@@ -12,6 +12,7 @@
 const { BigQuery } = require('@google-cloud/bigquery');
 const fs = require('fs-extra');
 const path = require('path');
+const size = require('json-size');
 const { auth } = require('./auth.js');
 
 function loadQuery(query) {
@@ -40,15 +41,32 @@ async function execute(email, key, project, query, service, params = {
 
     return new Promise((resolve, reject) => {
       const results = [];
+      let avgsize = 0;
+
+      const spaceleft = () => {
+        if (results.length === 10) {
+          avgsize = size(results) / results.length;
+        }
+        if (avgsize * results.length > 1024 * 1024 * 0.9) {
+          return false;
+        }
+        return true;
+      };
 
       dataset.createQueryStream({
         query: loadQuery(query),
         maxResults: parseInt(params.limit, 10),
         params,
       })
-        .on('data', (row) => results.push(row))
+        .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
+          truncated: true,
+          results,
+        })))
         .on('error', (e) => reject(e))
-        .on('end', () => resolve(results));
+        .on('end', () => resolve({
+          truncated: false,
+          results,
+        }));
     });
   } catch (e) {
     throw new Error(`Unable to execute Google Query: ${e.message}`);
