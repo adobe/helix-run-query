@@ -41,7 +41,7 @@ async function main(params) {
     };
   }
   try {
-    const results = await execute(
+    const { results, truncated } = await execute(
       params.GOOGLE_CLIENT_EMAIL,
       params.GOOGLE_PRIVATE_KEY,
       params.GOOGLE_PROJECT_ID,
@@ -55,6 +55,7 @@ async function main(params) {
       },
       body: {
         results,
+        truncated,
       },
     };
   } catch (e) {

@@ -44,7 +44,24 @@ describe('Index Tests', () => {
     });
     assert.equal(typeof result, 'object');
     assert.ok(Array.isArray(result.body.results));
+    assert.ok(!result.body.truncated);
     assert.equal(result.body.results.length, 10);
+  }).timeout(5000);
+
+
+  it('index function truncates long responses', async () => {
+    const result = await index({
+      GOOGLE_CLIENT_EMAIL: util.email,
+      GOOGLE_PRIVATE_KEY: util.key,
+      GOOGLE_PROJECT_ID: util.projectid,
+      token: util.token,
+      __ow_path: 'list-everything',
+      limit: 10000000,
+      service: '0bxMEaYAJV6SoqFlbZ2n1f',
+    });
+    assert.equal(typeof result, 'object');
+    assert.ok(Array.isArray(result.body.results));
+    assert.ok(result.body.truncated);
   }).timeout(5000);
 
   it('index function returns 500 on error', async () => {

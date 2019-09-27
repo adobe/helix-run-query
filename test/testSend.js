@@ -18,16 +18,16 @@ const send = require('../src/sendquery.js');
 
 describe('bigquery tests', () => {
   it('runs a query', async () => {
-    const result = await send.execute(util.email, util.key, util.projectid, '/list-everything', '0bxMEaYAJV6SoqFlbZ2n1f');
-    assert.ok(Array.isArray(result));
+    const { results } = await send.execute(util.email, util.key, util.projectid, '/list-everything', '0bxMEaYAJV6SoqFlbZ2n1f');
+    assert.ok(Array.isArray(results));
   }).timeout(5000);
 
   it('runs a query with params', async () => {
-    const result = await send.execute(util.email, util.key, util.projectid, 'list-everything', '0bxMEaYAJV6SoqFlbZ2n1f', {
+    const { results } = await send.execute(util.email, util.key, util.projectid, 'list-everything', '0bxMEaYAJV6SoqFlbZ2n1f', {
       limit: 10,
     });
-    assert.ok(Array.isArray(result));
-    assert.equal(result.length, 10);
+    assert.ok(Array.isArray(results));
+    assert.equal(results.length, 10);
   }).timeout(150000);
 
   it('throws without projectid', async () => {
