@@ -43,7 +43,7 @@ async function execute(email, key, project, query, service, params = {
 
       dataset.createQueryStream({
         query: loadQuery(query),
-        maxResults: params.limit,
+        maxResults: parseInt(params.limit, 10),
         params,
       })
         .on('data', (row) => results.push(row))
