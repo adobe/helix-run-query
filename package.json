@@ -74,6 +74,8 @@
   },
   "wsk": {
     "name": "helix-services/run-query@${version}",
-    "static": []
+    "static": [
+      "src/queries/list-everything.sql"
+    ]
   }
 }

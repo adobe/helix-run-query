@@ -15,7 +15,7 @@ const path = require('path');
 const { auth } = require('./auth.js');
 
 function loadQuery(query) {
-  return fs.readFileSync(path.resolve(__dirname, 'queries', `${query}.sql`)).toString();
+  return fs.readFileSync(path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
 }
 
 /**

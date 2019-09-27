@@ -18,7 +18,7 @@ const send = require('../src/sendquery.js');
 
 describe('bigquery tests', () => {
   it('runs a query', async () => {
-    const result = await send.execute(util.email, util.key, util.projectid, 'list-everything', '0bxMEaYAJV6SoqFlbZ2n1f');
+    const result = await send.execute(util.email, util.key, util.projectid, '/list-everything', '0bxMEaYAJV6SoqFlbZ2n1f');
     assert.ok(Array.isArray(result));
   }).timeout(5000);
 
