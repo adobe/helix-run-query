@@ -33,7 +33,7 @@
     "@adobe/helix-status": "^4.3.5",
     "@google-cloud/bigquery": "^4.1.8",
     "dotenv": "^8.1.0",
-    "epsagon": "^1.33.3",
+    "epsagon": "^1.37.0",
     "fs-extra": "^8.1.0",
     "googleapis": "^43.0.0",
     "json-size": "^1.0.0",
