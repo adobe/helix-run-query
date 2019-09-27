@@ -1,3 +1,27 @@
+# 1.0.0 (2019-09-27)
+
+
+### Bug Fixes
+
+* **build:** add missing dependency ([aa163d7](https://github.com/adobe/helix-run-query/commit/aa163d7))
+* **build:** add wsk property for release tracking ([9e36a10](https://github.com/adobe/helix-run-query/commit/9e36a10))
+* **build:** increase version number to get a release ([f04ab95](https://github.com/adobe/helix-run-query/commit/f04ab95))
+* **package:** fix npm test script in order to provide information about failing tests ([80e7fe2](https://github.com/adobe/helix-run-query/commit/80e7fe2)), closes [#13](https://github.com/adobe/helix-run-query/issues/13)
+* **package:** update @adobe/helix-status to version 4.2.1 ([f7ab47a](https://github.com/adobe/helix-run-query/commit/f7ab47a))
+* **package.json:** remove redundant istanbul dependency and use latest nyc ([b29f97d](https://github.com/adobe/helix-run-query/commit/b29f97d)), closes [#4](https://github.com/adobe/helix-run-query/issues/4)
+* **test:** fix linebreaks ([78771fd](https://github.com/adobe/helix-run-query/commit/78771fd))
+
+
+### Features
+
+* **action:** turn action into a web action ([f41f212](https://github.com/adobe/helix-run-query/commit/f41f212))
+* **auth:** add fastly authentication ([733d340](https://github.com/adobe/helix-run-query/commit/733d340))
+* **index:** allow specifying query in path ([a20dfa3](https://github.com/adobe/helix-run-query/commit/a20dfa3))
+* **index:** clean parameters ([8372db1](https://github.com/adobe/helix-run-query/commit/8372db1))
+* **monitoring:** add helix-status library to enable monitoring ([ef72300](https://github.com/adobe/helix-run-query/commit/ef72300))
+* **query:** run simple queries ([e834508](https://github.com/adobe/helix-run-query/commit/e834508))
+* **query:** set the default dataset to the current service config id ([cb432a7](https://github.com/adobe/helix-run-query/commit/cb432a7))
+
 ## [1.2.1](https://github.com/adobe/helix-service/compare/v1.2.0...v1.2.1) (2019-09-03)
 
 
