@@ -14,6 +14,14 @@ const fs = require('fs-extra');
 const path = require('path');
 const size = require('json-size');
 const { auth } = require('./auth.js');
+const QueryExecutionError = require('./QueryExecutionError.js');
+
+class QueryLoadingError extends Error {
+  constructor(message) {
+    super(message);
+    this.statusCode = 404;
+  }
+}
 
 function loadQuery(query) {
   return fs.readFileSync(path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
@@ -26,11 +34,14 @@ function loadQuery(query) {
  * @param {string} project the Google project ID
  * @param {string} query the query from a .sql file
  */
-async function execute(email, key, project, query, service, params = {
+async function execute(email, key, project, queryname, service, params = {
   limit: 100,
 }) {
   try {
+    const query = loadQuery(queryname);
+
     const credentials = await auth(email, key);
+
     const bq = new BigQuery({
       projectId: project,
       credentials,
@@ -54,7 +65,7 @@ async function execute(email, key, project, query, service, params = {
       };
 
       dataset.createQueryStream({
-        query: loadQuery(query),
+        query,
         maxResults: parseInt(params.limit, 10),
         params,
       })
@@ -69,8 +80,13 @@ async function execute(email, key, project, query, service, params = {
         }));
     });
   } catch (e) {
-    throw new Error(`Unable to execute Google Query: ${e.message}`);
+    if (e.code && e.code === 'ENOENT') {
+      throw new QueryLoadingError('Query is not supported');
+    }
+    throw new QueryExecutionError(`Unable to execute Google Query: ${e.message}`);
   }
 }
 
-module.exports = { execute, loadQuery };
+module.exports = {
+  execute, loadQuery, QueryExecutionError, QueryLoadingError,
+};

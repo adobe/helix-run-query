@@ -76,6 +76,20 @@ describe('Index Tests', () => {
     assert.equal(typeof result, 'object');
     assert.equal(result.statusCode, 500);
   });
+
+  it('index function returns 404 on missing query', async () => {
+    const result = await index({
+      GOOGLE_CLIENT_EMAIL: util.email,
+      GOOGLE_PRIVATE_KEY: 'util.key',
+      token: util.token,
+      __ow_path: 'break-nothing',
+      service: '0bxMEaYAJV6SoqFlbZ2n1f',
+      limit: 10,
+    });
+    assert.equal(typeof result, 'object');
+    assert.equal(result.statusCode, 404);
+  });
+
   it('index function returns 401 on auth error', async () => {
     const result = await index({
       GOOGLE_CLIENT_EMAIL: util.email,
