@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 const initfastly = require('@adobe/fastly-native-promises');
+const { openWhiskWrapper } = require('epsagon');
 const { wrap } = require('@adobe/helix-status');
 const { execute } = require('./sendquery');
 
@@ -66,4 +67,9 @@ async function main(params) {
   }
 }
 
-module.exports = { main: wrap(main), cleanParams };
+module.exports = { main: wrap(openWhiskWrapper(main, {
+  token_param: 'EPSAGON_TOKEN',
+  appName: 'Helix Services',
+  metadataOnly: false,
+  ignoredKeys: [/^[A-Z0-9_]+$/, 'token'],
+})), cleanParams };
