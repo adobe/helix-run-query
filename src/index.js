@@ -67,9 +67,12 @@ async function main(params) {
   }
 }
 
-module.exports = { main: wrap(openWhiskWrapper(main, {
-  token_param: 'EPSAGON_TOKEN',
-  appName: 'Helix Services',
-  metadataOnly: false,
-  ignoredKeys: [/^[A-Z0-9_]+$/, 'token'],
-})), cleanParams };
+module.exports = {
+  main: wrap(openWhiskWrapper(main, {
+    token_param: 'EPSAGON_TOKEN',
+    appName: 'Helix Services',
+    metadataOnly: false,
+    ignoredKeys: [/^[A-Z0-9_]+$/, 'token'],
+  })),
+  cleanParams,
+};
