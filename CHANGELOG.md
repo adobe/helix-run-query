@@ -1,3 +1,17 @@
+# [1.2.0](https://github.com/adobe/helix-run-query/compare/v1.1.3...v1.2.0) (2019-09-27)
+
+
+### Bug Fixes
+
+* **index:** report missing queries as 404 ([cb5d3af](https://github.com/adobe/helix-run-query/commit/cb5d3af)), closes [#1](https://github.com/adobe/helix-run-query/issues/1)
+* **lint:** fix lint issues ([da4a3e2](https://github.com/adobe/helix-run-query/commit/da4a3e2))
+
+
+### Features
+
+* **health:** adds health checking for required services ([0d559a8](https://github.com/adobe/helix-run-query/commit/0d559a8))
+* **monitoring:** adds epsagon for service monitoring ([384f271](https://github.com/adobe/helix-run-query/commit/384f271)), closes [#6](https://github.com/adobe/helix-run-query/issues/6)
+
 ## [1.1.3](https://github.com/adobe/helix-run-query/compare/v1.1.2...v1.1.3) (2019-09-27)
 
 
