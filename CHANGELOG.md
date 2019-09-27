@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/adobe/helix-run-query/compare/v1.1.2...v1.1.3) (2019-09-27)
+
+
+### Bug Fixes
+
+* **index:** guard against too large response sizes ([2797c94](https://github.com/adobe/helix-run-query/commit/2797c94)), closes [#2](https://github.com/adobe/helix-run-query/issues/2)
+
 ## [1.1.2](https://github.com/adobe/helix-run-query/compare/v1.1.1...v1.1.2) (2019-09-27)
 
 
