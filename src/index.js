@@ -60,6 +60,7 @@ async function main(params) {
   } catch (e) {
     return {
       statusCode: e.statusCode || 500,
+      body: e.message
     };
   }
 }
