@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/adobe/helix-run-query/compare/v1.1.0...v1.1.1) (2019-09-27)
+
+
+### Bug Fixes
+
+* **build:** include sql files in deployment package ([8a25094](https://github.com/adobe/helix-run-query/commit/8a25094))
+
 # [1.1.0](https://github.com/adobe/helix-run-query/compare/v1.0.0...v1.1.0) (2019-09-27)
 
 
