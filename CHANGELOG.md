@@ -1,3 +1,11 @@
+## [1.2.1](https://github.com/adobe/helix-run-query/compare/v1.2.0...v1.2.1) (2019-09-30)
+
+
+### Bug Fixes
+
+* **monitoring:** update automation command and add config ([c6793a6](https://github.com/adobe/helix-run-query/commit/c6793a6))
+* **package:** update @adobe/helix-status to version 5.0.1 ([71643f3](https://github.com/adobe/helix-run-query/commit/71643f3)), closes [#10](https://github.com/adobe/helix-run-query/issues/10)
+
 # [1.2.0](https://github.com/adobe/helix-run-query/compare/v1.1.3...v1.2.0) (2019-09-27)
 
 
