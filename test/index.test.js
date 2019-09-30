@@ -96,7 +96,7 @@ describe('Index Tests', () => {
       GOOGLE_PROJECT_ID: util.projectid,
       __ow_headers: {
         'x-token': util.token,
-        'x-service': '0bxMEaYAJV6SoqFlbZ2n1f'
+        'x-service': '0bxMEaYAJV6SoqFlbZ2n1f',
       },
       token: 'Wrong Token',
       __ow_path: 'list-everything',

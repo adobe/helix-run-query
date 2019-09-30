@@ -33,9 +33,11 @@ async function authFastly(token, service) {
 }
 
 async function main(params) {
-  if(params.__ow_headers && ('x-token' in params.__ow_headers) && ('x-service' in params.__ow_headers)){
-    params.token = params.__ow_headers['x-token']
-    params.service = params.__ow_headers['x-service']
+  if (params.__ow_headers && ('x-token' in params.__ow_headers) && ('x-service' in params.__ow_headers)) {
+    // eslint-disable-next-line no-param-reassign
+    params.token = params.__ow_headers['x-token'];
+    // eslint-disable-next-line no-param-reassign
+    params.service = params.__ow_headers['x-service'];
   }
   try {
     await authFastly(params.token, params.service);
@@ -57,7 +59,7 @@ async function main(params) {
     return {
       headers: {
         'content-type': 'application/json',
-        'Vary': 'X-Token, X-Service',
+        Vary: 'X-Token, X-Service',
       },
       body: {
         results,
