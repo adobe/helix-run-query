@@ -108,6 +108,26 @@ describe('Index Tests', () => {
     assert.ok(!result.body.truncated);
     assert.equal(result.body.results.length, 10);
   }).timeout(5000);
+
+  it('index function returns an object with ow_headers', async () => {
+    const result = await index({
+      GOOGLE_CLIENT_EMAIL: util.email,
+      GOOGLE_PRIVATE_KEY: util.key,
+      GOOGLE_PROJECT_ID: util.projectid,
+      __ow_headers: {
+        'x-token': util.token,
+        'x-service': '0bxMEaYAJV6SoqFlbZ2n1f',
+      },
+      token: 'Wrong Token',
+      __ow_path: 'list-everything',
+      limit: 10,
+      service: 'Wrong Service',
+    });
+    assert.equal(typeof result, 'object');
+    assert.ok(Array.isArray(result.body.results));
+    assert.ok(!result.body.truncated);
+    assert.equal(result.body.results.length, 10);
+  }).timeout(5000);
 });
 
 describe('testing cleanParams', () => {
