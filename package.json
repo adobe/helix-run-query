@@ -81,9 +81,9 @@
   },
   "statuspage": {
     "name": "Google BigQuery Integration",
-    "group": "Development"
+    "group": "Delivery"
   },
   "newrelic": {
-    "group_policy": "Development Repeated Failure"
+    "group_policy": "Delivery Repeated Failure"
   }
 }
