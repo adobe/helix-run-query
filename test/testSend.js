@@ -55,9 +55,17 @@ describe('bigquery tests', () => {
   }).timeout(5000);
 });
 
-describe('sql loading tests', () => {
+describe('sql loading and processing', () => {
   it('loadQuery loads a query', () => {
     const result = send.loadQuery('list-everything');
     assert.ok(result.match(/select/i));
+  });
+
+  it('query parameters are processed', () => {
+    const EXPECTED = { 'helix-param': 'helix', 'helix-param2': 'helix2', 'helix-param3': 'helix3' };
+    const query = send.loadQuery('break-something', './test');
+    const ACTUAL = send.getExtraParameters(query);
+
+    assert.deepEqual(EXPECTED, ACTUAL);
   });
 });
