@@ -10,33 +10,18 @@
  * governing permissions and limitations under the License.
  */
 const { BigQuery } = require('@google-cloud/bigquery');
-const fs = require('fs-extra');
-const path = require('path');
 const size = require('json-size');
 const { auth } = require('./auth.js');
-
-function loadQuery(query, dir = null) {
-  return fs.readFileSync(path.resolve(dir || __dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
-}
-
-function getExtraParameters(query) {
-  return query.split('\n')
-    .filter((e) => e.startsWith('---'))
-    .filter((e) => e.indexOf(':') > 0)
-    .map((e) => e.substring(4).split(': '))
-    .reduce((acc, val) => {
-      // eslint-disable-next-line prefer-destructuring
-      acc[val[0]] = val[1];
-      return acc;
-    }, {});
-}
+const { loadQuery } = require('./util.js');
 
 /**
  *
  * @param {string} email email address of the Google service account
  * @param {string} key private key of the global Google service account
  * @param {string} project the Google project ID
- * @param {string} query the query from a .sql file
+ * @param {string} query the name of a .sql file in queries directory
+ * @param {string} service the serviceid of the published site
+ * @param {object} params parameters for substitution into query
  */
 async function execute(email, key, project, query, service, params = {
   limit: 100,
@@ -64,9 +49,9 @@ async function execute(email, key, project, query, service, params = {
         }
         return true;
       };
-
+      const loadedQuery = loadQuery(query);
       dataset.createQueryStream({
-        query: loadQuery(query),
+        query: loadedQuery,
         maxResults: parseInt(params.limit, 10),
         params,
       })
@@ -85,4 +70,4 @@ async function execute(email, key, project, query, service, params = {
   }
 }
 
-module.exports = { execute, loadQuery, getExtraParameters };
+module.exports = { execute };

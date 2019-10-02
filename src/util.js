@@ -9,14 +9,34 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const dotenv = require('dotenv');
+const fs = require('fs-extra');
+const path = require('path');
 
-dotenv.config();
+function loadQuery(query, dir = null) {
+  return fs.readFileSync(path.resolve(dir || __dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
+}
 
-module.exports = {
-  email: process.env.GOOGLE_CLIENT_EMAIL,
-  key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-  projectid: process.env.GOOGLE_PROJECT_ID,
-  token: process.env.HLX_FASTLY_AUTH,
-  service: '0bxMEaYAJV6SoqFlbZ2n1f',
-};
+function getExtraParameters(query) {
+  return query.split('\n')
+    .filter((e) => e.startsWith('---'))
+    .filter((e) => e.indexOf(':') > 0)
+    .map((e) => e.substring(4).split(': '))
+    .reduce((acc, val) => {
+      // eslint-disable-next-line prefer-destructuring
+      acc[val[0]] = val[1];
+      return acc;
+    }, {});
+}
+
+function cleanParams(params) {
+  return Object.keys(params)
+    .filter((key) => !key.match(/[A-Z0-9_]+/))
+    .filter((key) => !key.startsWith('__'))
+    .reduce((cleanedobj, key) => {
+      // eslint-disable-next-line no-param-reassign
+      cleanedobj[key] = params[key];
+      return cleanedobj;
+    }, {});
+}
+
+module.exports = { loadQuery, getExtraParameters, cleanParams };

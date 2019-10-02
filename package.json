@@ -60,7 +60,8 @@
     "lodash": "^4.17.15",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
-    "semantic-release": "^15.13.24"
+    "semantic-release": "^15.13.24",
+    "sinon": "^7.5.0"
   },
   "lint-staged": {
     "*.js": "eslint"

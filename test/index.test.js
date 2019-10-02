@@ -17,15 +17,15 @@
 const assert = require('assert');
 const index = require('../src/index.js').main;
 const { cleanParams } = require('../src/index.js');
-const util = require('../src/util.js');
+const env = require('../src/env.js');
 
 describe('Index Tests', () => {
   it('index function is present', async () => {
     await index({
-      GOOGLE_CLIENT_EMAIL: util.email,
-      GOOGLE_PRIVATE_KEY: util.key,
-      GOOGLE_PROJECT_ID: util.projectid,
-      token: util.token,
+      GOOGLE_CLIENT_EMAIL: env.email,
+      GOOGLE_PRIVATE_KEY: env.key,
+      GOOGLE_PROJECT_ID: env.projectid,
+      token: env.token,
       __ow_path: 'list-everything',
       limit: 10,
       service: '0bxMEaYAJV6SoqFlbZ2n1f',
@@ -34,10 +34,10 @@ describe('Index Tests', () => {
 
   it('index function returns an object', async () => {
     const result = await index({
-      GOOGLE_CLIENT_EMAIL: util.email,
-      GOOGLE_PRIVATE_KEY: util.key,
-      GOOGLE_PROJECT_ID: util.projectid,
-      token: util.token,
+      GOOGLE_CLIENT_EMAIL: env.email,
+      GOOGLE_PRIVATE_KEY: env.key,
+      GOOGLE_PROJECT_ID: env.projectid,
+      token: env.token,
       __ow_path: 'list-everything',
       limit: 10,
       service: '0bxMEaYAJV6SoqFlbZ2n1f',
@@ -51,10 +51,10 @@ describe('Index Tests', () => {
 
   it('index function truncates long responses', async () => {
     const result = await index({
-      GOOGLE_CLIENT_EMAIL: util.email,
-      GOOGLE_PRIVATE_KEY: util.key,
-      GOOGLE_PROJECT_ID: util.projectid,
-      token: util.token,
+      GOOGLE_CLIENT_EMAIL: env.email,
+      GOOGLE_PRIVATE_KEY: env.key,
+      GOOGLE_PROJECT_ID: env.projectid,
+      token: env.token,
       __ow_path: 'list-everything',
       limit: 10000000,
       service: '0bxMEaYAJV6SoqFlbZ2n1f',
@@ -66,10 +66,10 @@ describe('Index Tests', () => {
 
   it('index function returns 500 on error', async () => {
     const result = await index({
-      GOOGLE_CLIENT_EMAIL: util.email,
-      GOOGLE_PRIVATE_KEY: 'util.key',
-      token: util.token,
-      __ow_path: 'break-something',
+      GOOGLE_CLIENT_EMAIL: env.email,
+      GOOGLE_PRIVATE_KEY: 'env.key',
+      token: env.token,
+      __ow_path: 'list-everything',
       service: '0bxMEaYAJV6SoqFlbZ2n1f',
       limit: 10,
     });
@@ -78,10 +78,10 @@ describe('Index Tests', () => {
   });
   it('index function returns 401 on auth error', async () => {
     const result = await index({
-      GOOGLE_CLIENT_EMAIL: util.email,
-      GOOGLE_PRIVATE_KEY: 'util.key',
+      GOOGLE_CLIENT_EMAIL: env.email,
+      GOOGLE_PRIVATE_KEY: 'env.key',
       token: 'notatoken',
-      __ow_path: 'break-something',
+      __ow_path: 'list-everything',
       service: '0bxMEaYAJV6SoqFlbZ2n1f',
       limit: 10,
     });
@@ -91,11 +91,11 @@ describe('Index Tests', () => {
 
   it('index function returns an object with ow_headers', async () => {
     const result = await index({
-      GOOGLE_CLIENT_EMAIL: util.email,
-      GOOGLE_PRIVATE_KEY: util.key,
-      GOOGLE_PROJECT_ID: util.projectid,
+      GOOGLE_CLIENT_EMAIL: env.email,
+      GOOGLE_PRIVATE_KEY: env.key,
+      GOOGLE_PROJECT_ID: env.projectid,
       __ow_headers: {
-        'x-token': util.token,
+        'x-token': env.token,
         'x-service': '0bxMEaYAJV6SoqFlbZ2n1f',
       },
       token: 'Wrong Token',
@@ -111,11 +111,11 @@ describe('Index Tests', () => {
 
   it('index function returns an object with ow_headers', async () => {
     const result = await index({
-      GOOGLE_CLIENT_EMAIL: util.email,
-      GOOGLE_PRIVATE_KEY: util.key,
-      GOOGLE_PROJECT_ID: util.projectid,
+      GOOGLE_CLIENT_EMAIL: env.email,
+      GOOGLE_PRIVATE_KEY: env.key,
+      GOOGLE_PROJECT_ID: env.projectid,
       __ow_headers: {
-        'x-token': util.token,
+        'x-token': env.token,
         'x-service': '0bxMEaYAJV6SoqFlbZ2n1f',
       },
       token: 'Wrong Token',
