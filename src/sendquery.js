@@ -27,6 +27,7 @@ async function execute(email, key, project, query, service, params = {
   limit: 100,
 }) {
   try {
+    const loadedQuery = loadQuery(query);
     const credentials = await auth(email, key);
     const bq = new BigQuery({
       projectId: project,
@@ -49,7 +50,6 @@ async function execute(email, key, project, query, service, params = {
         }
         return true;
       };
-      const loadedQuery = loadQuery(query);
       dataset.createQueryStream({
         query: loadedQuery,
         maxResults: parseInt(params.limit, 10),

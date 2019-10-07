@@ -12,8 +12,8 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-function loadQuery(query, dir = null) {
-  return fs.readFileSync(path.resolve(dir || __dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
+function loadQuery(query) {
+  return fs.readFileSync(path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
 }
 
 function getExtraParameters(query) {

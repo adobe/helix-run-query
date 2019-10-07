@@ -15,11 +15,16 @@
 'use strict';
 
 const assert = require('assert');
-const index = require('../src/index.js').main;
+const proxyquire = require('proxyquire');
 const { cleanParams } = require('../src/index.js');
 const env = require('../src/env.js');
 
-describe('Index Tests', () => {
+describe('Index Tests', async () => {
+  const goodQuery = 'select * from requests201905';
+  const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
+
+  const index = proxyquire('../src/index.js', { './sendquery.js': goodExec }).main;
+
   it('index function is present', async () => {
     await index({
       GOOGLE_CLIENT_EMAIL: env.email,
