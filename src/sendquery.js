@@ -23,12 +23,13 @@ const { loadQuery } = require('./util.js');
  * @param {string} service the serviceid of the published site
  * @param {object} params parameters for substitution into query
  */
-async function execute(email, key, project, query, service, params = {
+async function execute(email, key, project, queryname, service, params = {
   limit: 100,
 }) {
   try {
     const loadedQuery = loadQuery(query);
     const credentials = await auth(email, key);
+
     const bq = new BigQuery({
       projectId: project,
       credentials,
@@ -66,8 +67,10 @@ async function execute(email, key, project, query, service, params = {
         }));
     });
   } catch (e) {
-    throw new Error(`Unable to execute Google Query: ${e.message}`);
+    if (e.code && e.code === 'ENOENT') {
+      throw new QueryLoadingError('Query is not supported');
+    }
+    throw new QueryExecutionError(`Unable to execute Google Query: ${e.message}`);
   }
 }
-
 module.exports = { execute };

@@ -1,3 +1,47 @@
+## [1.2.4](https://github.com/adobe/helix-run-query/compare/v1.2.3...v1.2.4) (2019-10-05)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-status to v5.0.2 ([#16](https://github.com/adobe/helix-run-query/issues/16)) ([7ecc5e0](https://github.com/adobe/helix-run-query/commit/7ecc5e0))
+
+## [1.2.3](https://github.com/adobe/helix-run-query/compare/v1.2.2...v1.2.3) (2019-10-05)
+
+
+### Bug Fixes
+
+* **deploy:** use helix-services-private ([519ca20](https://github.com/adobe/helix-run-query/commit/519ca20))
+* **deps:** pin dependencies ([#13](https://github.com/adobe/helix-run-query/issues/13)) ([161083a](https://github.com/adobe/helix-run-query/commit/161083a))
+
+## [1.2.2](https://github.com/adobe/helix-run-query/compare/v1.2.1...v1.2.2) (2019-10-05)
+
+
+### Bug Fixes
+
+* **deps:** update any ([#15](https://github.com/adobe/helix-run-query/issues/15)) ([9cae13b](https://github.com/adobe/helix-run-query/commit/9cae13b))
+
+## [1.2.1](https://github.com/adobe/helix-run-query/compare/v1.2.0...v1.2.1) (2019-09-30)
+
+
+### Bug Fixes
+
+* **monitoring:** update automation command and add config ([c6793a6](https://github.com/adobe/helix-run-query/commit/c6793a6))
+* **package:** update @adobe/helix-status to version 5.0.1 ([71643f3](https://github.com/adobe/helix-run-query/commit/71643f3)), closes [#10](https://github.com/adobe/helix-run-query/issues/10)
+
+# [1.2.0](https://github.com/adobe/helix-run-query/compare/v1.1.3...v1.2.0) (2019-09-27)
+
+
+### Bug Fixes
+
+* **index:** report missing queries as 404 ([cb5d3af](https://github.com/adobe/helix-run-query/commit/cb5d3af)), closes [#1](https://github.com/adobe/helix-run-query/issues/1)
+* **lint:** fix lint issues ([da4a3e2](https://github.com/adobe/helix-run-query/commit/da4a3e2))
+
+
+### Features
+
+* **health:** adds health checking for required services ([0d559a8](https://github.com/adobe/helix-run-query/commit/0d559a8))
+* **monitoring:** adds epsagon for service monitoring ([384f271](https://github.com/adobe/helix-run-query/commit/384f271)), closes [#6](https://github.com/adobe/helix-run-query/issues/6)
+
 ## [1.1.3](https://github.com/adobe/helix-run-query/compare/v1.1.2...v1.1.3) (2019-09-27)
 
 
