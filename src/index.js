@@ -12,18 +12,8 @@
 const initfastly = require('@adobe/fastly-native-promises');
 const { openWhiskWrapper } = require('epsagon');
 const { wrap } = require('@adobe/helix-status');
-const { execute } = require('./sendquery');
-
-function cleanParams(params) {
-  return Object.keys(params)
-    .filter((key) => !key.match(/[A-Z0-9_]+/))
-    .filter((key) => !key.startsWith('__'))
-    .reduce((cleanedobj, key) => {
-      // eslint-disable-next-line no-param-reassign
-      cleanedobj[key] = params[key];
-      return cleanedobj;
-    }, {});
-}
+const { execute } = require('./sendquery.js');
+const { cleanParams } = require('./util.js');
 
 async function authFastly(token, service) {
   // verify Fastly credentials

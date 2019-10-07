@@ -9,6 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+/**
+ *
+ * @param {String} email the email of the service account to use for all subsequent requests
+ * @param {String} key the private key of the service account to use for all subsequent requests
+ */
 const { google } = require('googleapis');
 
 
@@ -34,11 +39,6 @@ async function googleauth(email, key) {
   return gauth;
 }
 
-/**
- *
- * @param {String} email the email of the service account to use for all subsequent requests
- * @param {String} key the private key of the service account to use for all subsequent requests
- */
 async function auth(email, key) {
   try {
     const credentials = {
@@ -51,9 +51,9 @@ async function auth(email, key) {
     return credentials;
   } catch (e) {
     throw new Error(`Invalid credentials. Make sure email is the Google Service 
-Account email in the format <name>@<project>.iam.gserviceaccount.com and key is
-the private key starting with -----BEGIN PRIVATE KEY-----. You can create a new
-Service Account in the Google Cloud Platform Console under IAM.`);
+  Account email in the format <name>@<project>.iam.gserviceaccount.com and key is
+  the private key starting with -----BEGIN PRIVATE KEY-----. You can create a new
+  Service Account in the Google Cloud Platform Console under IAM.`);
   }
 }
 

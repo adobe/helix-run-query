@@ -20,8 +20,8 @@ For more, see the [API documentation](docs/API.md).
 
 ## Development
 
-### Deploying Helix Static
+### Deploying Helix Run Query
 
-Deploying Helix Service requires the `wsk` command line client, authenticated to a namespace of your choice. For Project Helix, we use the `helix` namespace.
+Deploying Helix Run Query requires the `wsk` command line client, authenticated to a namespace of your choice. For Project Helix, we use the `helix` namespace.
 
-All commits to master that pass the testing will be deployed automatically. All commits to branches that will pass the testing will get commited as `/helix-services/service@ci<num>` and tagged with the CI build number.
+All commits to master that pass the testing will be deployed automatically. All commits to branches that will pass the testing will get commited as `/helix-services/run-query@ci<num>` and tagged with the CI build number.
