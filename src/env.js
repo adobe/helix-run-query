@@ -9,7 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+const dotenv = require('dotenv');
 
-class QueryExecutionError extends Error {}
+dotenv.config();
 
-module.exports = QueryExecutionError;
+module.exports = {
+  email: process.env.GOOGLE_CLIENT_EMAIL,
+  key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  projectid: process.env.GOOGLE_PROJECT_ID,
+  token: process.env.HLX_FASTLY_AUTH,
+  service: '0bxMEaYAJV6SoqFlbZ2n1f',
+};

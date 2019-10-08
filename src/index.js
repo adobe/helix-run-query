@@ -12,18 +12,8 @@
 const initfastly = require('@adobe/fastly-native-promises');
 const { openWhiskWrapper } = require('epsagon');
 const { wrap } = require('@adobe/helix-status');
-const { execute } = require('./sendquery');
-
-function cleanParams(params) {
-  return Object.keys(params)
-    .filter((key) => !key.match(/[A-Z0-9_]+/))
-    .filter((key) => !key.startsWith('__'))
-    .reduce((cleanedobj, key) => {
-      // eslint-disable-next-line no-param-reassign
-      cleanedobj[key] = params[key];
-      return cleanedobj;
-    }, {});
-}
+const { execute } = require('./sendquery.js');
+const { cleanParams } = require('./util.js');
 
 async function authFastly(token, service) {
   // verify Fastly credentials
@@ -33,6 +23,12 @@ async function authFastly(token, service) {
 }
 
 async function main(params) {
+  if (params.__ow_headers && ('x-token' in params.__ow_headers) && ('x-service' in params.__ow_headers)) {
+    // eslint-disable-next-line no-param-reassign
+    params.token = params.__ow_headers['x-token'];
+    // eslint-disable-next-line no-param-reassign
+    params.service = params.__ow_headers['x-service'];
+  }
   try {
     await authFastly(params.token, params.service);
   } catch (e) {
@@ -53,6 +49,7 @@ async function main(params) {
     return {
       headers: {
         'content-type': 'application/json',
+        Vary: 'X-Token, X-Service',
       },
       body: {
         results,

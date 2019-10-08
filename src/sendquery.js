@@ -10,38 +10,25 @@
  * governing permissions and limitations under the License.
  */
 const { BigQuery } = require('@google-cloud/bigquery');
-const fs = require('fs-extra');
-const path = require('path');
 const size = require('json-size');
 const { auth } = require('./auth.js');
-const QueryExecutionError = require('./QueryExecutionError.js');
-
-class QueryLoadingError extends Error {
-  constructor(message) {
-    super(message);
-    this.statusCode = 404;
-  }
-}
-
-function loadQuery(query) {
-  return fs.readFileSync(path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
-}
+const { loadQuery } = require('./util.js');
 
 /**
  *
  * @param {string} email email address of the Google service account
  * @param {string} key private key of the global Google service account
  * @param {string} project the Google project ID
- * @param {string} query the query from a .sql file
+ * @param {string} query the name of a .sql file in queries directory
+ * @param {string} service the serviceid of the published site
+ * @param {object} params parameters for substitution into query
  */
-async function execute(email, key, project, queryname, service, params = {
+async function execute(email, key, project, query, service, params = {
   limit: 100,
 }) {
   try {
-    const query = loadQuery(queryname);
-
+    const loadedQuery = loadQuery(query);
     const credentials = await auth(email, key);
-
     const bq = new BigQuery({
       projectId: project,
       credentials,
@@ -63,9 +50,8 @@ async function execute(email, key, project, queryname, service, params = {
         }
         return true;
       };
-
       dataset.createQueryStream({
-        query,
+        query: loadedQuery,
         maxResults: parseInt(params.limit, 10),
         params,
       })
@@ -80,13 +66,8 @@ async function execute(email, key, project, queryname, service, params = {
         }));
     });
   } catch (e) {
-    if (e.code && e.code === 'ENOENT') {
-      throw new QueryLoadingError('Query is not supported');
-    }
-    throw new QueryExecutionError(`Unable to execute Google Query: ${e.message}`);
+    throw new Error(`Unable to execute Google Query: ${e.message}`);
   }
 }
 
-module.exports = {
-  execute, loadQuery, QueryExecutionError, QueryLoadingError,
-};
+module.exports = { execute };
