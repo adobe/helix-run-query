@@ -78,7 +78,7 @@
   "wsk": {
     "name": "helix-services/run-query@${version}",
     "static": [
-      "src/queries/list-everything.sql"
+      "src/queries/next-resource.sql"
     ]
   }
 }
