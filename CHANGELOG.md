@@ -1,3 +1,14 @@
+## [1.2.2](https://github.com/adobe/helix-run-query/compare/v1.2.1...v1.2.2) (2019-10-08)
+
+
+### Bug Fixes
+
+* **deploy:** use helix-services-private ([3cb135e](https://github.com/adobe/helix-run-query/commit/3cb135e))
+* **deps:** deps fix ([c845e7e](https://github.com/adobe/helix-run-query/commit/c845e7e))
+* **deps:** pin dependencies ([#13](https://github.com/adobe/helix-run-query/issues/13)) ([de9ef12](https://github.com/adobe/helix-run-query/commit/de9ef12))
+* **deps:** update any ([#15](https://github.com/adobe/helix-run-query/issues/15)) ([b42e4e2](https://github.com/adobe/helix-run-query/commit/b42e4e2))
+* **deps:** update dependency @adobe/helix-status to v5.0.2 ([#16](https://github.com/adobe/helix-run-query/issues/16)) ([d584141](https://github.com/adobe/helix-run-query/commit/d584141))
+
 ## [1.2.4](https://github.com/adobe/helix-run-query/compare/v1.2.3...v1.2.4) (2019-10-05)
 
 
