@@ -55,8 +55,6 @@ async function auth(email, key) {
   the private key starting with -----BEGIN PRIVATE KEY-----. You can create a new
   Service Account in the Google Cloud Platform Console under IAM.`);
   }
-}
-
-module.exports = {
-  auth, googleauth,
-};
+  module.exports = {
+    auth, googleauth,
+  };
