@@ -1,3 +1,17 @@
+# [1.3.0](https://github.com/adobe/helix-run-query/compare/v1.2.4...v1.3.0) (2019-10-08)
+
+
+### Bug Fixes
+
+* **build:** fix build errors ([a449755](https://github.com/adobe/helix-run-query/commit/a449755))
+* **package:** fix nonexistent file ([ff322eb](https://github.com/adobe/helix-run-query/commit/ff322eb))
+
+
+### Features
+
+* **index:** adds support for caching bigquery results ([8a16a09](https://github.com/adobe/helix-run-query/commit/8a16a09))
+* **run-query:** adds support for headers in sql files ([4a0dc8a](https://github.com/adobe/helix-run-query/commit/4a0dc8a)), closes [#12](https://github.com/adobe/helix-run-query/issues/12)
+
 ## [1.2.4](https://github.com/adobe/helix-run-query/compare/v1.2.3...v1.2.4) (2019-10-05)
 
 
