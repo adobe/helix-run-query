@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/adobe/helix-run-query/compare/v1.3.0...v1.3.1) (2019-10-08)
+
+
+### Bug Fixes
+
+* **deps:** pin dependencies ([#24](https://github.com/adobe/helix-run-query/issues/24)) ([50cbf05](https://github.com/adobe/helix-run-query/commit/50cbf05))
+
 # [1.3.0](https://github.com/adobe/helix-run-query/compare/v1.2.4...v1.3.0) (2019-10-08)
 
 
