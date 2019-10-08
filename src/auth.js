@@ -40,23 +40,23 @@ async function googleauth(email, key) {
 }
 
 async function auth(email, key) {
-    try {
-      const credentials = {
-        client_email: email,
-        private_key: key,
-      };
-  
-      await googleauth(email, key);
-  
-      return credentials;
-    } catch (e) {
-      throw new Error(`Invalid credentials. Make sure email is the Google Service 
+  try {
+    const credentials = {
+      client_email: email,
+      private_key: key,
+    };
+
+    await googleauth(email, key);
+
+    return credentials;
+  } catch (e) {
+    throw new Error(`Invalid credentials. Make sure email is the Google Service 
   Account email in the format <name>@<project>.iam.gserviceaccount.com and key is
   the private key starting with -----BEGIN PRIVATE KEY-----. You can create a new
   Service Account in the Google Cloud Platform Console under IAM.`);
-    }
   }
-  
-  module.exports = {
-    auth, googleauth,
-  };
+}
+
+module.exports = {
+  auth, googleauth,
+};
