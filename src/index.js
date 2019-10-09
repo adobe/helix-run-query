@@ -36,7 +36,7 @@ async function main(params) {
       statusCode: 401,
       body: {
         params,
-      }
+      },
     };
   }
   try {
@@ -56,7 +56,7 @@ async function main(params) {
       body: {
         results,
         truncated,
-        params
+        params,
       },
     };
   } catch (e) {
