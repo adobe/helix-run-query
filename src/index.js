@@ -34,7 +34,9 @@ async function main(params) {
   } catch (e) {
     return {
       statusCode: 401,
-      body: e.message,
+      body: {
+        params,
+      }
     };
   }
   try {
@@ -54,12 +56,15 @@ async function main(params) {
       body: {
         results,
         truncated,
+        params
       },
     };
   } catch (e) {
     return {
       statusCode: e.statusCode || 500,
-      body: e.message,
+      body: {
+        params,
+      },
     };
   }
 }
