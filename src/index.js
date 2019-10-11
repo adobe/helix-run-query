@@ -13,7 +13,7 @@ const initfastly = require('@adobe/fastly-native-promises');
 const { openWhiskWrapper } = require('epsagon');
 const { wrap } = require('@adobe/helix-status');
 const { execute } = require('./sendquery.js');
-const { cleanParams } = require('./util.js');
+const { cleanRequestParams } = require('./util.js');
 
 async function authFastly(token, service) {
   // verify Fastly credentials
@@ -44,7 +44,7 @@ async function main(params) {
       params.GOOGLE_PROJECT_ID,
       params.__ow_path,
       params.service,
-      cleanParams(params),
+      cleanRequestParams(params),
     );
     return {
       headers: {
@@ -76,5 +76,4 @@ module.exports = {
     googleiam: 'https://iam.googleapis.com/$discovery/rest?version=v1',
     googlebigquery: 'https://www.googleapis.com/discovery/v1/apis/bigquery/v2/rest',
   }),
-  cleanParams,
 };

@@ -16,7 +16,7 @@
 
 const assert = require('assert');
 const proxyquire = require('proxyquire');
-const { cleanParams } = require('../src/index.js');
+const { cleanRequestParams, cleanQueryParams } = require('../src/util.js');
 const env = require('../src/env.js');
 
 describe('Index Tests', async () => {
@@ -135,21 +135,38 @@ describe('Index Tests', async () => {
   }).timeout(5000);
 });
 
-describe('testing cleanParams', () => {
-  it('cleanParams returns Object', () => {
-    const result = cleanParams({});
+describe('testing cleanRequestParams', () => {
+  it('cleanRequestParams returns object', () => {
+    const result = cleanRequestParams({});
     assert.equal(typeof result, 'object');
     assert.ok(!Array.isArray(result));
   });
 
-  it('cleanParams returns clean Object', () => {
-    const result = cleanParams({
+  it('cleanRequestParams returns clean object', () => {
+    const result = cleanRequestParams({
       FOOBAR: 'ahhhh',
       foobar: 'good',
       __foobar: 'bad',
     });
     assert.deepStrictEqual(result, {
       foobar: 'good',
+    });
+  });
+
+  it('cleanQueryParams leaves only BigQuery', () => {
+    const query = 'SELECT ^something1, ^something2 WHERE ^tablename and @bqParam';
+
+    const params = {
+      tablename: '`Helix',
+      something1: '\'Loves',
+      something2: '"Lucy',
+      something3: 'foobar',
+      bqParam: 'Google BigQuery Parameter',
+    };
+    const result = cleanQueryParams(query, params);
+
+    assert.deepStrictEqual(result, {
+      bqParam: 'Google BigQuery Parameter',
     });
   });
 });

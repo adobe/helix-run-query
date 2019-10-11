@@ -12,7 +12,7 @@
 const { BigQuery } = require('@google-cloud/bigquery');
 const size = require('json-size');
 const { auth } = require('./auth.js');
-const { loadQuery } = require('./util.js');
+const { loadQuery, queryReplace, cleanQueryParams } = require('./util.js');
 
 /**
  *
@@ -51,9 +51,9 @@ async function execute(email, key, project, query, service, params = {
         return true;
       };
       dataset.createQueryStream({
-        query: loadedQuery,
+        query: queryReplace(loadedQuery, params),
         maxResults: parseInt(params.limit, 10),
-        params,
+        params: cleanQueryParams(loadedQuery, params),
       })
         .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
           truncated: true,

@@ -16,6 +16,31 @@ function loadQuery(query) {
   return fs.readFileSync(path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
 }
 
+function cleanQueryParams(query, params) {
+  return Object.keys(params)
+    .filter((key) => query.match(new RegExp(`\\^${key}`, 'g')) == null)
+    .filter((key) => query.match(new RegExp(`\\@${key}`, 'g')) != null)
+    .reduce((cleanObj, key) => {
+      // eslint-disable-next-line no-param-reassign
+      cleanObj[key] = params[key];
+      return cleanObj;
+    }, {});
+}
+
+function queryReplace(query, params) {
+  let outQuery = query;
+
+  Object.keys(params)
+    .filter((key) => typeof params[key] === 'string')
+    .forEach((key) => {
+      const regex = new RegExp(`\\^${key}`, 'g');
+      // eslint-disable-next-line no-param-reassign
+      params[key] = params[key].replace(/`|'|"/g, '');
+      outQuery = outQuery.replace(regex, `\`${params[key]}\``);
+    });
+  return outQuery;
+}
+
 function getExtraParameters(query) {
   return query.split('\n')
     .filter((e) => e.startsWith('---'))
@@ -28,7 +53,7 @@ function getExtraParameters(query) {
     }, {});
 }
 
-function cleanParams(params) {
+function cleanRequestParams(params) {
   return Object.keys(params)
     .filter((key) => !key.match(/[A-Z0-9_]+/))
     .filter((key) => !key.startsWith('__'))
@@ -39,4 +64,10 @@ function cleanParams(params) {
     }, {});
 }
 
-module.exports = { loadQuery, getExtraParameters, cleanParams };
+module.exports = {
+  loadQuery,
+  getExtraParameters,
+  cleanRequestParams,
+  cleanQueryParams,
+  queryReplace,
+};

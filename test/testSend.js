@@ -16,7 +16,8 @@ const sinon = require('sinon');
 const { AssertionError } = require('assert');
 const proxyquire = require('proxyquire');
 const env = require('../src/env.js');
-const { loadQuery, getExtraParameters } = require('../src/util.js');
+const { loadQuery, getExtraParameters, queryReplace } = require('../src/util.js');
+const { execute } = require('../src/sendquery.js');
 
 describe('bigquery tests', () => {
   const goodQuery = 'select * from requests201905';
@@ -37,6 +38,15 @@ describe('bigquery tests', () => {
     assert.ok(Array.isArray(results));
     assert.equal(results.length, 10);
   }).timeout(5000);
+
+  it('runs a query with queryParams', async () => {
+    const { results } = await execute(env.email, env.key, env.projectid, 'next-resource', '0bxMEaYAJV6SoqFlbZ2n1f', {
+      limit: 1,
+      tablename: 'requests201905',
+    });
+    assert.ok(Array.isArray(results));
+    assert.equal(results.length, 1);
+  }).timeout(1000000);
 
   it('throws without projectid', async () => {
     try {
@@ -75,5 +85,36 @@ describe('sql loading and processing', () => {
     const EXPECTED = { 'helix-param': 'helix', 'helix-param2': 'helix2', 'helix-param3': 'helix3' };
     const ACTUAL = getExtraParameters(fakeQuery);
     assert.deepEqual(EXPECTED, ACTUAL);
+  });
+
+  it('query substitution works', () => {
+    const query = 'SELECT ^something1, ^something2 WHERE ^tablename';
+    const EXPECTED = 'SELECT `Loves`, `Lucy` WHERE `Helix`';
+
+    const params = {
+      tablename: 'Helix',
+      something1: 'Loves',
+      something2: 'Lucy',
+    };
+
+    const ACTUAL = queryReplace(query, params);
+
+    assert.equal(ACTUAL, EXPECTED);
+  });
+
+  it('prevents sql injection by canceling double,single,or template strings', () => {
+    const query = 'SELECT ^something1, ^something2 WHERE ^tablename';
+    const EXPECTED = 'SELECT `Loves`, `CMS` WHERE `Helix`';
+
+    const params = {
+      tablename: '`Helix',
+      something1: '\'Loves',
+      something2: '"CMS',
+      something3: 'foobar',
+    };
+
+    const ACTUAL = queryReplace(query, params);
+
+    assert.equal(ACTUAL, EXPECTED);
   });
 });
