@@ -1,3 +1,10 @@
+## [1.2.6](https://github.com/adobe/helix-run-query/compare/v1.2.5...v1.2.6) (2019-10-11)
+
+
+### Bug Fixes
+
+* **index:** removes potential problem of newlines ([ef5c914](https://github.com/adobe/helix-run-query/commit/ef5c914))
+
 ## [1.2.5](https://github.com/adobe/helix-run-query/compare/v1.2.4...v1.2.5) (2019-10-08)
 
 
