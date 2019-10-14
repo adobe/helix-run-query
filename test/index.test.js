@@ -67,7 +67,7 @@ describe('Index Tests', async () => {
     assert.equal(typeof result, 'object');
     assert.ok(Array.isArray(result.body.results));
     assert.ok(result.body.truncated);
-  }).timeout(10000);
+  }).timeout(5000);
 
   it('index function returns 500 on error', async () => {
     const result = await index({

@@ -16,7 +16,6 @@ const sinon = require('sinon');
 const { AssertionError } = require('assert');
 const proxyquire = require('proxyquire');
 const env = require('../src/env.js');
-const { loadQuery, getExtraParameters, queryReplace } = require('../src/util.js');
 const { execute } = require('../src/sendquery.js');
 
 describe('bigquery tests', () => {
@@ -46,7 +45,7 @@ describe('bigquery tests', () => {
     });
     assert.ok(Array.isArray(results));
     assert.equal(results.length, 1);
-  }).timeout(1000000);
+  }).timeout(5000);
 
   it('throws without projectid', async () => {
     try {
@@ -72,49 +71,4 @@ describe('bigquery tests', () => {
       }
     }
   }).timeout(5000);
-});
-
-describe('sql loading and processing', () => {
-  it('loadQuery loads a query', () => {
-    const result = loadQuery('next-resource');
-    assert.ok(result.match(/select/i));
-  });
-
-  it('query parameters are processed', () => {
-    const fakeQuery = '--- helix-param: helix\n--- helix-param2: helix2\n--- helix-param3: helix3\n# this query is intentionally broken.';
-    const EXPECTED = { 'helix-param': 'helix', 'helix-param2': 'helix2', 'helix-param3': 'helix3' };
-    const ACTUAL = getExtraParameters(fakeQuery);
-    assert.deepEqual(EXPECTED, ACTUAL);
-  });
-
-  it('query substitution works', () => {
-    const query = 'SELECT ^something1, ^something2 WHERE ^tablename';
-    const EXPECTED = 'SELECT `Loves`, `Lucy` WHERE `Helix`';
-
-    const params = {
-      tablename: 'Helix',
-      something1: 'Loves',
-      something2: 'Lucy',
-    };
-
-    const ACTUAL = queryReplace(query, params);
-
-    assert.equal(ACTUAL, EXPECTED);
-  });
-
-  it('prevents sql injection by canceling double,single,or template strings', () => {
-    const query = 'SELECT ^something1, ^something2 WHERE ^tablename';
-    const EXPECTED = 'SELECT `Loves`, `CMS` WHERE `Helix`';
-
-    const params = {
-      tablename: '`Helix',
-      something1: '\'Loves',
-      something2: '"CMS',
-      something3: 'foobar',
-    };
-
-    const ACTUAL = queryReplace(query, params);
-
-    assert.equal(ACTUAL, EXPECTED);
-  });
 });

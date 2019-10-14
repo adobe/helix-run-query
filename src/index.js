@@ -13,14 +13,7 @@ const initfastly = require('@adobe/fastly-native-promises');
 const { openWhiskWrapper } = require('epsagon');
 const { wrap } = require('@adobe/helix-status');
 const { execute } = require('./sendquery.js');
-const { cleanRequestParams } = require('./util.js');
-
-async function authFastly(token, service) {
-  // verify Fastly credentials
-  const Fastly = await initfastly(token, service);
-  await Fastly.getVersions();
-  return true;
-}
+const { cleanRequestParams, authFastly } = require('./util.js');
 
 async function main(params) {
   if (params.__ow_headers && ('x-token' in params.__ow_headers) && ('x-service' in params.__ow_headers)) {

@@ -9,13 +9,35 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+const initfastly = require('@adobe/fastly-native-promises');
 const fs = require('fs-extra');
 const path = require('path');
 
+/**
+ *
+ * @param {string} token Fastly Authentication Token
+ * @param {string} service serviceid for a helix-project
+ */
+async function authFastly(token, service) {
+  // verify Fastly credentials
+  const Fastly = await initfastly(token, service);
+  await Fastly.getVersions();
+  return true;
+}
+
+/**
+ *
+ * @param {string} query name of the query file
+ */
 function loadQuery(query) {
   return fs.readFileSync(path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
 }
 
+/**
+ *
+ * @param {string} query the content read from a query file
+ * @param {object} params query parameters, that are inserted into query
+ */
 function cleanQueryParams(query, params) {
   return Object.keys(params)
     .filter((key) => query.match(new RegExp(`\\^${key}`, 'g')) == null)
@@ -27,6 +49,11 @@ function cleanQueryParams(query, params) {
     }, {});
 }
 
+/**
+ *
+ * @param {string} query the content read from a query file
+ * @param {*} params query parameters, that are inserted into query
+ */
 function queryReplace(query, params) {
   let outQuery = query;
 
@@ -34,6 +61,10 @@ function queryReplace(query, params) {
     .filter((key) => typeof params[key] === 'string')
     .forEach((key) => {
       const regex = new RegExp(`\\^${key}`, 'g');
+      const sqlInjCheck = params[key].match(/[;\s]/g);
+      if(sqlInjCheck != null){
+        throw new Error("Only single phrase parameters allowed");
+      }
       // eslint-disable-next-line no-param-reassign
       params[key] = params[key].replace(/`|'|"/g, '');
       outQuery = outQuery.replace(regex, `\`${params[key]}\``);
@@ -41,6 +72,10 @@ function queryReplace(query, params) {
   return outQuery;
 }
 
+/**
+ *
+ * @param {string} query the content read from a query file
+ */
 function getExtraParameters(query) {
   return query.split('\n')
     .filter((e) => e.startsWith('---'))
@@ -53,6 +88,10 @@ function getExtraParameters(query) {
     }, {});
 }
 
+/**
+ *
+ * @param {object} params all parameters contained in a request
+ */
 function cleanRequestParams(params) {
   return Object.keys(params)
     .filter((key) => !key.match(/[A-Z0-9_]+/))
@@ -70,4 +109,5 @@ module.exports = {
   cleanRequestParams,
   cleanQueryParams,
   queryReplace,
+  authFastly,
 };
