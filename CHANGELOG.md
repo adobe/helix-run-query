@@ -1,3 +1,10 @@
+## [1.2.7](https://github.com/adobe/helix-run-query/compare/v1.2.6...v1.2.7) (2019-10-16)
+
+
+### Bug Fixes
+
+* **deps:** update any ([#37](https://github.com/adobe/helix-run-query/issues/37)) ([967dae0](https://github.com/adobe/helix-run-query/commit/967dae0))
+
 ## [1.2.6](https://github.com/adobe/helix-run-query/compare/v1.2.5...v1.2.6) (2019-10-11)
 
 
