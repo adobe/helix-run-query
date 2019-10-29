@@ -35,7 +35,7 @@
     "dotenv": "8.2.0",
     "epsagon": "1.37.1",
     "fs-extra": "8.1.0",
-    "googleapis": "43.0.0",
+    "googleapis": "44.0.0",
     "json-size": "1.0.0",
     "request": "2.88.0",
     "request-promise-native": "1.0.7"
