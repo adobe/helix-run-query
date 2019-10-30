@@ -80,5 +80,12 @@
     "static": [
       "src/queries/next-resource.sql"
     ]
+  },
+  "statuspage": {
+    "name": "Google BigQuery Integration",
+    "group": "Delivery"
+  },
+  "newrelic": {
+    "group_policy": "Delivery Repeated Failure"
   }
 }
