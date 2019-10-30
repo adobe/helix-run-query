@@ -40,12 +40,13 @@ async function execute(email, key, project, query, service, params = {
     return new Promise((resolve, reject) => {
       const results = [];
       let avgsize = 0;
+      const maxsize = 1024 * 1024 * 0.9;
 
       const spaceleft = () => {
         if (results.length === 10) {
           avgsize = size(results) / results.length;
         }
-        if (avgsize * results.length > 1024 * 1024 * 0.9) {
+        if (avgsize * results.length > maxsize) {
           return false;
         }
         return true;

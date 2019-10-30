@@ -62,8 +62,8 @@ function queryReplace(query, params) {
     .forEach((key) => {
       const regex = new RegExp(`\\^${key}`, 'g');
       const sqlInjCheck = params[key].match(/[;\s]/g);
-      if(sqlInjCheck != null){
-        throw new Error("Only single phrase parameters allowed");
+      if (sqlInjCheck != null) {
+        throw new Error('Only single phrase parameters allowed');
       }
       // eslint-disable-next-line no-param-reassign
       params[key] = params[key].replace(/`|'|"/g, '');
