@@ -47,7 +47,7 @@ describe('Index Tests', async () => {
     recordIfMissing: false,
     matchRequestsBy: {
       headers: {
-        exclude: ['authorization', 'user-agent'],
+        exclude: ['authorization', 'user-agent', 'x-goog-api-client'],
       },
       body: true,
       url: false,
@@ -72,8 +72,16 @@ describe('Index Tests', async () => {
         'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/jobs',
         'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/datasets/helix_logging_fake_name',
       ],
-    )
-      .passthrough();
+    ).passthrough();
+
+    server.any('https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/queries/*')
+      .on('beforePersist', (req, recording) => {
+        // eslint-disable-next-line no-param-reassign
+        recording.request.headers['primary-key'] = 'Helix-Key';
+      })
+      .on('request', (req) => {
+        req.headers['primary-key'] = 'Helix-Key';
+      });
   });
 
   it('index function is present', async () => {

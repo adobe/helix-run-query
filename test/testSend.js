@@ -35,11 +35,11 @@ describe('bigquery tests', async () => {
   const service = 'fake_name';
 
   setupPolly({
-    recordFailedRequests: false,
-    recordIfMissing: false,
+    recordFailedRequests: true,
+    recordIfMissing: true,
     matchRequestsBy: {
       headers: {
-        exclude: ['authorization', 'user-agent'],
+        exclude: ['authorization', 'user-agent', 'x-goog-api-client'],
       },
       body: true,
       url: false,
@@ -65,6 +65,15 @@ describe('bigquery tests', async () => {
         'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/datasets/helix_logging_fake_name',
       ],
     ).passthrough();
+
+    server.any('https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/queries/*')
+      .on('beforePersist', (req, recording) => {
+        // eslint-disable-next-line no-param-reassign
+        recording.request.headers['primary-key'] = 'Helix-Key';
+      })
+      .on('request', (req) => {
+        req.headers['primary-key'] = 'Helix-Key';
+      });
   });
 
 
