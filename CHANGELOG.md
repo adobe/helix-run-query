@@ -1,3 +1,10 @@
+## [1.2.10](https://github.com/adobe/helix-run-query/compare/v1.2.9...v1.2.10) (2019-10-31)
+
+
+### Bug Fixes
+
+* **monitoring:** adding back missing config ([13f1429](https://github.com/adobe/helix-run-query/commit/13f1429cec8f0b4ae4076783768931bc63deef7b))
+
 ## [1.2.9](https://github.com/adobe/helix-run-query/compare/v1.2.8...v1.2.9) (2019-10-31)
 
 
