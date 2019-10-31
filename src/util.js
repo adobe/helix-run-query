@@ -31,16 +31,15 @@ async function authFastly(token, service) {
  */
 async function loadQuery(query) {
   const pathName = path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`);
-  return new Promise(async function (resolve, reject){
-    fs.readFile(pathName, function(err, data){
-      if(err){
-        reject(new Error("Failed to load .sql file"));
-      }
-      else{
+  return new Promise(((resolve, reject) => {
+    fs.readFile(pathName, (err, data) => {
+      if (err) {
+        reject(new Error('Failed to load .sql file'));
+      } else {
         resolve(data.toString());
       }
-    })
-  });
+    });
+  }));
 }
 
 /**

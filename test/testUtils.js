@@ -27,12 +27,10 @@ describe('testing util functions', () => {
     const result = await loadQuery('next-resource');
     assert.ok(result.match(/select/i));
   });
-  
+
   it('loadQuery throws with bad query file', async () => {
-    const EXPECTED = new Error("Failed to load .sql file");
-    const handle = async () => {
-      return await loadQuery('Does not Exist');
-    };
+    const EXPECTED = new Error('Failed to load .sql file');
+    const handle = () => loadQuery('Does not Exist');
     assert.rejects(handle, EXPECTED);
   });
 
