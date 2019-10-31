@@ -49,9 +49,10 @@ describe('Index Tests', async () => {
       headers: {
         exclude: ['authorization', 'user-agent'],
       },
-      body: false,
+      body: true,
       url: false,
       order: false,
+      method: true,
     },
     logging: false,
     adapters: [NodeHttpAdapter],

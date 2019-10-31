@@ -41,9 +41,10 @@ describe('bigquery tests', async () => {
       headers: {
         exclude: ['authorization', 'user-agent'],
       },
-      body: false,
+      body: true,
       url: false,
       order: false,
+      method: true,
     },
     logging: false,
     adapters: [NodeHttpAdapter],
@@ -63,8 +64,7 @@ describe('bigquery tests', async () => {
         'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/jobs',
         'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/datasets/helix_logging_fake_name',
       ],
-    )
-      .passthrough();
+    ).passthrough();
   });
 
 
