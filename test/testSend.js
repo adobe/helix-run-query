@@ -35,8 +35,8 @@ describe('bigquery tests', async () => {
   const service = 'fake_name';
 
   setupPolly({
-    recordFailedRequests: true,
-    recordIfMissing: true,
+    recordFailedRequests: false,
+    recordIfMissing: false,
     matchRequestsBy: {
       headers: {
         exclude: ['authorization', 'user-agent', 'x-goog-api-client'],
