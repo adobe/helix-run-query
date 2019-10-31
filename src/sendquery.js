@@ -27,7 +27,7 @@ async function execute(email, key, project, query, service, params = {
   limit: 100,
 }) {
   try {
-    const loadedQuery = loadQuery(query);
+    const loadedQuery = await loadQuery(query);
     const credentials = await auth(email, key.replace(/\\n/g, '\n'));
     const bq = new BigQuery({
       projectId: project,

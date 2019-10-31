@@ -23,9 +23,17 @@ const env = require('../src/env.js');
 describe('testing util functions', () => {
   const service = '0bxMEaYAJV6SoqFlbZ2n1f';
 
-  it('loadQuery loads a query', () => {
-    const result = loadQuery('next-resource');
+  it('loadQuery loads a query', async () => {
+    const result = await loadQuery('next-resource');
     assert.ok(result.match(/select/i));
+  });
+  
+  it('loadQuery throws with bad query file', async () => {
+    const EXPECTED = new Error("Failed to load .sql file");
+    const handle = async () => {
+      return await loadQuery('Does not Exist');
+    };
+    assert.rejects(handle, EXPECTED);
   });
 
   it('query parameters are processed', () => {

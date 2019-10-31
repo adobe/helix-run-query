@@ -29,8 +29,18 @@ async function authFastly(token, service) {
  *
  * @param {string} query name of the query file
  */
-function loadQuery(query) {
-  return fs.readFileSync(path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
+async function loadQuery(query) {
+  const pathName = path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`);
+  return new Promise(async function (resolve, reject){
+    fs.readFile(pathName, function(err, data){
+      if(err){
+        reject(new Error("Failed to load .sql file"));
+      }
+      else{
+        resolve(data.toString());
+      }
+    })
+  });
 }
 
 /**
