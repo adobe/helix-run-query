@@ -8,5 +8,5 @@ This is the main function
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| param | <code>object</code> | <code>&quot;null&quot;</code> | parameters necessary for run-query; see README.md |
+| param | <code>object</code> | <code>null</code> | parameters necessary for run-query; see README.md |
 

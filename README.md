@@ -15,14 +15,44 @@ run ```npm install``` in root of repository
 Assuming you are using httpie as your http client:
 
 ```bash
-http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/list-everything?limit=20 
+http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/next-resource?limit=20 
 ```
 
 For more, see the [API documentation](docs/API.md).
 
 ## Development
 
-### Deploying Helix Run Query
+### Queries
+
+    Query files live in the src/queries directory. They are static resources; that are loaded into run-query and
+    then sent to Bigquery for actual execution. It is up to the developer to ensure their query is correct; this 
+    can be done by using the Bigquery console. 
+
+    Once a query file is complete and correct, you may add it as a static resource; so that it won't be excluded during openwhisk deployment. 
+    In the root of the repository; find the package.json and add your query file (file with .sql extension) under static: 
+
+    ```
+    "wsk": {
+    "name": "helix-services/run-query@${version}",
+    "static": [
+      "src/queries/next-resource.sql"
+    ]
+  },
+    ```
+
+    Now, query file can be executed as an action; triggered by a request as such: 
+    ```bash
+    http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/SOME-QUERY-WITHOUT-EXTENSION?limit=20 
+    ```
+
+### Parameterized Queries
+
+    Helix Run Query provides query developers the ability to specify parameters anywhere in their queries. 
+    Using  ^param anywhere in the query; and providing a corresponding {param: 'value'} in the request; enables 
+    you to effectively parameterize just about any part of the query. It is not advised to parameterize anything beyond 
+    table name or limit. Anything else; can make your query susceptible to SQL injection. 
+
+## Deploying Helix Run Query
 
 Deploying Helix Run Query requires the `wsk` command line client, authenticated to a namespace of your choice. For Project Helix, we use the `helix` namespace.
 
