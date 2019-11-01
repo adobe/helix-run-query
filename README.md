@@ -31,31 +31,35 @@ http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-quer
 
 ```
 
-Required Environment Variables
+## Required Environment Variables
+
 This service depends on three external services to operate:
 
-Fastly
-Adobe I/O Runtime (only for deployments)
-Google Cloud Platform
+- Fastly
+- Adobe I/O Runtime (only for deployments)
+- Google Cloud Platform
 
 It is configured using a number of environment variables that are required for testing (tests that miss required variables will be skipped) and deployment (deployment will fail or be non-functional). These variables are required and this is how to set them up:
 
-GOOGLE_CLIENT_EMAIL
-This is the email address associated with a Google Cloud Platform Service account. It looks like <name>@<project>.iam.gserviceaccount.com. You can create a proper service account following the instructions in the Google Cloud Platform documentation or this step-by-step guide:
+### `GOOGLE_CLIENT_EMAIL`
 
-Log in to Google Cloud Platform Console
-Select menu → "IAM & admin" → "Service accounts" → "Create service account"
-Create the service account
-Add the following roles to the service account:
-BigQuery Admin
-Service Account Admin
-Service Account Key Admin
-Service Account Key Admin
-Create a private key in JSON format for the service account and download the key file
-Note: The private key file and the value of the GOOGLE_CLIENT_EMAIL environment variable should be considered private and should never be checked in to source control.
+This is the email address associated with a Google Cloud Platform Service account. It looks like `<name>@<project>.iam.gserviceaccount.com`. You can create a proper service account following [the instructions in the Google Cloud Platform documentation](https://cloud.google.com/iam/docs/creating-managing-service-accounts) or this step-by-step guide:
+
+1. Log in to [Google Cloud Platform Console](https://console.cloud.google.com)
+2. Select menu → "IAM & admin" → "Service accounts" → "Create service account"
+3. Create the service account
+4. Add the following roles to the service account:
+   * BigQuery Admin
+   * Service Account Admin
+   * Service Account Key Admin
+   * Service Account Key Admin
+5. Create a private key in JSON format for the service account and download the key file
+
+**Note:** The private key file and the value of the `GOOGLE_CLIENT_EMAIL` environment variable should be considered private and should never be checked in to source control.
 
 The downloaded file will look something like this:
 
+```json
 {
   "type": "service_account",
   "project_id": "project-12345678",
@@ -68,35 +72,41 @@ The downloaded file will look something like this:
   "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/example-account%40project-12345678.iam.gserviceaccount.com"
 }
-Copy the value of the client_email field (e.g. example-account@project-12345678.iam.gserviceaccount.com) and save it in the GOOGLE_CLIENT_EMAIL environment variable.
+```
 
-GOOGLE_PRIVATE_KEY
-This is the private key associated with the Google Cloud Platform Service account created above. In order to retrieve the correct value, see Creating and Managing Service Account Keys in the Google Cloud Platform documentation or continue the step-by-step guide from above:
+Copy the value of the `client_email` field (e.g. `example-account@project-12345678.iam.gserviceaccount.com`) and save it in the `GOOGLE_CLIENT_EMAIL` environment variable.
 
-Make sure you've followed all steps to get the value of GOOGLE_CLIENT_EMAIL
-Copy the value of the private_key property in the JSON file you've downloaded
-Note: The private key and the value of the GOOGLE_PRIVATE_KEY environment variable should be considered private and should never be checked in to source control.
+### `GOOGLE_PRIVATE_KEY`
+
+This is the private key associated with the Google Cloud Platform Service account created above. In order to retrieve the correct value, see [Creating and Managing Service Account Keys in the Google Cloud Platform documentation](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) or continue the step-by-step guide from above:
+
+6. Make sure you've followed all steps to get the value of `GOOGLE_CLIENT_EMAIL`
+7. Copy the value of the `private_key` property in the JSON file you've downloaded
+
+**Note:** The private key and the value of the `GOOGLE_PRIVATE_KEY` environment variable should be considered private and should never be checked in to source control.
 
 The private key is a multi-line value.
 
-Note: Private keys created using an API typically have a short expiration time and need to be rotated in regular intervals. Even for private keys that have been created manually, regular rotation is a best practice.
+**Note:** Private keys created using an API typically have a short expiration time and need to be rotated in regular intervals. Even for private keys that have been created manually, regular rotation is a best practice.
 
-GOOGLE_PROJECT_ID
-This is the Google Cloud Platform project ID. It looks like project-12345678 and you will find it in lots of places in the Google Cloud Platform Console UI. In addition, you can just take the value of the project_id property in your downloaded key JSON file.
+### `GOOGLE_PROJECT_ID`
 
-HLX_FASTLY_NAMESPACE
+This is the Google Cloud Platform project ID. It looks like `project-12345678` and you will find it in lots of places in the Google Cloud Platform Console UI. In addition, you can just take the value of the `project_id` property in your downloaded key JSON file.
+
+### `HLX_FASTLY_NAMESPACE`
+
 This property is only required for testing and development. It is the service config ID that you can retrieve from Fastly.
 
 For testing, it is a good idea to use a separate, non-production service config, as the tests not only perform frequent updates, but they also rotate the private keys of the created Google Cloud Platform service accounts. As the tests don't activate the service config, this will lead to an invalid logging configuration in a short time.
 
-HLX_FASTLY_AUTH
-This property is only required for testing and development. It is an API token for the Fastly API. Follow the instructions in the Fastly documentation to create a token.
+### `HLX_FASTLY_AUTH`
 
-The token needs to have global, i.e. write access to your service config.
+This property is only required for testing and development. It is an API token for the Fastly API. Follow the [instructions in the Fastly documentation](https://docs.fastly.com/guides/account-management-and-security/using-api-tokens) to create a token.
 
-Note: The API token and the value of the HLX_FASTLY_AUTH environment variable should be considered private and should never be checked in to source control.
+The token needs to have `global`, i.e. write access to your service config.
 
-VERSION_NUM
+
+**Note:** The API token and the value of the `HLX_FASTLY_AUTH` environment variable should be considered private and should never be checked in to source control.
 For more, see the [API documentation](docs/API.md).
 
 ## Development
