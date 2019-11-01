@@ -9,13 +9,82 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+const initfastly = require('@adobe/fastly-native-promises');
 const fs = require('fs-extra');
 const path = require('path');
 
-function loadQuery(query) {
-  return fs.readFileSync(path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`)).toString();
+/**
+ *
+ * @param {string} token Fastly Authentication Token
+ * @param {string} service serviceid for a helix-project
+ */
+async function authFastly(token, service) {
+  // verify Fastly credentials
+  const Fastly = await initfastly(token, service);
+  await Fastly.getVersions();
+  return true;
 }
 
+/**
+ *
+ * @param {string} query name of the query file
+ */
+async function loadQuery(query) {
+  const pathName = path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`);
+  return new Promise(((resolve, reject) => {
+    fs.readFile(pathName, (err, data) => {
+      if (err) {
+        reject(new Error('Failed to load .sql file'));
+      } else {
+        resolve(data.toString());
+      }
+    });
+  }));
+}
+
+/**
+ *
+ * @param {string} query the content read from a query file
+ * @param {object} params query parameters, that are inserted into query
+ */
+function cleanQueryParams(query, params) {
+  return Object.keys(params)
+    .filter((key) => query.match(new RegExp(`\\^${key}`, 'g')) == null)
+    .filter((key) => query.match(new RegExp(`\\@${key}`, 'g')) != null)
+    .reduce((cleanObj, key) => {
+      // eslint-disable-next-line no-param-reassign
+      cleanObj[key] = params[key];
+      return cleanObj;
+    }, {});
+}
+
+/**
+ *
+ * @param {string} query the content read from a query file
+ * @param {*} params query parameters, that are inserted into query
+ */
+function queryReplace(query, params) {
+  let outQuery = query;
+
+  Object.keys(params)
+    .filter((key) => typeof params[key] === 'string')
+    .forEach((key) => {
+      const regex = new RegExp(`\\^${key}`, 'g');
+      const sqlInjCheck = params[key].match(/[;\s]/g);
+      if (sqlInjCheck != null) {
+        throw new Error('Only single phrase parameters allowed');
+      }
+      // eslint-disable-next-line no-param-reassign
+      params[key] = params[key].replace(/`|'|"/g, '');
+      outQuery = outQuery.replace(regex, `\`${params[key]}\``);
+    });
+  return outQuery;
+}
+
+/**
+ *
+ * @param {string} query the content read from a query file
+ */
 function getExtraParameters(query) {
   return query.split('\n')
     .filter((e) => e.startsWith('---'))
@@ -28,7 +97,11 @@ function getExtraParameters(query) {
     }, {});
 }
 
-function cleanParams(params) {
+/**
+ *
+ * @param {object} params all parameters contained in a request
+ */
+function cleanRequestParams(params) {
   return Object.keys(params)
     .filter((key) => !key.match(/[A-Z0-9_]+/))
     .filter((key) => !key.startsWith('__'))
@@ -39,4 +112,11 @@ function cleanParams(params) {
     }, {});
 }
 
-module.exports = { loadQuery, getExtraParameters, cleanParams };
+module.exports = {
+  loadQuery,
+  getExtraParameters,
+  cleanRequestParams,
+  cleanQueryParams,
+  queryReplace,
+  authFastly,
+};

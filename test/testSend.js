@@ -13,34 +13,95 @@
 /* eslint-env mocha */
 const assert = require('assert');
 const sinon = require('sinon');
+const path = require('path');
 const { AssertionError } = require('assert');
 const proxyquire = require('proxyquire');
-const env = require('../src/env.js');
-const { loadQuery, getExtraParameters } = require('../src/util.js');
 
-describe('bigquery tests', () => {
-  const goodQuery = 'select * from requests201905';
+const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
+const FSPersister = require('@pollyjs/persister-fs');
+const { setupMocha: setupPolly } = require('@pollyjs/core');
+
+// Register the node http adapter so its accessible by all future polly instances
+const env = require('../src/env.js');
+const { execute } = require('../src/sendquery.js');
+
+describe('bigquery tests', async () => {
+  const goodQuery = 'select req_url from requests';
   const badQuery = '# this query is intentionally broken.';
 
   const badExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => badQuery } });
   const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
 
+  const service = 'fake_name';
+
+  setupPolly({
+    recordFailedRequests: false,
+    recordIfMissing: false,
+    matchRequestsBy: {
+      headers: {
+        exclude: ['authorization', 'user-agent', 'x-goog-api-client'],
+      },
+      body: true,
+      url: false,
+      order: false,
+      method: true,
+    },
+    logging: false,
+    adapters: [NodeHttpAdapter],
+    persister: FSPersister,
+    persisterOptions: {
+      fs: {
+        recordingsDir: path.resolve(__dirname, 'fixtures/recordings'),
+      },
+    },
+  });
+
+  beforeEach(function first() {
+    const { server } = this.polly;
+    server.any(
+      [
+        'https://www.googleapis.com/oauth2/v4/token',
+        'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/jobs',
+        'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/datasets/helix_logging_fake_name',
+      ],
+    ).passthrough();
+
+    server.any('https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/queries/*')
+      .on('beforePersist', (req, recording) => {
+        // eslint-disable-next-line no-param-reassign
+        recording.request.headers['primary-key'] = 'Helix-Key';
+      })
+      .on('request', (req) => {
+        req.headers['primary-key'] = 'Helix-Key';
+      });
+  });
+
+
   it('runs a query', async () => {
-    const { results } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', '0bxMEaYAJV6SoqFlbZ2n1f');
+    const { results } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', service);
     assert.ok(Array.isArray(results));
-  }).timeout(5000);
+  });
 
   it('runs a query with params', async () => {
-    const { results } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', '0bxMEaYAJV6SoqFlbZ2n1f', {
+    const { results } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', service, {
       limit: 10,
     });
     assert.ok(Array.isArray(results));
     assert.equal(results.length, 10);
-  }).timeout(5000);
+  });
+
+  it('runs a query with queryParams', async () => {
+    const { results } = await execute(env.email, env.key, env.projectid, 'next-resource', service, {
+      limit: 1,
+      tablename: 'requests',
+    });
+    assert.ok(Array.isArray(results));
+    assert.equal(results.length, 0);
+  });
 
   it('throws without projectid', async () => {
     try {
-      await goodExec.execute(env.email, env.key, undefined, 'list-everything', '0bxMEaYAJV6SoqFlbZ2n1f');
+      await goodExec.execute(env.email, env.key, undefined, 'list-everything', service);
       assert.fail('expected exception not thrown');
     } catch (e) {
       if (e instanceof AssertionError) {
@@ -48,11 +109,11 @@ describe('bigquery tests', () => {
         throw e;
       }
     }
-  }).timeout(5000);
+  });
 
   it('throws with bad query', async () => {
     try {
-      await badExec.execute(env.email, env.key, env.projectid, 'break-something', '0bxMEaYAJV6SoqFlbZ2n1f');
+      await badExec.execute(env.email, env.key, env.projectid, 'break-something', service);
       assert.fail('expected exception not thrown');
     } catch (e) {
       sinon.restore();
@@ -61,19 +122,5 @@ describe('bigquery tests', () => {
         throw e;
       }
     }
-  }).timeout(5000);
-});
-
-describe('sql loading and processing', () => {
-  it('loadQuery loads a query', () => {
-    const result = loadQuery('next-resource');
-    assert.ok(result.match(/select/i));
-  });
-
-  it('query parameters are processed', () => {
-    const fakeQuery = '--- helix-param: helix\n--- helix-param2: helix2\n--- helix-param3: helix3\n# this query is intentionally broken.';
-    const EXPECTED = { 'helix-param': 'helix', 'helix-param2': 'helix2', 'helix-param3': 'helix3' };
-    const ACTUAL = getExtraParameters(fakeQuery);
-    assert.deepEqual(EXPECTED, ACTUAL);
   });
 });
