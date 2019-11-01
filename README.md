@@ -20,15 +20,12 @@ http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-quer
 ```
 
 Parameters needed in request:
-GOOGLE_PROJECT_ID,
-GOOGLE_PRIVATE_KEY,
-GOOGLE_CLIENT_EMAIL,
-token XOR X-Token,
-service XOR X-Service,
-.
-.
-.
-Any google or helix parameters that are placeholders in the query file;
+1. GOOGLE_PROJECT_ID,
+2. GOOGLE_PRIVATE_KEY,
+3. GOOGLE_CLIENT_EMAIL,
+4. token XOR X-Token,
+5. service XOR X-Service,
+6. Any google or helix parameters that are placeholders in the query file;
 
 For more, see the [API documentation](docs/API.md).
 
