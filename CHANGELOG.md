@@ -1,3 +1,10 @@
+## [1.2.11](https://github.com/adobe/helix-run-query/compare/v1.2.10...v1.2.11) (2019-11-01)
+
+
+### Bug Fixes
+
+* **query:** param not parsed ([aa2c619](https://github.com/adobe/helix-run-query/commit/aa2c619a2d5a2bb58bb58fac918babfaaab5e833))
+
 ## [1.2.10](https://github.com/adobe/helix-run-query/compare/v1.2.9...v1.2.10) (2019-10-31)
 
 

@@ -16,6 +16,7 @@ Assuming you are using httpie as your http client:
 
 ```bash
 http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/next-resource?limit=20 
+
 ```
 
 For more, see the [API documentation](docs/API.md).
