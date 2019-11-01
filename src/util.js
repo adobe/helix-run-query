@@ -15,7 +15,7 @@ const path = require('path');
 
 /**
  * authenticates token and service with Fastly
- * 
+ *
  * @param {string} token Fastly Authentication Token
  * @param {string} service serviceid for a helix-project
  */
@@ -28,7 +28,7 @@ async function authFastly(token, service) {
 
 /**
  * reads a query file and loads it into memory
- * 
+ *
  * @param {string} query name of the query file
  */
 async function loadQuery(query) {
@@ -46,7 +46,7 @@ async function loadQuery(query) {
 
 /**
  * strips params object of helix query parameters
- * 
+ *
  * @param {string} query the content read from a query file
  * @param {object} params query parameters, that are inserted into query
  */
@@ -62,11 +62,11 @@ function cleanQueryParams(query, params) {
 }
 
 /**
- * replaces helix query parameter placeholders denoted by ^param 
+ * replaces helix query parameter placeholders denoted by ^param
  * in a query with value in param object. Example; SELECT * FROM ^tablename
  * ^tabename is the query parameter; so it's expected that the params object
  * contains {tablename: 'some-value'}
- * 
+ *
  * @param {string} query the content read from a query file
  * @param {*} params query parameters, that are inserted into query
  */
@@ -90,8 +90,8 @@ function queryReplace(query, params) {
 
 /**
  * processes additional parameters to be passed into request
- * for example; --- Cache-Control: max-age: 300. 
- * 
+ * for example; --- Cache-Control: max-age: 300.
+ *
  * @param {string} query the content read from a query file
  */
 function getExtraParameters(query) {
@@ -108,7 +108,7 @@ function getExtraParameters(query) {
 
 /**
  * removes used up parameters from request
- * 
+ *
  * @param {object} params all parameters contained in a request
  */
 function cleanRequestParams(params) {
