@@ -15,7 +15,8 @@ const { auth } = require('./auth.js');
 const { loadQuery, queryReplace, cleanQueryParams } = require('./util.js');
 
 /**
- *
+ * executes a query using Google Bigquery API
+ * 
  * @param {string} email email address of the Google service account
  * @param {string} key private key of the global Google service account
  * @param {string} project the Google project ID
