@@ -18,6 +18,19 @@ Assuming you are using httpie as your http client:
 http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/next-resource?limit=20 
 ```
 
+Parameters needed: 
+{
+    GOOGLE_PROJECT_ID,
+    GOOGLE_PRIVATE_KEY,
+    GOOGLE_CLIENT_EMAIL,
+    token XOR X-Token,
+    service XOR X-Service,
+    .
+    .
+    .
+    Any google or helix parameters that are placeholders in the query file;
+}
+
 For more, see the [API documentation](docs/API.md).
 
 ## Development
