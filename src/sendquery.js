@@ -41,6 +41,8 @@ async function execute(email, key, project, query, service, params = {
       const results = [];
       let avgsize = 0;
       const maxsize = 1024 * 1024 * 0.9;
+      // eslint-disable-next-line no-param-reassign
+      params.limit = parseInt(params.limit, 10);
 
       const spaceleft = () => {
         if (results.length === 10) {
@@ -53,7 +55,7 @@ async function execute(email, key, project, query, service, params = {
       };
       dataset.createQueryStream({
         query: queryReplace(loadedQuery, params),
-        maxResults: parseInt(params.limit, 10),
+        maxResults: params.limit,
         params: cleanQueryParams(loadedQuery, params),
       })
         .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
