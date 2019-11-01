@@ -19,7 +19,7 @@ http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-quer
 
 ```
 
-Parameters needed: 
+Parameters needed in request: 
 {
     GOOGLE_PROJECT_ID,
     GOOGLE_PRIVATE_KEY,
