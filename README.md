@@ -1,5 +1,5 @@
 # Helix Run Query
-> An action that runs premade queries on datasets created by Helix-Logging
+> A service that runs premade queries on datasets created by Helix-Logging
 ## Status
 [![codecov](https://img.shields.io/codecov/c/github/adobe/helix-run-query.svg)](https://codecov.io/gh/adobe/helix-run-query)
 [![CircleCI](https://img.shields.io/circleci/project/github/adobe/helix-run-query.svg)](https://circleci.com/gh/adobe/helix-run-query)
@@ -31,19 +31,16 @@ For more, see the [API documentation](docs/API.md).
     Once a query file is complete and correct, you may add it as a static resource; so that it won't be excluded during openwhisk deployment. 
     In the root of the repository; find the package.json and add your query file (file with .sql extension) under static: 
 
-    ```
     "wsk": {
     "name": "helix-services/run-query@${version}",
-    "static": [
-      "src/queries/next-resource.sql"
-    ]
-  },
-    ```
+        "static": [
+            "src/queries/next-resource.sql"
+        ]
+    },
 
     Now, query file can be executed as an action; triggered by a request as such: 
-    ```bash
-    http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/SOME-QUERY-WITHOUT-EXTENSION?limit=20 
-    ```
+
+    http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/SOME-QUERY-WITHOUT-EXTENSION?limit=20 param1=value1 param2=value2
 
 ### Parameterized Queries
 
