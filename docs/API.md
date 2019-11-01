@@ -1,12 +1,12 @@
 <a name="main"></a>
 
-## main(name) ⇒ <code>string</code>
+## main(name) ⇒ <code>object</code>
 This is the main function
 
 **Kind**: global function  
-**Returns**: <code>string</code> - a greeting  
+**Returns**: <code>object</code> - HTTP response 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| name | <code>string</code> | <code>&quot;world&quot;</code> | name of the person to greet |
+| param | <code>object</code> | <code>&quot;null&quot;</code> | parameters necessary for run-query; see README.md |
 

@@ -1,5 +1,5 @@
 # Helix Run Query
-> An action that queries Google Bigquery
+> An action that runs premade queries on datasets created by Helix-Logging
 ## Status
 [![codecov](https://img.shields.io/codecov/c/github/adobe/helix-run-query.svg)](https://codecov.io/gh/adobe/helix-run-query)
 [![CircleCI](https://img.shields.io/circleci/project/github/adobe/helix-run-query.svg)](https://circleci.com/gh/adobe/helix-run-query)
@@ -9,11 +9,13 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) [![Greenkeeper badge](https://badges.greenkeeper.io/adobe/helix-run-query.svg)](https://greenkeeper.io/)
 
 ## Installation
+run ```npm install``` in root of repository
 
 ## Usage
+Assuming you are using httpie as your http client:
 
 ```bash
-curl https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/list-everything?limit=20
+http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/list-everything?limit=20 
 ```
 
 For more, see the [API documentation](docs/API.md).
