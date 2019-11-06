@@ -29,7 +29,7 @@
   "homepage": "https://github.com/adobe/helix-run-query#readme",
   "dependencies": {
     "@adobe/fastly-native-promises": "1.14.1",
-    "@adobe/helix-shared": "3.1.0",
+    "@adobe/helix-shared": "3.1.2",
     "@adobe/helix-status": "5.3.0",
     "@google-cloud/bigquery": "4.3.0",
     "dotenv": "8.2.0",
