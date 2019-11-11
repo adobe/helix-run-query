@@ -1,3 +1,10 @@
+## [1.2.14](https://github.com/adobe/helix-run-query/compare/v1.2.13...v1.2.14) (2019-11-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v45 ([#58](https://github.com/adobe/helix-run-query/issues/58)) ([49a4b47](https://github.com/adobe/helix-run-query/commit/49a4b47a5c2bca53cff79f89e1d2883f5ae96451))
+
 ## [1.2.13](https://github.com/adobe/helix-run-query/compare/v1.2.12...v1.2.13) (2019-11-10)
 
 
