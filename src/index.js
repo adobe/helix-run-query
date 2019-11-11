@@ -14,21 +14,7 @@ const { wrap } = require('@adobe/helix-status');
 const { execute } = require('./sendquery.js');
 const { cleanRequestParams, authFastly } = require('./util.js');
 
-async function main(params) {
-  if (params.__ow_headers && ('x-token' in params.__ow_headers) && ('x-service' in params.__ow_headers)) {
-    // eslint-disable-next-line no-param-reassign
-    params.token = params.__ow_headers['x-token'];
-    // eslint-disable-next-line no-param-reassign
-    params.service = params.__ow_headers['x-service'];
-  }
-  try {
-    await authFastly(params.token, params.service);
-  } catch (e) {
-    return {
-      statusCode: 401,
-      body: e.message,
-    };
-  }
+async function runExec(params){
   try {
     const { results, truncated } = await execute(
       params.GOOGLE_CLIENT_EMAIL,
@@ -56,16 +42,49 @@ async function main(params) {
   }
 }
 
-module.exports = {
-  main: wrap(openWhiskWrapper(main, {
-    token_param: 'EPSAGON_TOKEN',
-    appName: 'Helix Services',
-    metadataOnly: false,
-    ignoredKeys: [/^[A-Z0-9_]+$/, 'token'],
-  }),
-  {
+/**
+ * Runs the action by wrapping the `runExec` function with the pingdom-status utility.
+ * Additionally, if a EPSAGON_TOKEN is configured, the epsagon tracers are instrumented.
+ * @param params Action params
+ * @returns {Promise<*>} The response
+ */
+async function run(params) {
+  let action = runExec;
+  if (params && params.EPSAGON_TOKEN) {
+    // ensure that epsagon is only required, if a token is present. this is to avoid invoking their
+    // patchers otherwise.
+    // eslint-disable-next-line global-require
+    const { openWhiskWrapper } = require('epsagon');
+    action = openWhiskWrapper(action, {
+      token_param: 'EPSAGON_TOKEN',
+      appName: 'Helix Services',
+      metadataOnly: false, // Optional, send more trace data
+      ignoredKeys: ['EPSAGON_TOKEN', 'token', 'GOOGLE_PRIVATE_KEY', /[A-Z0-9_]+/],
+    });
+  }
+  return wrap(action, {
     fastly: 'https://api.fastly.com/public-ip-list',
     googleiam: 'https://iam.googleapis.com/$discovery/rest?version=v1',
     googlebigquery: 'https://www.googleapis.com/discovery/v1/apis/bigquery/v2/rest',
-  }),
-};
+  })(params);
+}
+
+async function main(params) {
+  if (params.__ow_headers && ('x-token' in params.__ow_headers) && ('x-service' in params.__ow_headers)) {
+    // eslint-disable-next-line no-param-reassign
+    params.token = params.__ow_headers['x-token'];
+    // eslint-disable-next-line no-param-reassign
+    params.service = params.__ow_headers['x-service'];
+  }
+  try {
+    await authFastly(params.token, params.service);
+  } catch (e) {
+    return {
+      statusCode: 401,
+      body: e.message,
+    };
+  }
+  return await run(params);
+}
+
+module.exports = main;
