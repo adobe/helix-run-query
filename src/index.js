@@ -14,7 +14,7 @@ const { wrap } = require('@adobe/helix-status');
 const { execute } = require('./sendquery.js');
 const { cleanRequestParams, authFastly } = require('./util.js');
 
-async function runExec(params){
+async function runExec(params) {
   try {
     const { results, truncated } = await execute(
       params.GOOGLE_CLIENT_EMAIL,
@@ -83,7 +83,7 @@ async function main(params) {
       body: e.message,
     };
   }
-  return await run(params);
+  return run(params);
 }
 
 module.exports = main;
