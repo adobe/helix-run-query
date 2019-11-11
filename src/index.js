@@ -54,7 +54,6 @@ async function run(params) {
     // ensure that epsagon is only required, if a token is present. this is to avoid invoking their
     // patchers otherwise.
     // eslint-disable-next-line global-require
-    const { openWhiskWrapper } = require('epsagon');
     action = openWhiskWrapper(action, {
       token_param: 'EPSAGON_TOKEN',
       appName: 'Helix Services',
