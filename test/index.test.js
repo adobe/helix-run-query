@@ -36,9 +36,9 @@ describe('Index Tests', async () => {
         throw new Error('Authentication Error with Fastly');
       },
     },
-  });
+  }).main;
 
-  const index = proxyquire('../src/index.js', { './sendquery.js': goodExec, './util.js': { authFastly: () => true } });
+  const index = proxyquire('../src/index.js', { './sendquery.js': goodExec, './util.js': { authFastly: () => true } }).main;
 
   const service = 'fake_name';
 

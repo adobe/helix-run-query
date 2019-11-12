@@ -81,4 +81,4 @@ async function main(params) {
   return run(params);
 }
 
-module.exports = main;
+module.exports.main = main;
