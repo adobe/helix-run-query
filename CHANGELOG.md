@@ -1,3 +1,24 @@
+## [1.2.14](https://github.com/adobe/helix-run-query/compare/v1.2.13...v1.2.14) (2019-11-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v45 ([#58](https://github.com/adobe/helix-run-query/issues/58)) ([49a4b47](https://github.com/adobe/helix-run-query/commit/49a4b47a5c2bca53cff79f89e1d2883f5ae96451))
+
+## [1.2.13](https://github.com/adobe/helix-run-query/compare/v1.2.12...v1.2.13) (2019-11-10)
+
+
+### Bug Fixes
+
+* **deps:** update any ([#57](https://github.com/adobe/helix-run-query/issues/57)) ([b98158e](https://github.com/adobe/helix-run-query/commit/b98158e0fb65968bbcff8df81009239fa8530074))
+
+## [1.2.12](https://github.com/adobe/helix-run-query/compare/v1.2.11...v1.2.12) (2019-11-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-shared to v3.1.2 ([#51](https://github.com/adobe/helix-run-query/issues/51)) ([4717b27](https://github.com/adobe/helix-run-query/commit/4717b27663dedd4a486e7ef2d6cbad2416847197))
+
 ## [1.2.11](https://github.com/adobe/helix-run-query/compare/v1.2.10...v1.2.11) (2019-11-01)
 
 
