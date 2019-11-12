@@ -126,11 +126,11 @@ Once a query file is complete and correct, you may add it as a static resource; 
 In the root of the repository; find the package.json and add your query file (file with `.sql` extension) under `static`: 
 
 ```json
- "wsk": {
- "name": "helix-services/run-query@${version}",
- "static": [
-      "src/queries/next-resource.sql"
-   ]
+"wsk": {
+"name": "helix-services/run-query@${version}",
+"static": [
+     "src/queries/next-resource.sql"
+  ]
 },
 ```
 
