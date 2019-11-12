@@ -138,7 +138,7 @@ Contributions are highly welcome.
 ### Parameterized Queries
 
     Helix Run Query provides query developers the ability to specify parameters anywhere in their queries. 
-    Using  ^param anywhere in the query; and providing a corresponding {param: 'value'} in the request; enables 
+    Using  `^param` anywhere in the query; and providing a corresponding `{param: 'value'}` in the request; enables 
     you to effectively parameterize just about any part of the query. It is not advised to parameterize anything beyond 
     table name or limit. Anything else; can make your query susceptible to SQL injection. 
 
