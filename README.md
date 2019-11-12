@@ -15,8 +15,10 @@ run ```npm install``` in root of repository
 Assuming you are using httpie as your http client:
 
 ```bash
-http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/next-resource?limit=20 
+curl https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/next-resource?limit=20 
+```
 
+```json
 {
     "results": [
         {
@@ -28,7 +30,6 @@ http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-quer
     ],
     "truncated": false
 }
-
 ```
 
 ## Required Environment Variables
@@ -117,23 +118,28 @@ Contributions are highly welcome.
 
 ### Queries
 
-    Query files live in the src/queries directory. They are static resources; that are loaded into run-query and
-    then sent to Bigquery for actual execution. It is up to the developer to ensure their query is correct; this 
-    can be done by using the Bigquery console. 
+    Query files live in the `src/queries` directory. They are static resources; that are loaded into `run-query` and
+    then sent to BigQuery for actual execution. It is up to the developer to ensure their query is correct; this 
+    can be done by using the BigQuery console.
 
-    Once a query file is complete and correct, you may add it as a static resource; so that it won't be excluded during openwhisk deployment. 
-    In the root of the repository; find the package.json and add your query file (file with .sql extension) under static: 
+    Once a query file is complete and correct, you may add it as a static resource; so that it won't be excluded during OpenWhisk deployment.
+    In the root of the repository; find the package.json and add your query file (file with `.sql` extension) under `static`: 
 
+    ```json
     "wsk": {
     "name": "helix-services/run-query@${version}",
         "static": [
             "src/queries/next-resource.sql"
         ]
     },
+    ```
 
     Now, query file can be executed as an action; triggered by a request as such: 
 
-    http -f POST https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/SOME-QUERY-WITHOUT-EXTENSION?limit=20 param1=value1 param2=value2
+    ```bash
+    curl -X POST -H "Content-Type: application/json" https://adobeioruntime.net/api/v1/w/helix-services/run-query@v1/next-resource -d 
+    '{"service":"secretService", "token":"secretToken", "queryParam1":"value"}'
+    ```
 
 ### Parameterized Queries
 
