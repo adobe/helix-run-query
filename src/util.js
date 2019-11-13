@@ -108,7 +108,7 @@ function getHeaderParams(query) {
 }
 
 /**
- * cleans out extra parameters from query; so that
+ * cleans out extra parameters from query and leaves only query
  *
  * @param {string} query the content read from a query file
  */
