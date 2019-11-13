@@ -12,23 +12,9 @@
 const { openWhiskWrapper } = require('epsagon');
 const { wrap } = require('@adobe/helix-status');
 const { execute } = require('./sendquery.js');
-const { cleanRequestParams, authFastly } = require('./util.js');
+const { cleanRequestParams } = require('./util.js');
 
-async function main(params) {
-  if (params.__ow_headers && ('x-token' in params.__ow_headers) && ('x-service' in params.__ow_headers)) {
-    // eslint-disable-next-line no-param-reassign
-    params.token = params.__ow_headers['x-token'];
-    // eslint-disable-next-line no-param-reassign
-    params.service = params.__ow_headers['x-service'];
-  }
-  try {
-    await authFastly(params.token, params.service);
-  } catch (e) {
-    return {
-      statusCode: 401,
-      body: e.message,
-    };
-  }
+async function runExec(params) {
   try {
     const { results, truncated } = await execute(
       params.GOOGLE_CLIENT_EMAIL,
@@ -56,16 +42,35 @@ async function main(params) {
   }
 }
 
-module.exports = {
-  main: wrap(openWhiskWrapper(main, {
+/**
+ * Runs the action by wrapping the `runExec` function with the pingdom-status utility.
+ * Additionally, if a EPSAGON_TOKEN is configured, the epsagon tracers are instrumented.
+ * @param params Action params
+ * @returns {Promise<*>} The response
+ */
+async function run(params) {
+  let action = runExec;
+  action = openWhiskWrapper(action, {
     token_param: 'EPSAGON_TOKEN',
     appName: 'Helix Services',
-    metadataOnly: false,
-    ignoredKeys: [/^[A-Z0-9_]+$/, 'token'],
-  }),
-  {
+    metadataOnly: false, // Optional, send more trace data
+    ignoredKeys: ['token', /[A-Z0-9_]+/],
+  });
+  return wrap(action, {
     fastly: 'https://api.fastly.com/public-ip-list',
     googleiam: 'https://iam.googleapis.com/$discovery/rest?version=v1',
     googlebigquery: 'https://www.googleapis.com/discovery/v1/apis/bigquery/v2/rest',
-  }),
-};
+  })(params);
+}
+
+async function main(params) {
+  if (params.__ow_headers && ('x-token' in params.__ow_headers) && ('x-service' in params.__ow_headers)) {
+    // eslint-disable-next-line no-param-reassign
+    params.token = params.__ow_headers['x-token'];
+    // eslint-disable-next-line no-param-reassign
+    params.service = params.__ow_headers['x-service'];
+  }
+  return run(params);
+}
+
+module.exports.main = main;

@@ -27,7 +27,7 @@ const { execute } = require('../src/sendquery.js');
 
 describe('bigquery tests', async () => {
   const goodQuery = 'select req_url from requests';
-  const badQuery = '# this query is intentionally broken.';
+  const badQuery = 'this query is intentionally broken.';
 
   const badExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => badQuery } });
   const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
