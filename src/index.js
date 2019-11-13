@@ -54,7 +54,7 @@ async function run(params) {
     token_param: 'EPSAGON_TOKEN',
     appName: 'Helix Services',
     metadataOnly: false, // Optional, send more trace data
-    ignoredKeys: ['token', 'GOOGLE_PRIVATE_KEY', /[A-Z0-9_]+/],
+    ignoredKeys: ['token', /[A-Z0-9_]+/],
   });
   return wrap(action, {
     fastly: 'https://api.fastly.com/public-ip-list',
