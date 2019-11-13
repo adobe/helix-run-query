@@ -12,7 +12,10 @@
 const { BigQuery } = require('@google-cloud/bigquery');
 const size = require('json-size');
 const { auth } = require('./auth.js');
-const { loadQuery, queryReplace, cleanQueryParams } = require('./util.js');
+const {
+  loadQuery, queryReplace, cleanQueryParams,
+  cleanHeaderParams, getHeaderParams, authFastly,
+} = require('./util.js');
 
 /**
  * executes a query using Google Bigquery API
@@ -27,8 +30,18 @@ const { loadQuery, queryReplace, cleanQueryParams } = require('./util.js');
 async function execute(email, key, project, query, service, params = {
   limit: 100,
 }) {
+  const rawQuery = await loadQuery(query);
+  const headerParams = getHeaderParams(rawQuery);
+  const loadedQuery = cleanHeaderParams(rawQuery);
+  if (headerParams && headerParams.Authorization === 'fastly') {
+    try {
+      await authFastly(params.token, params.service);
+    } catch (e) {
+      e.statusCode = 401;
+      throw e;
+    }
+  }
   try {
-    const loadedQuery = await loadQuery(query);
     const credentials = await auth(email, key.replace(/\\n/g, '\n'));
     const bq = new BigQuery({
       projectId: project,

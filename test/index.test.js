@@ -25,18 +25,13 @@ const env = require('../src/env.js');
 const { cleanRequestParams, cleanQueryParams } = require('../src/util.js');
 
 describe('Index Tests', async () => {
-  const goodQuery = 'select * from requests';
+  const goodQuery = '--- Authorization: none\nselect * from requests';
+  const goodQueryWithAuth = '--- Authorization: fastly\nselect * from requests';
 
   const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
+  const goodExecWithAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth } });
 
-  const badAuthIndex = proxyquire('../src/index.js', {
-    './sendquery.js': goodExec,
-    './util.js': {
-      authFastly: () => {
-        throw new Error('Authentication Error with Fastly');
-      },
-    },
-  }).main;
+  const badAuthIndex = proxyquire('../src/index.js', { './sendquery.js': goodExecWithAuth }).main;
 
   const index = proxyquire('../src/index.js', { './sendquery.js': goodExec, './util.js': { authFastly: () => true } }).main;
 
@@ -70,6 +65,7 @@ describe('Index Tests', async () => {
       [
         'https://www.googleapis.com/oauth2/v4/token',
         'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/jobs',
+        'https://api.fastly.com/service/fake_name/version',
         'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/datasets/helix_logging_fake_name',
       ],
     ).passthrough();

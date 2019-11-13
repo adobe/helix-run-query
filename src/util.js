@@ -89,12 +89,13 @@ function queryReplace(query, params) {
 }
 
 /**
- * processes additional parameters to be passed into request
- * for example; --- Cache-Control: max-age: 300.
+ * Processes additional parameters relating to query properties, like -- Authorization
+ * and other properties that will be passed into request/response headers: for example;
+ * --- Cache-Control: max-age: 300.
  *
  * @param {string} query the content read from a query file
  */
-function getExtraParameters(query) {
+function getHeaderParams(query) {
   return query.split('\n')
     .filter((e) => e.startsWith('---'))
     .filter((e) => e.indexOf(':') > 0)
@@ -104,6 +105,18 @@ function getExtraParameters(query) {
       acc[val[0]] = val[1];
       return acc;
     }, {});
+}
+
+/**
+ * cleans out extra parameters from query; so that
+ *
+ * @param {string} query the content read from a query file
+ */
+function cleanHeaderParams(query) {
+  return query.split('\n')
+    .filter((e) => !e.startsWith('---'))
+    .filter((e) => !e.startsWith('#'))
+    .join(' ');
 }
 
 /**
@@ -124,9 +137,10 @@ function cleanRequestParams(params) {
 
 module.exports = {
   loadQuery,
-  getExtraParameters,
+  getHeaderParams,
   cleanRequestParams,
   cleanQueryParams,
+  cleanHeaderParams,
   queryReplace,
   authFastly,
 };

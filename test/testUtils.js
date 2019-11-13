@@ -16,7 +16,7 @@
 
 const assert = require('assert');
 const {
-  loadQuery, getExtraParameters, queryReplace, authFastly,
+  loadQuery, getHeaderParams, cleanHeaderParams, queryReplace, authFastly,
 } = require('../src/util.js');
 const env = require('../src/env.js');
 
@@ -37,8 +37,24 @@ describe('testing util functions', () => {
   it('query parameters are processed', () => {
     const fakeQuery = '--- helix-param: helix\n--- helix-param2: helix2\n--- helix-param3: helix3\n# this query is intentionally broken.';
     const EXPECTED = { 'helix-param': 'helix', 'helix-param2': 'helix2', 'helix-param3': 'helix3' };
-    const ACTUAL = getExtraParameters(fakeQuery);
+    const ACTUAL = getHeaderParams(fakeQuery);
     assert.deepEqual(EXPECTED, ACTUAL);
+  });
+
+  it('query parameters are cleaned from query', () => {
+    const fakeQuery = `--- helix-param: helix\n--- helix-param2: helix2\n--- helix-param3: helix3\n#This is A random Comment\nSELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Type, status_code
+    FROM ^tablename
+    WHERE 
+      resp_http_Content_Type LIKE "text/html%" AND
+      status_code LIKE "404"
+    GROUP BY
+      req_url, resp_http_Content_Type, status_code 
+    ORDER BY visits DESC
+    LIMIT @limit`;
+
+    const EXPECTED = 'SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Type, status_code     FROM ^tablename     WHERE        resp_http_Content_Type LIKE "text/html%" AND       status_code LIKE "404"     GROUP BY       req_url, resp_http_Content_Type, status_code      ORDER BY visits DESC     LIMIT @limit';
+    const ACTUAL = cleanHeaderParams(fakeQuery);
+    assert.equal(EXPECTED, ACTUAL);
   });
 
   it('query substitution works', () => {

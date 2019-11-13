@@ -12,7 +12,7 @@
 const { openWhiskWrapper } = require('epsagon');
 const { wrap } = require('@adobe/helix-status');
 const { execute } = require('./sendquery.js');
-const { cleanRequestParams, authFastly } = require('./util.js');
+const { cleanRequestParams } = require('./util.js');
 
 async function runExec(params) {
   try {
@@ -69,14 +69,6 @@ async function main(params) {
     params.token = params.__ow_headers['x-token'];
     // eslint-disable-next-line no-param-reassign
     params.service = params.__ow_headers['x-service'];
-  }
-  try {
-    await authFastly(params.token, params.service);
-  } catch (e) {
-    return {
-      statusCode: 401,
-      body: e.message,
-    };
   }
   return run(params);
 }
