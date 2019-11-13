@@ -50,7 +50,7 @@ async function runExec(params) {
  */
 async function run(params) {
   let action = runExec;
-  action = openWhiskWrapper(runExec, {
+  action = openWhiskWrapper(action, {
     token_param: 'EPSAGON_TOKEN',
     appName: 'Helix Services',
     metadataOnly: false, // Optional, send more trace data
