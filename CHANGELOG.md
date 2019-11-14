@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/adobe/helix-run-query/compare/v1.2.14...v1.3.0) (2019-11-14)
+
+
+### Features
+
+* **auth:** enable authorization disabling (trigger re-release) ([2669a8a](https://github.com/adobe/helix-run-query/commit/2669a8af19706be53d03c211f23ba357e4e13fa8))
+
 ## [1.2.14](https://github.com/adobe/helix-run-query/compare/v1.2.13...v1.2.14) (2019-11-11)
 
 
