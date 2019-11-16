@@ -8,7 +8,7 @@ executors:
     working_directory: ~/repo
 
 orbs:
-  helix-post-deploy: adobe/helix-post-deploy@1.1.0
+  helix-post-deploy: adobe/helix-post-deploy@1.2.1
 
 commands:
   setup:
@@ -68,7 +68,10 @@ jobs:
       - run:
           name: Link Sequences
           command: npm run deploy-sequences
-      - helix-post-deploy/monitoring
+      - helix-post-deploy/monitoring:
+          statuspage_name: Google BigQuery Integration
+          statuspage_group: Delivery
+          newrelic_group_policy: Delivery Repeated Failure
 
   branch-deploy:
     executor: node10
