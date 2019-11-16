@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/adobe/helix-run-query/compare/v1.3.0...v1.3.1) (2019-11-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-status to v6 ([78ccc08](https://github.com/adobe/helix-run-query/commit/78ccc0861d7647957008aa7f7de2a15318201a20))
+
 # [1.3.0](https://github.com/adobe/helix-run-query/compare/v1.2.14...v1.3.0) (2019-11-14)
 
 
