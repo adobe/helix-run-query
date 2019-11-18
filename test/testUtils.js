@@ -135,10 +135,15 @@ describe('testing util functions', () => {
   });
 
   it('replaceTableName does not repeat', async () => {
-    const result = await replaceTableNames('foo ^bar ^bar baz', {
-      bar: () => 'bar',
+    let i = 0;
+    const result = await replaceTableNames('foo ^bar ^bar ^bar ^bar ^bar ^bar baz', {
+      bar: () => {
+        i += 1;
+        return 'bar';
+      },
     });
 
-    assert.equal(result, 'foo bar bar baz');
+    assert.equal(result, 'foo bar bar bar bar bar bar baz');
+    assert.equal(i, 1);
   });
 });

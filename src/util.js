@@ -140,11 +140,11 @@ function cleanRequestParams(params) {
 async function replaceTableNames(query, replacers) {
   const replacements = await (query.match(/\^[a-z]+/g) ? query.match(/\^[a-z]+/g) : [])
     .map((placeholder) => placeholder.substr(1))
-    .reduce(async (pv, placeholder) => {
+    .reduce(async (pvp, placeholder) => {
+      const pv = await pvp;
       if (pv[placeholder]) {
         return pv;
       }
-      // eslint-disable-next-line no-param-reassign
       pv[placeholder] = await replacers[placeholder]();
       return pv;
     }, {});
