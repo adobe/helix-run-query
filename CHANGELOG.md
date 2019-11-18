@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/adobe/helix-run-query/compare/v1.3.1...v1.4.0) (2019-11-18)
+
+
+### Features
+
+* **util:** tablename replacement ([8a59364](https://github.com/adobe/helix-run-query/commit/8a593643dd3bb43f447ee601510681dc8ef3e07a))
+
 ## [1.3.1](https://github.com/adobe/helix-run-query/compare/v1.3.0...v1.3.1) (2019-11-16)
 
 
