@@ -137,20 +137,19 @@ function cleanRequestParams(params) {
     }, {});
 }
 
-async function replaceTableNames(query, replacers){
-  const replacements = await (query.match(/\^[a-z]+/g)? query.match(/\^[a-z]+/g) : [])
-  .map(placeholder => placeholder.substr(1))
-  .reduce(async (pv, placeholder) => {
-    if (pv[placeholder]) {
+async function replaceTableNames(query, replacers) {
+  const replacements = await (query.match(/\^[a-z]+/g) ? query.match(/\^[a-z]+/g) : [])
+    .map((placeholder) => placeholder.substr(1))
+    .reduce(async (pv, placeholder) => {
+      if (pv[placeholder]) {
+        return pv;
+      }
+      // eslint-disable-next-line no-param-reassign
+      pv[placeholder] = await replacers[placeholder]();
       return pv;
-    }
-    pv[placeholder] = await replacers[placeholder]();
-    return pv;
-  }, {});
+    }, {});
 
-  return Object.keys(replacements).reduce((q, placeholder) => {
-    return q.replace(new RegExp('\\^' + placeholder, 'g'), replacements[placeholder])
-  }, query);
+  return Object.keys(replacements).reduce((q, placeholder) => q.replace(new RegExp(`\\^${placeholder}`, 'g'), replacements[placeholder]), query);
 }
 
 module.exports = {
