@@ -13,7 +13,7 @@ const { BigQuery } = require('@google-cloud/bigquery');
 const size = require('json-size');
 const { auth } = require('./auth.js');
 const {
-  loadQuery, queryReplace, cleanQueryParams,
+  loadQuery, replaceTableNames, cleanQueryParams,
   cleanHeaderParams, getHeaderParams, authFastly,
 } = require('./util.js');
 
@@ -67,8 +67,23 @@ async function execute(email, key, project, query, service, params = {
         }
         return true;
       };
+
+      const query = replaceTableNames(loadedQuery, {
+        myrequests: () => {
+          return 'SELECT * FROM `' + dataset.id + '.requests*`'
+        },
+        allrequests: async () => {
+          const alldatasets = await bq.getDatasets();
+          return alldatasets
+            .filter(({id}) => id.match(/^helix_logging_.*/))
+            .map(({id}) => id)
+            .map(id => 'SELECT * FROM `' + id + '.requests*`')
+            .join(' UNION ALL\n');
+        }
+      });
+
       dataset.createQueryStream({
-        query: queryReplace(loadedQuery, params),
+        query,
         maxResults: params.limit,
         params: cleanQueryParams(loadedQuery, params),
       })
