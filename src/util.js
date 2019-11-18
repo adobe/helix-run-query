@@ -70,6 +70,7 @@ function cleanQueryParams(query, params) {
  * @param {string} query the content read from a query file
  * @param {*} params query parameters, that are inserted into query
  */
+
 function queryReplace(query, params) {
   let outQuery = query;
 
@@ -87,6 +88,7 @@ function queryReplace(query, params) {
     });
   return outQuery;
 }
+
 
 /**
  * Processes additional parameters relating to query properties, like -- Authorization
@@ -135,6 +137,22 @@ function cleanRequestParams(params) {
     }, {});
 }
 
+async function replaceTableNames(query, replacers){
+  const replacements = await (query.match(/\^[a-z]+/g)? query.match(/\^[a-z]+/g) : [])
+  .map(placeholder => placeholder.substr(1))
+  .reduce(async (pv, placeholder) => {
+    if (pv[placeholder]) {
+      return pv;
+    }
+    pv[placeholder] = await replacers[placeholder]();
+    return pv;
+  }, {});
+
+  return Object.keys(replacements).reduce((q, placeholder) => {
+    return q.replace(new RegExp('\\^' + placeholder, 'g'), replacements[placeholder])
+  }, query);
+}
+
 module.exports = {
   loadQuery,
   getHeaderParams,
@@ -143,4 +161,5 @@ module.exports = {
   cleanHeaderParams,
   queryReplace,
   authFastly,
+  replaceTableNames,
 };
