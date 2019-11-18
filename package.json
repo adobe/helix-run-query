@@ -84,7 +84,8 @@
     "name": "helix-services-private/run-query@${version}",
     "linksPackage": "helix-services",
     "static": [
-      "src/queries/next-resource.sql"
+      "src/queries/next-resource.sql",
+      "src/queries/top-pages.sql"
     ]
   }
 }
