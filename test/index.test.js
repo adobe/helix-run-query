@@ -25,8 +25,8 @@ const env = require('../src/env.js');
 const { cleanRequestParams, cleanQueryParams } = require('../src/util.js');
 
 describe('Index Tests', async () => {
-  const goodQuery = '--- Authorization: none\nselect * from requests';
-  const goodQueryWithAuth = '--- Authorization: fastly\nselect * from requests';
+  const goodQuery = '--- Authorization: none\nselect * from requests LIMIT @limit';
+  const goodQueryWithAuth = '--- Authorization: fastly\nselect * from requests LIMIT @limit';
 
   const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
   const goodExecWithAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth } });
@@ -87,7 +87,7 @@ describe('Index Tests', async () => {
       GOOGLE_PROJECT_ID: env.projectid,
       token: env.token,
       __ow_path: 'list-everything',
-      limit: 10,
+      limit: 3,
       service,
     });
   });
@@ -99,13 +99,13 @@ describe('Index Tests', async () => {
       GOOGLE_PROJECT_ID: env.projectid,
       token: env.token,
       __ow_path: 'list-everything',
-      limit: 10,
+      limit: 3,
       service,
     });
     assert.equal(typeof result, 'object');
     assert.ok(Array.isArray(result.body.results));
     assert.ok(!result.body.truncated);
-    assert.equal(result.body.results.length, 10);
+    assert.equal(result.body.results.length, 3);
   });
 
 
@@ -116,7 +116,7 @@ describe('Index Tests', async () => {
       GOOGLE_PROJECT_ID: env.projectid,
       token: env.token,
       __ow_path: 'list-everything',
-      limit: 20000,
+      limit: 2000,
       service,
     });
     assert.equal(typeof result, 'object');
@@ -131,7 +131,7 @@ describe('Index Tests', async () => {
       token: env.token,
       __ow_path: 'list-everything',
       service,
-      limit: 10,
+      limit: 3,
     });
     assert.equal(typeof result, 'object');
     assert.equal(result.statusCode, 500);
@@ -144,7 +144,7 @@ describe('Index Tests', async () => {
       token: 'notatoken',
       __ow_path: 'list-everything',
       service,
-      limit: 10,
+      limit: 3,
     });
     assert.equal(typeof result, 'object');
     assert.equal(result.statusCode, 401);
@@ -161,13 +161,13 @@ describe('Index Tests', async () => {
       },
       token: 'Wrong Token',
       __ow_path: 'list-everything',
-      limit: 10,
+      limit: 3,
       service: 'Wrong Service',
     });
     assert.equal(typeof result, 'object');
     assert.ok(Array.isArray(result.body.results));
     assert.ok(!result.body.truncated);
-    assert.equal(result.body.results.length, 10);
+    assert.equal(result.body.results.length, 3);
   });
 
   it('index function returns an object with ow_headers', async () => {
@@ -181,13 +181,13 @@ describe('Index Tests', async () => {
       },
       token: 'Wrong Token',
       __ow_path: 'list-everything',
-      limit: 10,
+      limit: 3,
       service: 'Wrong Service',
     });
     assert.equal(typeof result, 'object');
     assert.ok(Array.isArray(result.body.results));
     assert.ok(!result.body.truncated);
-    assert.equal(result.body.results.length, 10);
+    assert.equal(result.body.results.length, 3);
   });
 });
 
