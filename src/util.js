@@ -137,6 +137,12 @@ function cleanRequestParams(params) {
     }, {});
 }
 
+/**
+ * replaces tablename with range of request tables
+ *
+ * @param {string} query a query loaded from loadQuery with placeholders
+ * @param {object} replacers an function mapping from placeholders to replacer methods
+ */
 async function replaceTableNames(query, replacers) {
   const replacements = await (query.match(/\^[a-z]+/g) ? query.match(/\^[a-z]+/g) : [])
     .map((placeholder) => placeholder.substr(1))
