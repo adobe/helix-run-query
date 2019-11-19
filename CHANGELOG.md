@@ -1,3 +1,13 @@
+# [2.0.0](https://github.com/adobe/helix-run-query/compare/v1.4.0...v2.0.0) (2019-11-19)
+
+
+* Table name replace (#66) ([8fd37c0](https://github.com/adobe/helix-run-query/commit/8fd37c0c3066af19f27ab9802fe7e3e6bf4211b3)), closes [#66](https://github.com/adobe/helix-run-query/issues/66)
+
+
+### BREAKING CHANGES
+
+* the ^placeholder thingies are now only used for dataset and table names and no longer for arbitrary parameter names
+
 # [1.4.0](https://github.com/adobe/helix-run-query/compare/v1.3.1...v1.4.0) (2019-11-18)
 
 
