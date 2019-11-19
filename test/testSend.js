@@ -90,14 +90,21 @@ describe('bigquery tests', async () => {
     assert.equal(results.length, 10);
   });
 
-  it('runs a query with queryParams', async () => {
+  it('runs a query with myrequest replacer', async () => {
     const { results } = await execute(env.email, env.key, env.projectid, 'next-resource', service, {
-      limit: 1,
-      tablename: 'requests',
+      limit: 100,
     });
     assert.ok(Array.isArray(results));
     assert.equal(results.length, 0);
   });
+
+  /*
+  it('runs a query with alldatasets replacer', async () => {
+    const { results } = await execute(env.email, env.key, env.projectid, 'next-resource', service, {
+      limit: 100,
+    });
+  })
+  */
 
   it('throws without projectid', async () => {
     try {
