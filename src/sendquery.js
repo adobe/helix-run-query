@@ -52,7 +52,7 @@ async function execute(email, key, project, query, service, params = {
     }).get();
 
     // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
       const results = [];
       let avgsize = 0;
       const maxsize = 1024 * 1024 * 0.9;
@@ -69,7 +69,7 @@ async function execute(email, key, project, query, service, params = {
         return true;
       };
 
-      const replacedQuery = await replaceTableNames(loadedQuery, {
+      const replacedQuery = replaceTableNames(loadedQuery, {
         myrequests: () => `SELECT * FROM \`${dataset.id}.requests*\``,
         allrequests: async () => {
           const [alldatasets] = await bq.getDatasets();
@@ -79,24 +79,24 @@ async function execute(email, key, project, query, service, params = {
             .map((id) => `SELECT * FROM \`${id}.requests*\``)
             .join(' UNION ALL\n');
         },
-      });
-
-      dataset.createQueryStream({
-        query: replacedQuery,
-        maxResults: params.limit,
-        params: cleanQueryParams(loadedQuery, params),
+      }).then((query) => {
+        dataset.createQueryStream({
+          query,
+          maxResults: params.limit,
+          params: cleanQueryParams(loadedQuery, params),
+        })
+          .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
+            truncated: true,
+            results,
+          })))
+          .on('error', (e) => reject(e))
+          .on('end', () => resolve({
+            truncated: false,
+            results,
+          }));
       })
-        .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
-          truncated: true,
-          results,
-        })))
-        .on('error', (e) => reject(e))
-        .on('end', () => resolve({
-          truncated: false,
-          results,
-        }));
-    });
-  } catch (e) {
+  })}
+  catch (e) {
     throw new Error(`Unable to execute Google Query: ${e.message}`);
   }
 }

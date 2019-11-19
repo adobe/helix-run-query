@@ -1,3 +1,5 @@
+--- Authorization: none
+--- Cache-Control: max-age=300
 SELECT * FROM (
   SELECT 
     req_url, count(req_http_X_CDN_Request_ID) as reqs
