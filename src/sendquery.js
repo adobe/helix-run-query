@@ -51,6 +51,7 @@ async function execute(email, key, project, query, service, params = {
       location: 'US',
     }).get();
 
+    // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
       const results = [];
       let avgsize = 0;
@@ -68,7 +69,7 @@ async function execute(email, key, project, query, service, params = {
         return true;
       };
 
-      const query = await replaceTableNames(loadedQuery, {
+      const replacedQuery = await replaceTableNames(loadedQuery, {
         myrequests: () => `SELECT * FROM \`${dataset.id}.requests*\``,
         allrequests: async () => {
           const [alldatasets] = await bq.getDatasets();
@@ -81,7 +82,7 @@ async function execute(email, key, project, query, service, params = {
       });
 
       dataset.createQueryStream({
-        query,
+        query: replacedQuery,
         maxResults: params.limit,
         params: cleanQueryParams(loadedQuery, params),
       })

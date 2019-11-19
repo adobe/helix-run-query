@@ -23,18 +23,17 @@ const { setupMocha: setupPolly } = require('@pollyjs/core');
 
 // Register the node http adapter so its accessible by all future polly instances
 const env = require('../src/env.js');
-const { execute } = require('../src/sendquery.js');
 
-function getQuery(replacer){
+function getQuery(replacer) {
   return `--- Authorization: none
   SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Type, status_code
   FROM ( 
-    ^` + replacer + `
+    ^${replacer}
   )
   GROUP BY
     req_url, resp_http_Content_Type, status_code 
   ORDER BY visits DESC
-  LIMIT @limit`
+  LIMIT @limit`;
 }
 
 describe('bigquery tests', async () => {
@@ -43,8 +42,8 @@ describe('bigquery tests', async () => {
 
   const badExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => badQuery } });
   const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
-  const allReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => {return getQuery('allrequests')} } });
-  const myReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => {return getQuery('myrequests')} } });
+  const allReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('allrequests') } });
+  const myReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('myrequests') } });
 
   const service = 'fake_name';
 
@@ -93,7 +92,7 @@ describe('bigquery tests', async () => {
 
   it('runs a query', async () => {
     const { results } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', service, {
-      limit: 3
+      limit: 3,
     });
     assert.ok(Array.isArray(results));
     assert.ok(results.length, 3);
@@ -115,7 +114,7 @@ describe('bigquery tests', async () => {
     assert.equal(results.length, 3);
   });
 
-  
+
   it('runs a query with alldatasets replacer', async () => {
     const { results } = await allReplacer.execute(env.email, env.key, env.projectid, 'next-resource', service, {
       limit: 100,
@@ -124,7 +123,7 @@ describe('bigquery tests', async () => {
     assert.ok(Array.isArray(results));
     assert.equal(results.length, 100);
   });
- 
+
 
   it('throws without projectid', async () => {
     try {
