@@ -69,7 +69,7 @@ async function execute(email, key, project, query, service, params = {
         return true;
       };
 
-      const replacedQuery = replaceTableNames(loadedQuery, {
+      replaceTableNames(loadedQuery, {
         myrequests: () => `SELECT * FROM \`${dataset.id}.requests*\``,
         allrequests: async () => {
           const [alldatasets] = await bq.getDatasets();
@@ -79,9 +79,9 @@ async function execute(email, key, project, query, service, params = {
             .map((id) => `SELECT * FROM \`${id}.requests*\``)
             .join(' UNION ALL\n');
         },
-      }).then((query) => {
+      }).then((q) => {
         dataset.createQueryStream({
-          query,
+          query: q,
           maxResults: params.limit,
           params: cleanQueryParams(loadedQuery, params),
         })
@@ -94,9 +94,9 @@ async function execute(email, key, project, query, service, params = {
             truncated: false,
             results,
           }));
-      })
-  })}
-  catch (e) {
+      });
+    });
+  } catch (e) {
     throw new Error(`Unable to execute Google Query: ${e.message}`);
   }
 }

@@ -139,7 +139,7 @@ function cleanRequestParams(params) {
 
 /**
  * replaces tablename with union of tables from one dataset or multiple datasets
- * i.e: 
+ * i.e:
  * if query inputted is SELECT req_url FROM ^myrequest
  * output will become SELECT req_url FROM (SELECT * FROM helix_logging_myService.requests*)
  *
