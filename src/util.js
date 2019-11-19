@@ -137,6 +137,15 @@ function cleanRequestParams(params) {
     }, {});
 }
 
+/**
+ * replaces tablename with union of tables from one dataset or multiple datasets
+ * i.e:
+ * if query inputted is SELECT req_url FROM ^myrequest
+ * output will become SELECT req_url FROM (SELECT * FROM helix_logging_myService.requests*)
+ *
+ * @param {string} query a query loaded from loadQuery with placeholders
+ * @param {object} replacers an function mapping from placeholders to replacer methods
+ */
 async function replaceTableNames(query, replacers) {
   const replacements = await (query.match(/\^[a-z]+/g) ? query.match(/\^[a-z]+/g) : [])
     .map((placeholder) => placeholder.substr(1))
