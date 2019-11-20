@@ -16,7 +16,7 @@ const { cleanRequestParams } = require('./util.js');
 
 async function runExec(params) {
   try {
-    const { results, truncated } = await execute(
+    const { results, truncated, headers } = await execute(
       params.GOOGLE_CLIENT_EMAIL,
       params.GOOGLE_PRIVATE_KEY,
       params.GOOGLE_PROJECT_ID,
@@ -24,16 +24,17 @@ async function runExec(params) {
       params.service,
       cleanRequestParams(params),
     );
-    return {
-      headers: {
+    const result =  {
+      headers: Object.assign({
         'content-type': 'application/json',
         Vary: 'X-Token, X-Service',
-      },
+      }, headers),
       body: {
         results,
         truncated,
       },
     };
+    return result;
   } catch (e) {
     return {
       statusCode: e.statusCode || 500,
