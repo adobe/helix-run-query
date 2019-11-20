@@ -26,11 +26,11 @@ const env = require('../src/env.js');
 describe('Index Tests', async () => {
   const goodQueryWithAuth = '--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nselect * from requests LIMIT @limit';
 
-  const goodExecWithAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth , authFastly: () => true } });
-  const execWithBadAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth , authFastly: () => Promise.reject(new Error("Failed")) } });
+  const goodExecWithAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => true } });
+  const execWithBadAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => Promise.reject(new Error('Failed')) } });
 
-  const index = proxyquire('../src/index.js', { './sendquery.js': goodExecWithAuth}).main;
-  const badIndex = proxyquire('../src/index.js', {'./sendquery.js': execWithBadAuth}).main;
+  const index = proxyquire('../src/index.js', { './sendquery.js': goodExecWithAuth }).main;
+  const badIndex = proxyquire('../src/index.js', { './sendquery.js': execWithBadAuth }).main;
 
   const service = 'fake_name';
 
@@ -102,10 +102,12 @@ describe('Index Tests', async () => {
     assert.ok(Array.isArray(result.body.results));
     assert.ok(!result.body.truncated);
     assert.equal(result.body.results.length, 3);
-    assert.deepEqual(result.headers, { 'content-type': 'application/json',
-    Vary: 'X-Token, X-Service',
-    Vary2: 'X-Token, X-Service',
-    'Cache-Control': 'max-age=300'});
+    assert.deepEqual(result.headers, {
+      'content-type': 'application/json',
+      Vary: 'X-Token, X-Service',
+      Vary2: 'X-Token, X-Service',
+      'Cache-Control': 'max-age=300',
+    });
   });
 
 
@@ -122,10 +124,12 @@ describe('Index Tests', async () => {
     assert.equal(typeof result, 'object');
     assert.ok(Array.isArray(result.body.results));
     assert.ok(result.body.truncated);
-    assert.deepEqual(result.headers, { 'content-type': 'application/json',
-    Vary: 'X-Token, X-Service',
-    Vary2: 'X-Token, X-Service',
-    'Cache-Control': 'max-age=300'});
+    assert.deepEqual(result.headers, {
+      'content-type': 'application/json',
+      Vary: 'X-Token, X-Service',
+      Vary2: 'X-Token, X-Service',
+      'Cache-Control': 'max-age=300',
+    });
   });
 
   it('index function returns 500 on error', async () => {
@@ -172,10 +176,12 @@ describe('Index Tests', async () => {
     assert.ok(Array.isArray(result.body.results));
     assert.ok(!result.body.truncated);
     assert.equal(result.body.results.length, 3);
-    assert.deepEqual(result.headers, { 'content-type': 'application/json',
-    Vary: 'X-Token, X-Service',
-    Vary2: 'X-Token, X-Service',
-    'Cache-Control': 'max-age=300'});
+    assert.deepEqual(result.headers, {
+      'content-type': 'application/json',
+      Vary: 'X-Token, X-Service',
+      Vary2: 'X-Token, X-Service',
+      'Cache-Control': 'max-age=300',
+    });
   });
 
   it('index function returns an object with ow_headers', async () => {
@@ -196,9 +202,11 @@ describe('Index Tests', async () => {
     assert.ok(Array.isArray(result.body.results));
     assert.ok(!result.body.truncated);
     assert.equal(result.body.results.length, 3);
-    assert.deepEqual(result.headers, { 'content-type': 'application/json',
-    Vary: 'X-Token, X-Service',
-    Vary2: 'X-Token, X-Service',
-    'Cache-Control': 'max-age=300'});
+    assert.deepEqual(result.headers, {
+      'content-type': 'application/json',
+      Vary: 'X-Token, X-Service',
+      Vary2: 'X-Token, X-Service',
+      'Cache-Control': 'max-age=300',
+    });
   });
 });

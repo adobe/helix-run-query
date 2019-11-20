@@ -44,7 +44,7 @@ async function execute(email, key, project, query, service, params = {}) {
       e.statusCode = 401;
       throw e;
     }
-    delete headerParams['Authorization'];
+    delete headerParams.Authorization;
   }
   try {
     const credentials = await auth(email, key.replace(/\\n/g, '\n'));
@@ -63,7 +63,7 @@ async function execute(email, key, project, query, service, params = {}) {
       const maxsize = 1024 * 1024 * 0.9;
       // eslint-disable-next-line no-param-reassign
       params.limit = parseInt(params.limit, 10);
-      headers = cleanHeaderParams(loadedQuery, headerParams, true);
+      const headers = cleanHeaderParams(loadedQuery, headerParams, true);
 
       const spaceleft = () => {
         if (results.length === 10) {

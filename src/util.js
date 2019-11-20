@@ -50,11 +50,9 @@ async function loadQuery(query) {
  * @param {string} query the content read from a query file
  * @param {object} params query parameters, that are inserted into query
  */
-function cleanHeaderParams(query, params, rmvQueryParams=false) {
+function cleanHeaderParams(query, params, rmvQueryParams = false) {
   return Object.keys(params)
-    .filter((key) => {
-      return rmvQueryParams != (query.match(new RegExp(`\\@${key}`, 'g')) != null);
-    })
+    .filter((key) => rmvQueryParams !== (query.match(new RegExp(`\\@${key}`, 'g')) != null))
     .reduce((cleanObj, key) => {
       // eslint-disable-next-line no-param-reassign
       cleanObj[key] = params[key];

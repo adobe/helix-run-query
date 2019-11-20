@@ -24,11 +24,12 @@ async function runExec(params) {
       params.service,
       cleanRequestParams(params),
     );
-    const result =  {
-      headers: Object.assign({
+    const result = {
+      headers: {
         'content-type': 'application/json',
         Vary: 'X-Token, X-Service',
-      }, headers),
+        ...headers,
+      },
       body: {
         results,
         truncated,

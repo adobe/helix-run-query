@@ -18,7 +18,7 @@ const assert = require('assert');
 const {
   loadQuery, getHeaderParams, cleanHeaderParams,
   cleanQuery, authFastly, replaceTableNames,
-  resolveParameterDiff, cleanRequestParams
+  resolveParameterDiff, cleanRequestParams,
 } = require('../src/util.js');
 const env = require('../src/env.js');
 
@@ -182,7 +182,7 @@ describe('testing util functions', () => {
     const defaultParams = getHeaderParams(query);
 
     const ACTUAL = cleanHeaderParams(query, defaultParams, true);
-    const EXPECTED = {'Cache-Control': 'max-age=300'};
+    const EXPECTED = { 'Cache-Control': 'max-age=300' };
 
     assert.deepEqual(ACTUAL, EXPECTED);
   });
