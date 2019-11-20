@@ -43,7 +43,6 @@ describe('bigquery tests', async () => {
 
   const badExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => badQuery } });
   const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
-  const allReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('allrequests') } });
   const myReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('myrequests') } });
 
   const service = 'fake_name';

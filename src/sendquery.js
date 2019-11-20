@@ -34,9 +34,10 @@ async function execute(email, key, project, query, service, params = {}) {
   const loadedQuery = cleanHeaderParams(rawQuery);
   const completeParams = resolveParameterDiff(
     params,
-    cleanQueryParams(loadedQuery, headerParams));
+    cleanQueryParams(loadedQuery, headerParams),
+  );
 
-    if (headerParams && headerParams.Authorization === 'fastly') {
+  if (headerParams && headerParams.Authorization === 'fastly') {
     try {
       await authFastly(params.token, params.service);
     } catch (e) {
@@ -72,7 +73,7 @@ async function execute(email, key, project, query, service, params = {}) {
         return true;
       };
 
-      replacedQuery = replaceTableNames(loadedQuery, {
+      replaceTableNames(loadedQuery, {
         myrequests: () => `SELECT * FROM \`${dataset.id}.requests*\``,
         allrequests: async () => {
           const [alldatasets] = await bq.getDatasets();
@@ -98,8 +99,8 @@ async function execute(email, key, project, query, service, params = {}) {
             results,
           }));
       });
-  });
-} catch (e) {
+    });
+  } catch (e) {
     throw new Error(`Unable to execute Google Query: ${e.message}`);
   }
 }

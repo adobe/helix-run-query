@@ -166,15 +166,8 @@ async function replaceTableNames(query, replacers) {
  * @param {object} params provided parameters
  * @param {object} defaults default parameters in query file
  */
-function resolveParameterDiff(params, defaults){
-  const uniques = Object.keys(defaults)
-  .filter((key) => !(key in params))
-  .reduce((pv, cv) => {
-    pv[cv] = defaults[cv];
-    return pv;
-  }, {});
-
-  return Object.assign(uniques, params);
+function resolveParameterDiff(params, defaults) {
+  return Object.assign(defaults, params);
 }
 
 module.exports = {

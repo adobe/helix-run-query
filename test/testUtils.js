@@ -16,7 +16,7 @@
 
 const assert = require('assert');
 const {
-  loadQuery, getHeaderParams, cleanHeaderParams, 
+  loadQuery, getHeaderParams, cleanHeaderParams,
   queryReplace, authFastly, replaceTableNames,
   resolveParameterDiff,
 } = require('../src/util.js');
@@ -164,7 +164,7 @@ describe('testing util functions', () => {
       tablename: '`Helix',
       something1: '\'Loves',
       something2: 'CMS',
-    }
+    };
 
     assert.deepEqual(ACTUAL, EXPECTED);
   });
@@ -183,7 +183,7 @@ describe('testing util functions', () => {
     const EXPECTED = {
       tablename: '`Helix',
       something1: '\'Loves',
-    }
+    };
 
     assert.deepEqual(ACTUAL, EXPECTED);
   });
@@ -202,7 +202,7 @@ describe('testing util functions', () => {
     const EXPECTED = {
       tablename: '`Helix',
       something1: '\'Loves',
-    }
+    };
 
     assert.deepEqual(ACTUAL, EXPECTED);
   });
