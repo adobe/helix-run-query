@@ -23,6 +23,7 @@ const { setupMocha: setupPolly } = require('@pollyjs/core');
 
 // Register the node http adapter so its accessible by all future polly instances
 const env = require('../src/env.js');
+const { execute } = require('../src/sendquery.js');
 
 function getQuery(replacer) {
   return `--- Authorization: none
@@ -42,7 +43,6 @@ describe('bigquery tests', async () => {
 
   const badExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => badQuery } });
   const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
-  const allReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('allrequests') } });
   const myReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('myrequests') } });
 
   const service = 'fake_name';
@@ -116,12 +116,14 @@ describe('bigquery tests', async () => {
 
 
   it('runs a query with alldatasets replacer', async () => {
-    const { results } = await allReplacer.execute(env.email, env.key, env.projectid, 'next-resource', service, {
-      limit: 100,
+    const { results } = await execute(env.email, env.key, env.projectid, 'top-pages', service, {
+      limit: 10,
+      fromDays: 30,
+      toDays: 0,
     });
 
     assert.ok(Array.isArray(results));
-    assert.equal(results.length, 100);
+    assert.equal(results.length, 10);
   });
 
 

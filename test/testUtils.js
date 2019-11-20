@@ -16,7 +16,9 @@
 
 const assert = require('assert');
 const {
-  loadQuery, getHeaderParams, cleanHeaderParams, queryReplace, authFastly, replaceTableNames,
+  loadQuery, getHeaderParams, cleanHeaderParams,
+  queryReplace, authFastly, replaceTableNames,
+  resolveParameterDiff,
 } = require('../src/util.js');
 const env = require('../src/env.js');
 
@@ -145,5 +147,63 @@ describe('testing util functions', () => {
 
     assert.equal(result, 'foo bar bar bar bar bar bar baz');
     assert.equal(i, 1);
+  });
+
+  it('resolveParameterDiff fills in empty params with defaults', () => {
+    const query = '--- something1: Likes\n--- something2: CMS\n--- tablename: fakeTable\nSELECT @something1, @something2 WHERE @tablename';
+    const defaults = getHeaderParams(query);
+
+    const params = {
+      tablename: '`Helix',
+      something1: '\'Loves',
+    };
+
+    const ACTUAL = resolveParameterDiff(params, defaults);
+
+    const EXPECTED = {
+      tablename: '`Helix',
+      something1: '\'Loves',
+      something2: 'CMS',
+    };
+
+    assert.deepEqual(ACTUAL, EXPECTED);
+  });
+
+  it('resolveParameterDiff works if some defaults missing', () => {
+    const query = '--- something1: Likes\n--- tablename: fakeTable\nSELECT @something1, @something2 WHERE @tablename';
+    const defaults = getHeaderParams(query);
+
+    const params = {
+      tablename: '`Helix',
+      something1: '\'Loves',
+    };
+
+    const ACTUAL = resolveParameterDiff(params, defaults);
+
+    const EXPECTED = {
+      tablename: '`Helix',
+      something1: '\'Loves',
+    };
+
+    assert.deepEqual(ACTUAL, EXPECTED);
+  });
+
+  it('resolveParameterDiff works if all defaults missing', () => {
+    const query = 'SELECT @something1, @something2 WHERE @tablename';
+    const defaults = getHeaderParams(query);
+
+    const params = {
+      tablename: '`Helix',
+      something1: '\'Loves',
+    };
+
+    const ACTUAL = resolveParameterDiff(params, defaults);
+
+    const EXPECTED = {
+      tablename: '`Helix',
+      something1: '\'Loves',
+    };
+
+    assert.deepEqual(ACTUAL, EXPECTED);
   });
 });

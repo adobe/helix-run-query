@@ -15,6 +15,7 @@ const { auth } = require('./auth.js');
 const {
   loadQuery, replaceTableNames, cleanQueryParams,
   cleanHeaderParams, getHeaderParams, authFastly,
+  resolveParameterDiff,
 } = require('./util.js');
 
 /**
@@ -27,12 +28,15 @@ const {
  * @param {string} service the serviceid of the published site
  * @param {object} params parameters for substitution into query
  */
-async function execute(email, key, project, query, service, params = {
-  limit: 100,
-}) {
+async function execute(email, key, project, query, service, params = {}) {
   const rawQuery = await loadQuery(query);
   const headerParams = getHeaderParams(rawQuery);
   const loadedQuery = cleanHeaderParams(rawQuery);
+  const completeParams = resolveParameterDiff(
+    params,
+    cleanQueryParams(loadedQuery, headerParams),
+  );
+
   if (headerParams && headerParams.Authorization === 'fastly') {
     try {
       await authFastly(params.token, params.service);
@@ -83,7 +87,7 @@ async function execute(email, key, project, query, service, params = {
         dataset.createQueryStream({
           query: q,
           maxResults: params.limit,
-          params: cleanQueryParams(loadedQuery, params),
+          params: completeParams,
         })
           .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
             truncated: true,

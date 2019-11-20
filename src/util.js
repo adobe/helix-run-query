@@ -161,6 +161,15 @@ async function replaceTableNames(query, replacers) {
   return Object.keys(replacements).reduce((q, placeholder) => q.replace(new RegExp(`\\^${placeholder}`, 'g'), replacements[placeholder]), query);
 }
 
+/**
+ * combines user provided params and fills in missing from query file
+ * @param {object} params provided parameters
+ * @param {object} defaults default parameters in query file
+ */
+function resolveParameterDiff(params, defaults) {
+  return Object.assign(defaults, params);
+}
+
 module.exports = {
   loadQuery,
   getHeaderParams,
@@ -170,4 +179,5 @@ module.exports = {
   queryReplace,
   authFastly,
   replaceTableNames,
+  resolveParameterDiff,
 };
