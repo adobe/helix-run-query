@@ -62,7 +62,7 @@ async function execute(email, key, project, query, service, params = {}) {
       let avgsize = 0;
       const maxsize = 1024 * 1024 * 0.9;
       // eslint-disable-next-line no-param-reassign
-      params.limit = parseInt(params.limit, 10);
+      completeParams.limit = parseInt(completeParams.limit, 10);
       const headers = cleanHeaderParams(loadedQuery, headerParams, true);
 
       const spaceleft = () => {
