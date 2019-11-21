@@ -42,8 +42,8 @@ describe('bigquery tests', async () => {
 
   const badExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => badQuery } });
   const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
-  const myReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('myrequests'), authFastly: () => true} });
-  const execWithRealLoad = proxyquire('../src/sendquery.js', { './util.js': {authFastly: () => true}});
+  const myReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('myrequests'), authFastly: () => true } });
+  const execWithRealLoad = proxyquire('../src/sendquery.js', { './util.js': { authFastly: () => true } });
 
   const service = 'fake_name';
 
