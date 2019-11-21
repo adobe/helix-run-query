@@ -23,7 +23,6 @@ const { setupMocha: setupPolly } = require('@pollyjs/core');
 
 // Register the node http adapter so its accessible by all future polly instances
 const env = require('../src/env.js');
-const { execute } = require('../src/sendquery.js');
 
 function getQuery(replacer) {
   return `--- Authorization: none
@@ -43,7 +42,8 @@ describe('bigquery tests', async () => {
 
   const badExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => badQuery } });
   const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
-  const myReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('myrequests') } });
+  const myReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('myrequests'), authFastly: () => true} });
+  const execWithRealLoad = proxyquire('../src/sendquery.js', { './util.js': {authFastly: () => true}});
 
   const service = 'fake_name';
 
@@ -116,7 +116,7 @@ describe('bigquery tests', async () => {
 
 
   it('runs a query with alldatasets replacer', async () => {
-    const { results } = await execute(env.email, env.key, env.projectid, 'top-pages', service, {
+    const { results } = await execWithRealLoad.execute(env.email, env.key, env.projectid, 'top-pages', service, {
       limit: 10,
       fromDays: 30,
       toDays: 0,
