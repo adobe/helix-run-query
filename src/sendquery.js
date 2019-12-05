@@ -44,8 +44,8 @@ async function execute(email, key, project, query, service, params = {}) {
       e.statusCode = 401;
       throw e;
     }
-    delete headerParams.Authorization;
   }
+  delete headerParams.Authorization;
   try {
     const credentials = await auth(email, key.replace(/\\n/g, '\n'));
     const bq = new BigQuery({
