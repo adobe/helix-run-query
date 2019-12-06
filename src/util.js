@@ -45,50 +45,20 @@ async function loadQuery(query) {
 }
 
 /**
- * strips params object of helix query parameters
+ * strips param object of everything save headers!
  *
  * @param {string} query the content read from a query file
  * @param {object} params query parameters, that are inserted into query
  */
-function cleanQueryParams(query, params) {
+function cleanHeaderParams(query, params, rmvQueryParams = false) {
   return Object.keys(params)
-    .filter((key) => query.match(new RegExp(`\\^${key}`, 'g')) == null)
-    .filter((key) => query.match(new RegExp(`\\@${key}`, 'g')) != null)
+    .filter((key) => rmvQueryParams !== (query.match(new RegExp(`\\@${key}`, 'g')) != null))
     .reduce((cleanObj, key) => {
       // eslint-disable-next-line no-param-reassign
       cleanObj[key] = params[key];
       return cleanObj;
     }, {});
 }
-
-/**
- * replaces helix query parameter placeholders denoted by ^param
- * in a query with value in param object. Example; SELECT * FROM ^tablename
- * ^tabename is the query parameter; so it's expected that the params object
- * contains {tablename: 'some-value'}
- *
- * @param {string} query the content read from a query file
- * @param {*} params query parameters, that are inserted into query
- */
-
-function queryReplace(query, params) {
-  let outQuery = query;
-
-  Object.keys(params)
-    .filter((key) => typeof params[key] === 'string')
-    .forEach((key) => {
-      const regex = new RegExp(`\\^${key}`, 'g');
-      const sqlInjCheck = params[key].match(/[;\s]/g);
-      if (sqlInjCheck != null) {
-        throw new Error('Only single phrase parameters allowed');
-      }
-      // eslint-disable-next-line no-param-reassign
-      params[key] = params[key].replace(/`|'|"/g, '');
-      outQuery = outQuery.replace(regex, `\`${params[key]}\``);
-    });
-  return outQuery;
-}
-
 
 /**
  * Processes additional parameters relating to query properties, like -- Authorization
@@ -114,7 +84,7 @@ function getHeaderParams(query) {
  *
  * @param {string} query the content read from a query file
  */
-function cleanHeaderParams(query) {
+function cleanQuery(query) {
   return query.split('\n')
     .filter((e) => !e.startsWith('---'))
     .filter((e) => !e.startsWith('#'))
@@ -128,7 +98,7 @@ function cleanHeaderParams(query) {
  */
 function cleanRequestParams(params) {
   return Object.keys(params)
-    .filter((key) => !key.match(/[A-Z0-9_]+/))
+    .filter((key) => !key.match(/^[A-Z0-9_]+/))
     .filter((key) => !key.startsWith('__'))
     .reduce((cleanedobj, key) => {
       // eslint-disable-next-line no-param-reassign
@@ -162,7 +132,7 @@ async function replaceTableNames(query, replacers) {
 }
 
 /**
- * combines user provided params and fills in missing from query file
+ * fills in missing query parameters (if any) with defaults from query file
  * @param {object} params provided parameters
  * @param {object} defaults default parameters in query file
  */
@@ -174,9 +144,8 @@ module.exports = {
   loadQuery,
   getHeaderParams,
   cleanRequestParams,
-  cleanQueryParams,
   cleanHeaderParams,
-  queryReplace,
+  cleanQuery,
   authFastly,
   replaceTableNames,
   resolveParameterDiff,

@@ -17,8 +17,8 @@
 const assert = require('assert');
 const {
   loadQuery, getHeaderParams, cleanHeaderParams,
-  queryReplace, authFastly, replaceTableNames,
-  resolveParameterDiff,
+  cleanQuery, authFastly, replaceTableNames,
+  resolveParameterDiff, cleanRequestParams,
 } = require('../src/util.js');
 const env = require('../src/env.js');
 
@@ -55,48 +55,8 @@ describe('testing util functions', () => {
     LIMIT @limit`;
 
     const EXPECTED = 'SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Type, status_code     FROM ^tablename     WHERE        resp_http_Content_Type LIKE "text/html%" AND       status_code LIKE "404"     GROUP BY       req_url, resp_http_Content_Type, status_code      ORDER BY visits DESC     LIMIT @limit';
-    const ACTUAL = cleanHeaderParams(fakeQuery);
+    const ACTUAL = cleanQuery(fakeQuery);
     assert.equal(EXPECTED, ACTUAL);
-  });
-
-  it('query substitution works', () => {
-    const query = 'SELECT ^something1, ^something2 WHERE ^tablename';
-    const EXPECTED = 'SELECT `Loves`, `CMS` WHERE `Helix`';
-
-    const params = {
-      tablename: 'Helix',
-      something1: 'Loves',
-      something2: 'CMS',
-    };
-
-    const ACTUAL = queryReplace(query, params);
-
-    assert.equal(ACTUAL, EXPECTED);
-  });
-
-  it('prevents sql injection from canceling quotes and template strings', () => {
-    const query = 'SELECT ^something1, ^something2 WHERE ^tablename';
-    const EXPECTED = 'SELECT `Loves`, `CMS` WHERE `Helix`';
-
-    const params = {
-      tablename: '`Helix',
-      something1: '\'Loves',
-      something2: '"CMS',
-      something3: 'foobar',
-    };
-
-    const ACTUAL = queryReplace(query, params);
-
-    assert.equal(ACTUAL, EXPECTED);
-  });
-
-  it('prevents sql injection from malicious query', () => {
-    const query = 'SELECT * FROM table WHERE ^maliciousCode';
-    const EXPECTED = 'Only single phrase parameters allowed';
-    const params = {
-      maliciousCode: 'DROP TABLE table;',
-    };
-    assert.throws(() => (queryReplace(query, params)), new Error(EXPECTED));
   });
 
   it('authFastly correctly authenticates', async () => {
@@ -205,5 +165,52 @@ describe('testing util functions', () => {
     };
 
     assert.deepEqual(ACTUAL, EXPECTED);
+  });
+
+  it('cleanHeaderParams removes query parameters', () => {
+    const query = '--- something1: Likes\n--- something2: CMS\n--- tablename: fakeTable\nSELECT @something1, @something2 WHERE @tablename';
+    const defaultParams = getHeaderParams(query);
+
+    const ACTUAL = cleanHeaderParams(query, defaultParams, true);
+    const EXPECTED = {};
+
+    assert.deepEqual(ACTUAL, EXPECTED);
+  });
+
+  it('cleanHeaderParams removes everything except Headers', () => {
+    const query = '--- Cache-Control: max-age=300\n--- something1: Likes\n--- something2: CMS\n--- tablename: fakeTable\nSELECT @something1, @something2 WHERE @tablename';
+    const defaultParams = getHeaderParams(query);
+
+    const ACTUAL = cleanHeaderParams(query, defaultParams, true);
+    const EXPECTED = { 'Cache-Control': 'max-age=300' };
+
+    assert.deepEqual(ACTUAL, EXPECTED);
+  });
+
+  it('cleanHeaderParams has no headers or default parameters does not fail', () => {
+    const query = 'SELECT @something1, @something2 WHERE @tablename';
+    const defaultParams = getHeaderParams(query);
+
+    const ACTUAL = cleanHeaderParams(query, defaultParams);
+    const EXPECTED = {};
+
+    assert.deepEqual(ACTUAL, EXPECTED);
+  });
+
+  it('cleanRequestParams returns object', () => {
+    const result = cleanRequestParams({});
+    assert.equal(typeof result, 'object');
+    assert.ok(!Array.isArray(result));
+  });
+
+  it('cleanRequestParams returns clean object', () => {
+    const result = cleanRequestParams({
+      FOOBAR: 'ahhhh',
+      foobar: 'good',
+      __foobar: 'bad',
+    });
+    assert.deepStrictEqual(result, {
+      foobar: 'good',
+    });
   });
 });

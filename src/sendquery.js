@@ -13,8 +13,8 @@ const { BigQuery } = require('@google-cloud/bigquery');
 const size = require('json-size');
 const { auth } = require('./auth.js');
 const {
-  loadQuery, replaceTableNames, cleanQueryParams,
-  cleanHeaderParams, getHeaderParams, authFastly,
+  loadQuery, replaceTableNames, cleanHeaderParams,
+  cleanQuery, getHeaderParams, authFastly,
   resolveParameterDiff,
 } = require('./util.js');
 
@@ -31,10 +31,10 @@ const {
 async function execute(email, key, project, query, service, params = {}) {
   const rawQuery = await loadQuery(query);
   const headerParams = getHeaderParams(rawQuery);
-  const loadedQuery = cleanHeaderParams(rawQuery);
+  const loadedQuery = cleanQuery(rawQuery);
   const completeParams = resolveParameterDiff(
-    params,
-    cleanQueryParams(loadedQuery, headerParams),
+    cleanHeaderParams(loadedQuery, params),
+    cleanHeaderParams(loadedQuery, headerParams),
   );
 
   if (headerParams && headerParams.Authorization === 'fastly') {
@@ -45,6 +45,7 @@ async function execute(email, key, project, query, service, params = {}) {
       throw e;
     }
   }
+  delete headerParams.Authorization;
   try {
     const credentials = await auth(email, key.replace(/\\n/g, '\n'));
     const bq = new BigQuery({
@@ -61,7 +62,8 @@ async function execute(email, key, project, query, service, params = {}) {
       let avgsize = 0;
       const maxsize = 1024 * 1024 * 0.9;
       // eslint-disable-next-line no-param-reassign
-      params.limit = parseInt(params.limit, 10);
+      completeParams.limit = parseInt(completeParams.limit, 10);
+      const headers = cleanHeaderParams(loadedQuery, headerParams, true);
 
       const spaceleft = () => {
         if (results.length === 10) {
@@ -90,11 +92,13 @@ async function execute(email, key, project, query, service, params = {}) {
           params: completeParams,
         })
           .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
+            headers,
             truncated: true,
             results,
           })))
           .on('error', (e) => reject(e))
           .on('end', () => resolve({
+            headers,
             truncated: false,
             results,
           }));

@@ -22,18 +22,15 @@ const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
 const FSPersister = require('@pollyjs/persister-fs');
 const { setupMocha: setupPolly } = require('@pollyjs/core');
 const env = require('../src/env.js');
-const { cleanRequestParams, cleanQueryParams } = require('../src/util.js');
 
 describe('Index Tests', async () => {
-  const goodQuery = '--- Authorization: none\nselect * from requests LIMIT @limit';
-  const goodQueryWithAuth = '--- Authorization: fastly\nselect * from requests LIMIT @limit';
+  const goodQueryWithAuth = '--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nselect * from requests LIMIT @limit';
 
-  const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
-  const goodExecWithAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth } });
+  const goodExecWithAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => true } });
+  const execWithBadAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => Promise.reject(new Error('Failed')) } });
 
-  const badAuthIndex = proxyquire('../src/index.js', { './sendquery.js': goodExecWithAuth }).main;
-
-  const index = proxyquire('../src/index.js', { './sendquery.js': goodExec, './util.js': { authFastly: () => true } }).main;
+  const index = proxyquire('../src/index.js', { './sendquery.js': goodExecWithAuth }).main;
+  const badIndex = proxyquire('../src/index.js', { './sendquery.js': execWithBadAuth }).main;
 
   const service = 'fake_name';
 
@@ -65,7 +62,6 @@ describe('Index Tests', async () => {
       [
         'https://www.googleapis.com/oauth2/v4/token',
         'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/jobs',
-        'https://api.fastly.com/service/fake_name/version',
         'https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/datasets/helix_logging_fake_name',
       ],
     ).passthrough();
@@ -106,6 +102,12 @@ describe('Index Tests', async () => {
     assert.ok(Array.isArray(result.body.results));
     assert.ok(!result.body.truncated);
     assert.equal(result.body.results.length, 3);
+    assert.deepEqual(result.headers, {
+      'content-type': 'application/json',
+      Vary: 'X-Token, X-Service',
+      Vary2: 'X-Token, X-Service',
+      'Cache-Control': 'max-age=300',
+    });
   });
 
 
@@ -122,6 +124,12 @@ describe('Index Tests', async () => {
     assert.equal(typeof result, 'object');
     assert.ok(Array.isArray(result.body.results));
     assert.ok(result.body.truncated);
+    assert.deepEqual(result.headers, {
+      'content-type': 'application/json',
+      Vary: 'X-Token, X-Service',
+      Vary2: 'X-Token, X-Service',
+      'Cache-Control': 'max-age=300',
+    });
   });
 
   it('index function returns 500 on error', async () => {
@@ -138,7 +146,7 @@ describe('Index Tests', async () => {
   });
 
   it('index function returns 401 on auth error', async () => {
-    const result = await badAuthIndex({
+    const result = await badIndex({
       GOOGLE_CLIENT_EMAIL: env.email,
       GOOGLE_PRIVATE_KEY: 'env.key',
       token: 'notatoken',
@@ -168,6 +176,12 @@ describe('Index Tests', async () => {
     assert.ok(Array.isArray(result.body.results));
     assert.ok(!result.body.truncated);
     assert.equal(result.body.results.length, 3);
+    assert.deepEqual(result.headers, {
+      'content-type': 'application/json',
+      Vary: 'X-Token, X-Service',
+      Vary2: 'X-Token, X-Service',
+      'Cache-Control': 'max-age=300',
+    });
   });
 
   it('index function returns an object with ow_headers', async () => {
@@ -188,41 +202,11 @@ describe('Index Tests', async () => {
     assert.ok(Array.isArray(result.body.results));
     assert.ok(!result.body.truncated);
     assert.equal(result.body.results.length, 3);
-  });
-});
-
-describe('testing cleanRequestParams', () => {
-  it('cleanRequestParams returns object', () => {
-    const result = cleanRequestParams({});
-    assert.equal(typeof result, 'object');
-    assert.ok(!Array.isArray(result));
-  });
-
-  it('cleanRequestParams returns clean object', () => {
-    const result = cleanRequestParams({
-      FOOBAR: 'ahhhh',
-      foobar: 'good',
-      __foobar: 'bad',
-    });
-    assert.deepStrictEqual(result, {
-      foobar: 'good',
-    });
-  });
-
-  it('cleanQueryParams leaves only BigQuery', () => {
-    const query = 'SELECT ^something1, ^something2 WHERE ^tablename and @bqParam';
-
-    const params = {
-      tablename: '`Helix',
-      something1: '\'Loves',
-      something2: '"Lucy',
-      something3: 'foobar',
-      bqParam: 'Google BigQuery Parameter',
-    };
-    const result = cleanQueryParams(query, params);
-
-    assert.deepStrictEqual(result, {
-      bqParam: 'Google BigQuery Parameter',
+    assert.deepEqual(result.headers, {
+      'content-type': 'application/json',
+      Vary: 'X-Token, X-Service',
+      Vary2: 'X-Token, X-Service',
+      'Cache-Control': 'max-age=300',
     });
   });
 });

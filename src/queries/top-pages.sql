@@ -1,5 +1,5 @@
---- Authorization: none
---- Cache-Control: max-age=300
+--- Authorization: fastly
+--- Cache-Control: max-age=1296000
 --- fromDays: 30
 --- toDays: 0
 --- limit: 10
