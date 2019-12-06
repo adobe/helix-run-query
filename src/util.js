@@ -98,7 +98,7 @@ function cleanQuery(query) {
  */
 function cleanRequestParams(params) {
   return Object.keys(params)
-    .filter((key) => !key.match(/[A-Z0-9_]+/))
+    .filter((key) => !key.match(/^[A-Z0-9_]+/))
     .filter((key) => !key.startsWith('__'))
     .reduce((cleanedobj, key) => {
       // eslint-disable-next-line no-param-reassign
