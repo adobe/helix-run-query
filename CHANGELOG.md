@@ -1,3 +1,10 @@
+## [2.1.5](https://github.com/adobe/helix-run-query/compare/v2.1.4...v2.1.5) (2019-12-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-shared to v3.3.0 ([54df4ea](https://github.com/adobe/helix-run-query/commit/54df4ea4bb237a5308e6a61aecc529e9110b8e9a))
+
 ## [2.1.4](https://github.com/adobe/helix-run-query/compare/v2.1.3...v2.1.4) (2019-12-20)
 
 
