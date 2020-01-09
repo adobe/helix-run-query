@@ -1,3 +1,10 @@
+## [2.1.7](https://github.com/adobe/helix-run-query/compare/v2.1.6...v2.1.7) (2020-01-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-status to v7.0.3 ([#93](https://github.com/adobe/helix-run-query/issues/93)) ([2d4aebf](https://github.com/adobe/helix-run-query/commit/2d4aebf36be3450821a93d3bcf1944cb4a2920d8))
+
 ## [2.1.6](https://github.com/adobe/helix-run-query/compare/v2.1.5...v2.1.6) (2020-01-06)
 
 
