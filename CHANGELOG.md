@@ -1,3 +1,10 @@
+## [2.2.1](https://github.com/adobe/helix-run-query/compare/v2.2.0...v2.2.1) (2020-01-10)
+
+
+### Bug Fixes
+
+* **blogposts:** do not require authentication ([936cfb9](https://github.com/adobe/helix-run-query/commit/936cfb92bd6ccffd526e17fb627665695346d53e)), closes [/github.com/davidnuescheler/theblog/issues/17#issuecomment-573136128](https://github.com//github.com/davidnuescheler/theblog/issues/17/issues/issuecomment-573136128)
+
 # [2.2.0](https://github.com/adobe/helix-run-query/compare/v2.1.7...v2.2.0) (2020-01-10)
 
 
