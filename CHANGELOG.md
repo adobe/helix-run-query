@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/adobe/helix-run-query/compare/v2.1.7...v2.2.0) (2020-01-10)
+
+
+### Features
+
+* **queries:** a query to see top blogs in theblog helix page ([30eb1e2](https://github.com/adobe/helix-run-query/commit/30eb1e2b8aed8ba1ba27d61314af6c145bf9796b)), closes [#94](https://github.com/adobe/helix-run-query/issues/94)
+
 ## [2.1.7](https://github.com/adobe/helix-run-query/compare/v2.1.6...v2.1.7) (2020-01-09)
 
 
