@@ -1,4 +1,4 @@
---- Authorization: fastly
+--- Authorization: none
 --- Cache-Control: max-age=1296000
 --- fromDays: 30
 --- toDays: 0
