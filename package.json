@@ -86,7 +86,8 @@
     "linksPackage": "helix-services",
     "static": [
       "src/queries/next-resource.sql",
-      "src/queries/top-pages.sql"
+      "src/queries/top-pages.sql",
+      "src/queries/top-blogposts.sql"
     ]
   }
 }
