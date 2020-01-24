@@ -1,3 +1,10 @@
+## [2.2.9](https://github.com/adobe/helix-run-query/compare/v2.2.8...v2.2.9) (2020-01-24)
+
+
+### Bug Fixes
+
+* **epsagon:** use helix-epsagon wrapper ([#108](https://github.com/adobe/helix-run-query/issues/108)) ([37469e6](https://github.com/adobe/helix-run-query/commit/37469e655d12108cf0b6a80c5bf62a2314c3dd58))
+
 ## [2.2.8](https://github.com/adobe/helix-run-query/compare/v2.2.7...v2.2.8) (2020-01-23)
 
 
