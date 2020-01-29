@@ -1,3 +1,59 @@
+## [2.2.13](https://github.com/adobe/helix-run-query/compare/v2.2.12...v2.2.13) (2020-01-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/openwhisk-action-utils to v4.1.0 ([8c22936](https://github.com/adobe/helix-run-query/commit/8c22936a9c8c14c841029c127e59cc795f07fa52))
+
+## [2.2.12](https://github.com/adobe/helix-run-query/compare/v2.2.11...v2.2.12) (2020-01-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-epsagon to v1.1.2 ([e0ef41d](https://github.com/adobe/helix-run-query/commit/e0ef41df930e622ba2829d2b94dee9534cbf58b8))
+
+## [2.2.11](https://github.com/adobe/helix-run-query/compare/v2.2.10...v2.2.11) (2020-01-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-epsagon to v1.1.1 ([01e2412](https://github.com/adobe/helix-run-query/commit/01e2412acfcbda1e1206eb239d2945e83261e7f9))
+
+## [2.2.10](https://github.com/adobe/helix-run-query/compare/v2.2.9...v2.2.10) (2020-01-24)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-epsagon to v1.1.0 ([#110](https://github.com/adobe/helix-run-query/issues/110)) ([909c694](https://github.com/adobe/helix-run-query/commit/909c69424ef45737cc5f4aebf44a04936ff6ed26))
+
+## [2.2.9](https://github.com/adobe/helix-run-query/compare/v2.2.8...v2.2.9) (2020-01-24)
+
+
+### Bug Fixes
+
+* **epsagon:** use helix-epsagon wrapper ([#108](https://github.com/adobe/helix-run-query/issues/108)) ([37469e6](https://github.com/adobe/helix-run-query/commit/37469e655d12108cf0b6a80c5bf62a2314c3dd58))
+
+## [2.2.8](https://github.com/adobe/helix-run-query/compare/v2.2.7...v2.2.8) (2020-01-23)
+
+
+### Bug Fixes
+
+* **deps:** update [@adobe](https://github.com/adobe) ([ae12d93](https://github.com/adobe/helix-run-query/commit/ae12d9374b0cfadb5959f2c4762c7f87867e81b6))
+
+## [2.2.7](https://github.com/adobe/helix-run-query/compare/v2.2.6...v2.2.7) (2020-01-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-status to v7.1.0 ([db1fc8b](https://github.com/adobe/helix-run-query/commit/db1fc8b2130dfa8e79b110f3d329081fbe0fdf73))
+
+## [2.2.6](https://github.com/adobe/helix-run-query/compare/v2.2.5...v2.2.6) (2020-01-20)
+
+
+### Bug Fixes
+
+* **deps:** update external ([#104](https://github.com/adobe/helix-run-query/issues/104)) ([a591e21](https://github.com/adobe/helix-run-query/commit/a591e21ff8bd3311b0fb337053705e95d75cffd9))
+
 ## [2.2.5](https://github.com/adobe/helix-run-query/compare/v2.2.4...v2.2.5) (2020-01-16)
 
 
