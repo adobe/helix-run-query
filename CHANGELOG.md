@@ -1,3 +1,15 @@
+# [2.3.0](https://github.com/adobe/helix-run-query/compare/v2.2.13...v2.3.0) (2020-01-30)
+
+
+### Bug Fixes
+
+* **query:** gets correct posts ([f1e197a](https://github.com/adobe/helix-run-query/commit/f1e197add5a0bf9d01eada7b44b557682dc67349))
+
+
+### Features
+
+* **top-blogs:** make top-blogposts query parametric ([6401578](https://github.com/adobe/helix-run-query/commit/64015788a853e3caeb25eadea776789bb55eaea1)), closes [#116](https://github.com/adobe/helix-run-query/issues/116)
+
 ## [2.2.13](https://github.com/adobe/helix-run-query/compare/v2.2.12...v2.2.13) (2020-01-29)
 
 
