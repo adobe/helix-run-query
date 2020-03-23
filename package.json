@@ -35,7 +35,7 @@
     "@adobe/openwhisk-action-utils": "4.2.2",
     "@google-cloud/bigquery": "4.7.0",
     "dotenv": "8.2.0",
-    "fs-extra": "8.1.0",
+    "fs-extra": "9.0.0",
     "googleapis": "48.0.0",
     "json-size": "1.0.0",
     "request": "2.88.2",
