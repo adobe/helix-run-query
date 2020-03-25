@@ -1,3 +1,10 @@
+# [2.4.0](https://github.com/adobe/helix-run-query/compare/v2.3.18...v2.4.0) (2020-03-25)
+
+
+### Features
+
+* **queries:** added new query for error tracing ([#156](https://github.com/adobe/helix-run-query/issues/156)) ([9064fde](https://github.com/adobe/helix-run-query/commit/9064fde18a03ba095ac44deda4cc81ef287146e6))
+
 ## [2.3.18](https://github.com/adobe/helix-run-query/compare/v2.3.17...v2.3.18) (2020-03-24)
 
 
