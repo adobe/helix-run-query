@@ -1,3 +1,10 @@
+## [2.4.6](https://github.com/adobe/helix-run-query/compare/v2.4.5...v2.4.6) (2020-04-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-epsagon to v1.2.0 ([9a9682a](https://github.com/adobe/helix-run-query/commit/9a9682ad4dc0c0b242fc906776fca6f8929cc189))
+
 ## [2.4.5](https://github.com/adobe/helix-run-query/compare/v2.4.4...v2.4.5) (2020-04-08)
 
 
