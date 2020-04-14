@@ -82,8 +82,7 @@
     }
   },
   "wsk": {
-    "name": "helix-services-private/run-query@${version}",
-    "linksPackage": "helix-services",
+    "name": "helix-services/run-query@${version}",
     "static": [
       "src/queries/next-resource.sql",
       "src/queries/top-pages.sql",
