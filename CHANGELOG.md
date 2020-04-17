@@ -1,3 +1,10 @@
+## [2.4.8](https://github.com/adobe/helix-run-query/compare/v2.4.7...v2.4.8) (2020-04-17)
+
+
+### Bug Fixes
+
+* **deploy:** use helix-services package ([#175](https://github.com/adobe/helix-run-query/issues/175)) ([67bf91a](https://github.com/adobe/helix-run-query/commit/67bf91aa14921aef323244353216e916116015b9))
+
 ## [2.4.7](https://github.com/adobe/helix-run-query/compare/v2.4.6...v2.4.7) (2020-04-14)
 
 
