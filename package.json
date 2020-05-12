@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/helix-run-query"
+    "url": "https://github.com/adobe/helix-run-query.git"
   },
   "author": "",
   "license": "Apache-2.0",
