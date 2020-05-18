@@ -36,7 +36,7 @@
     "@google-cloud/bigquery": "4.7.0",
     "dotenv": "8.2.0",
     "fs-extra": "9.0.0",
-    "googleapis": "50.0.0",
+    "googleapis": "51.0.0",
     "json-size": "1.0.0",
     "request": "2.88.2",
     "request-promise-native": "1.0.8"
