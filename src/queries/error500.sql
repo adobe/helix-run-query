@@ -1,3 +1,4 @@
+--- description: log entries of requests with 50x status code.
 --- Authorization: none
 --- limit: 1000
 --- fromMins: 30

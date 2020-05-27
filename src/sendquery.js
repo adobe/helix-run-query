@@ -19,6 +19,30 @@ const {
 } = require('./util.js');
 
 /**
+ * processes headers and request parameters
+ *
+ * @param {*} query
+ * @param {*} params
+ */
+async function processParams(query, params) {
+  const rawQuery = await loadQuery(query);
+  const headerParams = getHeaderParams(rawQuery);
+  const description = headerParams.description || '';
+  const loadedQuery = cleanQuery(rawQuery);
+  const requestParams = resolveParameterDiff(
+    cleanHeaderParams(loadedQuery, params),
+    cleanHeaderParams(loadedQuery, headerParams),
+  );
+
+  return {
+    headerParams,
+    description,
+    loadedQuery,
+    requestParams,
+  };
+}
+
+/**
  * executes a query using Google Bigquery API
  *
  * @param {string} email email address of the Google service account
@@ -29,13 +53,12 @@ const {
  * @param {object} params parameters for substitution into query
  */
 async function execute(email, key, project, query, service, params = {}) {
-  const rawQuery = await loadQuery(query);
-  const headerParams = getHeaderParams(rawQuery);
-  const loadedQuery = cleanQuery(rawQuery);
-  const completeParams = resolveParameterDiff(
-    cleanHeaderParams(loadedQuery, params),
-    cleanHeaderParams(loadedQuery, headerParams),
-  );
+  const {
+    headerParams,
+    description,
+    loadedQuery,
+    requestParams,
+  } = await processParams(query, params);
 
   if (headerParams && headerParams.Authorization === 'fastly') {
     try {
@@ -62,7 +85,7 @@ async function execute(email, key, project, query, service, params = {}) {
       let avgsize = 0;
       const maxsize = 1024 * 1024 * 0.9;
       // eslint-disable-next-line no-param-reassign
-      completeParams.limit = parseInt(completeParams.limit, 10);
+      requestParams.limit = parseInt(requestParams.limit, 10);
       const headers = cleanHeaderParams(loadedQuery, headerParams, true);
 
       const spaceleft = () => {
@@ -89,18 +112,22 @@ async function execute(email, key, project, query, service, params = {}) {
         dataset.createQueryStream({
           query: q,
           maxResults: params.limit,
-          params: completeParams,
+          params: requestParams,
         })
           .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
             headers,
             truncated: true,
             results,
+            description,
+            requestParams,
           })))
           .on('error', (e) => reject(e))
           .on('end', () => resolve({
             headers,
             truncated: false,
             results,
+            description,
+            requestParams,
           }));
       });
     });
@@ -109,4 +136,24 @@ async function execute(email, key, project, query, service, params = {}) {
   }
 }
 
-module.exports = { execute };
+/**
+ * get query metadata
+ * @param {object} params parameters for substitution into query
+ */
+async function queryInfo(params) {
+  const path = params.__ow_path.split('.')[0];
+  const {
+    headerParams, description, loadedQuery, requestParams,
+  } = await processParams(path, params);
+
+  return {
+    statusCode: 200,
+    headers: cleanHeaderParams(loadedQuery, headerParams, true),
+    body: {
+      text: description,
+      requestParams: JSON.stringify(requestParams),
+    },
+  };
+}
+
+module.exports = { execute, queryInfo };

@@ -25,7 +25,7 @@ const { setupMocha: setupPolly } = require('@pollyjs/core');
 const env = require('../src/env.js');
 
 function getQuery(replacer) {
-  return `--- Authorization: none
+  return `--- description: good commenting is encouraged\n--- Authorization: none
   SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Type, status_code
   FROM ( 
     ^${replacer}
@@ -37,7 +37,7 @@ function getQuery(replacer) {
 }
 
 describe('bigquery tests', async () => {
-  const goodQuery = 'select req_url from requests LIMIT @limit';
+  const goodQuery = '--- description: good comment practices for helix queries is encouraged\nselect req_url from requests LIMIT @limit';
   const badQuery = 'this query is intentionally broken.';
 
   const badExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => badQuery } });
@@ -91,38 +91,46 @@ describe('bigquery tests', async () => {
 
 
   it('runs a query', async () => {
-    const { results } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', service, {
+    const { results, description, requestParams } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', service, {
       limit: 3,
     });
     assert.ok(Array.isArray(results));
+    assert.deepEqual(requestParams, { limit: 3 });
+    assert.equal(description, 'good comment practices for helix queries is encouraged');
     assert.ok(results.length, 3);
   });
 
   it('runs a query with params', async () => {
-    const { results } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', service, {
+    const { results, description, requestParams } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', service, {
       limit: 3,
     });
     assert.ok(Array.isArray(results));
+    assert.equal(description, 'good comment practices for helix queries is encouraged');
+    assert.deepEqual(requestParams, { limit: 3 });
     assert.equal(results.length, 3);
   });
 
   it('runs a query with myrequest replacer', async () => {
-    const { results } = await myReplacer.execute(env.email, env.key, env.projectid, 'next-resource', service, {
+    const { results, description, requestParams } = await myReplacer.execute(env.email, env.key, env.projectid, 'next-resource', service, {
       limit: 3,
     });
     assert.ok(Array.isArray(results));
+    assert.equal(description, 'good commenting is encouraged');
+    assert.deepEqual(requestParams, { limit: 3 });
     assert.equal(results.length, 3);
   });
 
 
   it('runs a query with alldatasets replacer', async () => {
-    const { results } = await execWithRealLoad.execute(env.email, env.key, env.projectid, 'top-pages', service, {
+    const { results, description, requestParams } = await execWithRealLoad.execute(env.email, env.key, env.projectid, 'top-pages', service, {
       limit: 10,
       fromDays: 30,
       toDays: 0,
     });
 
     assert.ok(Array.isArray(results));
+    assert.equal(description, 'most requested sites by Helix.');
+    assert.deepEqual(requestParams, { limit: 10, fromDays: 30, toDays: 0 });
     assert.equal(results.length, 10);
   });
 
