@@ -1,3 +1,10 @@
+# [2.5.0](https://github.com/adobe/helix-run-query/compare/v2.4.16...v2.5.0) (2020-05-28)
+
+
+### Features
+
+* **most-visited.sql:** new query for site diff ([#201](https://github.com/adobe/helix-run-query/issues/201)) ([d82cf59](https://github.com/adobe/helix-run-query/commit/d82cf59259174092ed62a2410e1bdec6c85fa031)), closes [#200](https://github.com/adobe/helix-run-query/issues/200)
+
 ## [2.4.16](https://github.com/adobe/helix-run-query/compare/v2.4.15...v2.4.16) (2020-05-26)
 
 
