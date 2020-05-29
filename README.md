@@ -6,7 +6,7 @@
 [![GitHub license](https://img.shields.io/github/license/adobe/helix-run-query.svg)](https://github.com/adobe/helix-run-query/blob/master/LICENSE.txt)
 [![GitHub issues](https://img.shields.io/github/issues/adobe/helix-run-query.svg)](https://github.com/adobe/helix-run-query/issues)
 [![LGTM Code Quality Grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/adobe/helix-run-query.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/adobe/helix-run-query)
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) [![Greenkeeper badge](https://badges.greenkeeper.io/adobe/helix-run-query.svg)](https://greenkeeper.io/)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) 
 
 ## Installation
 run ```npm install``` in root of repository
