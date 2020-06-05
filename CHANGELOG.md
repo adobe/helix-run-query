@@ -1,3 +1,24 @@
+## [2.5.2](https://github.com/adobe/helix-run-query/compare/v2.5.1...v2.5.2) (2020-06-02)
+
+
+### Bug Fixes
+
+* **deps:** update [@adobe](https://github.com/adobe) ([b816407](https://github.com/adobe/helix-run-query/commit/b816407620dab5560ea8dc9a2510e2c489f969da))
+
+## [2.5.1](https://github.com/adobe/helix-run-query/compare/v2.5.0...v2.5.1) (2020-06-01)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-epsagon to v1.3.3 ([66a1174](https://github.com/adobe/helix-run-query/commit/66a11745b387daf43c7ee74bc0358bf82be8b17d))
+
+# [2.5.0](https://github.com/adobe/helix-run-query/compare/v2.4.16...v2.5.0) (2020-05-28)
+
+
+### Features
+
+* **most-visited.sql:** new query for site diff ([#201](https://github.com/adobe/helix-run-query/issues/201)) ([d82cf59](https://github.com/adobe/helix-run-query/commit/d82cf59259174092ed62a2410e1bdec6c85fa031)), closes [#200](https://github.com/adobe/helix-run-query/issues/200)
+
 ## [2.4.16](https://github.com/adobe/helix-run-query/compare/v2.4.15...v2.4.16) (2020-05-26)
 
 
