@@ -89,7 +89,6 @@ describe('bigquery tests', async () => {
       });
   });
 
-
   it('runs a query', async () => {
     const { results } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', service, {
       limit: 3,
@@ -114,7 +113,6 @@ describe('bigquery tests', async () => {
     assert.equal(results.length, 3);
   });
 
-
   it('runs a query with alldatasets replacer', async () => {
     const { results } = await execWithRealLoad.execute(env.email, env.key, env.projectid, 'top-pages', service, {
       limit: 10,
@@ -125,7 +123,6 @@ describe('bigquery tests', async () => {
     assert.ok(Array.isArray(results));
     assert.equal(results.length, 10);
   });
-
 
   it('throws without projectid', async () => {
     try {

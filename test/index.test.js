@@ -110,7 +110,6 @@ describe('Index Tests', async () => {
     });
   });
 
-
   it('index function truncates long responses', async () => {
     const result = await index({
       GOOGLE_CLIENT_EMAIL: env.email,
