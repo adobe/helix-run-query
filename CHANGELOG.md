@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/adobe/helix-run-query/compare/v2.5.11...v2.6.0) (2020-06-24)
+
+
+### Features
+
+* **index.js:** response contain playback ([#206](https://github.com/adobe/helix-run-query/issues/206)) ([cf8a6ff](https://github.com/adobe/helix-run-query/commit/cf8a6ff52b1299b6c863a696a4d8ea21d330a2df)), closes [#204](https://github.com/adobe/helix-run-query/issues/204)
+
 ## [2.5.11](https://github.com/adobe/helix-run-query/compare/v2.5.10...v2.5.11) (2020-06-16)
 
 
