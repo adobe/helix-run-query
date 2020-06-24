@@ -24,7 +24,7 @@ const { setupMocha: setupPolly } = require('@pollyjs/core');
 const env = require('../src/env.js');
 
 describe('Index Tests', async () => {
-  const goodQueryWithAuth = '--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nselect * from requests LIMIT @limit';
+  const goodQueryWithAuth = '--- description: some fake comments that mean nothing\n--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nselect * from requests LIMIT @limit';
 
   const goodExecWithAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => true } });
   const execWithBadAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => Promise.reject(new Error('Failed')) } });
@@ -108,6 +108,8 @@ describe('Index Tests', async () => {
       Vary2: 'X-Token, X-Service',
       'Cache-Control': 'max-age=300',
     });
+    assert.deepEqual(result.body.requestParams, { limit: 3 });
+    assert.equal(result.body.description, 'some fake comments that mean nothing');
   });
 
   it('index function truncates long responses', async () => {
@@ -129,6 +131,8 @@ describe('Index Tests', async () => {
       Vary2: 'X-Token, X-Service',
       'Cache-Control': 'max-age=300',
     });
+    assert.deepEqual(result.body.requestParams, { limit: 2000 });
+    assert.equal(result.body.description, 'some fake comments that mean nothing');
   });
 
   it('index function returns 500 on error', async () => {
@@ -181,6 +185,8 @@ describe('Index Tests', async () => {
       Vary2: 'X-Token, X-Service',
       'Cache-Control': 'max-age=300',
     });
+    assert.deepEqual(result.body.requestParams, { limit: 3 });
+    assert.equal(result.body.description, 'some fake comments that mean nothing');
   });
 
   it('index function returns an object with ow_headers', async () => {
@@ -207,5 +213,32 @@ describe('Index Tests', async () => {
       Vary2: 'X-Token, X-Service',
       'Cache-Control': 'max-age=300',
     });
+    assert.deepEqual(result.body.requestParams, { limit: 3 });
+    assert.equal(result.body.description, 'some fake comments that mean nothing');
+  });
+
+  it('index returns query metadata if path ends with .txt, .html', async () => {
+    const { body, headers, statusCode } = await index({
+      GOOGLE_CLIENT_EMAIL: env.email,
+      GOOGLE_PRIVATE_KEY: env.key,
+      GOOGLE_PROJECT_ID: env.projectid,
+      token: env.token,
+      __ow_path: 'list-everything.txt',
+      __ow_headers: {
+        'x-token': env.token,
+        'x-service': service,
+      },
+      limit: 3,
+      service,
+    });
+    const EXPECTED = {
+      Authorization: 'fastly',
+      'Cache-Control': 'max-age=300',
+      Vary2: 'X-Token, X-Service',
+    };
+    assert.equal(statusCode, 200);
+    assert.equal(body.text, 'some fake comments that mean nothing');
+    assert.equal(body.requestParams, '{"limit":3}');
+    assert.deepEqual(headers, EXPECTED);
   });
 });

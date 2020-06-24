@@ -53,6 +53,7 @@ async function loadQuery(query) {
 function cleanHeaderParams(query, params, rmvQueryParams = false) {
   return Object.keys(params)
     .filter((key) => rmvQueryParams !== (query.match(new RegExp(`\\@${key}`, 'g')) != null))
+    .filter((key) => key !== 'description')
     .reduce((cleanObj, key) => {
       // eslint-disable-next-line no-param-reassign
       cleanObj[key] = params[key];

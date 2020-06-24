@@ -13,12 +13,17 @@ const { wrap: status } = require('@adobe/helix-status');
 const { wrap } = require('@adobe/openwhisk-action-utils');
 const { logger } = require('@adobe/openwhisk-action-logger');
 const { epsagon } = require('@adobe/helix-epsagon');
-const { execute } = require('./sendquery.js');
+const { execute, queryInfo } = require('./sendquery.js');
 const { cleanRequestParams } = require('./util.js');
 
 async function runExec(params) {
   try {
-    const { results, truncated, headers } = await execute(
+    if (params.__ow_path && params.__ow_path.endsWith('.txt')) {
+      return queryInfo(params);
+    }
+    const {
+      results, truncated, headers, description, requestParams,
+    } = await execute(
       params.GOOGLE_CLIENT_EMAIL,
       params.GOOGLE_PRIVATE_KEY,
       params.GOOGLE_PROJECT_ID,
@@ -34,6 +39,8 @@ async function runExec(params) {
       },
       body: {
         results,
+        description,
+        requestParams,
         truncated,
       },
     };

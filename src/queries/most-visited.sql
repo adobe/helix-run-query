@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
 */
+--- description: most visited urls within hlx.pages
 --- Authorization: none
 --- Cache-Control: max-age=1296000
 --- fromDays: 30
