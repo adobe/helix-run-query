@@ -1,3 +1,10 @@
+## [2.6.5](https://github.com/adobe/helix-run-query/compare/v2.6.4...v2.6.5) (2020-07-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fastly-native-promises to v1.16.1 ([#236](https://github.com/adobe/helix-run-query/issues/236)) ([41f5e45](https://github.com/adobe/helix-run-query/commit/41f5e456dcfe37d6d6c34cbf6fc5066605642ca1))
+
 ## [2.6.4](https://github.com/adobe/helix-run-query/compare/v2.6.3...v2.6.4) (2020-07-02)
 
 
