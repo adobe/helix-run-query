@@ -1,5 +1,5 @@
 --- description: log entries of requests with 50x status code.
---- Authorization: none
+--- Authorization: fastly
 --- limit: 1000
 --- fromMins: 30
 --- toMins: 0

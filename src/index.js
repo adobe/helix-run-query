@@ -14,7 +14,7 @@ const { wrap } = require('@adobe/openwhisk-action-utils');
 const { logger } = require('@adobe/openwhisk-action-logger');
 const { epsagon } = require('@adobe/helix-epsagon');
 const { execute, queryInfo } = require('./sendquery.js');
-const { cleanRequestParams } = require('./util.js');
+const { cleanRequestParams, accessLogFormat } = require('./util.js');
 
 async function runExec(params) {
   try {
@@ -38,7 +38,7 @@ async function runExec(params) {
         ...headers,
       },
       body: {
-        results,
+        results: (params.format === 'access.log') ? results.map(accessLogFormat) : results,
         description,
         requestParams,
         truncated,

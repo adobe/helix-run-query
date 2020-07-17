@@ -9,6 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+/* eslint-disable camelcase */
 const initfastly = require('@adobe/fastly-native-promises');
 const fs = require('fs-extra');
 const path = require('path');
@@ -141,6 +142,23 @@ function resolveParameterDiff(params, defaults) {
   return Object.assign(defaults, params);
 }
 
+/**
+ * format log data into apache access log format
+ *
+ * @param {object} requests array of objects containing log data
+ *
+ * returns object in "%h %l %u %t \"%r\" %>s %b" format
+ */
+function accessLogFormat(request) {
+  const {
+    client_ip_masked, client_as_name, time_start_usec, req_url,
+    status_code, req_http_User_Agent, req_http_Referer,
+  } = request;
+  const date = new Date(parseInt(time_start_usec, 10) / 1000).toString();
+  // eslint-disable-next-line no-param-reassign
+  return `${client_ip_masked} - ${client_as_name} [${date}] "GET ${req_url} -" ${status_code} "${req_http_Referer}" "${req_http_User_Agent}"`;
+}
+
 module.exports = {
   loadQuery,
   getHeaderParams,
@@ -150,4 +168,5 @@ module.exports = {
   authFastly,
   replaceTableNames,
   resolveParameterDiff,
+  accessLogFormat,
 };

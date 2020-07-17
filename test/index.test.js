@@ -174,11 +174,12 @@ describe('Index Tests', async () => {
       __ow_path: 'list-everything',
       limit: 3,
       service: 'Wrong Service',
+      format: 'access.log',
     });
     assert.equal(typeof result, 'object');
+    assert.equal(result.body.results.length, 3);
     assert.ok(Array.isArray(result.body.results));
     assert.ok(!result.body.truncated);
-    assert.equal(result.body.results.length, 3);
     assert.deepEqual(result.headers, {
       'content-type': 'application/json',
       Vary: 'X-Token, X-Service',

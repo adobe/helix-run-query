@@ -1,5 +1,5 @@
 --- description: log entries of requests occuring in [fromMins, toMins].
---- Authorization: none
+--- Authorization: fastly
 --- limit: 1000
 --- contains: theblog--adobe.hlx.page
 --- fromMins: 30
