@@ -1,3 +1,73 @@
+## [2.6.16](https://github.com/adobe/helix-run-query/compare/v2.6.15...v2.6.16) (2020-08-02)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([c6e3919](https://github.com/adobe/helix-run-query/commit/c6e3919d5e1ca43d294b83f83991e11fe9e2d838))
+
+## [2.6.15](https://github.com/adobe/helix-run-query/compare/v2.6.14...v2.6.15) (2020-07-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fastly-native-promises to v1.17.0 ([365a205](https://github.com/adobe/helix-run-query/commit/365a2050e99dacad8d835a2bc55e339847fecb95))
+
+## [2.6.14](https://github.com/adobe/helix-run-query/compare/v2.6.13...v2.6.14) (2020-07-28)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v56 ([#258](https://github.com/adobe/helix-run-query/issues/258)) ([0104106](https://github.com/adobe/helix-run-query/commit/01041063f58c61289e59b787b051beab95675649))
+
+## [2.6.13](https://github.com/adobe/helix-run-query/compare/v2.6.12...v2.6.13) (2020-07-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-status to v8.1.2 ([#255](https://github.com/adobe/helix-run-query/issues/255)) ([4566937](https://github.com/adobe/helix-run-query/commit/45669376b9cc418b20818566745b610eef7414bc))
+
+## [2.6.12](https://github.com/adobe/helix-run-query/compare/v2.6.11...v2.6.12) (2020-07-22)
+
+
+### Bug Fixes
+
+* **deps:** update [@adobe](https://github.com/adobe) fixes ([1e786b5](https://github.com/adobe/helix-run-query/commit/1e786b5ecd93cbfc1b4b1d44353f3d68c1dcce0e))
+
+## [2.6.11](https://github.com/adobe/helix-run-query/compare/v2.6.10...v2.6.11) (2020-07-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-status to v8.1.1 ([#253](https://github.com/adobe/helix-run-query/issues/253)) ([3c62c56](https://github.com/adobe/helix-run-query/commit/3c62c5608c9e7c4659eb180ea97c372145ec1e79))
+
+## [2.6.10](https://github.com/adobe/helix-run-query/compare/v2.6.9...v2.6.10) (2020-07-21)
+
+
+### Bug Fixes
+
+* **deps:** update [@adobe](https://github.com/adobe) fixes ([#252](https://github.com/adobe/helix-run-query/issues/252)) ([e459f11](https://github.com/adobe/helix-run-query/commit/e459f11ff3e54e5a7bc6c55284b6de068ee8b8b1))
+
+## [2.6.9](https://github.com/adobe/helix-run-query/compare/v2.6.8...v2.6.9) (2020-07-20)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v55 ([#251](https://github.com/adobe/helix-run-query/issues/251)) ([a124535](https://github.com/adobe/helix-run-query/commit/a1245356e9ab70e2f4b05e284854ac1087e43fd6))
+
+## [2.6.8](https://github.com/adobe/helix-run-query/compare/v2.6.7...v2.6.8) (2020-07-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v54 ([#245](https://github.com/adobe/helix-run-query/issues/245)) ([3dfb05b](https://github.com/adobe/helix-run-query/commit/3dfb05baedf4fb79837ac6263fc3eb90ea8f2723))
+
+## [2.6.7](https://github.com/adobe/helix-run-query/compare/v2.6.6...v2.6.7) (2020-07-11)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([81423e0](https://github.com/adobe/helix-run-query/commit/81423e0ba72b1d260c02a53888ed0b521e20bf90))
+
 ## [2.6.6](https://github.com/adobe/helix-run-query/compare/v2.6.5...v2.6.6) (2020-07-02)
 
 
