@@ -1,3 +1,10 @@
+## [2.6.32](https://github.com/adobe/helix-run-query/compare/v2.6.31...v2.6.32) (2020-09-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/openwhisk-action-utils to v4.3.1 ([f70d1e3](https://github.com/adobe/helix-run-query/commit/f70d1e31a72947058d2aa3a1da1dcccfaa96b2cf))
+
 ## [2.6.31](https://github.com/adobe/helix-run-query/compare/v2.6.30...v2.6.31) (2020-09-29)
 
 
