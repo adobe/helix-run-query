@@ -1,3 +1,10 @@
+## [2.6.40](https://github.com/adobe/helix-run-query/compare/v2.6.39...v2.6.40) (2020-11-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v64 ([5d532f6](https://github.com/adobe/helix-run-query/commit/5d532f64c76d4952a3daf327ea0d578512d67a79))
+
 ## [2.6.39](https://github.com/adobe/helix-run-query/compare/v2.6.38...v2.6.39) (2020-11-07)
 
 
