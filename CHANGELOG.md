@@ -1,3 +1,10 @@
+## [2.6.42](https://github.com/adobe/helix-run-query/compare/v2.6.41...v2.6.42) (2020-11-14)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @google-cloud/bigquery to v5.5.0 ([1d18cc1](https://github.com/adobe/helix-run-query/commit/1d18cc15619c208567f238958277c209a7f3e7ab))
+
 ## [2.6.41](https://github.com/adobe/helix-run-query/compare/v2.6.40...v2.6.41) (2020-11-13)
 
 
