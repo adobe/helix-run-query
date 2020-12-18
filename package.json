@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/adobe/helix-run-query#readme",
   "dependencies": {
-    "@adobe/fastly-native-promises": "1.18.2",
+    "@adobe/fastly-native-promises": "1.19.0",
     "@adobe/helix-epsagon": "1.5.5",
     "@adobe/helix-status": "9.0.0",
     "@adobe/openwhisk-action-logger": "2.3.1",
