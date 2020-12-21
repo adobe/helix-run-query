@@ -51,7 +51,7 @@
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/exec": "5.0.0",
     "@semantic-release/git": "9.0.0",
-    "ajv": "6.12.6",
+    "ajv": "7.0.2",
     "codecov": "3.8.1",
     "commitizen": "4.2.2",
     "cz-conventional-changelog": "3.3.0",
