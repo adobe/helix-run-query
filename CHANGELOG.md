@@ -1,3 +1,10 @@
+# [2.7.0](https://github.com/adobe/helix-run-query/compare/v2.6.61...v2.7.0) (2021-01-14)
+
+
+### Features
+
+* **queries:** add generic last-errors query ([233ceff](https://github.com/adobe/helix-run-query/commit/233ceffa909b963c8b330f8423611968ac06e2eb))
+
 ## [2.6.61](https://github.com/adobe/helix-run-query/compare/v2.6.60...v2.6.61) (2021-01-12)
 
 
