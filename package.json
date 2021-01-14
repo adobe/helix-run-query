@@ -84,6 +84,7 @@
     "namespace": "helix",
     "name": "helix-services/run-query@${version}",
     "static": [
+      "src/queries/recent-errors.sql",
       "src/queries/next-resource.sql",
       "src/queries/top-pages.sql",
       "src/queries/top-blogposts.sql",
