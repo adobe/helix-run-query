@@ -1,14 +1,14 @@
 version: 2.1
 executors:
-  node10:
+  node12:
     docker:
-      - image: circleci/node:10-stretch
+      - image: circleci/node:12
         environment:
           NPM_CONFIG_PREFIX: "~/.npm-global"
     working_directory: ~/repo
 
 orbs:
-  helix-post-deploy: adobe/helix-post-deploy@1.10.0
+  helix-post-deploy: adobe/helix-post-deploy@2.0.6
 
 commands:
   setup:
@@ -18,8 +18,8 @@ commands:
           keys:
             - v3-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
       - run:
-          name: install npm 6.9.0
-          command: sudo npm -g install npm@6.9.0
+          name: install npm
+          command: sudo npm -g install npm
       - run:
           name: Installing Dependencies
           command: npm ci
@@ -33,7 +33,7 @@ commands:
 
 jobs:
   build:
-    executor: node10
+    executor: node12
     steps:
       - setup
       - run: mkdir junit
@@ -49,7 +49,7 @@ jobs:
           path: junit
 
   semantic-release:
-    executor: node10
+    executor: node12
     steps:
       - setup
       - run:
@@ -74,7 +74,7 @@ jobs:
           newrelic_group_policy: Delivery Repeated Failure
 
   branch-deploy:
-    executor: node10
+    executor: node12
     steps:
       - setup
       - run:
@@ -100,10 +100,10 @@ workflows:
             - build
           filters:
             branches:
-              ignore: master
+              ignore: main
       - semantic-release:
           requires:
             - build
           filters:
             branches:
-              only: master
+              only: main
