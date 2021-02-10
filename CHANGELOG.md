@@ -1,3 +1,10 @@
+## [2.7.6](https://github.com/adobe/helix-run-query/compare/v2.7.5...v2.7.6) (2021-02-10)
+
+
+### Bug Fixes
+
+* **deps:** bump helix-status ([dcf1bcc](https://github.com/adobe/helix-run-query/commit/dcf1bcc3920722a6f305035eb43cb8b221b3628f))
+
 ## [2.7.5](https://github.com/adobe/helix-run-query/compare/v2.7.4...v2.7.5) (2021-02-09)
 
 
