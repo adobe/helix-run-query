@@ -59,7 +59,7 @@
     "jsdoc-to-markdown": "6.0.1",
     "junit-report-builder": "3.0.0",
     "lint-staged": "10.5.4",
-    "lodash": "4.17.20",
+    "lodash": "4.17.21",
     "mocha": "8.3.0",
     "npm": "7.5.4",
     "nyc": "15.1.0",
