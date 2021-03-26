@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/adobe/helix-run-query#readme",
   "dependencies": {
-    "@adobe/fastly-native-promises": "1.22.2",
+    "@adobe/fastly-native-promises": "1.22.3",
     "@adobe/helix-epsagon": "1.6.0",
     "@adobe/helix-status": "9.1.1",
     "@adobe/openwhisk-action-logger": "2.4.1",
@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
-    "@adobe/openwhisk-action-builder": "3.0.16",
+    "@adobe/openwhisk-action-builder": "3.0.17",
     "@pollyjs/adapter-node-http": "5.1.0",
     "@pollyjs/core": "5.1.0",
     "@pollyjs/persister-fs": "5.0.0",
