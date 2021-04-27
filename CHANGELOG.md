@@ -1,3 +1,10 @@
+## [2.7.43](https://github.com/adobe/helix-run-query/compare/v2.7.42...v2.7.43) (2021-04-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v72 ([#414](https://github.com/adobe/helix-run-query/issues/414)) ([893269d](https://github.com/adobe/helix-run-query/commit/893269d59be97e2f9dafc92b880fff037d811aac))
+
 ## [2.7.42](https://github.com/adobe/helix-run-query/compare/v2.7.41...v2.7.42) (2021-04-12)
 
 
