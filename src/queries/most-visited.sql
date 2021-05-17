@@ -44,6 +44,7 @@ WITH num_visits AS (
   WHERE 
     m.max_reqs > CAST(@threshold as INT64) AND
     m.max_reqs = n.num_reqs AND
-    m.repo_name = n.repo_name 
+    m.repo_name = n.repo_name AND 
+    m.repo_name NOT in ("davidnuescheler--embrew", "adobe--spark-website")
   ORDER BY m.max_reqs DESC
 )
