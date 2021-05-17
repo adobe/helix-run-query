@@ -1,3 +1,10 @@
+## [2.7.46](https://github.com/adobe/helix-run-query/compare/v2.7.45...v2.7.46) (2021-05-17)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([8f15f5f](https://github.com/adobe/helix-run-query/commit/8f15f5f460aa44e7014a20fe66c1da973e940008))
+
 ## [2.7.45](https://github.com/adobe/helix-run-query/compare/v2.7.44...v2.7.45) (2021-05-04)
 
 
