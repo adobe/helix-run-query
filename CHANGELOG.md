@@ -1,3 +1,11 @@
+# [2.8.0](https://github.com/adobe/helix-run-query/compare/v2.7.46...v2.8.0) (2021-05-18)
+
+
+### Features
+
+* **most-visited:** allow hiding repos in table ([1ca8b23](https://github.com/adobe/helix-run-query/commit/1ca8b23f0bc2f035348699fded025613cb3fbed7))
+* **most-visited:** exclude repos ([c8ae7a9](https://github.com/adobe/helix-run-query/commit/c8ae7a988f9ba482f36547bd5d9ae9555f7f956d))
+
 ## [2.7.46](https://github.com/adobe/helix-run-query/compare/v2.7.45...v2.7.46) (2021-05-17)
 
 
