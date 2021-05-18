@@ -44,6 +44,7 @@ WITH num_visits AS (
   WHERE 
     m.max_reqs > CAST(@threshold as INT64) AND
     m.max_reqs = n.num_reqs AND
-    m.repo_name = n.repo_name 
+    m.repo_name = n.repo_name AND 
+    m.repo_name NOT IN (SELECT repo_name FROM `helix-225321.helix_logging_1McGRQOYFuABWBHyD8D4Ux.secret_repos`)
   ORDER BY m.max_reqs DESC
 )
