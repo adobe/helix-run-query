@@ -1,3 +1,15 @@
+# [2.9.0](https://github.com/adobe/helix-run-query/compare/v2.8.0...v2.9.0) (2021-05-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-status to v9.1.7 ([265e021](https://github.com/adobe/helix-run-query/commit/265e021d3c18f7dbd7afabdb38a571d79a3f011c))
+
+
+### Features
+
+* **most-visited:** use the date partitioning to reduce query size ([ed8e4ff](https://github.com/adobe/helix-run-query/commit/ed8e4ff99ac9a0ce3351658fa6a5a86f1729fb05))
+
 # [2.8.0](https://github.com/adobe/helix-run-query/compare/v2.7.46...v2.8.0) (2021-05-18)
 
 
