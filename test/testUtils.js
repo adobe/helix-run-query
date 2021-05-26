@@ -44,7 +44,11 @@ describe('testing util functions', () => {
   });
 
   it('query parameters are cleaned from query', () => {
-    const fakeQuery = `--- helix-param: helix\n--- helix-param2: helix2\n--- helix-param3: helix3\n#This is A random Comment\nSELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Type, status_code
+    const fakeQuery = `--- helix-param: helix
+--- helix-param2: helix2
+--- helix-param3: helix3
+#This is A random Comment
+SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Type, status_code
     FROM ^tablename
     WHERE 
       resp_http_Content_Type LIKE "text/html%" AND
@@ -54,7 +58,15 @@ describe('testing util functions', () => {
     ORDER BY visits DESC
     LIMIT @limit`;
 
-    const EXPECTED = 'SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Type, status_code     FROM ^tablename     WHERE        resp_http_Content_Type LIKE "text/html%" AND       status_code LIKE "404"     GROUP BY       req_url, resp_http_Content_Type, status_code      ORDER BY visits DESC     LIMIT @limit';
+    const EXPECTED = `SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Type, status_code
+    FROM ^tablename
+    WHERE 
+      resp_http_Content_Type LIKE "text/html%" AND
+      status_code LIKE "404"
+    GROUP BY
+      req_url, resp_http_Content_Type, status_code 
+    ORDER BY visits DESC
+    LIMIT @limit`;
     const ACTUAL = cleanQuery(fakeQuery);
     assert.equal(EXPECTED, ACTUAL);
   });
