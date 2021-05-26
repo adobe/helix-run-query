@@ -38,7 +38,7 @@ async function loadQuery(query) {
       if (err) {
         reject(new Error('Failed to load .sql file'));
       } else {
-        resolve(data.toString());
+        resolve(data.toString('utf8'));
       }
     });
   }));
@@ -89,7 +89,7 @@ function cleanQuery(query) {
   return query.split('\n')
     .filter((e) => !e.startsWith('---'))
     .filter((e) => !e.startsWith('#'))
-    .join(' ');
+    .join('\n');
 }
 
 /**
