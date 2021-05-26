@@ -1,3 +1,15 @@
+# [2.10.0](https://github.com/adobe/helix-run-query/compare/v2.9.1...v2.10.0) (2021-05-26)
+
+
+### Bug Fixes
+
+* **query:** line breaks are important ([b8d06af](https://github.com/adobe/helix-run-query/commit/b8d06afa329f9d899deb8d380ee362554e00e3e8))
+
+
+### Features
+
+* **index:** report x-error header ([8af9789](https://github.com/adobe/helix-run-query/commit/8af978969a9524b97fdbe267cbab8e4a2728dd51))
+
 ## [2.9.1](https://github.com/adobe/helix-run-query/compare/v2.9.0...v2.9.1) (2021-05-25)
 
 
