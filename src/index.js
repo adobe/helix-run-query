@@ -49,6 +49,9 @@ async function runExec(params) {
     return {
       statusCode: e.statusCode || 500,
       body: e.message,
+      headers: {
+        'x-error': e.message,
+      },
     };
   }
 }
