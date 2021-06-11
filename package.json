@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.5",
-    "@adobe/openwhisk-action-builder": "3.0.25",
+    "@adobe/openwhisk-action-builder": "3.0.26",
     "@pollyjs/adapter-node-http": "5.1.1",
     "@pollyjs/core": "5.1.1",
     "@pollyjs/persister-fs": "5.1.1",
