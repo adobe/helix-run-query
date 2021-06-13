@@ -30,7 +30,7 @@
   "dependencies": {
     "@adobe/fastly-native-promises": "1.23.2",
     "@adobe/helix-epsagon": "1.6.7",
-    "@adobe/helix-status": "9.1.7",
+    "@adobe/helix-status": "9.1.8",
     "@adobe/openwhisk-action-logger": "2.4.4",
     "@adobe/openwhisk-action-utils": "4.4.4",
     "@google-cloud/bigquery": "5.6.0",
