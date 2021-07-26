@@ -12,10 +12,10 @@
     "semantic-release": "semantic-release",
     "docs": "npx jsdoc2md -c .jsdoc.json --files 'src/*.js'  > docs/API.md",
     "commit": "git-cz",
-    "build": "wsk-builder -v",
-    "deploy": "wsk-builder -v --deploy --test=/_status_check/healthcheck.json",
-    "deploy-sequences": "wsk-builder --no-build -no-hints -l latest -l major -l minor",
-    "deploy-ci": "wsk-builder -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci"
+    "build": "hedy -v",
+    "deploy": "hedy -v --deploy --test=/_status_check/healthcheck.json",
+    "deploy-sequences": "hedy --no-build -no-hints -l latest -l major -l minor  --cleanup-patch=1w --cleanup-minor=1w --cleanup-major=1y --cleanup-ci=24h",
+    "deploy-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --cleanup-ci=24h"
   },
   "repository": {
     "type": "git",
@@ -31,8 +31,8 @@
     "@adobe/fastly-native-promises": "1.23.2",
     "@adobe/helix-epsagon": "1.6.8",
     "@adobe/helix-status": "9.1.8",
-    "@adobe/openwhisk-action-logger": "2.4.4",
-    "@adobe/openwhisk-action-utils": "4.4.4",
+    "@adobe/helix-universal": "1.6.5",
+    "@adobe/helix-universal-logger": "1.0.5",
     "@google-cloud/bigquery": "5.7.0",
     "dotenv": "10.0.0",
     "fs-extra": "10.0.0",
@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.5",
-    "@adobe/openwhisk-action-builder": "3.0.27",
+    "@adobe/helix-deploy": "4.9.0",
     "@pollyjs/adapter-node-http": "5.1.1",
     "@pollyjs/core": "5.1.1",
     "@pollyjs/persister-fs": "5.1.1",
