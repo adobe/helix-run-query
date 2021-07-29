@@ -36,7 +36,7 @@ async function loadQuery(query) {
   return new Promise(((resolve, reject) => {
     fs.readFile(pathName, (err, data) => {
       if (err) {
-        reject(new Error('Failed to load .sql file ' + pathName));
+        reject(new Error(`Failed to load .sql file ${pathName}`));
       } else {
         resolve(data.toString('utf8'));
       }
