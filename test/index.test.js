@@ -94,6 +94,7 @@ describe('Index Tests', async () => {
   it('index function returns an object', async () => {
     const response = await index(new Request('https://helix-run-query.com/list-everything?limit=3', {
       headers: {
+        'x-service': service,
       },
     }), {
       env: {
