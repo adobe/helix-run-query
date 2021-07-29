@@ -69,7 +69,7 @@ async function run(request, context) {
   params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
   params.GOOGLE_PROJECT_ID = context.env.GOOGLE_PROJECT_ID;
 
-  return runExec(params, pathname);
+  return runExec(params, pathname.split('/').pop());
 }
 
 /**
