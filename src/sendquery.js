@@ -11,8 +11,8 @@
  */
 const { BigQuery } = require('@google-cloud/bigquery');
 const size = require('json-size');
-const { auth } = require('./auth.js');
 const { Response } = require('@adobe/helix-universal');
+const { auth } = require('./auth.js');
 const {
   loadQuery, replaceTableNames, cleanHeaderParams,
   cleanQuery, getHeaderParams, authFastly,
@@ -142,16 +142,14 @@ async function execute(email, key, project, query, service, params = {}) {
  * @param {object} params parameters for substitution into query
  */
 async function queryInfo(pathname, params) {
-  const [ path ] = pathname.split('.');
+  const [path] = pathname.split('.');
   const {
     headerParams, description, loadedQuery, requestParams,
   } = await processParams(path, params);
 
-  return new Response(description + Array.from(Object.entries(requestParams)).reduce((acc, [k, v]) => {
-    return acc + `  * ${k}: ${v}\n\n`;
-  }, '\n'), {
+  return new Response(description + Array.from(Object.entries(requestParams)).reduce((acc, [k, v]) => `${acc}  * ${k}: ${v}\n\n`, '\n'), {
     status: 200,
-    headers: cleanHeaderParams(loadedQuery, headerParams, true)
+    headers: cleanHeaderParams(loadedQuery, headerParams, true),
   });
 }
 

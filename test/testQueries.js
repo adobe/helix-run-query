@@ -13,8 +13,8 @@
 /* eslint-env mocha */
 
 const assert = require('assert');
-const { main } = require('../src/index');
 const { Request } = require('@adobe/helix-universal');
+const { main } = require('../src/index');
 
 describe('Test Queries', () => {
   it('recent-errors', async () => {
@@ -22,13 +22,13 @@ describe('Test Queries', () => {
       headers: {
         'x-token': process.env.HLX_FASTLY_AUTH,
         'x-service': '6v0sHgrPTGUGS5PHOXZ0H1',
-      }
+      },
     }), {
       env: {
         GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
         GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
         GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
-      }
+      },
     });
     assert.ok(res);
     const results = await res.json();
@@ -41,13 +41,13 @@ describe('Test Queries', () => {
       headers: {
         'x-token': process.env.HLX_FASTLY_AUTH,
         'x-service': '6v0sHgrPTGUGS5PHOXZ0H1',
-      }
+      },
     }), {
       env: {
         GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
         GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
         GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
-      }
+      },
     });
     assert.ok(res);
     const results = await res.json();
@@ -60,13 +60,13 @@ describe('Test Queries', () => {
       headers: {
         'x-token': process.env.HLX_FASTLY_AUTH,
         'x-service': '6v0sHgrPTGUGS5PHOXZ0H1',
-      }
+      },
     }), {
       env: {
         GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
         GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
         GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
-      }
+      },
     });
     assert.ok(res);
     const results = await res.json();

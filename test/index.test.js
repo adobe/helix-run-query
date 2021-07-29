@@ -81,13 +81,13 @@ describe('Index Tests', async () => {
     await index(new Request('https://helix-run-query.com/list-everything?limit=3', {
       headers: {
         'x-service': service,
-      }
+      },
     }), {
       env: {
         GOOGLE_CLIENT_EMAIL: env.email,
         GOOGLE_PRIVATE_KEY: env.key,
         GOOGLE_PROJECT_ID: env.projectid,
-      }
+      },
     });
   });
 
@@ -95,13 +95,13 @@ describe('Index Tests', async () => {
     const response = await index(new Request('https://helix-run-query.com/list-everything?limit=3', {
       headers: {
         'x-service': service,
-      }
+      },
     }), {
       env: {
         GOOGLE_CLIENT_EMAIL: env.email,
         GOOGLE_PRIVATE_KEY: env.key,
         GOOGLE_PROJECT_ID: env.projectid,
-      }
+      },
     });
     const body = await response.json();
 
@@ -113,7 +113,7 @@ describe('Index Tests', async () => {
     assert.equal(response.headers.get('vary'), 'X-Token, X-Service');
     assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
     assert.equal(response.headers.get('cache-control'), 'max-age=300');
- 
+
     assert.deepEqual(body.requestParams, { limit: 3 });
     assert.equal(body.description, 'some fake comments that mean nothing');
   });
@@ -122,13 +122,13 @@ describe('Index Tests', async () => {
     const response = await index(new Request('https://helix-run-query.com/list-everything?limit=2000', {
       headers: {
         'x-service': service,
-      }
+      },
     }), {
       env: {
         GOOGLE_CLIENT_EMAIL: env.email,
         GOOGLE_PRIVATE_KEY: env.key,
         GOOGLE_PROJECT_ID: env.projectid,
-      }
+      },
     });
     const body = await response.json();
 
@@ -140,7 +140,7 @@ describe('Index Tests', async () => {
     assert.equal(response.headers.get('vary'), 'X-Token, X-Service');
     assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
     assert.equal(response.headers.get('cache-control'), 'max-age=300');
- 
+
     assert.deepEqual(body.requestParams, { limit: 2000 });
     assert.equal(body.description, 'some fake comments that mean nothing');
   });
@@ -149,13 +149,13 @@ describe('Index Tests', async () => {
     const response = await index(new Request('https://helix-run-query.com/list-everything?limit=3', {
       headers: {
         'x-service': service,
-      }
+      },
     }), {
       env: {
         GOOGLE_CLIENT_EMAIL: env.email,
         GOOGLE_PRIVATE_KEY: 'env.key',
         GOOGLE_PROJECT_ID: env.projectid,
-      }
+      },
     });
     assert.equal(typeof response, 'object');
     assert.equal(response.status, 500);
@@ -166,13 +166,13 @@ describe('Index Tests', async () => {
       headers: {
         'x-service': service,
         'x-token': 'notatoken',
-      }
+      },
     }), {
       env: {
         GOOGLE_CLIENT_EMAIL: env.email,
         GOOGLE_PRIVATE_KEY: 'env.key',
         GOOGLE_PROJECT_ID: env.projectid,
-      }
+      },
     });
     assert.equal(typeof response, 'object');
     assert.equal(response.status, 401);
@@ -238,13 +238,13 @@ describe('Index Tests', async () => {
     const response = await index(new Request('https://helix-run-query.com/list-everything.txt?limit=3', {
       headers: {
         'x-service': service,
-      }
+      },
     }), {
       env: {
         GOOGLE_CLIENT_EMAIL: env.email,
         GOOGLE_PRIVATE_KEY: env.key,
         GOOGLE_PROJECT_ID: env.projectid,
-      }
+      },
     });
 
     assert.equal(response.status, 200);
