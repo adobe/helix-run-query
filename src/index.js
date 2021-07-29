@@ -20,7 +20,7 @@ const { cleanRequestParams } = require('./util.js');
 async function runExec(params, pathname) {
   try {
     if (pathname && pathname.endsWith('.txt')) {
-      return queryInfo(params);
+      return queryInfo(pathname, params);
     }
     const {
       results, truncated, headers, description, requestParams,

@@ -145,7 +145,7 @@ describe('Index Tests', async () => {
     assert.equal(body.description, 'some fake comments that mean nothing');
   });
 
-  it.only('index function returns 500 on error', async () => {
+  it('index function returns 500 on error', async () => {
     const response = await index(new Request('https://helix-run-query.com/list-everything?limit=3', {
       headers: {
         'x-service': service,
@@ -162,19 +162,23 @@ describe('Index Tests', async () => {
   });
 
   it('index function returns 401 on auth error', async () => {
-    const result = await badIndex({
-      GOOGLE_CLIENT_EMAIL: env.email,
-      GOOGLE_PRIVATE_KEY: 'env.key',
-      token: 'notatoken',
-      __ow_path: 'list-everything',
-      service,
-      limit: 3,
+    const response = await badIndex(new Request('https://helix-run-query.com/list-everything?limit=3', {
+      headers: {
+        'x-service': service,
+        'x-token': 'notatoken',
+      }
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: env.email,
+        GOOGLE_PRIVATE_KEY: 'env.key',
+        GOOGLE_PROJECT_ID: env.projectid,
+      }
     });
-    assert.equal(typeof result, 'object');
-    assert.equal(result.statusCode, 401);
+    assert.equal(typeof response, 'object');
+    assert.equal(response.status, 401);
   });
 
-  it('index function returns an object with ow_headers', async () => {
+  it.skip('index function returns an object with ow_headers', async () => {
     const result = await index({
       GOOGLE_CLIENT_EMAIL: env.email,
       GOOGLE_PRIVATE_KEY: env.key,
@@ -202,7 +206,7 @@ describe('Index Tests', async () => {
     assert.equal(result.body.description, 'some fake comments that mean nothing');
   });
 
-  it('index function returns an object with ow_headers', async () => {
+  it.skip('index function returns an object with ow_headers', async () => {
     const result = await index({
       GOOGLE_CLIENT_EMAIL: env.email,
       GOOGLE_PRIVATE_KEY: env.key,
@@ -231,27 +235,26 @@ describe('Index Tests', async () => {
   });
 
   it('index returns query metadata if path ends with .txt, .html', async () => {
-    const { body, headers, statusCode } = await index({
-      GOOGLE_CLIENT_EMAIL: env.email,
-      GOOGLE_PRIVATE_KEY: env.key,
-      GOOGLE_PROJECT_ID: env.projectid,
-      token: env.token,
-      __ow_path: 'list-everything.txt',
-      __ow_headers: {
-        'x-token': env.token,
+    const response = await index(new Request('https://helix-run-query.com/list-everything.txt?limit=3', {
+      headers: {
         'x-service': service,
-      },
-      limit: 3,
-      service,
+      }
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: env.email,
+        GOOGLE_PRIVATE_KEY: env.key,
+        GOOGLE_PROJECT_ID: env.projectid,
+      }
     });
-    const EXPECTED = {
-      Authorization: 'fastly',
-      'Cache-Control': 'max-age=300',
-      Vary2: 'X-Token, X-Service',
-    };
-    assert.equal(statusCode, 200);
-    assert.equal(body.text, 'some fake comments that mean nothing');
-    assert.equal(body.requestParams, '{"limit":3}');
-    assert.deepEqual(headers, EXPECTED);
+
+    assert.equal(response.status, 200);
+    assert.equal(await response.text(), `some fake comments that mean nothing
+  * limit: 3
+
+`);
+    assert.equal(response.headers.get('content-type'), 'text/plain; charset=utf-8');
+    assert.equal(response.headers.get('authorization'), 'fastly');
+    assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
+    assert.equal(response.headers.get('cache-control'), 'max-age=300');
   });
 });

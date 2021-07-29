@@ -147,10 +147,9 @@ async function queryInfo(pathname, params) {
     headerParams, description, loadedQuery, requestParams,
   } = await processParams(path, params);
 
-  return new Response(JSON.stringify({
-    text: description,
-    requestParams
-  }), {
+  return new Response(description + Array.from(Object.entries(requestParams)).reduce((acc, [k, v]) => {
+    return acc + `  * ${k}: ${v}\n\n`;
+  }, '\n'), {
     status: 200,
     headers: cleanHeaderParams(loadedQuery, headerParams, true)
   });
