@@ -83,6 +83,7 @@
   },
   "wsk": {
     "namespace": "helix",
+    "memory": 512,
     "name": "helix-services/run-query@${version}",
     "static": [
       "src/queries/recent-errors.sql",
