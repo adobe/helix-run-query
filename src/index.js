@@ -11,6 +11,7 @@
  */
 const { wrap: status } = require('@adobe/helix-status');
 const wrap = require('@adobe/helix-shared-wrap');
+const { cleanupHeaderValue } = require('@adobe/helix-shared-utils');
 const { logger } = require('@adobe/helix-universal-logger');
 const { Response } = require('@adobe/helix-universal');
 const { execute, queryInfo } = require('./sendquery.js');
@@ -49,7 +50,7 @@ async function runExec(params, pathname) {
     return new Response(e.message, {
       status: e.statusCode || 500,
       headers: {
-        'x-error': e.message,
+        'x-error': cleanupHeaderValue(e.message),
       },
     });
   }

@@ -134,8 +134,8 @@ describe('Index Tests', async () => {
 
     assert.equal(typeof body, 'object');
     assert.ok(Array.isArray(body.results));
-    assert.ok(!body.truncated);
-    assert.equal(body.results.length, 3);
+    assert.ok(body.truncated);
+    assert.notEqual(body.results.length, 2000);
     assert.equal(response.headers.get('content-type'), 'application/json');
     assert.equal(response.headers.get('vary'), 'X-Token, X-Service');
     assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
@@ -145,17 +145,20 @@ describe('Index Tests', async () => {
     assert.equal(body.description, 'some fake comments that mean nothing');
   });
 
-  it('index function returns 500 on error', async () => {
-    const result = await index({
-      GOOGLE_CLIENT_EMAIL: env.email,
-      GOOGLE_PRIVATE_KEY: 'env.key',
-      token: env.token,
-      __ow_path: 'list-everything',
-      service,
-      limit: 3,
+  it.only('index function returns 500 on error', async () => {
+    const response = await index(new Request('https://helix-run-query.com/list-everything?limit=3', {
+      headers: {
+        'x-service': service,
+      }
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: env.email,
+        GOOGLE_PRIVATE_KEY: 'env.key',
+        GOOGLE_PROJECT_ID: env.projectid,
+      }
     });
-    assert.equal(typeof result, 'object');
-    assert.equal(result.statusCode, 500);
+    assert.equal(typeof response, 'object');
+    assert.equal(response.status, 500);
   });
 
   it('index function returns 401 on auth error', async () => {
