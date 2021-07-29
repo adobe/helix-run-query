@@ -17,6 +17,7 @@
 const assert = require('assert');
 const proxyquire = require('proxyquire');
 const path = require('path');
+const { Request } = require('@adobe/helix-universal');
 
 const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
 const FSPersister = require('@pollyjs/persister-fs');
@@ -77,62 +78,71 @@ describe('Index Tests', async () => {
   });
 
   it('index function is present', async () => {
-    await index({
-      GOOGLE_CLIENT_EMAIL: env.email,
-      GOOGLE_PRIVATE_KEY: env.key,
-      GOOGLE_PROJECT_ID: env.projectid,
-      token: env.token,
-      __ow_path: 'list-everything',
-      limit: 3,
-      service,
+    await index(new Request('https://helix-run-query.com/list-everything?limit=3', {
+      headers: {
+        'x-service': service,
+      }
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: env.email,
+        GOOGLE_PRIVATE_KEY: env.key,
+        GOOGLE_PROJECT_ID: env.projectid,
+      }
     });
   });
 
   it('index function returns an object', async () => {
-    const result = await index({
-      GOOGLE_CLIENT_EMAIL: env.email,
-      GOOGLE_PRIVATE_KEY: env.key,
-      GOOGLE_PROJECT_ID: env.projectid,
-      token: env.token,
-      __ow_path: 'list-everything',
-      limit: 3,
-      service,
+    const response = await index(new Request('https://helix-run-query.com/list-everything?limit=3', {
+      headers: {
+        'x-service': service,
+      }
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: env.email,
+        GOOGLE_PRIVATE_KEY: env.key,
+        GOOGLE_PROJECT_ID: env.projectid,
+      }
     });
-    assert.equal(typeof result, 'object');
-    assert.ok(Array.isArray(result.body.results));
-    assert.ok(!result.body.truncated);
-    assert.equal(result.body.results.length, 3);
-    assert.deepEqual(result.headers, {
-      'content-type': 'application/json',
-      Vary: 'X-Token, X-Service',
-      Vary2: 'X-Token, X-Service',
-      'Cache-Control': 'max-age=300',
-    });
-    assert.deepEqual(result.body.requestParams, { limit: 3 });
-    assert.equal(result.body.description, 'some fake comments that mean nothing');
+    const body = await response.json();
+
+    assert.equal(typeof body, 'object');
+    assert.ok(Array.isArray(body.results));
+    assert.ok(!body.truncated);
+    assert.equal(body.results.length, 3);
+    assert.equal(response.headers.get('content-type'), 'application/json');
+    assert.equal(response.headers.get('vary'), 'X-Token, X-Service');
+    assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
+    assert.equal(response.headers.get('cache-control'), 'max-age=300');
+ 
+    assert.deepEqual(body.requestParams, { limit: 3 });
+    assert.equal(body.description, 'some fake comments that mean nothing');
   });
 
   it('index function truncates long responses', async () => {
-    const result = await index({
-      GOOGLE_CLIENT_EMAIL: env.email,
-      GOOGLE_PRIVATE_KEY: env.key,
-      GOOGLE_PROJECT_ID: env.projectid,
-      token: env.token,
-      __ow_path: 'list-everything',
-      limit: 2000,
-      service,
+    const response = await index(new Request('https://helix-run-query.com/list-everything?limit=2000', {
+      headers: {
+        'x-service': service,
+      }
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: env.email,
+        GOOGLE_PRIVATE_KEY: env.key,
+        GOOGLE_PROJECT_ID: env.projectid,
+      }
     });
-    assert.equal(typeof result, 'object');
-    assert.ok(Array.isArray(result.body.results));
-    assert.ok(result.body.truncated);
-    assert.deepEqual(result.headers, {
-      'content-type': 'application/json',
-      Vary: 'X-Token, X-Service',
-      Vary2: 'X-Token, X-Service',
-      'Cache-Control': 'max-age=300',
-    });
-    assert.deepEqual(result.body.requestParams, { limit: 2000 });
-    assert.equal(result.body.description, 'some fake comments that mean nothing');
+    const body = await response.json();
+
+    assert.equal(typeof body, 'object');
+    assert.ok(Array.isArray(body.results));
+    assert.ok(!body.truncated);
+    assert.equal(body.results.length, 3);
+    assert.equal(response.headers.get('content-type'), 'application/json');
+    assert.equal(response.headers.get('vary'), 'X-Token, X-Service');
+    assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
+    assert.equal(response.headers.get('cache-control'), 'max-age=300');
+ 
+    assert.deepEqual(body.requestParams, { limit: 2000 });
+    assert.equal(body.description, 'some fake comments that mean nothing');
   });
 
   it('index function returns 500 on error', async () => {

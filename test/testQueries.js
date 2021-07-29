@@ -14,48 +14,63 @@
 
 const assert = require('assert');
 const { main } = require('../src/index');
+const { Request } = require('@adobe/helix-universal');
 
 describe('Test Queries', () => {
   it('recent-errors', async () => {
-    const res = await main({
-      __ow_path: 'recent-errors',
-      GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
-      GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
-      GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
-      token: process.env.HLX_FASTLY_AUTH,
-      service: '6v0sHgrPTGUGS5PHOXZ0H1',
+    const res = await main(new Request('https://helix-run-query.com/recent-errors', {
+      headers: {
+        'x-token': process.env.HLX_FASTLY_AUTH,
+        'x-service': '6v0sHgrPTGUGS5PHOXZ0H1',
+      }
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+      }
     });
     assert.ok(res);
-    assert.ok(res.body);
-    console.table(res.body.results);
+    const results = await res.json();
+    assert.ok(results);
+    console.table(results.results);
   }).timeout(100000);
 
   it('next-resource', async () => {
-    const res = await main({
-      __ow_path: 'next-resource',
-      GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
-      GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
-      GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
-      token: process.env.HLX_FASTLY_AUTH,
-      service: '6v0sHgrPTGUGS5PHOXZ0H1',
+    const res = await main(new Request('https://helix-run-query.com/next-resource', {
+      headers: {
+        'x-token': process.env.HLX_FASTLY_AUTH,
+        'x-service': '6v0sHgrPTGUGS5PHOXZ0H1',
+      }
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+      }
     });
     assert.ok(res);
-    assert.ok(res.body);
-    console.table(res.body.results);
+    const results = await res.json();
+    assert.ok(results);
+    console.table(results.results);
   }).timeout(100000);
 
   it('most-visited', async () => {
-    const res = await main({
-      __ow_path: 'most-visited',
-      GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
-      GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
-      GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
-      token: process.env.HLX_FASTLY_AUTH,
-      service: '6v0sHgrPTGUGS5PHOXZ0H1',
+    const res = await main(new Request('https://helix-run-query.com/most-visited', {
+      headers: {
+        'x-token': process.env.HLX_FASTLY_AUTH,
+        'x-service': '6v0sHgrPTGUGS5PHOXZ0H1',
+      }
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+      }
     });
     assert.ok(res);
-    assert.ok(res.body);
-    assert.ok(res.body.results, res.body);
-    console.table(res.body.results);
+    const results = await res.json();
+    assert.ok(results);
+    console.table(results.results);
   }).timeout(100000);
 });
