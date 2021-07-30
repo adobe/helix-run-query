@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 const { wrap: status } = require('@adobe/helix-status');
-const { wrap } = require('@adobe/openwhisk-action-utils');
-const { logger } = require('@adobe/openwhisk-action-logger');
-const { epsagon } = require('@adobe/helix-epsagon');
+const wrap = require('@adobe/helix-shared-wrap');
+const { cleanupHeaderValue } = require('@adobe/helix-shared-utils');
+const { logger } = require('@adobe/helix-universal-logger');
+const { Response } = require('@adobe/helix-universal');
 const { execute, queryInfo } = require('./sendquery.js');
 const { cleanRequestParams } = require('./util.js');
 
-async function runExec(params) {
+async function runExec(params, pathname) {
   try {
-    if (params.__ow_path && params.__ow_path.endsWith('.txt')) {
-      return queryInfo(params);
+    if (pathname && pathname.endsWith('.txt')) {
+      return queryInfo(pathname, params);
     }
     const {
       results, truncated, headers, description, requestParams,
@@ -27,45 +28,48 @@ async function runExec(params) {
       params.GOOGLE_CLIENT_EMAIL,
       params.GOOGLE_PRIVATE_KEY,
       params.GOOGLE_PROJECT_ID,
-      params.__ow_path,
+      pathname,
       params.service,
       cleanRequestParams(params),
     );
-    const result = {
+
+    return new Response(JSON.stringify({
+      results,
+      description,
+      requestParams,
+      truncated,
+    }), {
+      status: 200,
       headers: {
         'content-type': 'application/json',
         Vary: 'X-Token, X-Service',
         ...headers,
       },
-      body: {
-        results,
-        description,
-        requestParams,
-        truncated,
-      },
-    };
-    return result;
+    });
   } catch (e) {
-    return {
-      statusCode: e.statusCode || 500,
-      body: e.message,
+    return new Response(e.message, {
+      status: e.statusCode || 500,
       headers: {
-        'x-error': e.message,
+        'x-error': cleanupHeaderValue(e.message),
       },
-    };
+    });
   }
 }
 
-async function run(params) {
-  if (params.__ow_headers
-    && ('x-token' in params.__ow_headers)
-    && ('x-service' in params.__ow_headers)) {
-    // eslint-disable-next-line no-param-reassign
-    params.token = params.__ow_headers['x-token'];
-    // eslint-disable-next-line no-param-reassign
-    params.service = params.__ow_headers['x-service'];
-  }
-  return runExec(params);
+async function run(request, context) {
+  const { pathname, searchParams } = new URL(request.url);
+  const params = Array.from(searchParams.entries()).reduce((acc, [key, value]) => {
+    acc[key] = value;
+    return acc;
+  }, {});
+  params.token = request.headers.has('x-token') ? request.headers.get('x-token') : undefined;
+  params.service = request.headers.has('x-service') ? request.headers.get('x-service') : undefined;
+
+  params.GOOGLE_CLIENT_EMAIL = context.env.GOOGLE_CLIENT_EMAIL;
+  params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
+  params.GOOGLE_PROJECT_ID = context.env.GOOGLE_PROJECT_ID;
+
+  return runExec(params, pathname.split('/').pop());
 }
 
 /**
@@ -74,7 +78,6 @@ async function run(params) {
  * @returns {Promise<*>} The response
  */
 module.exports.main = wrap(run)
-  .with(epsagon)
   .with(status, {
     fastly: 'https://api.fastly.com/public-ip-list',
     googleiam: 'https://iam.googleapis.com/$discovery/rest?version=v1',
