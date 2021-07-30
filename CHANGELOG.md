@@ -1,3 +1,12 @@
+## [2.10.15](https://github.com/adobe/helix-run-query/compare/v2.10.14...v2.10.15) (2021-07-30)
+
+
+### Bug Fixes
+
+* **index:** guard against invalid header values ([fd2693f](https://github.com/adobe/helix-run-query/commit/fd2693ff51f05ee6f7ff19ff0d36deebec39e105)), closes [#459](https://github.com/adobe/helix-run-query/issues/459)
+* **index:** use only last segment of path name ([f2e469e](https://github.com/adobe/helix-run-query/commit/f2e469ef5e325450c094d88ac293740fd9ee99b7))
+* **txt:** render description as text, not json ([5bcbdd1](https://github.com/adobe/helix-run-query/commit/5bcbdd1f95caa778d9450f79af4b36cc1b69804d))
+
 ## [2.10.14](https://github.com/adobe/helix-run-query/compare/v2.10.13...v2.10.14) (2021-07-28)
 
 
