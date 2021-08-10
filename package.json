@@ -91,7 +91,8 @@
       "src/queries/top-pages.sql",
       "src/queries/top-blogposts.sql",
       "src/queries/error500.sql",
-      "src/queries/most-visited.sql"
+      "src/queries/most-visited.sql",
+      "src/queries/most-visited-hlx3.sql"
     ]
   }
 }
