@@ -1,3 +1,10 @@
+# [2.11.0](https://github.com/adobe/helix-run-query/compare/v2.10.18...v2.11.0) (2021-08-10)
+
+
+### Features
+
+* **create-most-visited-query-for-helix3:** helix 3 uses a new service id, so the query needs to be adjusted ([5e9bd9b](https://github.com/adobe/helix-run-query/commit/5e9bd9b9c1f56bd72a383d0494fb544e7473b000))
+
 ## [2.10.18](https://github.com/adobe/helix-run-query/compare/v2.10.17...v2.10.18) (2021-08-09)
 
 
