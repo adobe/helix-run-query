@@ -66,9 +66,9 @@ current_rum_by_url_and_weight AS (
         CAST(100 * IF(COUNTIF(lcpgood IS NOT NULL) != 0, COUNTIF(lcpgood = TRUE)/COUNTIF(lcpgood IS NOT NULL), NULL) AS INT64) AS lcpgood,
         CAST(100 * IF(COUNTIF(fidgood IS NOT NULL) != 0, COUNTIF(fidgood = TRUE)/COUNTIF(fidgood IS NOT NULL), NULL) AS INT64) AS fidgood,
         CAST(100 * IF(COUNTIF(clsgood IS NOT NULL) != 0, COUNTIF(clsgood = TRUE)/COUNTIF(clsgood IS NOT NULL), NULL) AS INT64) AS clsgood,
-        CAST(APPROX_QUANTILES(LCP, 100)[OFFSET(50)] AS INT64) AS avglcp,
-        CAST(APPROX_QUANTILES(FID, 100)[OFFSET(50)] AS INT64) AS avgfid,
-        ROUND(APPROX_QUANTILES(CLS, 100)[OFFSET(50)], 3) AS avgcls,
+        CAST(APPROX_QUANTILES(LCP, 100)[OFFSET(75)] AS INT64) AS avglcp,
+        CAST(APPROX_QUANTILES(FID, 100)[OFFSET(75)] AS INT64) AS avgfid,
+        ROUND(APPROX_QUANTILES(CLS, 100)[OFFSET(75)], 3) AS avgcls,
         COUNT(id) AS events,
         weight, url
     FROM current_rum_by_id
@@ -80,9 +80,9 @@ previous_rum_by_url_and_weight AS (
         CAST(100 * IF(COUNTIF(lcpgood IS NOT NULL) != 0, COUNTIF(lcpgood = TRUE)/COUNTIF(lcpgood IS NOT NULL), NULL) AS INT64) AS lcpgood,
         CAST(100 * IF(COUNTIF(fidgood IS NOT NULL) != 0, COUNTIF(fidgood = TRUE)/COUNTIF(fidgood IS NOT NULL), NULL) AS INT64) AS fidgood,
         CAST(100 * IF(COUNTIF(clsgood IS NOT NULL) != 0, COUNTIF(clsgood = TRUE)/COUNTIF(clsgood IS NOT NULL), NULL) AS INT64) AS clsgood,
-        CAST(APPROX_QUANTILES(LCP, 100)[OFFSET(50)] AS INT64) AS avglcp,
-        CAST(APPROX_QUANTILES(FID, 100)[OFFSET(50)] AS INT64) AS avgfid,
-        ROUND(APPROX_QUANTILES(CLS, 100)[OFFSET(50)], 3) AS avgcls,
+        CAST(APPROX_QUANTILES(LCP, 100)[OFFSET(75)] AS INT64) AS avglcp,
+        CAST(APPROX_QUANTILES(FID, 100)[OFFSET(75)] AS INT64) AS avgfid,
+        ROUND(APPROX_QUANTILES(CLS, 100)[OFFSET(75)], 3) AS avgcls,
         COUNT(id) AS events,
         weight, url
     FROM previous_rum_by_id
