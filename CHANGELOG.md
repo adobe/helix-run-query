@@ -1,3 +1,15 @@
+# [2.12.0](https://github.com/adobe/helix-run-query/compare/v2.11.0...v2.12.0) (2021-08-16)
+
+
+### Bug Fixes
+
+* **rum:** use 75th percentile ([a5a7dab](https://github.com/adobe/helix-run-query/commit/a5a7dab19f3cd0e377b65734bd2dcf593a30ea9d))
+
+
+### Features
+
+* **queries:** Add RUM Dashboard ([ea7c9dc](https://github.com/adobe/helix-run-query/commit/ea7c9dcd38c8b02199efe1bbec751521f6c460af))
+
 # [2.11.0](https://github.com/adobe/helix-run-query/compare/v2.10.18...v2.11.0) (2021-08-10)
 
 
