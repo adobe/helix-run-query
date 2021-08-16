@@ -93,7 +93,8 @@
       "src/queries/error500.sql",
       "src/queries/most-visited.sql",
       "src/queries/most-visited-hlx3.sql",
-      "src/queries/rum-dashboard.sql"
+      "src/queries/rum-dashboard.sql",
+      "src/queries/blobs-served.sql"
     ]
   }
 }
