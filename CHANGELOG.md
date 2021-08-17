@@ -1,3 +1,10 @@
+# [2.13.0](https://github.com/adobe/helix-run-query/compare/v2.12.0...v2.13.0) (2021-08-17)
+
+
+### Features
+
+* **add-device-type-parameter-to-RUM-dashboard:** the new `device` parameter can take the values `all`, `mobile`, `desktop`, and `bot` ([d503f49](https://github.com/adobe/helix-run-query/commit/d503f49a9e5aea542dcec4a20b13fa15fd21fb08)), closes [#483](https://github.com/adobe/helix-run-query/issues/483)
+
 # [2.12.0](https://github.com/adobe/helix-run-query/compare/v2.11.0...v2.12.0) (2021-08-16)
 
 
