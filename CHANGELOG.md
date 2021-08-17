@@ -1,3 +1,10 @@
+# [2.14.0](https://github.com/adobe/helix-run-query/compare/v2.13.0...v2.14.0) (2021-08-17)
+
+
+### Features
+
+* **sql:** create queries for media migration ([5a5d4aa](https://github.com/adobe/helix-run-query/commit/5a5d4aa4a9e9d3979e0e6782544b8334264dbf43)), closes [#477](https://github.com/adobe/helix-run-query/issues/477)
+
 # [2.13.0](https://github.com/adobe/helix-run-query/compare/v2.12.0...v2.13.0) (2021-08-17)
 
 
