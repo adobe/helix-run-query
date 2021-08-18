@@ -1,3 +1,10 @@
+## [2.14.2](https://github.com/adobe/helix-run-query/compare/v2.14.1...v2.14.2) (2021-08-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal to v1.6.7 ([#486](https://github.com/adobe/helix-run-query/issues/486)) ([a738cf3](https://github.com/adobe/helix-run-query/commit/a738cf3cc18fc2415470baaf2c669d3af316dc1a))
+
 ## [2.14.1](https://github.com/adobe/helix-run-query/compare/v2.14.0...v2.14.1) (2021-08-18)
 
 
