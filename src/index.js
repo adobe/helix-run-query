@@ -14,6 +14,7 @@ const wrap = require('@adobe/helix-shared-wrap');
 const { cleanupHeaderValue } = require('@adobe/helix-shared-utils');
 const { logger } = require('@adobe/helix-universal-logger');
 const { Response } = require('@adobe/helix-universal');
+const bodyData = require('@adobe/helix-shared-body-data');
 const { execute, queryInfo } = require('./sendquery.js');
 const { cleanRequestParams } = require('./util.js');
 
@@ -57,11 +58,8 @@ async function runExec(params, pathname) {
 }
 
 async function run(request, context) {
-  const { pathname, searchParams } = new URL(request.url);
-  const params = Array.from(searchParams.entries()).reduce((acc, [key, value]) => {
-    acc[key] = value;
-    return acc;
-  }, {});
+  const { pathname } = new URL(request.url);
+  const params = context.data;
   params.token = request.headers.has('x-token') ? request.headers.get('x-token') : undefined;
   params.service = request.headers.has('x-service') ? request.headers.get('x-service') : undefined;
 
@@ -84,4 +82,9 @@ module.exports.main = wrap(run)
     googlebigquery: 'https://www.googleapis.com/discovery/v1/apis/bigquery/v2/rest',
   })
   .with(logger.trace)
-  .with(logger);
+  .with(logger)
+  .with(bodyData, {
+    coerceInt: true,
+    coerceBoolean: true,
+    coerceNumber: true,
+  });
