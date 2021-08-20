@@ -1,3 +1,11 @@
+## [2.14.3](https://github.com/adobe/helix-run-query/compare/v2.14.2...v2.14.3) (2021-08-20)
+
+
+### Bug Fixes
+
+* **deps:** pin dependency @adobe/helix-shared-body-data to 1.0.14 ([337607a](https://github.com/adobe/helix-run-query/commit/337607a2efe144ac68c5c8efa3e3c34c77c82d9d))
+* **index:** use body-data-middleware to parse request parameters (and coerce into numbers) ([09a12b1](https://github.com/adobe/helix-run-query/commit/09a12b1d4ecd9203682cc3b6078c3dd0db836594))
+
 ## [2.14.2](https://github.com/adobe/helix-run-query/compare/v2.14.1...v2.14.2) (2021-08-18)
 
 
