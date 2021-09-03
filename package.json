@@ -95,7 +95,8 @@
       "src/queries/most-visited.sql",
       "src/queries/most-visited-hlx3.sql",
       "src/queries/rum-dashboard.sql",
-      "src/queries/blobs-served.sql"
+      "src/queries/blobs-served.sql",
+      "src/queries/daily-pageviews.sql"
     ]
   }
 }
