@@ -142,7 +142,7 @@ describe('bigquery tests', async () => {
         throw e;
       }
     }
-  });
+  }).timeout(10000);
 
   it('throws with bad query', async () => {
     try {
