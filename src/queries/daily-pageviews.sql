@@ -1,4 +1,4 @@
---- description: Get Helix RUM data for a given domain or owner/repo combination
+--- description: Get daily page views for a site according to Helix RUM data
 --- Authorization: none
 --- limit: 30
 --- offset: 0
@@ -30,7 +30,7 @@ SELECT
     EXTRACT(YEAR FROM date) AS year,
     EXTRACT(MONTH FROM date) AS month,
     EXTRACT(DAY FROM date) AS day,
-    date,
+    STRING(date) AS date,
     COUNT(url) AS urls,
     SUM(weight) AS pageviews,
 FROM pageviews_by_id
