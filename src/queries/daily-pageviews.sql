@@ -30,7 +30,7 @@ SELECT
     EXTRACT(YEAR FROM date) AS year,
     EXTRACT(MONTH FROM date) AS month,
     EXTRACT(DAY FROM date) AS day,
-    STRING(date) AS date,
+    STRING(date) AS time,
     COUNT(url) AS urls,
     SUM(weight) AS pageviews,
 FROM pageviews_by_id
