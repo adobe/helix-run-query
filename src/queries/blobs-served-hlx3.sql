@@ -17,21 +17,21 @@
 --- limit: 100
 --- offset: 0
 SELECT * FROM (
-SELECT 
+SELECT
     IF(req_http_X_Owner != "", req_http_X_Owner, REGEXP_EXTRACT(req_http_host, "[^\\-\\.]+--([^\\-\\.]+)\\.", 1))  AS owner,
-    IF(req_http_X_Repo != "", req_http_X_Repo, 
+    IF(req_http_X_Repo != "", req_http_X_Repo,
         IF(
-            ARRAY_LENGTH(SPLIT(SPLIT(req_http_host, '.')[OFFSET(0)], '--')) = 3, 
-            SPLIT(SPLIT(req_http_host, '.')[OFFSET(0)], '--')[OFFSET(1)], 
+            ARRAY_LENGTH(SPLIT(SPLIT(req_http_host, '.')[OFFSET(0)], '--')) = 3,
+            SPLIT(SPLIT(req_http_host, '.')[OFFSET(0)], '--')[OFFSET(1)],
             SPLIT(SPLIT(req_http_host, '.')[OFFSET(0)], '--')[OFFSET(0)]
-                ))AS repo, 
+                ))AS repo,
     REGEXP_EXTRACT(req_http_X_URL, "_([0-9a-f]+)\\.[a-z]+\\??", 1) AS id,
     REGEXP_EXTRACT(req_http_X_URL, "_[0-9a-f]+\\.([a-z]+)\\??", 1) AS format,
     TIMESTAMP_MICROS(CAST(MAX(time_start_usec) AS INT64)) AS latestreq,
     TIMESTAMP_MICROS(CAST(MIN(time_start_usec) AS INT64)) AS earliestreq,
     COUNT(time_start_usec) AS requests,
     MAX(req_http_host) AS host,
-FROM `helix-225321.helix_logging_1McGRQOYFuABWBHyD8D4Ux.requests*`
+FROM `helix_logging_7TvULgs0Xnls4q3R8tawdg.requests*`
 WHERE req_http_X_URL LIKE "%_media%"
     AND status_code = CAST(@status AS STRING) AND
     _TABLE_SUFFIX <= CONCAT(CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP()) AS String), LPAD(CAST(EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS String), 2, "0")) AND
