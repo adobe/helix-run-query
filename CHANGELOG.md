@@ -1,3 +1,16 @@
+# [2.15.0](https://github.com/adobe/helix-run-query/compare/v2.14.4...v2.15.0) (2021-09-06)
+
+
+### Bug Fixes
+
+* **pageviews:** format date as string ([dbb9032](https://github.com/adobe/helix-run-query/commit/dbb9032d36360a70340e0709a0d6d3c09c53b39d))
+* **pageviews:** use other column name for formatted date ([8d9ebf7](https://github.com/adobe/helix-run-query/commit/8d9ebf758b61492d091d95d4cab7be3cfd77c7b6))
+
+
+### Features
+
+* **queries:** add daily page views report ([f81d356](https://github.com/adobe/helix-run-query/commit/f81d3564fe428a2b43a842ea16454adcdeaf83e6))
+
 ## [2.14.4](https://github.com/adobe/helix-run-query/compare/v2.14.3...v2.14.4) (2021-08-20)
 
 
