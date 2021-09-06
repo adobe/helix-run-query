@@ -1,3 +1,10 @@
+# [2.16.0](https://github.com/adobe/helix-run-query/compare/v2.15.0...v2.16.0) (2021-09-06)
+
+
+### Features
+
+* add blobs-served query for helix3 ([#494](https://github.com/adobe/helix-run-query/issues/494)) ([22cfa71](https://github.com/adobe/helix-run-query/commit/22cfa71cbc0a3d8dd4db0823bc847fd50cc147d3))
+
 # [2.15.0](https://github.com/adobe/helix-run-query/compare/v2.14.4...v2.15.0) (2021-09-06)
 
 
