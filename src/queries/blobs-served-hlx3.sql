@@ -26,6 +26,7 @@ SELECT
             SPLIT(SPLIT(req_http_host, '.')[OFFSET(0)], '--')[OFFSET(0)]
                 ))AS repo,
     REGEXP_EXTRACT(req_http_X_URL, "_([0-9a-f]+)\\.[a-z]+\\??", 1) AS id,
+    req_http_X_URL AS url,
     REGEXP_EXTRACT(req_http_X_URL, "_[0-9a-f]+\\.([a-z]+)\\??", 1) AS format,
     TIMESTAMP_MICROS(CAST(MAX(time_start_usec) AS INT64)) AS latestreq,
     TIMESTAMP_MICROS(CAST(MIN(time_start_usec) AS INT64)) AS earliestreq,
@@ -38,7 +39,7 @@ WHERE req_http_X_URL LIKE "%_media%"
     _TABLE_SUFFIX >= CONCAT(CAST(EXTRACT(YEAR FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL @fromHours HOUR)) AS String), LPAD(CAST(EXTRACT(MONTH FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL @fromHours HOUR)) AS String), 2, "0")) AND
     time_start_usec > CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL @fromHours HOUR)) AS STRING) AND
     time_start_usec < CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 0 DAY)) AS STRING)
-GROUP BY owner, repo, id, format
+GROUP BY owner, repo, id, format, url
 ORDER BY requests DESC
 )
 WHERE id IS NOT NULL AND format IS NOT NULL
