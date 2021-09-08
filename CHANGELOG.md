@@ -1,3 +1,10 @@
+# [2.17.0](https://github.com/adobe/helix-run-query/compare/v2.16.0...v2.17.0) (2021-09-08)
+
+
+### Features
+
+* **blobs:** include full url ([#496](https://github.com/adobe/helix-run-query/issues/496)) ([4be198f](https://github.com/adobe/helix-run-query/commit/4be198f2ba3560d16a242e86f3be872e41320e04))
+
 # [2.16.0](https://github.com/adobe/helix-run-query/compare/v2.15.0...v2.16.0) (2021-09-06)
 
 
