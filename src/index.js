@@ -16,7 +16,7 @@ const { logger } = require('@adobe/helix-universal-logger');
 const { Response } = require('@adobe/helix-universal');
 const bodyData = require('@adobe/helix-shared-body-data');
 const { execute, queryInfo } = require('./sendquery.js');
-const { cleanRequestParams } = require('./util.js');
+const { cleanRequestParams, csvify } = require('./util.js');
 
 async function runExec(params, pathname) {
   try {
@@ -34,6 +34,16 @@ async function runExec(params, pathname) {
       cleanRequestParams(params),
     );
 
+    if (pathname && pathname.endsWith('.csv')) {
+      return new Response(csvify(results), {
+        status: 200,
+        headers: {
+          'content-type': 'text/csv',
+          Vary: 'X-Token, X-Service',
+          ...headers,
+        },
+      });
+    }
     return new Response(JSON.stringify({
       results,
       description,

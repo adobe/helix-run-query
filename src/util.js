@@ -141,6 +141,22 @@ function resolveParameterDiff(params, defaults) {
   return Object.assign(defaults, params);
 }
 
+function format(entry) {
+  switch (typeof entry) {
+    case 'boolean': return String(entry).toUpperCase();
+    case 'string': return `"${entry.replace(/"/g, '""')}"`;
+    default: return String(entry);
+  }
+}
+
+function csvify(arr) {
+  const [first = {}] = arr;
+  return [
+    Array.from(Object.keys(first)).join(','),
+    ...arr.map((line) => Object.values(line).map(format).join(',')),
+  ].join('\n');
+}
+
 module.exports = {
   loadQuery,
   getHeaderParams,
@@ -150,4 +166,5 @@ module.exports = {
   authFastly,
   replaceTableNames,
   resolveParameterDiff,
+  csvify,
 };

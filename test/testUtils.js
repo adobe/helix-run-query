@@ -19,6 +19,7 @@ const {
   loadQuery, getHeaderParams, cleanHeaderParams,
   cleanQuery, authFastly, replaceTableNames,
   resolveParameterDiff, cleanRequestParams,
+  csvify,
 } = require('../src/util.js');
 const env = require('../src/env.js');
 
@@ -224,5 +225,24 @@ SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Ty
     assert.deepStrictEqual(result, {
       foobar: 'good',
     });
+  });
+
+  it('csvify generates csv', () => {
+    const result = csvify([
+      { string: 'string', bool: true, num: 1.0 },
+      { string: 'str,ong', bool: false, num: -0.1 },
+      { string: 'str"ong', bool: false, num: -0.1 },
+    ]);
+    const expected = `string,bool,num
+"string",TRUE,1
+"str,ong",FALSE,-0.1
+"str""ong",FALSE,-0.1`;
+    assert.equal(result, expected);
+  });
+
+  it('csvify generates empty csv from empty data', () => {
+    const result = csvify([]);
+    const expected = '';
+    assert.equal(result, expected);
   });
 });

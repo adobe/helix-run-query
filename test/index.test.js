@@ -257,4 +257,24 @@ describe('Index Tests', async () => {
     assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
     assert.equal(response.headers.get('cache-control'), 'max-age=300');
   });
+
+  it('index returns csv if path ends with .csv', async () => {
+    const response = await index(new Request('https://helix-run-query.com/list-everything.csv?limit=3', {
+      headers: {
+        'x-service': service,
+      },
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: env.email,
+        GOOGLE_PRIVATE_KEY: env.key,
+        GOOGLE_PROJECT_ID: env.projectid,
+      },
+    });
+
+    const text = await response.text();
+    assert.equal(response.status, 200, text);
+    assert.equal(text.split('\n').length, 4);
+    assert.equal(text.split('\n')[0], 'client_geo_city,client_as_name,client_geo_conn_speed,client_geo_continent_code,client_geo_country_code,client_geo_gmt_offset,client_geo_latitude,client_geo_longitude,client_geo_metro_code,client_geo_postal_code,client_geo_region,client_ip_hashed,client_ip_masked,fastly_info_state,req_http_X_Ref,req_http_X_Repo,req_http_X_Static,req_http_X_Strain,req_http_X_Owner,server_datacenter,server_region,req_http_host,req_http_X_Host,req_url,req_http_X_URL,req_http_X_CDN_Request_ID,vcl_sub,time_start_usec,time_end_usec,time_elapsed_usec,resp_http_x_openwhisk_activation_id,resp_http_X_Version,req_http_Referer,req_http_User_Agent,resp_http_Content_Type,service_config,status_code');
+    assert.equal(response.headers.get('content-type'), 'text/csv');
+  });
 });
