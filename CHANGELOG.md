@@ -1,3 +1,10 @@
+# [2.18.0](https://github.com/adobe/helix-run-query/compare/v2.17.1...v2.18.0) (2021-09-09)
+
+
+### Features
+
+* **rum:** add ability to compare generations using the `generationa` and `generationb` parameters ([6de64ce](https://github.com/adobe/helix-run-query/commit/6de64ce6bff9b612efbe51da7c9ddf7c7f14028b))
+
 ## [2.17.1](https://github.com/adobe/helix-run-query/compare/v2.17.0...v2.17.1) (2021-09-09)
 
 
