@@ -1,3 +1,10 @@
+## [2.17.1](https://github.com/adobe/helix-run-query/compare/v2.17.0...v2.17.1) (2021-09-09)
+
+
+### Bug Fixes
+
+* **index:** create CSV output if path ends in `.csv` ([1c9a877](https://github.com/adobe/helix-run-query/commit/1c9a8777258eb16956c917d31d42cfceeff3d3a6))
+
 # [2.17.0](https://github.com/adobe/helix-run-query/compare/v2.16.0...v2.17.0) (2021-09-08)
 
 
