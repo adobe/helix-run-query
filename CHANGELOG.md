@@ -1,3 +1,10 @@
+# [2.19.0](https://github.com/adobe/helix-run-query/compare/v2.18.0...v2.19.0) (2021-09-14)
+
+
+### Features
+
+* **rum:** make `interval` in days configurable ([f845993](https://github.com/adobe/helix-run-query/commit/f845993e0d7e5b0e0e26345e292917cac3f2f98e))
+
 # [2.18.0](https://github.com/adobe/helix-run-query/compare/v2.17.1...v2.18.0) (2021-09-09)
 
 
