@@ -46,7 +46,7 @@ SELECT
 """,
 ARRAY_TO_STRING(ARRAY(SELECT 
     CONCAT('SUM(pageviews * IF(generation = "', generation, '", 1, 0)) AS ', REPLACE(generation, '-', '_')) AS expr 
-    FROM UNNEST(SPLIT(@generations, ',')) AS generation
+    FROM UNNEST(SPLIT(REGEXP_REPLACE(@generations, r"[^A-Za-z0-9,_-]", ""), ',')) AS generation
 ),', '),
     # SUM(pageviews * IF(generation = "instrumentation-test", 1, 0)) AS instrumentation_test,
     # SUM(pageviews * IF(generation = "instrumentation-test-sync", 1, 0)) AS instrumentation_test_sync,
