@@ -17,10 +17,12 @@ SELECT
     MAX(time) AS last,
     MIN(time) AS first,
     FORMAT_TIMESTAMP( '%y-%m-%d', TIMESTAMP_MILLIS(CAST(time AS INT64)), @timezone) AS date
-FROM `helix-225321.helix_rum.rum202109` 
+FROM `helix-225321.helix_rum.rum*` 
 WHERE 
     generation IS NOT NULL
-    AND url LIKE CONCAT("https://", @domain, "%")
+    AND url LIKE CONCAT("https://", @domain, "%") AND
+    _TABLE_SUFFIX <= CONCAT(CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP()) AS String), LPAD(CAST(EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS String), 2, "0")) AND
+    _TABLE_SUFFIX >= CONCAT(CAST(EXTRACT(YEAR FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL @intervaldays DAY)) AS String), LPAD(CAST(EXTRACT(MONTH FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) AS String), 2, "0")) AND
     AND CAST(time AS STRING) > CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL CAST(@intervaldays AS INT64) DAY)) AS STRING)
 GROUP BY id, generation, url, date),
 results AS (
