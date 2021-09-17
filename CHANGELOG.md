@@ -1,3 +1,18 @@
+# [2.20.0](https://github.com/adobe/helix-run-query/compare/v2.19.0...v2.20.0) (2021-09-17)
+
+
+### Bug Fixes
+
+* **csv:** fix csv path extraction ([a36286f](https://github.com/adobe/helix-run-query/commit/a36286fe9dd2843fc93aaa3dbea55103f4642853))
+* **pageviews:** filter illegal characters out of generations parameter ([5e806aa](https://github.com/adobe/helix-run-query/commit/5e806aa6c13d991ac4517f8f3e8e0d5d00f1970b))
+* **pageviews:** fix sql syntax error ([22dd816](https://github.com/adobe/helix-run-query/commit/22dd816de42c6fbd65a9173a914e01a9aef65905))
+* **pageviews:** restrict query range by month ([5ac43b3](https://github.com/adobe/helix-run-query/commit/5ac43b3f4152285012a0893f0abd60b31504cdc9))
+
+
+### Features
+
+* **queries:** report pageviews by generations for the last few days ([0dcbc8f](https://github.com/adobe/helix-run-query/commit/0dcbc8f48de7e03cc84204d930a8a8559951cbfb))
+
 # [2.19.0](https://github.com/adobe/helix-run-query/compare/v2.18.0...v2.19.0) (2021-09-14)
 
 
