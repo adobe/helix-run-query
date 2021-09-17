@@ -74,3 +74,20 @@ describe('Test Queries', () => {
     console.table(results.results);
   }).timeout(100000);
 });
+
+it('pageviews-by-generation', async () => {
+  const res = await main(new Request('https://helix-run-query.com/pageviews-by-generation?domain=blog.adobe.com&generations=instrumentation-test', {
+    headers: {
+    },
+  }), {
+    env: {
+      GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+      GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+      GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+    },
+  });
+  assert.ok(res);
+  const results = await res.json();
+  assert.ok(results);
+  console.table(results.results);
+}).timeout(100000);

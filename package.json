@@ -97,7 +97,8 @@
       "src/queries/rum-dashboard.sql",
       "src/queries/blobs-served.sql",
       "src/queries/blobs-served-hlx3.sql",
-      "src/queries/daily-pageviews.sql"
+      "src/queries/daily-pageviews.sql",
+      "src/queries/pageviews-by-generation.sql"
     ]
   }
 }
