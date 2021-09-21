@@ -59,7 +59,7 @@ current_rum_by_id AS (
     MAX(weight) AS weight,
     id
   FROM current_data 
-WHERE url LIKE CONCAT("https://", @domain, "/%") OR url LIKE CONCAT("https://%", @repo, "--", @owner, ".hlx%/") OR (@domain = "-" AND @repo = "-" AND @owner = "-")
+WHERE url LIKE CONCAT("https://", @domain, "%") OR url LIKE CONCAT("https://%", @repo, "--", @owner, ".hlx%/") OR (@domain = "-" AND @repo = "-" AND @owner = "-")
 GROUP BY id),
 previous_rum_by_id AS (
     SELECT 
@@ -77,7 +77,7 @@ previous_rum_by_id AS (
     MAX(weight) AS weight,
     id
   FROM previous_data 
-WHERE url LIKE CONCAT("https://", @domain, "/%") OR url LIKE CONCAT("https://%", @repo, "--", @owner, ".hlx%/") OR (@domain = "-" AND @repo = "-" AND @owner = "-")
+WHERE url LIKE CONCAT("https://", @domain, "%") OR url LIKE CONCAT("https://%", @repo, "--", @owner, ".hlx%/") OR (@domain = "-" AND @repo = "-" AND @owner = "-")
 GROUP BY id),
 current_rum_by_url_and_weight AS (
     SELECT 
