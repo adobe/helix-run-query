@@ -1,3 +1,10 @@
+## [2.20.1](https://github.com/adobe/helix-run-query/compare/v2.20.0...v2.20.1) (2021-09-21)
+
+
+### Bug Fixes
+
+* **rum-dashboard:** fix interval casting ([202db2f](https://github.com/adobe/helix-run-query/commit/202db2ff9eb073769155655f922d46d6e0812bad))
+
 # [2.20.0](https://github.com/adobe/helix-run-query/compare/v2.19.0...v2.20.0) (2021-09-17)
 
 
