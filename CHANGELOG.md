@@ -1,3 +1,10 @@
+## [2.20.2](https://github.com/adobe/helix-run-query/compare/v2.20.1...v2.20.2) (2021-09-21)
+
+
+### Bug Fixes
+
+* **rum-dashboard:** do not append `/` to each domain, allow filtering for exact page name ([bec2ec4](https://github.com/adobe/helix-run-query/commit/bec2ec41a6eb4d584568ba5b8a60a653bc05a010))
+
 ## [2.20.1](https://github.com/adobe/helix-run-query/compare/v2.20.0...v2.20.1) (2021-09-21)
 
 
