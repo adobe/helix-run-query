@@ -154,7 +154,7 @@ previous_event_count AS (
 current_truncated_rum_by_url AS (
   SELECT 
       CAST(SUM(lcpgood * pageviews) / SUM(pageviews) AS INT64) AS lcpgood, 
-      CAST(SUM(fidgood * pageviews) / SUM(pageviews) AS INT64) AS fidpgood, 
+      CAST(SUM(fidgood * pageviews) / SUM(pageviews) AS INT64) AS fidgood, 
       CAST(SUM(clsgood * pageviews) / SUM(pageviews) AS INT64) AS clsgood,
       CAST(SUM(avglcp * pageviews) / SUM(pageviews) AS INT64) AS avglcp, 
       CAST(SUM(avgfid * pageviews) / SUM(pageviews) AS INT64) AS avgfid, 
@@ -168,7 +168,7 @@ current_truncated_rum_by_url AS (
 previous_truncated_rum_by_url AS (
   SELECT 
       CAST(SUM(lcpgood * pageviews) / SUM(pageviews) AS INT64) AS lcpgood, 
-      CAST(SUM(fidgood * pageviews) / SUM(pageviews) AS INT64) AS fidpgood, 
+      CAST(SUM(fidgood * pageviews) / SUM(pageviews) AS INT64) AS fidgood, 
       CAST(SUM(clsgood * pageviews) / SUM(pageviews) AS INT64) AS clsgood,
       CAST(SUM(avglcp * pageviews) / SUM(pageviews) AS INT64) AS avglcp, 
       CAST(SUM(avgfid * pageviews) / SUM(pageviews) AS INT64) AS avgfid, 
