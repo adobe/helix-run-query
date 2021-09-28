@@ -1,5 +1,6 @@
 --- description: Get Helix RUM data for a given domain or owner/repo combination
 --- Authorization: none
+--- Access-Control-Allow-Origin: *
 --- limit: 10
 --- interval: 30
 --- domain: -
