@@ -1,5 +1,6 @@
 --- description: Get daily page views for a site according to Helix RUM data
 --- Authorization: none
+--- Access-Control-Allow-Origin: *
 --- limit: 30
 --- offset: 0
 --- url: 
