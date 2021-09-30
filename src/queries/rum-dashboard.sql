@@ -204,4 +204,4 @@ previous_truncated_rum_by_url AS (
   FROM (SELECT ROW_NUMBER() OVER (ORDER BY pageviews DESC) AS rank, * FROM previous_rum_by_url), previous_event_count 
   GROUP BY url
 )
-SELECT * FROM current_truncated_rum_by_url JOIN previous_truncated_rum_by_url USING (url)
+SELECT * FROM current_truncated_rum_by_url FULL OUTER JOIN previous_truncated_rum_by_url USING (url)
