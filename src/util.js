@@ -12,6 +12,7 @@
 const initfastly = require('@adobe/fastly-native-promises');
 const fs = require('fs-extra');
 const path = require('path');
+const { MissingQueryError } = require('./missing-query-error.js');
 
 /**
  * authenticates token and service with Fastly
@@ -36,7 +37,7 @@ async function loadQuery(query) {
   return new Promise(((resolve, reject) => {
     fs.readFile(pathName, (err, data) => {
       if (err) {
-        reject(new Error(`Failed to load .sql file ${pathName}`));
+        reject(new MissingQueryError(`Failed to load .sql file ${pathName}`));
       } else {
         resolve(data.toString('utf8'));
       }
