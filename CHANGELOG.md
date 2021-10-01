@@ -1,3 +1,10 @@
+## [2.21.2](https://github.com/adobe/helix-run-query/compare/v2.21.1...v2.21.2) (2021-10-01)
+
+
+### Bug Fixes
+
+* **errors:** return status 404 instead of 500 for missing queries ([268071d](https://github.com/adobe/helix-run-query/commit/268071dac787081c243227fe8bcd87be0a429f53))
+
 ## [2.21.1](https://github.com/adobe/helix-run-query/compare/v2.21.0...v2.21.1) (2021-10-01)
 
 
