@@ -36,7 +36,7 @@ describe('testing util functions', () => {
     const handle = () => loadQuery('Does not Exist');
     assert.rejects(handle, EXPECTED);
     try {
-      handle();
+      await loadQuery('Does not Exist');
     } catch (e) {
       assert.equal(e.statusCode, 404);
     }
