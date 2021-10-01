@@ -1,3 +1,20 @@
+# [2.21.0](https://github.com/adobe/helix-run-query/compare/v2.20.3...v2.21.0) (2021-09-30)
+
+
+### Bug Fixes
+
+* fid typo ([90a6a90](https://github.com/adobe/helix-run-query/commit/90a6a90f4eb0d0372eba3f6028b3f7d392c25e22))
+* **rum-dashboard:** show data even when there is no data in current or previous period ([a4d3568](https://github.com/adobe/helix-run-query/commit/a4d3568160c030c46206cc2a66ca110e3edee71b))
+
+
+### Features
+
+* **hlx3:** add hostname guesser ([fcc2ed2](https://github.com/adobe/helix-run-query/commit/fcc2ed2c834a8c45fd9daf76b225102c3fca656e))
+* **rum:** add cors header to daily-pageviews ([885cdb6](https://github.com/adobe/helix-run-query/commit/885cdb68b6ced8a6f36c9ebcace139b438722348))
+* **rum:** add cors headers to response ([3eb0d34](https://github.com/adobe/helix-run-query/commit/3eb0d349f2e680a81db8447025f8910f32dcf881))
+* **rum:** add query for checkpoint dropoff calculation ([31ee730](https://github.com/adobe/helix-run-query/commit/31ee730156518fba1af5cccf6202c276f7a6dd61))
+* **rum:** report percentage of bad cwv scores, too ([3ebe754](https://github.com/adobe/helix-run-query/commit/3ebe754ac0adcb43ef48f2c01e5137b37d54a124))
+
 ## [2.20.3](https://github.com/adobe/helix-run-query/compare/v2.20.2...v2.20.3) (2021-09-22)
 
 
