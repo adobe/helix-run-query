@@ -1,3 +1,10 @@
+## [2.21.1](https://github.com/adobe/helix-run-query/compare/v2.21.0...v2.21.1) (2021-10-01)
+
+
+### Bug Fixes
+
+* **rum:** numerous fixes in checkpoints query ([fa142bd](https://github.com/adobe/helix-run-query/commit/fa142bda02d9152702e322d159335e92c46890c2))
+
 # [2.21.0](https://github.com/adobe/helix-run-query/compare/v2.20.3...v2.21.0) (2021-09-30)
 
 
