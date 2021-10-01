@@ -1,10 +1,8 @@
 --- description: Get RUM data by checkpoint to see which checkpoint causes the greatest dropoff in traffic
 --- Authorization: none
---- limit: 10
 --- interval: 30
 --- domain: -
 --- generation: -
---- generationb: -
 --- device: all
 
 CREATE TEMP FUNCTION FILTERCLASS(user_agent STRING, device STRING) 
@@ -16,7 +14,7 @@ CREATE TEMP FUNCTION FILTERCLASS(user_agent STRING, device STRING)
     (device = "bot" AND user_agent NOT LIKE "Mozilla%"));
 
 WITH rootdata AS (
-    SELECT * FROM `helix-225321.helix_rum.rum202109`
+    SELECT * FROM `helix-225321.helix_rum.rum*`
     WHERE 
       # use date partitioning to reduce query size
       _TABLE_SUFFIX <= CONCAT(CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP()) AS String), LPAD(CAST(EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS String), 2, "0")) AND
@@ -24,7 +22,7 @@ WITH rootdata AS (
       CAST(time AS STRING) > CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL CAST(@interval AS INT64) DAY)) AS STRING) AND
       CAST(time AS STRING) < CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 0 DAY)) AS STRING) AND
       (generation = @generation OR @generation = "-") AND
-      (url LIKE CONCAT("https://", @domain, "%") OR url = "-") AND
+      (url LIKE CONCAT("https://", @domain, "%") OR @domain = "-") AND
       FILTERCLASS(user_agent, @device)
 ),
 data AS (
@@ -51,11 +49,15 @@ alldata AS (
     SELECT * FROM (SELECT * FROM anydata UNION ALL (SELECT * FROM data)))
 
 SELECT checkpoint, ids as events, 
-    ROUND(100 - (100 * ids / MAX(ids) OVER(
+    IF(MAX(ids) OVER(
         ORDER BY ids DESC
         ROWS BETWEEN 1 PRECEDING AND 0 FOLLOWING  
-    )), 1) AS percent_dropoff,
-    ROUND(100 * ids / MAX(ids) OVER (
-        ORDER BY  ids DESC), 1) AS percent_total
+    ) != 0, ROUND(100 - (100 * ids / MAX(ids) OVER(
+        ORDER BY ids DESC
+        ROWS BETWEEN 1 PRECEDING AND 0 FOLLOWING  
+    )), 1), 0) AS percent_dropoff,
+    IF(MAX(ids) OVER (
+        ORDER BY  ids DESC) != 0, ROUND(100 * ids / MAX(ids) OVER (
+        ORDER BY  ids DESC), 1), 0) AS percent_total
 
 FROM alldata
