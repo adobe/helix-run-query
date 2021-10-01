@@ -35,6 +35,11 @@ describe('testing util functions', () => {
     const EXPECTED = new Error('Failed to load .sql file');
     const handle = () => loadQuery('Does not Exist');
     assert.rejects(handle, EXPECTED);
+    try {
+      await loadQuery('Does not Exist');
+    } catch (e) {
+      assert.equal(e.statusCode, 404);
+    }
   });
 
   it('query parameters are processed', () => {
