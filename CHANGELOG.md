@@ -1,3 +1,10 @@
+## [2.21.5](https://github.com/adobe/helix-run-query/compare/v2.21.4...v2.21.5) (2021-10-07)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-shared-body-data to v1.1.2 ([#515](https://github.com/adobe/helix-run-query/issues/515)) ([c675a75](https://github.com/adobe/helix-run-query/commit/c675a752d6f271f5e19d35dca1d036da37b2fb8d))
+
 ## [2.21.4](https://github.com/adobe/helix-run-query/compare/v2.21.3...v2.21.4) (2021-10-04)
 
 
