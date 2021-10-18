@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.2.0",
-    "@adobe/helix-deploy": "4.11.1",
+    "@adobe/helix-deploy": "4.11.2",
     "@pollyjs/adapter-node-http": "5.1.1",
     "@pollyjs/core": "5.1.1",
     "@pollyjs/persister-fs": "5.1.1",
