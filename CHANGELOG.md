@@ -1,3 +1,10 @@
+## [2.21.11](https://github.com/adobe/helix-run-query/compare/v2.21.10...v2.21.11) (2021-10-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal-logger to v2 ([#523](https://github.com/adobe/helix-run-query/issues/523)) ([284eab5](https://github.com/adobe/helix-run-query/commit/284eab5fa62cc56996de82c59d91b07c302be6e1))
+
 ## [2.21.10](https://github.com/adobe/helix-run-query/compare/v2.21.9...v2.21.10) (2021-10-19)
 
 
