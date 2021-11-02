@@ -18,7 +18,8 @@ WITH rootdata AS (
         checkpoint, 
         id, 
         url, 
-        @generation AS generation 
+        @generation AS generation,
+        weight 
     FROM `helix-225321.helix_rum.rum*`
     WHERE 
       # use date partitioning to reduce query size
@@ -30,39 +31,68 @@ WITH rootdata AS (
       (url LIKE CONCAT("https://", @domain, "%") OR @domain = "-") AND
       FILTERCLASS(user_agent, @device)
 ),
+weightdata AS (
+    SELECT
+        checkpoint,
+        MAX(weight) AS weight,
+        id,
+        MAX(url) AS url,
+        MAX(generation) AS generation,
+    FROM rootdata
+    GROUP BY
+        id,
+        checkpoint
+),
 data AS (
 SELECT 
     checkpoint, 
-    COUNT(DISTINCT id) AS ids
+    COUNT(DISTINCT id) AS ids,
+    SUM(weight) AS views,
     # url
-FROM rootdata 
+FROM weightdata 
 WHERE 
     checkpoint IS NOT NULL
-GROUP BY checkpoint, generation #, url
+GROUP BY 
+    checkpoint, 
+    generation 
+    #, url
 ORDER BY ids DESC),
-anydata AS (
+anydatabyid AS (
     SELECT 
-    "any" AS checkpoint,
-    COUNT(DISTINCT id) AS ids
-    # url
-FROM rootdata 
-WHERE 
-    checkpoint IS NOT NULL
-ORDER BY ids DESC
+        "any" AS checkpoint,
+        COUNT(DISTINCT id) AS ids,
+        MAX(weight) AS views,
+        # url
+    FROM weightdata 
+    WHERE 
+        checkpoint IS NOT NULL #IN ("top", "unsupported", "noscript")
+    GROUP BY
+        id
+    ORDER BY ids DESC
+),
+anydata AS (
+    SELECT
+        MIN(checkpoint) AS checkpoint,
+        COUNT(DISTINCT ids) AS ids,
+        SUM(views) AS views,
+        #, url
+    FROM anydatabyid 
 ),
 alldata AS (
     SELECT * FROM (SELECT * FROM anydata UNION ALL (SELECT * FROM data)))
-
-SELECT checkpoint, ids as events, 
-    IF(MAX(ids) OVER(
-        ORDER BY ids DESC
+SELECT 
+    checkpoint, 
+    ids as events,
+    views,
+    IF(MAX(views) OVER(
+        ORDER BY views DESC
         ROWS BETWEEN 1 PRECEDING AND 0 FOLLOWING  
-    ) != 0, ROUND(100 - (100 * ids / MAX(ids) OVER(
-        ORDER BY ids DESC
+    ) != 0, ROUND(100 - (100 * views / MAX(views) OVER(
+        ORDER BY views DESC
         ROWS BETWEEN 1 PRECEDING AND 0 FOLLOWING  
     )), 1), 0) AS percent_dropoff,
-    IF(MAX(ids) OVER (
-        ORDER BY  ids DESC) != 0, ROUND(100 * ids / MAX(ids) OVER (
-        ORDER BY  ids DESC), 1), 0) AS percent_total
+    IF(MAX(views) OVER (
+        ORDER BY  views DESC) != 0, ROUND(100 * views / MAX(views) OVER (
+        ORDER BY  views DESC), 1), 0) AS percent_total
 
 FROM alldata
