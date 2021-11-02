@@ -1,3 +1,15 @@
+# [2.22.0](https://github.com/adobe/helix-run-query/compare/v2.21.11...v2.22.0) (2021-11-02)
+
+
+### Bug Fixes
+
+* **daily-pageviews:** correctly truncate days at midnight, not at current time ([17d26f1](https://github.com/adobe/helix-run-query/commit/17d26f1d01ab1d9af04305860fbe8bd49935836d))
+
+
+### Features
+
+* **queries:** add content-power query ([38bf4de](https://github.com/adobe/helix-run-query/commit/38bf4de5b6917631db5e126ae05340ccb288db05))
+
 ## [2.21.11](https://github.com/adobe/helix-run-query/compare/v2.21.10...v2.21.11) (2021-10-21)
 
 
