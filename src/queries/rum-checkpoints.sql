@@ -14,7 +14,12 @@ CREATE TEMP FUNCTION FILTERCLASS(user_agent STRING, device STRING)
     (device = "bot" AND user_agent NOT LIKE "Mozilla%"));
 
 WITH rootdata AS (
-    SELECT * FROM `helix-225321.helix_rum.rum*`
+    SELECT 
+        checkpoint, 
+        id, 
+        url, 
+        @generation AS generation 
+    FROM `helix-225321.helix_rum.rum*`
     WHERE 
       # use date partitioning to reduce query size
       _TABLE_SUFFIX <= CONCAT(CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP()) AS String), LPAD(CAST(EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS String), 2, "0")) AND
