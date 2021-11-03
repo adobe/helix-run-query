@@ -1,3 +1,11 @@
+## [2.22.1](https://github.com/adobe/helix-run-query/compare/v2.22.0...v2.22.1) (2021-11-03)
+
+
+### Bug Fixes
+
+* **checkpoints:** avoid double listing of checkpoints when no generation parameter was provided ([962a646](https://github.com/adobe/helix-run-query/commit/962a646e11462328961dd8b040a343006e2d6f11))
+* **checkpoints:** calculate percentages based on weight and not just on raw event count ([57a0e46](https://github.com/adobe/helix-run-query/commit/57a0e46c443659afc3951defefbf3a8b47833e78))
+
 # [2.22.0](https://github.com/adobe/helix-run-query/compare/v2.21.11...v2.22.0) (2021-11-02)
 
 
