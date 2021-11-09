@@ -42,7 +42,7 @@
     "json-size": "1.0.0"
   },
   "devDependencies": {
-    "@adobe/eslint-config-helix": "1.3.0",
+    "@adobe/eslint-config-helix": "1.3.1",
     "@adobe/helix-deploy": "4.12.2",
     "@pollyjs/adapter-node-http": "5.1.1",
     "@pollyjs/core": "5.1.1",
