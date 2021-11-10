@@ -1,3 +1,10 @@
+## [2.22.4](https://github.com/adobe/helix-run-query/compare/v2.22.3...v2.22.4) (2021-11-10)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-shared-utils to v1.0.4 ([#539](https://github.com/adobe/helix-run-query/issues/539)) ([80cce47](https://github.com/adobe/helix-run-query/commit/80cce47a05bc36fcca68aabd8b9e3034487a73e9))
+
 ## [2.22.3](https://github.com/adobe/helix-run-query/compare/v2.22.2...v2.22.3) (2021-11-09)
 
 
