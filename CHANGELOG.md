@@ -1,3 +1,10 @@
+## [2.22.5](https://github.com/adobe/helix-run-query/compare/v2.22.4...v2.22.5) (2021-11-12)
+
+
+### Bug Fixes
+
+* **rum-dashboard:** fix ordering of pages ([387fd32](https://github.com/adobe/helix-run-query/commit/387fd3282e4b5e7ecbe4a08dff717791f0333bec))
+
 ## [2.22.4](https://github.com/adobe/helix-run-query/compare/v2.22.3...v2.22.4) (2021-11-10)
 
 
