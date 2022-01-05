@@ -26,7 +26,8 @@ pageviews_by_id AS (
         id,
         MAX(weight) AS weight
     FROM current_data 
-    GROUP BY id)
+    GROUP BY id),
+dailydata AS (
 SELECT
     EXTRACT(YEAR FROM date) AS year,
     EXTRACT(MONTH FROM date) AS month,
@@ -36,4 +37,18 @@ SELECT
     SUM(weight) AS pageviews,
 FROM pageviews_by_id
 GROUP BY date
-ORDER BY date DESC
+ORDER BY date DESC),
+dates AS (
+    SELECT * FROM UNNEST(generate_timestamp_array((SELECT MIN(date) FROM pageviews_by_id),(SELECT MAX(date) FROM pageviews_by_id), INTERVAL 1 DAY)) AS alldates
+)
+SELECT 
+    EXTRACT(YEAR FROM dates.alldates) AS year,
+    EXTRACT(MONTH FROM dates.alldates) AS month,
+    EXTRACT(DAY FROM dates.alldates) AS day,
+    STRING(dates.alldates) AS time, 
+    COALESCE(dailydata.urls, 0) AS url,
+    COALESCE(dailydata.pageviews, 0) AS pageviews
+FROM dates 
+    FULL JOIN dailydata 
+    ON STRING(dates.alldates) = dailydata.time
+ORDER BY dates.alldates DESC
