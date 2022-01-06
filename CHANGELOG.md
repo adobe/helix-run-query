@@ -1,3 +1,10 @@
+## [2.23.3](https://github.com/adobe/helix-run-query/compare/v2.23.2...v2.23.3) (2022-01-06)
+
+
+### Bug Fixes
+
+* **rum-targets:** fix interval parameter support ([85a821d](https://github.com/adobe/helix-run-query/commit/85a821db5a1f2c1ffc3f560172c3aba73130006f))
+
 ## [2.23.2](https://github.com/adobe/helix-run-query/compare/v2.23.1...v2.23.2) (2022-01-06)
 
 
