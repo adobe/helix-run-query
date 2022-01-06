@@ -1,3 +1,11 @@
+# [2.23.0](https://github.com/adobe/helix-run-query/compare/v2.22.11...v2.23.0) (2022-01-06)
+
+
+### Features
+
+* **rum:** get top targets for a checkpoint and source, split by separator and order by pageviews ([18c14e5](https://github.com/adobe/helix-run-query/commit/18c14e560c3117ad52f687aa85b01a3353f5d664))
+* **rum:** wip: rum sources ([7a988c9](https://github.com/adobe/helix-run-query/commit/7a988c949f8c704ea19d68cc05225d728cb89a24))
+
 ## [2.22.11](https://github.com/adobe/helix-run-query/compare/v2.22.10...v2.22.11) (2022-01-06)
 
 
