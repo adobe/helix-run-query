@@ -1,3 +1,10 @@
+## [2.23.1](https://github.com/adobe/helix-run-query/compare/v2.23.0...v2.23.1) (2022-01-06)
+
+
+### Bug Fixes
+
+* **package:** include new sql files in bundle ([4076c34](https://github.com/adobe/helix-run-query/commit/4076c34f8b4d0298053ba8c0ad80a946595c9936))
+
 # [2.23.0](https://github.com/adobe/helix-run-query/compare/v2.22.11...v2.23.0) (2022-01-06)
 
 
