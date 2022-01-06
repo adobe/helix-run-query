@@ -1,3 +1,10 @@
+## [2.22.11](https://github.com/adobe/helix-run-query/compare/v2.22.10...v2.22.11) (2022-01-06)
+
+
+### Bug Fixes
+
+* **pageviews:** coalesce empty values with 0 for dates without hits in the min/max range ([08dbf8c](https://github.com/adobe/helix-run-query/commit/08dbf8c430801728e86c82b9406d23585c202455))
+
 ## [2.22.10](https://github.com/adobe/helix-run-query/compare/v2.22.9...v2.22.10) (2021-12-18)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-run-query",
-  "version": "2.22.10",
+  "version": "2.22.11",
   "private": true,
   "description": "Helix Run Query",
   "main": "src/index.js",
