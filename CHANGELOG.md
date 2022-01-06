@@ -1,3 +1,10 @@
+## [2.23.2](https://github.com/adobe/helix-run-query/compare/v2.23.1...v2.23.2) (2022-01-06)
+
+
+### Bug Fixes
+
+* **queries:** support interval parameter for rum sources and target queries ([dfe299f](https://github.com/adobe/helix-run-query/commit/dfe299f1944a34cb071e408b172a0aaa1f4ce0e4))
+
 ## [2.23.1](https://github.com/adobe/helix-run-query/compare/v2.23.0...v2.23.1) (2022-01-06)
 
 
