@@ -41,6 +41,7 @@ targets AS (
 SELECT 
   COUNT(id) AS ids,
   COUNT(DISTINCT url) AS pages,
+  APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
   SUM(views) AS views,
   checkpoint,
   target,
