@@ -1,3 +1,10 @@
+# [2.24.0](https://github.com/adobe/helix-run-query/compare/v2.23.4...v2.24.0) (2022-01-10)
+
+
+### Features
+
+* **rum-targets:** support `extract` parameter to extract values with regular expression ([a8dce5d](https://github.com/adobe/helix-run-query/commit/a8dce5d93bfc51e4f575d90024c5e48b9ba8b467))
+
 ## [2.23.4](https://github.com/adobe/helix-run-query/compare/v2.23.3...v2.23.4) (2022-01-10)
 
 
