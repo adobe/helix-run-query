@@ -1,3 +1,10 @@
+## [2.23.4](https://github.com/adobe/helix-run-query/compare/v2.23.3...v2.23.4) (2022-01-10)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal to v2 ([#566](https://github.com/adobe/helix-run-query/issues/566)) ([084215e](https://github.com/adobe/helix-run-query/commit/084215e941f6ded9bf986aae99af854816a7a8d3))
+
 ## [2.23.3](https://github.com/adobe/helix-run-query/compare/v2.23.2...v2.23.3) (2022-01-06)
 
 
