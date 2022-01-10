@@ -1,3 +1,10 @@
+## [2.25.1](https://github.com/adobe/helix-run-query/compare/v2.25.0...v2.25.1) (2022-01-10)
+
+
+### Bug Fixes
+
+* **rum-targets:** normalize urls ([a1c26e3](https://github.com/adobe/helix-run-query/commit/a1c26e35db5314f8e62df3e41671170f5705be74)), closes [/github.com/adobe/helix-slack-bot/pull/315#issuecomment-1009180200](https://github.com//github.com/adobe/helix-slack-bot/pull/315/issues/issuecomment-1009180200)
+
 # [2.25.0](https://github.com/adobe/helix-run-query/compare/v2.24.0...v2.25.0) (2022-01-10)
 
 
