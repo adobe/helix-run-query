@@ -11,7 +11,7 @@
  */
 const { BigQuery } = require('@google-cloud/bigquery');
 const size = require('json-size');
-const { Response } = require('@adobe/helix-universal');
+const { Response } = require('@adobe/helix-fetch');
 const { auth } = require('./auth.js');
 const {
   loadQuery, replaceTableNames, cleanHeaderParams,
