@@ -8,6 +8,7 @@
 --- checkpoint: -
 --- source: -
 --- separator: ;
+--- extract: -
 
 WITH 
 current_data AS (
@@ -43,7 +44,7 @@ SELECT
   SUM(views) AS views,
   checkpoint,
   target,
-FROM targets, UNNEST(SPLIT(target, CONCAT(@separator, " "))) AS target
+FROM targets, UNNEST(IF(@extract = '-', SPLIT(target, CONCAT(@separator, " ")), REGEXP_EXTRACT_ALL(target, @extract))) AS target
 GROUP BY target, checkpoint
 ORDER BY views DESC
 LIMIT @limit
