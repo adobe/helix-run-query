@@ -1,3 +1,10 @@
+# [2.25.0](https://github.com/adobe/helix-run-query/compare/v2.24.0...v2.25.0) (2022-01-10)
+
+
+### Features
+
+* **rum-targets:** add `topurl` property with most representative URL ([ed48df7](https://github.com/adobe/helix-run-query/commit/ed48df7343e45b1837a5be4bcdaed3d6089f2090))
+
 # [2.24.0](https://github.com/adobe/helix-run-query/compare/v2.23.4...v2.24.0) (2022-01-10)
 
 
