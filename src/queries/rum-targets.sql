@@ -29,7 +29,7 @@ targets AS (
     id,
     target, 
     checkpoint,
-    MAX(url) AS url, 
+    REGEXP_REPLACE(MAX(url), r"\?.*$", "") AS url, 
     MAX(weight) AS views
   FROM current_data 
   WHERE target IS NOT NULL 
