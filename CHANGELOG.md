@@ -1,3 +1,10 @@
+## [2.25.2](https://github.com/adobe/helix-run-query/compare/v2.25.1...v2.25.2) (2022-01-14)
+
+
+### Bug Fixes
+
+* **rum-dashboard:** fix date selection in sharding ([3387783](https://github.com/adobe/helix-run-query/commit/33877833a1a0295061c358b2f4446feda27d43aa))
+
 ## [2.25.1](https://github.com/adobe/helix-run-query/compare/v2.25.0...v2.25.1) (2022-01-10)
 
 
