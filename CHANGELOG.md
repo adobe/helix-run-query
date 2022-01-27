@@ -1,3 +1,10 @@
+## [2.25.6](https://github.com/adobe/helix-run-query/compare/v2.25.5...v2.25.6) (2022-01-27)
+
+
+### Bug Fixes
+
+* **rum-checkpoints:** fix hardcoded date bug ([fec7a62](https://github.com/adobe/helix-run-query/commit/fec7a620a12e8c3554ac43fbb3e1b9ab045abe9b))
+
 ## [2.25.5](https://github.com/adobe/helix-run-query/compare/v2.25.4...v2.25.5) (2022-01-27)
 
 
