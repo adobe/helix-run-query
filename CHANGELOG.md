@@ -1,3 +1,10 @@
+# [2.26.0](https://github.com/adobe/helix-run-query/compare/v2.25.7...v2.26.0) (2022-01-28)
+
+
+### Features
+
+* **queries:** add query for exceptional experience score ([b06f539](https://github.com/adobe/helix-run-query/commit/b06f539ddc02c732c99cb33d46382c715636e012))
+
 ## [2.25.7](https://github.com/adobe/helix-run-query/compare/v2.25.6...v2.25.7) (2022-01-27)
 
 
