@@ -1,3 +1,10 @@
+## [2.26.3](https://github.com/adobe/helix-run-query/compare/v2.26.2...v2.26.3) (2022-02-04)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal-logger to v2.0.2 ([#592](https://github.com/adobe/helix-run-query/issues/592)) ([e7034a8](https://github.com/adobe/helix-run-query/commit/e7034a8b9811c2eefc982c122e2155dfa3d27f70))
+
 ## [2.26.2](https://github.com/adobe/helix-run-query/compare/v2.26.1...v2.26.2) (2022-02-04)
 
 
