@@ -34,7 +34,7 @@
     "@adobe/helix-shared-utils": "2.0.1",
     "@adobe/helix-shared-wrap": "1.0.1",
     "@adobe/helix-status": "9.2.5",
-    "@adobe/helix-universal-logger": "2.0.1",
+    "@adobe/helix-universal-logger": "2.0.2",
     "@google-cloud/bigquery": "5.10.0",
     "dotenv": "10.0.0",
     "fs-extra": "10.0.0",
