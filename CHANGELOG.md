@@ -1,3 +1,10 @@
+# [2.27.0](https://github.com/adobe/helix-run-query/compare/v2.26.5...v2.27.0) (2022-02-09)
+
+
+### Features
+
+* **sources:** add topurl property to rum sources report ([d11a39e](https://github.com/adobe/helix-run-query/commit/d11a39e6f433aa73f16d4503b97f2e341a0eea31))
+
 ## [2.26.5](https://github.com/adobe/helix-run-query/compare/v2.26.4...v2.26.5) (2022-02-09)
 
 
