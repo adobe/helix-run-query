@@ -27,7 +27,8 @@ sources AS (
     source, 
     checkpoint,
     MAX(url) AS url, 
-    MAX(weight) AS views
+    MAX(weight) AS views,
+    SUM(weight) AS actions,
   FROM current_data 
   WHERE source IS NOT NULL AND (@checkpoint = '-' OR @checkpoint = checkpoint)
   GROUP BY source, id, checkpoint 
@@ -38,6 +39,8 @@ SELECT
   COUNT(DISTINCT url) AS pages,
   APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
   SUM(views) AS views,
+  SUM(actions) AS actions,
+  SUM(actions) / SUM(views) AS actions_per_view,
   checkpoint,
   source,
 FROM sources
