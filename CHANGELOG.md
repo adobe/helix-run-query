@@ -1,3 +1,11 @@
+# [2.28.0](https://github.com/adobe/helix-run-query/compare/v2.27.1...v2.28.0) (2022-02-18)
+
+
+### Features
+
+* **rum-sources:** add actions_per_view colum ([d499d97](https://github.com/adobe/helix-run-query/commit/d499d97e6ed15589a5c04451bf7fd914cb863f19))
+* **rum-sources:** count number of actions, if greater than number of page views ([9a79792](https://github.com/adobe/helix-run-query/commit/9a7979229054e28f8a031c36c0dc4434d92f92c5))
+
 ## [2.27.1](https://github.com/adobe/helix-run-query/compare/v2.27.0...v2.27.1) (2022-02-11)
 
 
