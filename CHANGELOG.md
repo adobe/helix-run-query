@@ -1,3 +1,11 @@
+# [2.29.0](https://github.com/adobe/helix-run-query/compare/v2.28.3...v2.29.0) (2022-02-24)
+
+
+### Features
+
+* **pageviews:** add `granularity` parameter that can set reporting granularity to day (1), week (7), month (30), quarter (90), or year (365) ([f35befd](https://github.com/adobe/helix-run-query/commit/f35befdcc072f336202f8dc77ff9382e140504f8)), closes [#611](https://github.com/adobe/helix-run-query/issues/611)
+* **pageviews:** support `granularity=auto` for automated adjustment to weekly or monthly granularity ([5dacce4](https://github.com/adobe/helix-run-query/commit/5dacce447d2c1cac0f20522421eefeea1a7c37bd)), closes [#611](https://github.com/adobe/helix-run-query/issues/611)
+
 ## [2.28.3](https://github.com/adobe/helix-run-query/compare/v2.28.2...v2.28.3) (2022-02-23)
 
 
