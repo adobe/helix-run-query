@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/adobe/helix-run-query#readme",
   "dependencies": {
-    "@adobe/fastly-native-promises": "2.0.2",
+    "@adobe/fastly-native-promises": "2.0.3",
     "@adobe/helix-fetch": "3.0.5",
     "@adobe/helix-shared-body-data": "1.1.16",
     "@adobe/helix-shared-utils": "2.0.2",
