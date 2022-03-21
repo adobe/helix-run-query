@@ -32,9 +32,8 @@ sources AS (
   FROM current_data 
   WHERE source IS NOT NULL AND (@checkpoint = '-' OR @checkpoint = checkpoint)
   GROUP BY source, id, checkpoint 
-)
-
-SELECT 
+),
+groupedsources AS (SELECT 
   COUNT(id) AS ids,
   COUNT(DISTINCT url) AS pages,
   APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
@@ -45,5 +44,9 @@ SELECT
   source,
 FROM sources
 GROUP BY source, checkpoint
+ORDER BY views DESC)
+SELECT *,
+  CAST((100 * PERCENT_RANK() OVER (PARTITION BY checkpoint ORDER BY views ASC)) AS INT64) AS percentile
+FROM groupedsources
 ORDER BY views DESC
 LIMIT @limit
