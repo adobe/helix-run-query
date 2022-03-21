@@ -36,16 +36,21 @@ targets AS (
     AND (@checkpoint = '-' OR @checkpoint = checkpoint)
     AND (@source = '-' OR @source = source)
   GROUP BY target, id, checkpoint 
+),
+groupedtargets AS (
+  SELECT 
+    COUNT(id) AS ids,
+    COUNT(DISTINCT url) AS pages,
+    APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
+    SUM(views) AS views,
+    checkpoint,
+    target,
+  FROM targets, UNNEST(IF(@extract = '-', SPLIT(target, CONCAT(@separator, " ")), REGEXP_EXTRACT_ALL(target, @extract))) AS target
+  GROUP BY target, checkpoint
+  ORDER BY views DESC
 )
-
-SELECT 
-  COUNT(id) AS ids,
-  COUNT(DISTINCT url) AS pages,
-  APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
-  SUM(views) AS views,
-  checkpoint,
-  target,
-FROM targets, UNNEST(IF(@extract = '-', SPLIT(target, CONCAT(@separator, " ")), REGEXP_EXTRACT_ALL(target, @extract))) AS target
-GROUP BY target, checkpoint
+SELECT *,
+  CAST((100 * PERCENT_RANK() OVER (PARTITION BY checkpoint ORDER BY views ASC)) AS INT64) AS percentile
+FROM groupedtargets
 ORDER BY views DESC
 LIMIT @limit
