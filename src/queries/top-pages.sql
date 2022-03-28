@@ -8,7 +8,7 @@ SELECT * FROM (
   SELECT 
     req_url, count(req_http_X_CDN_Request_ID) as reqs
   FROM (
-    ^allrequests
+    ^allrequests(resp_http_Content_Type, status_code, time_start_usec, req_url, req_http_X_CDN_Request_ID)
     WHERE
       _TABLE_SUFFIX BETWEEN 
       FORMAT_TIMESTAMP("%Y%m" , TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL @fromDays DAY)) AND 

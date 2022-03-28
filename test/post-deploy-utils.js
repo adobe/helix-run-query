@@ -68,6 +68,7 @@ class AWSTarget extends OpenwhiskTarget {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 class GoogleTarget extends OpenwhiskTarget {
   title() {
     return 'Google';
@@ -89,7 +90,7 @@ class GoogleTarget extends OpenwhiskTarget {
 const ALL_TARGETS = [
   OpenwhiskTarget,
   AWSTarget,
-  GoogleTarget,
+  // GoogleTarget,
 ];
 
 function createTargets(opts) {

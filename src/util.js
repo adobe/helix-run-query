@@ -119,18 +119,24 @@ function cleanRequestParams(params) {
  * @param {object} replacers an function mapping from placeholders to replacer methods
  */
 async function replaceTableNames(query, replacers) {
-  const replacements = await (query.match(/\^[a-z]+/g) ? query.match(/\^[a-z]+/g) : [])
-    .map((placeholder) => placeholder.substr(1))
-    .reduce(async (pvp, placeholder) => {
+  const regex = /\^(?<placeholder>[a-z]+)(\((?<args>[^)]+)\))?/;
+
+  const replacements = await (query.match(new RegExp(regex, 'g')) || [])
+    .map((placeholder) => placeholder.match(regex))
+    .map((placeholder) => placeholder.groups)
+    .reduce(async (pvp, { placeholder, args = '' }) => {
       const pv = await pvp;
       if (pv[placeholder]) {
         return pv;
       }
-      pv[placeholder] = await replacers[placeholder]();
+      pv[placeholder] = await replacers[placeholder](args.split(',').map((arg) => arg.trim()));
       return pv;
     }, {});
 
-  return Object.keys(replacements).reduce((q, placeholder) => q.replace(new RegExp(`\\^${placeholder}`, 'g'), replacements[placeholder]), query);
+  return Object
+    .keys(replacements)
+    .reduce((q, placeholder) => q
+      .replace(new RegExp(`\\^${placeholder}(\\([^)]+\\))?`, 'g'), replacements[placeholder]), query);
 }
 
 /**

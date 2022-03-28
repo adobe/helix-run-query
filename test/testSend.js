@@ -43,13 +43,12 @@ describe('bigquery tests', async () => {
   const badExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => badQuery } });
   const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
   const myReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('myrequests'), authFastly: () => true } });
-  const execWithRealLoad = proxyquire('../src/sendquery.js', { './util.js': { authFastly: () => true } });
 
   const service = 'fake_name';
 
   setupPolly({
-    recordFailedRequests: false,
-    recordIfMissing: false,
+    recordFailedRequests: true,
+    recordIfMissing: true,
     matchRequestsBy: {
       headers: {
         exclude: ['authorization', 'user-agent', 'x-goog-api-client'],
@@ -59,7 +58,7 @@ describe('bigquery tests', async () => {
       order: false,
       method: true,
     },
-    logging: false,
+    logging: true,
     adapters: [NodeHttpAdapter],
     persister: FSPersister,
     persisterOptions: {
@@ -119,19 +118,6 @@ describe('bigquery tests', async () => {
     assert.equal(results.length, 3);
   });
 
-  it('runs a query with alldatasets replacer', async () => {
-    const { results, description, requestParams } = await execWithRealLoad.execute(env.email, env.key, env.projectid, 'top-pages', service, {
-      limit: 10,
-      fromDays: 30,
-      toDays: 0,
-    });
-
-    assert.ok(Array.isArray(results));
-    assert.equal(description, 'most requested sites by Helix.');
-    assert.deepEqual(requestParams, { limit: 10, fromDays: 30, toDays: 0 });
-    assert.equal(results.length, 10);
-  });
-
   it('throws without projectid', async () => {
     try {
       await goodExec.execute(env.email, env.key, undefined, 'list-everything', service);
@@ -142,7 +128,7 @@ describe('bigquery tests', async () => {
         throw e;
       }
     }
-  }).timeout(10000);
+  }).timeout(20000);
 
   it('throws with bad query', async () => {
     try {
@@ -155,5 +141,5 @@ describe('bigquery tests', async () => {
         throw e;
       }
     }
-  });
+  }).timeout(10000);
 });

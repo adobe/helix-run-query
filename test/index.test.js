@@ -143,7 +143,7 @@ describe('Index Tests', async () => {
 
     assert.deepEqual(body.requestParams, { limit: 2000 });
     assert.equal(body.description, 'some fake comments that mean nothing');
-  });
+  }).timeout(10000);
 
   it('index function returns 500 on error', async () => {
     const response = await index(new Request('https://helix-run-query.com/list-everything?limit=3', {

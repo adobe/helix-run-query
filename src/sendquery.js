@@ -101,12 +101,13 @@ async function execute(email, key, project, query, service, params = {}) {
 
       replaceTableNames(loadedQuery, {
         myrequests: () => `SELECT * FROM \`${dataset.id}.requests*\``,
-        allrequests: async () => {
+        allrequests: async (columnnames = ['*']) => {
           const [alldatasets] = await bq.getDatasets();
           return alldatasets
-            .filter(({ id }) => id.match(/^helix_logging_*/g))
+            .filter(({ id }) => id.match(/^helix_logging_[0-9][a-zA-Z0-9]{21}/g))
+            .filter(({ metadata }) => metadata.location === 'US')
             .map(({ id }) => id)
-            .map((id) => `SELECT * FROM \`${id}.requests*\``)
+            .map((id) => `SELECT ${columnnames.join(', ')} FROM \`${id}.requests*\``)
             .join(' UNION ALL\n');
         },
       }).then((q) => {
