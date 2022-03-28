@@ -1,3 +1,10 @@
+## [2.29.6](https://github.com/adobe/helix-run-query/compare/v2.29.5...v2.29.6) (2022-03-28)
+
+
+### Bug Fixes
+
+* **queries:** make alldatasets replacer more relilient ([7086f4d](https://github.com/adobe/helix-run-query/commit/7086f4d5481bdc0c7f655c55762e33b627b0f8ec))
+
 ## [2.29.5](https://github.com/adobe/helix-run-query/compare/v2.29.4...v2.29.5) (2022-03-12)
 
 
