@@ -141,5 +141,5 @@ describe('bigquery tests', async () => {
         throw e;
       }
     }
-  });
+  }).timeout(10000);
 });
