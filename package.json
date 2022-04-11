@@ -31,7 +31,7 @@
     "@adobe/fastly-native-promises": "2.0.7",
     "@adobe/helix-fetch": "3.0.9",
     "@adobe/helix-shared-body-data": "1.1.18",
-    "@adobe/helix-shared-utils": "2.0.6",
+    "@adobe/helix-shared-utils": "2.0.7",
     "@adobe/helix-shared-wrap": "1.0.4",
     "@adobe/helix-status": "9.2.11",
     "@adobe/helix-universal-logger": "2.0.7",
