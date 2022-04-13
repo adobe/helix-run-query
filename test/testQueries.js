@@ -56,7 +56,7 @@ describe('Test Queries', () => {
   }).timeout(100000);
 
   it('most-visited', async () => {
-    const res = await main(new Request('https://helix-run-query.com/most-visited', {
+    const res = await main(new Request('https://helix-run-query.com/most-visited-hlx3', {
       headers: {
         'x-token': process.env.HLX_FASTLY_AUTH,
         'x-service': '6v0sHgrPTGUGS5PHOXZ0H1',
