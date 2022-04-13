@@ -1,0 +1,27 @@
+WITH domains_and_dates AS (
+  SELECT 
+    REGEXP_EXTRACT(MAX(url), "https://([^/]+)/", 1) AS url, 
+    TIMESTAMP_MILLIS(CAST(MAX(time) AS INT64)) AS date,
+    id,
+    MAX(CAST(weight AS INT64)) AS weight
+  FROM `helix-225321.helix_rum.rum*`
+  GROUP BY id
+),
+domains_and_months AS (
+  SELECT 
+    weight,
+    CASE url
+      WHEN "www.adobe.com" THEN "Express"
+      WHEN "pages.adobe.com" THEN "Pages"
+      WHEN "blog.adobe.com" THEN "Blog"
+      ELSE "Other"      
+    END AS url,
+    EXTRACT(MONTH FROM date) AS month,
+    EXTRACT(YEAR FROM date) AS year
+  FROM domains_and_dates
+  WHERE url IS NOT NULL AND URL NOT LIKE '%--%'
+)
+SELECT year, month, url, ROUND(SUM(weight) / 100000) / 10 AS pageviews
+FROM domains_and_months
+GROUP BY month, year, url
+ORDER BY year DESC, month DESC
