@@ -1,3 +1,10 @@
+## [2.29.13](https://github.com/adobe/helix-run-query/compare/v2.29.12...v2.29.13) (2022-04-14)
+
+
+### Bug Fixes
+
+* **queries:** remove outdated helix-2 queries ([8a8d953](https://github.com/adobe/helix-run-query/commit/8a8d95392ef1f15fab1fc56c1df167393da65904))
+
 ## [2.29.12](https://github.com/adobe/helix-run-query/compare/v2.29.11...v2.29.12) (2022-04-11)
 
 
