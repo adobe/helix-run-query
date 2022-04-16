@@ -1,3 +1,10 @@
+## [2.29.14](https://github.com/adobe/helix-run-query/compare/v2.29.13...v2.29.14) (2022-04-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-shared-utils to v2.0.8 ([cd4e430](https://github.com/adobe/helix-run-query/commit/cd4e430e6a44cc56300c17337109ef05f0083c6d))
+
 ## [2.29.13](https://github.com/adobe/helix-run-query/compare/v2.29.12...v2.29.13) (2022-04-14)
 
 
