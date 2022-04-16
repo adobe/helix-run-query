@@ -1,3 +1,10 @@
+## [2.29.15](https://github.com/adobe/helix-run-query/compare/v2.29.14...v2.29.15) (2022-04-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency fs-extra to v10.1.0 ([#639](https://github.com/adobe/helix-run-query/issues/639)) ([b3981d2](https://github.com/adobe/helix-run-query/commit/b3981d269d91870c97b773350c9252dabfcf4305))
+
 ## [2.29.14](https://github.com/adobe/helix-run-query/compare/v2.29.13...v2.29.14) (2022-04-16)
 
 
