@@ -1,3 +1,11 @@
+## [2.29.17](https://github.com/adobe/helix-run-query/compare/v2.29.16...v2.29.17) (2022-05-06)
+
+
+### Bug Fixes
+
+* **deps:** bump semantic-release-coralogix plugin version ([a21eb88](https://github.com/adobe/helix-run-query/commit/a21eb8872e16d9d7d6a250e93d360f9da72d93d6))
+* **release:** enable coralogix release tagging ([a19e400](https://github.com/adobe/helix-run-query/commit/a19e4003196dd1fc1727d3cd749e26d876256430))
+
 ## [2.29.16](https://github.com/adobe/helix-run-query/compare/v2.29.15...v2.29.16) (2022-05-03)
 
 
