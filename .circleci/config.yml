@@ -30,7 +30,8 @@ commands:
           key: v3-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
       - run:
           name: prepare test git user
-          command: git config --global user.email "circleci@example.com" && git config --global user.name "CircleCi Build"
+          command: git config --global user.email "circleci@example.com" && git config
+            --global user.name "CircleCi Build"
 
 jobs:
   build:
@@ -48,6 +49,8 @@ jobs:
           path: junit
       - store_artifacts:
           path: junit
+    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
+    resource_class: large
 
   semantic-release:
     executor: node12
