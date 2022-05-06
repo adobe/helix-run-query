@@ -16,6 +16,10 @@ module.exports = {
       publishCmd: 'npm run deploy'
     }],
     '@semantic-release/github',
+    ['@adobe/semantic-release-coralogix', {
+      'subsystems': ['helix-services'],
+      'applications': ['lqmig3v5eb'],
+    }]
   ],
   branches: ['main'],
 };
