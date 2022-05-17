@@ -11,10 +11,10 @@ AS
   SELECT 
     *
   FROM `helix-225321.helix_rum.cluster` 
-  WHERE IF(filterurl = '-', TRUE, url LIKE CONCAT('https://', filterurl, '%'))
-  AND   IF(filterurl = '-', TRUE, hostname = SPLIT(filterurl, '/')[OFFSET(0)])
-  AND   IF(days_offset > 0, DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, timezone), INTERVAL days_offset DAY),                TIMESTAMP(day_max, timezone)) >= time
-  AND   IF(days_count > 0,  DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, timezone), INTERVAL (days_offset + days_count) DAY), TIMESTAMP(day_min, timezone)) <= time
+  WHERE IF(filterurl = '-', TRUE, (url LIKE CONCAT('https://', filterurl, '%')) OR (filterurl LIKE 'localhost%' AND url LIKE CONCAT('http://', filterurl, '%')))
+  AND   IF(filterurl = '-', TRUE, (hostname = SPLIT(filterurl, '/')[OFFSET(0)]) OR (filterurl LIKE 'localhost:%' AND hostname = 'localhost'))
+  AND   IF(days_offset >= 0, DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, timezone), INTERVAL days_offset DAY),                TIMESTAMP(day_max, timezone)) >= time
+  AND   IF(days_count >= 0,  DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, timezone), INTERVAL (days_offset + days_count) DAY), TIMESTAMP(day_min, timezone)) <= time
   AND   helix_rum.CLUSTER_FILTERCLASS(user_agent, deviceclass)
   AND   IF(filtergeneration = '-', TRUE, generation = filtergeneration)
 ;
