@@ -43,19 +43,21 @@ AS
     ANY_VALUE(host) AS host,
     MAX(time) AS time,
     checkpoint,
+    source,
     target,
     MAX(weight) AS pageviews,
     ANY_VALUE(generation) AS generation,
+    id,
     ANY_VALUE(url) AS url,
     ANY_VALUE(referer) AS referer,
     ANY_VALUE(user_agent) AS user_agent,
   FROM helix_rum.CLUSTER_EVENTS(filterurl, days_offset, days_count, day_min, day_max, timezone, deviceclass, filtergeneration)
-  GROUP BY id, checkpoint, target;
+  GROUP BY id, checkpoint, target, source;
 
-SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
-ORDER BY time DESC
-LIMIT 10;
+# SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
+# ORDER BY time DESC
+# LIMIT 10;
 
-SELECT * FROM helix_rum.CLUSTER_CHECKPOINTS('blog.adobe.com', -1, -1, '2022-02-01', '2022-02-28', 'GMT', 'mobile', '-')
+SELECT hostname, url, time FROM helix_rum.CLUSTER_CHECKPOINTS('localhost:3000/drafts', -1, -7, '2022-02-01', '2022-05-28', 'GMT', 'all', '-')
 ORDER BY time DESC
 LIMIT 10;
