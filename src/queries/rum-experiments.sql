@@ -1,3 +1,12 @@
+--- description: Using Helix RUM data, get a report of conversion rates of experiment variants compared to control, including p value.
+--- Authorization: none
+--- Access-Control-Allow-Origin: *
+--- domain: -
+--- interval: 30
+--- offset: 0
+--- experiment: -
+--- conversioncheckpoint: click
+
 CREATE TEMPORARY FUNCTION
   CDF(nto FLOAT64)
   RETURNS FLOAT64
@@ -24,7 +33,16 @@ CREATE TEMPORARY FUNCTION
 
 WITH 
 all_checkpoints AS (
-  SELECT * FROM helix_rum.CLUSTER_CHECKPOINTS('localhost:3000/drafts/uncled', -1, -7, '2022-02-01', '2022-05-28', 'GMT', 'all', '-')
+  SELECT * FROM helix_rum.CLUSTER_CHECKPOINTS(
+    @domain, # domain or URL
+    CAST(@offset AS INT64), # offset in days from today
+    CAST(@interval AS INT64), # interval in days to consider
+    '2022-02-01', # not used, start date
+    '2022-05-28', # not used, end date
+    'GMT', # timezone
+    'all', # device class
+    '-' # not used, generation
+  )
 ),
 experiment_checkpoints AS(
 SELECT 
@@ -34,6 +52,7 @@ SELECT
   ANY_VALUE(pageviews) AS pageviews, 
 FROM all_checkpoints
 WHERE checkpoint = 'experiment'
+  AND (source = @experiment OR @experiment = '-') # filter by experiment or show all
 GROUP BY
   source,
   target,
@@ -43,7 +62,7 @@ converted_checkpoints AS (
 SELECT experiment_checkpoints.source, experiment_checkpoints.target, all_checkpoints.id, all_checkpoints.pageviews
 FROM experiment_checkpoints JOIN all_checkpoints
   ON experiment_checkpoints.id = all_checkpoints.id
-  WHERE all_checkpoints.checkpoint = 'click'
+  WHERE all_checkpoints.checkpoint = @conversioncheckpoint # note: at some point we may need further filters here
 ),
 conversions_summary AS (
 SELECT 
@@ -81,13 +100,6 @@ FROM experimentations_summary FULL JOIN conversions_summary
   AND experimentations_summary.target = conversions_summary.target
 )
 
--- SET
---   pooled_standard_error = SQRT( pooled_sample_proportion * ( 1 - pooled_sample_proportion ) * ( 1/sessions_variant_1 + 1/sessions_variant_2 ) );
--- SET
---   test = (conversions_variant_1/sessions_variant_1 - conversions_variant_2/sessions_variant_2) / pooled_standard_error;
--- SET
---   p_value = cdf((-1) * abs(test));
-
 SELECT 
   l.experiment,
   l.variant,
@@ -101,6 +113,7 @@ SELECT
   r.conversions AS control_conversions,
   l.conversion_rate AS variant_conversion_rate,
   r.conversion_rate AS control_conversion_rate,
+  # Math!
   (l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events) AS pooled_sample_proportion,
   SQRT(((l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events)) * ( 1 - ((l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events)) * ( 1/l.experimentations + 1/r.experimentations ))) AS pooled_standard_error,
   (l.conversion_rate - r.conversion_rate) / SQRT(((l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events)) * ( 1 - ((l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events)) * ( 1/l.experimentations + 1/r.experimentations ))) AS test,
