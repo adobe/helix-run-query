@@ -1,3 +1,18 @@
+# [2.30.0](https://github.com/adobe/helix-run-query/compare/v2.29.19...v2.30.0) (2022-05-19)
+
+
+### Bug Fixes
+
+* **common:** more lenient handling of localhost ([6922a83](https://github.com/adobe/helix-run-query/commit/6922a83dff34628fed8d9b25d90a59502d0cd391))
+* **common:** report source in CLUSTER_CHECKPOINTS ([6d1e576](https://github.com/adobe/helix-run-query/commit/6d1e5762bfc332f0f042b725cb02932b0e1b45c9))
+
+
+### Features
+
+* **queries:** add common query functions ([af5acf6](https://github.com/adobe/helix-run-query/commit/af5acf6d64e089c56dd2a2fe17d2bf454e4ae36c))
+* **queries:** make rum-experiments an official query endpoint ([39f5cb6](https://github.com/adobe/helix-run-query/commit/39f5cb61753e3041232a3cf0f15d75528c35c2eb))
+* **rum:** report experiment conversion rate and p value ([79d6c92](https://github.com/adobe/helix-run-query/commit/79d6c92b9305772d43b457d79dc9c72b7c9b2436))
+
 ## [2.29.19](https://github.com/adobe/helix-run-query/compare/v2.29.18...v2.29.19) (2022-05-16)
 
 
