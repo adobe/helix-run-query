@@ -29,9 +29,9 @@ CREATE TEMP FUNCTION LABELSCORE(score FLOAT64)
 
 WITH visits AS (
   SELECT 
-    MAX(REGEXP_REPLACE(url, "\\?.*$", "")) AS url,
-    REGEXP_EXTRACT(MAX(url), "https://([^/]+)/", 1) AS host,
-    TIMESTAMP_TRUNC(TIMESTAMP_MILLIS(CAST(MAX(time) AS INT64)), DAY) AS time, 
+    REGEXP_REPLACE(ANY_VALUE(url), "\\?.*$", "") AS url,
+    ANY_VALUE(hostname) AS host,
+    TIMESTAMP_TRUNC(MAX(time), DAY) AS time, 
     id, 
     MAX(weight) AS weight,
     MAX(LCP) AS LCP,
@@ -40,13 +40,16 @@ WITH visits AS (
     MAX(IF(checkpoint = "top", 1, 0)) AS top,
     MAX(IF(checkpoint = "load", 1, 0)) AS load,
     MAX(IF(checkpoint = "click", 1, 0)) AS click
-  FROM `helix-225321.helix_rum.rum*` 
-  WHERE 
-    # use date partitioning to reduce query size
-    _TABLE_SUFFIX <= upperdate AND
-    _TABLE_SUFFIX >= lowerdate AND
-    CAST(time AS STRING) < uppertimestamp AND
-    CAST(time AS STRING) > lowertimestamp
+  FROM helix_rum.CLUSTER_EVENTS(
+    @domain,
+    CAST(@offset AS INT64),
+    CAST(@interval AS INT64),
+    '',
+    '',
+    'GMT',
+    'all',
+    '-'
+  )
   GROUP BY id
 ),
 urldays AS (
@@ -172,8 +175,11 @@ SELECT
         COUNTIF(chain = 1) AS reach,
         COUNTIF(chain = 7) AS persistence
       FROM chains 
-      WHERE host = @domain OR @domain = "-"
+      WHERE (host = @domain OR @domain = "-") 
+        AND host IS NOT NULL
+        AND host NOT LIKE "%.hlx.%"
       GROUP BY host
+      ORDER BY host DESC
     ) AS chained
   )
   WHERE host = @domain OR (@domain = "-"
