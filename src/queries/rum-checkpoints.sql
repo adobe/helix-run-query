@@ -5,43 +5,25 @@
 --- generation: -
 --- device: all
 
-CREATE TEMP FUNCTION FILTERCLASS(user_agent STRING, device STRING) 
-  RETURNS BOOLEAN
-  AS (
-    device = "all" OR 
-    (device = "desktop" AND user_agent NOT LIKE "%Mobile%" AND user_agent LIKE "Mozilla%" ) OR 
-    (device = "mobile" AND user_agent LIKE "%Mobile%") OR
-    (device = "bot" AND user_agent NOT LIKE "Mozilla%"));
-
-WITH rootdata AS (
-    SELECT 
-        checkpoint, 
-        id, 
-        url, 
-        @generation AS generation,
-        weight 
-    FROM `helix-225321.helix_rum.rum*`
-    WHERE 
-      # use date partitioning to reduce query size
-      _TABLE_SUFFIX <= CONCAT(CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP()) AS String), LPAD(CAST(EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS String), 2, "0")) AND
-      _TABLE_SUFFIX >= CONCAT(CAST(EXTRACT(YEAR FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL CAST(@interval AS INT64) DAY)) AS String), LPAD(CAST(EXTRACT(MONTH FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL CAST(@interval AS INT64) DAY)) AS String), 2, "0")) AND
-      CAST(time AS STRING) > CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL CAST(@interval AS INT64) DAY)) AS STRING) AND
-      CAST(time AS STRING) < CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 0 DAY)) AS STRING) AND
-      (generation = @generation OR @generation = "-") AND
-      (url LIKE CONCAT("https://", @domain, "%") OR @domain = "-") AND
-      FILTERCLASS(user_agent, @device)
-),
+WITH
 weightdata AS (
-    SELECT
-        checkpoint,
-        MAX(weight) AS weight,
-        id,
-        MAX(url) AS url,
-        MAX(generation) AS generation,
-    FROM rootdata
-    GROUP BY
-        id,
-        checkpoint
+  SELECT 
+    checkpoint,
+    MAX(pageviews) AS weight,
+    id,
+    ANY_VALUE(url) AS url,
+    ANY_VALUE(generation) AS generation
+  FROM helix_rum.CLUSTER_CHECKPOINTS(
+    @domain,
+    0, # offset in days from today, not used
+    CAST(@interval AS INT64), # interval in days to consider
+    '2022-02-01', # not used, start date
+    '2022-05-28', # not used, end date
+    'GMT', # timezone
+    'all', # device class
+    @generation # generation
+  )
+  GROUP BY id, checkpoint
 ),
 data AS (
 SELECT 
@@ -61,7 +43,7 @@ anydatabyid AS (
     SELECT 
         "any" AS checkpoint,
         COUNT(DISTINCT id) AS ids,
-        MAX(weight) AS views,
+        MAX(weight) AS views
         # url
     FROM weightdata 
     WHERE 
@@ -80,6 +62,9 @@ anydata AS (
 ),
 alldata AS (
     SELECT * FROM (SELECT * FROM anydata UNION ALL (SELECT * FROM data)))
+
+-- SELECT * FROM anydatabyid LIMIT 10
+
 SELECT 
     checkpoint, 
     ids as events,
