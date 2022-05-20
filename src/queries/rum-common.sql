@@ -32,7 +32,8 @@ AS
     ANY_VALUE(generation) AS generation,
     ANY_VALUE(url) AS url,
     ANY_VALUE(referer) AS referer,
-    ANY_VALUE(user_agent) AS user_agent
+    ANY_VALUE(user_agent) AS user_agent,
+    id
   FROM helix_rum.CLUSTER_EVENTS(filterurl, days_offset, days_count, day_min, day_max, timezone, deviceclass, filtergeneration)
   GROUP BY id;
 
