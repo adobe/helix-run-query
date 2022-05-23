@@ -101,8 +101,7 @@
       "src/queries/rum-checkpoints.sql",
       "src/queries/rum-sources.sql",
       "src/queries/rum-targets.sql",
-      "src/queries/rum-experiments.sql",
-      "src/queries/pageviews-by-generation.sql"
+      "src/queries/rum-experiments.sql"
     ]
   }
 }
