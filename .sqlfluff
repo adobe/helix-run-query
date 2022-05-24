@@ -9,3 +9,6 @@ capitalisation_policy = upper
 
 [sqlfluff:rules:L030]
 extended_capitalisation_policy = upper
+
+[sqlfluff:rules:L016]
+ignore_comment_lines = true
