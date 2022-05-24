@@ -102,7 +102,7 @@
       "src/queries/rum-sources.sql",
       "src/queries/rum-targets.sql",
       "src/queries/rum-experiments.sql",
-      "src/queries/rum-checkpoints-urls.sql"
+      "src/queries/rum-checkpoint-urls.sql"
     ]
   }
 }
