@@ -1,0 +1,11 @@
+[sqlfluff]
+dialect = bigquery
+
+[sqlfluff:rules]
+tab_space_size = 2
+
+[sqlfluff:rules:L010]
+capitalisation_policy = upper
+
+[sqlfluff:rules:L030]
+extended_capitalisation_policy = upper
