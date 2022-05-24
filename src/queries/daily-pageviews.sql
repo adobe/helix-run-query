@@ -12,28 +12,30 @@ BEGIN
     AS
         WITH current_data AS (
         SELECT CASE ingranularity
-                WHEN 7 THEN TIMESTAMP_TRUNC(TIMESTAMP_MILLIS(CAST(time AS INT64)), ISOWEEK)
-                WHEN 30 THEN TIMESTAMP_TRUNC(TIMESTAMP_MILLIS(CAST(time AS INT64)), MONTH)
-                WHEN 90 THEN TIMESTAMP_TRUNC(TIMESTAMP_MILLIS(CAST(time AS INT64)), QUARTER)
-                WHEN 365 THEN TIMESTAMP_TRUNC(TIMESTAMP_MILLIS(CAST(time AS INT64)), YEAR)
-                ELSE TIMESTAMP_TRUNC(TIMESTAMP_MILLIS(CAST(time AS INT64)), DAY)
+                WHEN 7 THEN TIMESTAMP_TRUNC(time, ISOWEEK)
+                WHEN 30 THEN TIMESTAMP_TRUNC(time, MONTH)
+                WHEN 90 THEN TIMESTAMP_TRUNC(time, QUARTER)
+                WHEN 365 THEN TIMESTAMP_TRUNC(time, YEAR)
+                ELSE TIMESTAMP_TRUNC(time, DAY)
             END AS date,
             * 
-        FROM `helix-225321.helix_rum.rum*`
-        WHERE 
-            # use date partitioning to reduce query size
-            _TABLE_SUFFIX <= CONCAT(CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP()) AS String), LPAD(CAST(EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS String), 2, "0")) AND
-            _TABLE_SUFFIX >= CONCAT(CAST(EXTRACT(YEAR FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL (CAST(inlimit AS INT64) * CAST(ingranularity AS INT64)) DAY)) AS String), LPAD(CAST(EXTRACT(MONTH FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL CAST(inlimit AS INT64) DAY)) AS String), 2, "0")) AND
-            CAST(time AS STRING) > CAST(UNIX_MICROS(TIMESTAMP_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY), INTERVAL SAFE_ADD((CAST(inlimit AS INT64) * CAST(ingranularity AS INT64)), -1) DAY)) AS STRING) AND
-            CAST(time AS STRING) < CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL SAFE_ADD((CAST(inoffset AS INT64) * CAST(ingranularity AS INT64)), 0) DAY)) AS STRING) AND
-            url LIKE CONCAT("https://", inurl, "%")
+        FROM helix_rum.CLUSTER_PAGEVIEWS(
+            inurl, # url
+            (inoffset * ingranularity) - 1, # offset
+            inlimit * ingranularity, # days to fetch
+            '2022-05-01', # not used, start date
+            '2022-05-28', # not used, end date
+            'UTC', # timezone
+            'all', # deviceclass
+            '-' # not used, generation
+        )
         ),
         pageviews_by_id AS (
             SELECT 
                 MAX(date) AS date, 
                 MAX(url) AS url,
                 id,
-                MAX(weight) AS weight
+                MAX(pageviews) AS weight
             FROM current_data 
             GROUP BY id),
         dailydata AS (

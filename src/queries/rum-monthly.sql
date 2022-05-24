@@ -1,10 +1,10 @@
 WITH domains_and_dates AS (
   SELECT 
     REGEXP_EXTRACT(MAX(url), "https://([^/]+)/", 1) AS url, 
-    TIMESTAMP_MILLIS(CAST(MAX(time) AS INT64)) AS date,
+    MAX(time) AS date,
     id,
     MAX(CAST(weight AS INT64)) AS weight
-  FROM `helix-225321.helix_rum.rum*`
+  FROM `helix-225321.helix_rum.cluster`
   GROUP BY id
 ),
 domains_and_months AS (

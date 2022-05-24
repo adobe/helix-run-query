@@ -21,28 +21,28 @@ CREATE TEMP FUNCTION FILTERCLASS(user_agent STRING, device STRING)
 
 WITH 
 current_data AS (
-  SELECT * 
-  FROM `helix-225321.helix_rum.rum*`
-  WHERE 
-    # use date partitioning to reduce query size
-    _TABLE_SUFFIX <= CONCAT(CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP()) AS String), LPAD(CAST(EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS String), 2, "0")) AND
-    _TABLE_SUFFIX >= CONCAT(CAST(EXTRACT(YEAR FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL CAST(@interval AS INT64) DAY)) AS String), LPAD(CAST(EXTRACT(MONTH FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL CAST(@interval AS INT64) DAY)) AS String), 2, "0")) AND
-    CAST(time AS STRING) > CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL CAST(@interval AS INT64) DAY)) AS STRING) AND
-    CAST(time AS STRING) < CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 0 DAY)) AS STRING) AND
-    FILTERCLASS(user_agent, @device) AND
-    (generation = @generationa OR @generationa = "-")
+  SELECT * FROM helix_rum.CLUSTER_EVENTS(
+    @domain, # domain or URL
+    0, # not used, offset in days from today
+    CAST(@interval AS INT64), # interval in days to consider
+    '2022-02-01', # not used, start date
+    '2022-05-28', # not used, end date
+    'GMT', # timezone
+    @device, # device class
+    @generationa # generation
+  )
 ),
 previous_data AS (
-  SELECT * 
-  FROM `helix-225321.helix_rum.rum*`
-  WHERE 
-    # use date partitioning to reduce query size
-    ((@generationb = "-" AND
-    _TABLE_SUFFIX <= CONCAT(CAST(EXTRACT(YEAR FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) AS String), LPAD(CAST(EXTRACT(MONTH FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY)) AS String), 2, "0")) AND
-    _TABLE_SUFFIX >= CONCAT(CAST(EXTRACT(YEAR FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL (2 * CAST(@interval AS INT64)) DAY)) AS String), LPAD(CAST(EXTRACT(MONTH FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL (2 * CAST(@interval AS INT64)) DAY)) AS String), 2, "0")) AND
-    CAST(time AS STRING) > CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL (2 * CAST(@interval AS INT64)) DAY)) AS STRING) AND
-    CAST(time AS STRING) < CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL CAST(@interval AS INT64) DAY)) AS STRING)) OR generation = @generationb) AND
-    FILTERCLASS(user_agent, @device)
+  SELECT * FROM helix_rum.CLUSTER_EVENTS(
+    @domain, # domain or URL
+    IF(@generationb = '-', CAST(@interval AS INT64), 0), # offset in days from today (used only if generation filter is not used)
+    CAST(@interval AS INT64), # interval in days to consider
+    '2022-02-01', # not used, start date
+    '2022-05-28', # not used, end date
+    'GMT', # timezone
+    @device, # device class
+    @generationb # generation
+  )
 ),
 current_rum_by_id AS (
     SELECT 
