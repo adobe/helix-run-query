@@ -1,3 +1,18 @@
+# [2.31.0](https://github.com/adobe/helix-run-query/compare/v2.30.0...v2.31.0) (2022-05-24)
+
+
+### Bug Fixes
+
+* **ee-score:** refactoring and smaller fixes to ee score ([844eaee](https://github.com/adobe/helix-run-query/commit/844eaee8c774cf76dbdb78e311e2236a09fd16ac))
+* **rum-common:** report id in `CLUSTER_PAGEVIEWS` ([dc33859](https://github.com/adobe/helix-run-query/commit/dc33859066b6187b88de9a51e8e6aa0e2fee34eb))
+* **rum-dashboard:** pull correct data for previous period into dashboard ([44bfc57](https://github.com/adobe/helix-run-query/commit/44bfc573079707336113cb24dd08d2a82fae6fe6))
+
+
+### Features
+
+* **queries:** add rum-checkpoint-urls query to answer the question "where got this action taken most frequently" ([351207f](https://github.com/adobe/helix-run-query/commit/351207fabb5e1fcffcb6eccc4c620fd703c9ad5f))
+* **queries:** remove pageviews-by-generation query ([05d3201](https://github.com/adobe/helix-run-query/commit/05d32018efd87d05710cae5e389a94f4925487e7))
+
 # [2.30.0](https://github.com/adobe/helix-run-query/compare/v2.29.19...v2.30.0) (2022-05-19)
 
 
