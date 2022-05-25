@@ -1,3 +1,10 @@
+# [2.32.0](https://github.com/adobe/helix-run-query/compare/v2.31.0...v2.32.0) (2022-05-25)
+
+
+### Features
+
+* **queries:** add query to get sources and targets for a checkpoint ([3f3cd7b](https://github.com/adobe/helix-run-query/commit/3f3cd7b7f9ad750a6aef0655d10e10c7957e558e))
+
 # [2.31.0](https://github.com/adobe/helix-run-query/compare/v2.30.0...v2.31.0) (2022-05-24)
 
 
