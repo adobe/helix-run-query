@@ -48,20 +48,21 @@ async function logquerystats(job, query, fn) {
   const centsperterra = 5;
   const minbytes = 1024 * 1024;
   const billed = parseInt(metadata.statistics.query.totalBytesBilled, 10);
-  const billedbytes = Math.min(billed, billed && minbytes);
+  const billedbytes = Math.max(billed, billed && minbytes);
   const billedterrabytes = billedbytes / 1024 / 1024 / 1024 / 1024;
+
   const billedcents = billedterrabytes * centsperterra;
   const cf = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 4,
+    minimumFractionDigits: 2,
+    minimumSignificantDigits: 2,
+    maximumSignificantDigits: 2,
   });
-
   const nf = new Intl.NumberFormat('en-US', {
-    unit: 'GiB',
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 4,
+    style: 'unit',
+    unit: 'gigabyte',
+    maximumSignificantDigits: 3,
   });
   fn(`BiqQuery job ${job
     .id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ${cf.format(billedcents)}`);
