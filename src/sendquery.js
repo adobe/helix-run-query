@@ -43,20 +43,28 @@ async function processParams(query, params) {
   };
 }
 
-function logquerystats(job, query, fn) {
+async function logquerystats(job, query, fn) {
+  const [metadata] = await job.getMetadata();
   const centsperterra = 5;
   const minbytes = 1024 * 1024;
-  const billed = parseInt(job.metadata.statistics.query.totalBytesBilled, 10);
+  const billed = parseInt(metadata.statistics.query.totalBytesBilled, 10);
   const billedbytes = Math.min(billed, billed && minbytes);
   const billedterrabytes = billedbytes / 1024 / 1024 / 1024 / 1024;
   const billedcents = billedterrabytes * centsperterra;
-  const nf = new Intl.NumberFormat('en-US', {
+  const cf = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 2,
+    minimumFractionDigits: 4,
     maximumFractionDigits: 4,
   });
-  fn(`BiqQuery job ${job.id} for ${job.metadata.statistics.query.cacheHit ? '(cached)' : ''} ${job.metadata.statistics.query.statementType} ${query} finished with status ${job.metadata.status.state}, total bytes processed: ${job.metadata.statistics.query.totalBytesProcessed}, total bytes billed: ${job.metadata.statistics.query.totalBytesBilled}, estimated cost: ${nf.format(billedcents)}`);
+
+  const nf = new Intl.NumberFormat('en-US', {
+    unit: 'GiB',
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+  });
+  fn(`BiqQuery job ${job
+    .id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ${cf.format(billedcents)}`);
 }
 
 /**
@@ -142,12 +150,13 @@ async function execute(email, key, project, query, service, params = {}, logger 
               description,
               requestParams,
             })))
-            .on('error', (e) => {
-              logquerystats(job, query, logger.warn);
+            /* c8 ignore next 3 */
+            .on('error', async (e) => {
+              await logquerystats(job, query, logger.warn);
               reject(e);
             })
-            .on('end', () => {
-              logquerystats(job, query, logger.info);
+            .on('end', async () => {
+              await logquerystats(job, query, logger.info);
               resolve({
                 headers,
                 truncated: false,
