@@ -110,12 +110,14 @@ async function execute(email, key, project, query, service, params = {}) {
             .map((id) => `SELECT ${columnnames.join(', ')} FROM \`${id}.requests*\``)
             .join(' UNION ALL\n');
         },
-      }).then((q) => {
-        dataset.createQueryStream({
+      }).then(async (q) => {
+        const job = await dataset.createQueryJob({
           query: q,
           maxResults: params.limit,
           params: requestParams,
-        })
+        });
+        const stream = job.getQueryResultsStream({});
+        stream
           .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
             headers,
             truncated: true,
