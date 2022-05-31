@@ -18,7 +18,7 @@ const bodyData = require('@adobe/helix-shared-body-data');
 const { execute, queryInfo } = require('./sendquery.js');
 const { cleanRequestParams, csvify } = require('./util.js');
 
-async function runExec(params, pathname) {
+async function runExec(params, pathname, log) {
   try {
     if (pathname && pathname.endsWith('.txt')) {
       return queryInfo(pathname, params);
@@ -32,6 +32,7 @@ async function runExec(params, pathname) {
       pathname.replace(/\..*$/, ''),
       params.service,
       cleanRequestParams(params),
+      log,
     );
 
     if (pathname && pathname.endsWith('.csv')) {
@@ -77,7 +78,7 @@ async function run(request, context) {
   params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
   params.GOOGLE_PROJECT_ID = context.env.GOOGLE_PROJECT_ID;
 
-  return runExec(params, pathname.split('/').pop());
+  return runExec(params, pathname.split('/').pop(), context.log);
 }
 
 /**

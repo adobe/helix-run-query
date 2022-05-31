@@ -43,6 +43,22 @@ async function processParams(query, params) {
   };
 }
 
+function logquerystats(job, query, fn) {
+  const centsperterra = 5;
+  const minbytes = 1024 * 1024;
+  const billed = parseInt(job.metadata.statistics.query.totalBytesBilled, 10);
+  const billedbytes = Math.min(billed, billed && minbytes);
+  const billedterrabytes = billedbytes / 1024 / 1024 / 1024 / 1024;
+  const billedcents = billedterrabytes * centsperterra;
+  const nf = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 4,
+  });
+  fn(`BiqQuery job ${job.id} for ${job.metadata.statistics.query.cacheHit ? '(cached)' : ''} ${job.metadata.statistics.query.statementType} ${query} finished with status ${job.metadata.status.state}, total bytes processed: ${job.metadata.statistics.query.totalBytesProcessed}, total bytes billed: ${job.metadata.statistics.query.totalBytesBilled}, estimated cost: ${nf.format(billedcents)}`);
+}
+
 /**
  * executes a query using Google Bigquery API
  *
@@ -53,7 +69,7 @@ async function processParams(query, params) {
  * @param {string} service the serviceid of the published site
  * @param {object} params parameters for substitution into query
  */
-async function execute(email, key, project, query, service, params = {}) {
+async function execute(email, key, project, query, service, params = {}, logger = console) {
   const {
     headerParams,
     description,
@@ -111,7 +127,7 @@ async function execute(email, key, project, query, service, params = {}) {
             .join(' UNION ALL\n');
         },
       }).then(async (q) => {
-        const job = await dataset.createQueryJob({
+        const [job] = await dataset.createQueryJob({
           query: q,
           maxResults: params.limit,
           params: requestParams,
@@ -125,14 +141,20 @@ async function execute(email, key, project, query, service, params = {}) {
             description,
             requestParams,
           })))
-          .on('error', (e) => reject(e))
-          .on('end', () => resolve({
-            headers,
-            truncated: false,
-            results,
-            description,
-            requestParams,
-          }));
+          .on('error', (e) => {
+            logquerystats(job, query, logger.warn);
+            reject(e);
+          })
+          .on('end', () => {
+            logquerystats(job, query, logger.info);
+            resolve({
+              headers,
+              truncated: false,
+              results,
+              description,
+              requestParams,
+            });
+          });
       });
     });
   } catch (e) {
