@@ -151,11 +151,14 @@ async function execute(email, key, project, query, service, params = {}, logger 
               description,
               requestParams,
             })))
-            /* c8 ignore next 3 */
-            .on('error', async (e) => {
-              await logquerystats(job, query, logger.warn);
-              reject(e);
-            })
+            .on(
+              'error',
+              /* istanbul ignore next */
+              async (e) => {
+                await logquerystats(job, query, logger.warn);
+                reject(e);
+              },
+            )
             .on('end', async () => {
               await logquerystats(job, query, logger.info);
               resolve({
