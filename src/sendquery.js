@@ -64,7 +64,7 @@ async function logquerystats(job, query, fn) {
     unit: 'gigabyte',
     maximumSignificantDigits: 3,
   });
-  fn(`BiqQuery job ${job
+  fn(`BigQuery job ${job
     .id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ${cf.format(billedcents)}`);
 }
 
