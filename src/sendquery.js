@@ -127,34 +127,39 @@ async function execute(email, key, project, query, service, params = {}, logger 
             .join(' UNION ALL\n');
         },
       }).then(async (q) => {
-        const [job] = await dataset.createQueryJob({
-          query: q,
-          maxResults: params.limit,
-          params: requestParams,
-        });
-        const stream = job.getQueryResultsStream({});
-        stream
-          .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
-            headers,
-            truncated: true,
-            results,
-            description,
-            requestParams,
-          })))
-          .on('error', (e) => {
-            logquerystats(job, query, logger.warn);
-            reject(e);
-          })
-          .on('end', () => {
-            logquerystats(job, query, logger.info);
-            resolve({
+        try {
+          const [job] = await dataset.createQueryJob({
+            query: q,
+            maxResults: params.limit,
+            params: requestParams,
+          });
+          const stream = job.getQueryResultsStream({});
+          stream
+            .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
               headers,
-              truncated: false,
+              truncated: true,
               results,
               description,
               requestParams,
+            })))
+            .on('error', (e) => {
+              logquerystats(job, query, logger.warn);
+              reject(e);
+            })
+            .on('end', () => {
+              logquerystats(job, query, logger.info);
+              resolve({
+                headers,
+                truncated: false,
+                results,
+                description,
+                requestParams,
+              });
             });
-          });
+        } catch (e) {
+          logger.error(`Unable to execute query ${query} (${e.errors[0].reason}): ${e.errors[0].message}`);
+          reject(e);
+        }
       });
     });
   } catch (e) {
