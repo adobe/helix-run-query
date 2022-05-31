@@ -52,7 +52,7 @@ describe('Test Queries', () => {
     assert.ok(res);
     const results = await res.json();
     assert.ok(results);
-    console.table(results.results);
+    // console.table(results.results);
   }).timeout(100000);
 
   it('most-visited', async () => {
