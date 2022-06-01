@@ -43,6 +43,31 @@ async function processParams(query, params) {
   };
 }
 
+async function logquerystats(job, query, fn) {
+  const [metadata] = await job.getMetadata();
+  const centsperterra = 5;
+  const minbytes = 1024 * 1024;
+  const billed = parseInt(metadata.statistics.query.totalBytesBilled, 10);
+  const billedbytes = Math.max(billed, billed && minbytes);
+  const billedterrabytes = billedbytes / 1024 / 1024 / 1024 / 1024;
+
+  const billedcents = billedterrabytes * centsperterra;
+  const cf = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    minimumSignificantDigits: 2,
+    maximumSignificantDigits: 2,
+  });
+  const nf = new Intl.NumberFormat('en-US', {
+    style: 'unit',
+    unit: 'gigabyte',
+    maximumSignificantDigits: 3,
+  });
+  fn(`BigQuery job ${job
+    .id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ${cf.format(billedcents)}`);
+}
+
 /**
  * executes a query using Google Bigquery API
  *
@@ -53,7 +78,7 @@ async function processParams(query, params) {
  * @param {string} service the serviceid of the published site
  * @param {object} params parameters for substitution into query
  */
-async function execute(email, key, project, query, service, params = {}) {
+async function execute(email, key, project, query, service, params = {}, logger = console) {
   const {
     headerParams,
     description,
@@ -110,27 +135,44 @@ async function execute(email, key, project, query, service, params = {}) {
             .map((id) => `SELECT ${columnnames.join(', ')} FROM \`${id}.requests*\``)
             .join(' UNION ALL\n');
         },
-      }).then((q) => {
-        dataset.createQueryStream({
-          query: q,
-          maxResults: params.limit,
-          params: requestParams,
-        })
-          .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
-            headers,
-            truncated: true,
-            results,
-            description,
-            requestParams,
-          })))
-          .on('error', (e) => reject(e))
-          .on('end', () => resolve({
-            headers,
-            truncated: false,
-            results,
-            description,
-            requestParams,
-          }));
+      }).then(async (q) => {
+        try {
+          const [job] = await dataset.createQueryJob({
+            query: q,
+            maxResults: params.limit,
+            params: requestParams,
+          });
+          const stream = job.getQueryResultsStream({});
+          stream
+            .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
+              headers,
+              truncated: true,
+              results,
+              description,
+              requestParams,
+            })))
+            .on(
+              'error',
+              /* istanbul ignore next */
+              async (e) => {
+                await logquerystats(job, query, logger.warn);
+                reject(e);
+              },
+            )
+            .on('end', async () => {
+              await logquerystats(job, query, logger.info);
+              resolve({
+                headers,
+                truncated: false,
+                results,
+                description,
+                requestParams,
+              });
+            });
+        } catch (e) {
+          logger.error(`Unable to execute query ${query} (${e.errors[0].reason}): ${e.errors[0].message}`);
+          reject(e);
+        }
       });
     });
   } catch (e) {
