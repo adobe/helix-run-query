@@ -1,3 +1,18 @@
+# [2.33.0](https://github.com/adobe/helix-run-query/compare/v2.32.1...v2.33.0) (2022-06-01)
+
+
+### Bug Fixes
+
+* **logging:** use correct unit for logs ([b0391a4](https://github.com/adobe/helix-run-query/commit/b0391a4f3303d66c413c952774f4feba82370ab3))
+* **sendquery:** better error handling in job creation ([c8ac38c](https://github.com/adobe/helix-run-query/commit/c8ac38c953d2a01f45b0623b3fef402678471cf6))
+* **sendquery:** fix typo in log message ([127a384](https://github.com/adobe/helix-run-query/commit/127a384de0f48d89e90c015827a1884d73351f1d))
+* **sendquery:** refresh query metadata before logging ([a435e6d](https://github.com/adobe/helix-run-query/commit/a435e6dfdd06530e63eaa1f0a5d774b705fa51ab))
+
+
+### Features
+
+* **sendquery:** log estimated cost of query execution to coralogix ([af7a478](https://github.com/adobe/helix-run-query/commit/af7a478d2c27cae44c3ec937f468c977fe2b9c67))
+
 ## [2.32.1](https://github.com/adobe/helix-run-query/compare/v2.32.0...v2.32.1) (2022-05-31)
 
 
