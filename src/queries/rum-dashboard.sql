@@ -16,7 +16,9 @@ RETURNS BOOLEAN
 AS (
   device = "all"
   OR (
-    device = "desktop" AND user_agent NOT LIKE "%Mobile%" AND user_agent LIKE "Mozilla%"
+    device = "desktop"
+    AND user_agent NOT LIKE "%Mobile%"
+    AND user_agent LIKE "Mozilla%"
   ) OR
   (device = "mobile" AND user_agent LIKE "%Mobile%") OR
   (device = "bot" AND user_agent NOT LIKE "Mozilla%"));
@@ -61,7 +63,6 @@ current_rum_by_id AS (
     IF(MAX(cls) IS NULL, NULL, IF(MAX(cls) > 0.25, TRUE, FALSE)) AS clsbad,
     MAX(host) AS host,
     MAX(user_agent) AS user_agent,
-    MAX(time) AS time,
     IF(
       @domain = "-" AND @repo = "-" AND @owner = "-",
       REGEXP_EXTRACT(MAX(url), "https://([^/]+)/", 1),
@@ -93,7 +94,6 @@ previous_rum_by_id AS (
     IF(MAX(cls) IS NULL, NULL, IF(MAX(cls) > 0.25, TRUE, FALSE)) AS clsbad,
     MAX(host) AS host,
     MAX(user_agent) AS user_agent,
-    MAX(time) AS time,
     IF(
       @domain = "-" AND @repo = "-" AND @owner = "-",
       REGEXP_EXTRACT(MAX(url), "https://([^/]+)/", 1),
@@ -284,56 +284,140 @@ previous_event_count AS (
 
 current_truncated_rum_by_url AS (
   SELECT
-    CAST(SUM(lcpgood * pageviews) / SUM(pageviews) AS INT64) AS lcpgood,
-    CAST(SUM(fidgood * pageviews) / SUM(pageviews) AS INT64) AS fidgood,
-    CAST(SUM(clsgood * pageviews) / SUM(pageviews) AS INT64) AS clsgood,
-    CAST(SUM(lcpbad * pageviews) / SUM(pageviews) AS INT64) AS lcpbad,
-    CAST(SUM(fidbad * pageviews) / SUM(pageviews) AS INT64) AS fidbad,
-    CAST(SUM(clsbad * pageviews) / SUM(pageviews) AS INT64) AS clsbad,
-    CAST(SUM(avglcp * pageviews) / SUM(pageviews) AS INT64) AS avglcp,
-    CAST(SUM(avgfid * pageviews) / SUM(pageviews) AS INT64) AS avgfid,
-    ROUND(SUM(avgcls * pageviews) / SUM(pageviews), 3) AS avgcls,
-    SUM(pageviews) AS pageviews,
-    100 * SUM(pageviews) / MAX(allevents) AS rumshare,
-    IF(rank > @limit, "Other", url) AS url
+    CAST(SUM(ranked.lcpgood * pageviews) / SUM(pageviews) AS INT64) AS lcpgood,
+    CAST(SUM(ranked.fidgood * pageviews) / SUM(pageviews) AS INT64) AS fidgood,
+    CAST(SUM(ranked.clsgood * pageviews) / SUM(pageviews) AS INT64) AS clsgood,
+    CAST(SUM(ranked.lcpbad * pageviews) / SUM(pageviews) AS INT64) AS lcpbad,
+    CAST(SUM(ranked.fidbad * pageviews) / SUM(pageviews) AS INT64) AS fidbad,
+    CAST(SUM(ranked.clsbad * pageviews) / SUM(pageviews) AS INT64) AS clsbad,
+    CAST(SUM(ranked.avglcp * pageviews) / SUM(pageviews) AS INT64) AS avglcp,
+    CAST(SUM(ranked.avgfid * pageviews) / SUM(pageviews) AS INT64) AS avgfid,
+    ROUND(SUM(ranked.avgcls * pageviews) / SUM(pageviews), 3) AS avgcls,
+    SUM(ranked.pageviews) AS pageviews,
+    100 * SUM(pageviews) / MAX(current_event_count.allevents) AS rumshare,
+    IF(ranked.rank > @limit AND @rising != "true", "Other", ranked.url) AS url
   FROM
     (SELECT
-      *,
+      pageviews,
+      lcpgood,
+      fidgood,
+      clsgood,
+      lcpbad,
+      fidbad,
+      clsbad,
+      avglcp,
+      avgfid,
+      avgcls,
+      url,
       ROW_NUMBER() OVER (ORDER BY pageviews DESC) AS rank
-      FROM current_rum_by_url),
+      FROM current_rum_by_url) AS ranked,
     current_event_count
   GROUP BY url
 ),
 
 previous_truncated_rum_by_url AS (
   SELECT
-    CAST(SUM(lcpgood * pageviews) / SUM(pageviews) AS INT64) AS lcpgood,
-    CAST(SUM(fidgood * pageviews) / SUM(pageviews) AS INT64) AS fidgood,
-    CAST(SUM(clsgood * pageviews) / SUM(pageviews) AS INT64) AS clsgood,
-    CAST(SUM(lcpbad * pageviews) / SUM(pageviews) AS INT64) AS lcpbad,
-    CAST(SUM(fidbad * pageviews) / SUM(pageviews) AS INT64) AS fidbad,
-    CAST(SUM(clsbad * pageviews) / SUM(pageviews) AS INT64) AS clsbad,
-    CAST(SUM(avglcp * pageviews) / SUM(pageviews) AS INT64) AS avglcp,
-    CAST(SUM(avgfid * pageviews) / SUM(pageviews) AS INT64) AS avgfid,
-    ROUND(SUM(avgcls * pageviews) / SUM(pageviews), 3) AS avgcls,
-    SUM(pageviews) AS pageviews,
-    100 * SUM(pageviews) / MAX(allevents) AS rumshare,
-    IF(rank > @limit, "Other", url) AS url
+    CAST(SUM(ranked.lcpgood * pageviews) / SUM(pageviews) AS INT64) AS lcpgood,
+    CAST(SUM(ranked.fidgood * pageviews) / SUM(pageviews) AS INT64) AS fidgood,
+    CAST(SUM(ranked.clsgood * pageviews) / SUM(pageviews) AS INT64) AS clsgood,
+    CAST(SUM(ranked.lcpbad * pageviews) / SUM(pageviews) AS INT64) AS lcpbad,
+    CAST(SUM(ranked.fidbad * pageviews) / SUM(pageviews) AS INT64) AS fidbad,
+    CAST(SUM(ranked.clsbad * pageviews) / SUM(pageviews) AS INT64) AS clsbad,
+    CAST(SUM(ranked.avglcp * pageviews) / SUM(pageviews) AS INT64) AS avglcp,
+    CAST(SUM(ranked.avgfid * pageviews) / SUM(pageviews) AS INT64) AS avgfid,
+    ROUND(SUM(ranked.avgcls * pageviews) / SUM(pageviews), 3) AS avgcls,
+    SUM(ranked.pageviews) AS pageviews,
+    100 * SUM(pageviews) / MAX(previous_event_count.allevents) AS rumshare,
+    IF(ranked.rank > @limit AND @rising != "true", "Other", ranked.url) AS url
   FROM
     (SELECT
       *,
       ROW_NUMBER() OVER (ORDER BY pageviews DESC) AS rank
-      FROM previous_rum_by_url),
+      FROM previous_rum_by_url) AS ranked,
     previous_event_count
   GROUP BY url
 )
 
 SELECT
-  *
-FROM
-  current_truncated_rum_by_url FULL OUTER JOIN previous_truncated_rum_by_url
-  ON current_truncated_rum_by_url.url = previous_truncated_rum_by_url.url
-ORDER BY
-  IF(url = "Other", 1, 0),
-  current_truncated_rum_by_url.pageviews DESC,
-  previous_truncated_rum_by_url.pageviews DESC
+  url,
+  pageviews,
+  pageviews_1,
+  pageviews_diff,
+  lcpgood,
+  fidgood,
+  clsgood,
+  lcpbad,
+  fidbad,
+  clsbad,
+  avglcp,
+  avgfid,
+  avgcls,
+  rumshare,
+  lcpgood_1,
+  fidgood_1,
+  clsgood_1,
+  lcpbad_1,
+  fidbad_1,
+  clsbad_1,
+  avglcp_1,
+  avgfid_1,
+  avgcls_1,
+  rumshare_1,
+  url_1
+FROM (
+  SELECT
+    current_truncated_rum_by_url.pageviews AS pageviews,
+    previous_truncated_rum_by_url.pageviews AS pageviews_1,
+    current_truncated_rum_by_url.lcpgood AS lcpgood,
+    current_truncated_rum_by_url.fidgood AS fidgood,
+    current_truncated_rum_by_url.clsgood AS clsgood,
+    current_truncated_rum_by_url.lcpbad AS lcpbad,
+    current_truncated_rum_by_url.fidbad AS fidbad,
+    current_truncated_rum_by_url.clsbad AS clsbad,
+    current_truncated_rum_by_url.avglcp AS avglcp,
+    current_truncated_rum_by_url.avgfid AS avgfid,
+    current_truncated_rum_by_url.avgcls AS avgcls,
+    current_truncated_rum_by_url.rumshare AS rumshare,
+    previous_truncated_rum_by_url.lcpgood AS lcpgood_1,
+    previous_truncated_rum_by_url.fidgood AS fidgood_1,
+    previous_truncated_rum_by_url.clsgood AS clsgood_1,
+    previous_truncated_rum_by_url.lcpbad AS lcpbad_1,
+    previous_truncated_rum_by_url.fidbad AS fidbad_1,
+    previous_truncated_rum_by_url.clsbad AS clsbad_1,
+    previous_truncated_rum_by_url.avglcp AS avglcp_1,
+    previous_truncated_rum_by_url.avgfid AS avgfid_1,
+    previous_truncated_rum_by_url.avgcls AS avgcls_1,
+    previous_truncated_rum_by_url.rumshare AS rumshare_1,
+    previous_truncated_rum_by_url.url AS url_1,
+    ROW_NUMBER() OVER (ORDER BY
+      IF(
+        @rising = "true",
+        COALESCE(
+          current_truncated_rum_by_url.pageviews, 0
+        ) - COALESCE(previous_truncated_rum_by_url.pageviews, 0),
+        0
+      ) DESC,
+      current_truncated_rum_by_url.pageviews DESC
+    ) AS rank,
+    COALESCE(
+      current_truncated_rum_by_url.url, previous_truncated_rum_by_url.url
+    ) AS url,
+    COALESCE(
+      current_truncated_rum_by_url.pageviews, 0
+    ) - COALESCE(previous_truncated_rum_by_url.pageviews, 0) AS pageviews_diff
+  FROM
+    current_truncated_rum_by_url FULL OUTER JOIN previous_truncated_rum_by_url
+    ON current_truncated_rum_by_url.url = previous_truncated_rum_by_url.url
+  ORDER BY
+    IF(current_truncated_rum_by_url.url = "Other", 1, 0),
+    IF(
+      @rising = "true",
+      COALESCE(
+        current_truncated_rum_by_url.pageviews, 0
+      ) - COALESCE(previous_truncated_rum_by_url.pageviews, 0),
+      0
+    ) DESC,
+    current_truncated_rum_by_url.pageviews DESC,
+    previous_truncated_rum_by_url.pageviews DESC
+) WHERE
+rank <= @limit OR url = "Other" OR @rising != "true"
