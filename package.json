@@ -64,7 +64,7 @@
     "eslint-plugin-import": "2.26.0",
     "jsdoc-to-markdown": "7.1.1",
     "junit-report-builder": "3.0.0",
-    "lint-staged": "12.5.0",
+    "lint-staged": "13.0.0",
     "lodash": "4.17.21",
     "mocha": "10.0.0",
     "npm": "8.12.1",
