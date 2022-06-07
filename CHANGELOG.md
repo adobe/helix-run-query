@@ -1,3 +1,11 @@
+# [2.34.0](https://github.com/adobe/helix-run-query/compare/v2.33.1...v2.34.0) (2022-06-07)
+
+
+### Features
+
+* **pageviews:** add ability to select timezone using parameter ([f93a8eb](https://github.com/adobe/helix-run-query/commit/f93a8eb995bebe9355654e7d14823e083e36f089))
+* **rum-dashboard:** add new parameter `rising` (default: `false`) that sorts pages by page view increase over the previous period ([9c3ec33](https://github.com/adobe/helix-run-query/commit/9c3ec331830c9ec1847d767a168bb68cf5485132))
+
 ## [2.33.1](https://github.com/adobe/helix-run-query/compare/v2.33.0...v2.33.1) (2022-06-04)
 
 
