@@ -295,7 +295,7 @@ current_truncated_rum_by_url AS (
     ROUND(SUM(ranked.avgcls * pageviews) / SUM(pageviews), 3) AS avgcls,
     SUM(ranked.pageviews) AS pageviews,
     100 * SUM(pageviews) / MAX(current_event_count.allevents) AS rumshare,
-    IF(ranked.rank > @limit AND @rising != "true", "Other", ranked.url) AS url
+    IF(ranked.rank > @limit AND NOT @rising, "Other", ranked.url) AS url
   FROM
     (SELECT
       pageviews,
@@ -328,7 +328,7 @@ previous_truncated_rum_by_url AS (
     ROUND(SUM(ranked.avgcls * pageviews) / SUM(pageviews), 3) AS avgcls,
     SUM(ranked.pageviews) AS pageviews,
     100 * SUM(pageviews) / MAX(previous_event_count.allevents) AS rumshare,
-    IF(ranked.rank > @limit AND @rising != "true", "Other", ranked.url) AS url
+    IF(ranked.rank > @limit AND NOT @rising, "Other", ranked.url) AS url
   FROM
     (SELECT
       *,
@@ -391,7 +391,7 @@ FROM (
     previous_truncated_rum_by_url.url AS url_1,
     ROW_NUMBER() OVER (ORDER BY
       IF(
-        @rising = "true",
+        @rising,
         COALESCE(
           current_truncated_rum_by_url.pageviews, 0
         ) - COALESCE(previous_truncated_rum_by_url.pageviews, 0),
@@ -411,7 +411,7 @@ FROM (
   ORDER BY
     IF(current_truncated_rum_by_url.url = "Other", 1, 0),
     IF(
-      @rising = "true",
+      @rising,
       COALESCE(
         current_truncated_rum_by_url.pageviews, 0
       ) - COALESCE(previous_truncated_rum_by_url.pageviews, 0),
@@ -420,4 +420,4 @@ FROM (
     current_truncated_rum_by_url.pageviews DESC,
     previous_truncated_rum_by_url.pageviews DESC
 ) WHERE
-rank <= @limit OR url = "Other" OR @rising != "true"
+rank <= @limit OR url = "Other" OR @rising
