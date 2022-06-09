@@ -12,10 +12,11 @@ CREATE OR REPLACE PROCEDURE helix_rum.UPDATE_PAGEVIEWS(
   inlimit INT64,
   inoffset INT64,
   inurl STRING,
+  intimezone STRING,
   OUT results NUMERIC
 )
 BEGIN
-  CREATE TEMP TABLE pageviews(
+  CREATE TEMP TABLE temp_pageviews(
     year INT64,
     month INT64,
     day INT64,
@@ -40,7 +41,7 @@ BEGIN
       inlimit * ingranularity, # days to fetch
       '2022-05-01', # not used, start date
       '2022-05-28', # not used, end date
-      @timezone, # timezone
+      intimezone, # timezone
       'all', # deviceclass
       '-' # not used, generation
     )
@@ -107,28 +108,28 @@ BEGIN
   )
 
   SELECT * FROM finaldata ORDER BY time DESC;
-  SET results = (SELECT SUM(pageviews) FROM (SELECT * FROM pageviews));
+  SET results = (SELECT SUM(pageviews) FROM (SELECT * FROM temp_pageviews));
 END;
 IF (CAST(@granularity AS STRING) = "auto") THEN
-    CALL helix_rum.UPDATE_PAGEVIEWS(1, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, results);
+    CALL helix_rum.UPDATE_PAGEVIEWS(1, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
     IF (results > (CAST(@limit AS INT64) * 200)) THEN
         # we have enough results, use the daily granularity
-        SELECT * FROM PAGEVIEWS;
+        SELECT * FROM temp_pageviews;
     ELSE
         # we don't have enough results, zoom out
-        DROP TABLE PAGEVIEWS;
-        CALL helix_rum.UPDATE_PAGEVIEWS(7, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, results);
+        DROP TABLE temp_pageviews;
+        CALL helix_rum.UPDATE_PAGEVIEWS(7, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
         IF (results > (CAST(@limit AS INT64) * 200)) THEN
             # we have enough results, use the weekly granularity
-            SELECT * FROM PAGEVIEWS;
+            SELECT * FROM temp_pageviews;
         ELSE
             # we don't have enough results, zoom out to monthly and stop
-            DROP TABLE PAGEVIEWS;
-            CALL helix_rum.UPDATE_PAGEVIEWS(30, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, results);
-            SELECT * FROM PAGEVIEWS;
+            DROP TABLE temp_pageviews;
+            CALL helix_rum.UPDATE_PAGEVIEWS(30, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
+            SELECT * FROM temp_pageviews;
         END IF;
     END IF;
 ELSE
-    CALL helix_rum.UPDATE_PAGEVIEWS(CAST(@granularity AS INT64), CAST(@limit AS INT64), CAST(@offset AS INT64), @url, results);
-    SELECT * FROM PAGEVIEWS;
+    CALL helix_rum.UPDATE_PAGEVIEWS(CAST(@granularity AS INT64), CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
+    SELECT * FROM temp_pageviews;
 END IF;
