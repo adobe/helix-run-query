@@ -62,6 +62,15 @@ function cleanHeaderParams(query, params, rmvQueryParams = false) {
     }, {});
 }
 
+function coerce(value) {
+  if (value === 'true') {
+    return true;
+  } else if (value === 'false') {
+    return false;
+  }
+  return value;
+}
+
 /**
  * Processes additional parameters relating to query properties, like -- Authorization
  * and other properties that will be passed into request/response headers: for example;
@@ -76,7 +85,7 @@ function getHeaderParams(query) {
     .map((e) => e.substring(4).split(': '))
     .reduce((acc, val) => {
       // eslint-disable-next-line prefer-destructuring
-      acc[val[0]] = val[1];
+      acc[val[0]] = coerce(val[1]);
       return acc;
     }, {});
 }

@@ -128,7 +128,12 @@ SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Ty
   });
 
   it('resolveParameterDiff fills in empty params with defaults', () => {
-    const query = '--- something1: Likes\n--- something2: CMS\n--- tablename: fakeTable\nSELECT @something1, @something2 WHERE @tablename';
+    const query = `--- something1: Likes
+--- something2: CMS
+--- tablename: fakeTable
+--- rising: true
+--- falling: false
+SELECT @something1, @something2 WHERE @tablename`;
     const defaults = getHeaderParams(query);
 
     const params = {
@@ -142,6 +147,8 @@ SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Ty
       tablename: '`Helix',
       something1: '\'Loves',
       something2: 'CMS',
+      rising: true,
+      falling: false,
     };
 
     assert.deepEqual(ACTUAL, EXPECTED);
