@@ -1,3 +1,10 @@
+## [2.35.1](https://github.com/adobe/helix-run-query/compare/v2.35.0...v2.35.1) (2022-06-09)
+
+
+### Bug Fixes
+
+* **pageviews:** take parameter out of procedure ([c0e9b8a](https://github.com/adobe/helix-run-query/commit/c0e9b8abd6b2379a7a11b263f7b370ec3bce6b2b))
+
 # [2.35.0](https://github.com/adobe/helix-run-query/compare/v2.34.0...v2.35.0) (2022-06-09)
 
 
