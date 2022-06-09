@@ -1,3 +1,15 @@
+# [2.35.0](https://github.com/adobe/helix-run-query/compare/v2.34.0...v2.35.0) (2022-06-09)
+
+
+### Bug Fixes
+
+* **rum-dashboard:** do not coerce boolean into strings ([a622cdb](https://github.com/adobe/helix-run-query/commit/a622cdbea201018742b71107f4fd06b0b420743b))
+
+
+### Features
+
+* **api:** automatically coerce boolean parameters ([9d9ae9d](https://github.com/adobe/helix-run-query/commit/9d9ae9d72709ed4722adcf9b10382cc7cc91d116))
+
 # [2.34.0](https://github.com/adobe/helix-run-query/compare/v2.33.1...v2.34.0) (2022-06-07)
 
 
