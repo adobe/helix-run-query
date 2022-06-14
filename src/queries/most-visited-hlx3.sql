@@ -5,6 +5,7 @@
 --- toDays: 0
 --- threshold: 100
 --- limit: 100
+--- version: -
 WITH num_visits AS (
   SELECT
     req_url,
@@ -33,6 +34,7 @@ WITH num_visits AS (
         '0'
       )
     ) AND
+    (resp_http_x_version = @version OR @version = '-') AND
     resp_http_content_type LIKE 'text/html%' AND
     status_code = '200' AND
     time_start_usec > CAST(
