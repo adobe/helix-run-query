@@ -66,3 +66,4 @@ WHERE
   AND m.max_reqs = n.num_reqs AND
   m.repo_name = n.repo_name
 ORDER BY m.max_reqs DESC
+LIMIT @limit
