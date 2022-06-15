@@ -1,3 +1,15 @@
+# [2.36.0](https://github.com/adobe/helix-run-query/compare/v2.35.1...v2.36.0) (2022-06-15)
+
+
+### Bug Fixes
+
+* **most-visited:** add limit parameter ([a5ebdca](https://github.com/adobe/helix-run-query/commit/a5ebdca36cc1c5de0f78990c2c19b9cdd150f9fb))
+
+
+### Features
+
+* **most-visited:** enable filtering of repos using the `version` parameter ([c4f7481](https://github.com/adobe/helix-run-query/commit/c4f748167416f816885424f1b4fe3b4270baddb0))
+
 ## [2.35.1](https://github.com/adobe/helix-run-query/compare/v2.35.0...v2.35.1) (2022-06-09)
 
 
