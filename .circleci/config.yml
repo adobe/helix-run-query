@@ -1,6 +1,6 @@
 version: 2.1
 executors:
-  node12:
+  node14:
     docker:
       - image: cimg/node:14.19
     working_directory: ~/repo
@@ -8,6 +8,7 @@ executors:
 orbs:
   helix-post-deploy: adobe/helix-post-deploy@3.0.0
   helix-gcloud-setup: adobe/helix-gcloud-setup@1.0.1
+  codecov: codecov/codecov@3.2.3
 
 commands:
   setup:
@@ -32,7 +33,7 @@ commands:
 
 jobs:
   build:
-    executor: node12
+    executor: node14
     steps:
       - setup
       - run: mkdir junit
@@ -40,15 +41,16 @@ jobs:
           name: Lint
           command: npm run lint
       - run:
-          name: Getting Code Coverage
-          command: npm run test-ci
+          name: Running tests and getting code coverage
+          command: npm run test
+      - codecov/upload
       - store_test_results:
           path: junit
       - store_artifacts:
           path: junit
 
   semantic-release:
-    executor: node12
+    executor: node14
     steps:
       - setup
       - run:
@@ -67,11 +69,11 @@ jobs:
           path: junit
       - run:
           name: Link Sequences
-          command: npm run deploy-sequences
+          command: npm run deploy-routes
       - helix-post-deploy/monitoring:
           targets: universal, aws
   branch-deploy:
-    executor: node12
+    executor: node14
     steps:
       - setup
       - run:

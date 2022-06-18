@@ -5,17 +5,20 @@
   "description": "Helix Run Query",
   "main": "src/index.js",
   "scripts": {
-    "test": " nyc --reporter=text --reporter=lcov -i -g 'Post-Deploy' --check-coverage --branches 95 --statements 100 --lines 100 mocha -i -g 'Post-Deploy'",
-    "test-ci": "nyc --reporter=text --reporter=lcov -i -g 'Post-Deploy' --check-coverage --branches 95 --statements 100 --lines 100 mocha -i -g 'Post-Deploy' --reporter xunit --reporter-options output=./junit/test-results.xml --exit && codecov",
-    "test-postdeploy": "mocha --reporter xunit --reporter-options output=./junit/test-results.xml -g 'Post-Deploy'",
+    "test": "nyc mocha -i -g 'Post-Deploy' --exit",
+    "test-postdeploy": "mocha -g 'Post-Deploy' --exit",
     "lint": "./node_modules/.bin/eslint .",
     "semantic-release": "semantic-release",
     "docs": "npx jsdoc2md -c .jsdoc.json --files 'src/*.js'  > docs/API.md",
-    "commit": "git-cz",
     "build": "hedy -v",
     "deploy": "hedy -v --deploy --test=/_status_check/healthcheck.json",
-    "deploy-sequences": "hedy --no-build -no-hints -l latest -l major -l minor  --cleanup-patch=1w --cleanup-minor=1w --cleanup-major=1y --cleanup-ci=24h",
-    "deploy-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --cleanup-ci=24h"
+    "deploy-routes": "hedy --no-build -no-hints -l latest -l major -l minor  --cleanup-patch=1w --cleanup-minor=1w --cleanup-major=1y --cleanup-ci=24h",
+    "deploy-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --cleanup-ci=24h",
+    "prepare": "npx husky install"
+  },
+  "mocha": {
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json"
   },
   "repository": {
     "type": "git",
@@ -56,12 +59,10 @@
     "ajv": "8.11.0",
     "chai": "4.3.6",
     "chai-http": "4.3.0",
-    "codecov": "3.8.3",
-    "commitizen": "4.2.4",
-    "cz-conventional-changelog": "3.3.0",
     "eslint": "8.17.0",
     "eslint-plugin-header": "3.1.1",
     "eslint-plugin-import": "2.26.0",
+    "husky": "8.0.1",
     "jsdoc-to-markdown": "7.1.1",
     "junit-report-builder": "3.0.0",
     "lint-staged": "13.0.1",
@@ -75,14 +76,6 @@
   },
   "lint-staged": {
     "*.js": "eslint"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
-    },
-    "ghooks": {
-      "pre-commit": "npx lint-staged"
-    }
   },
   "wsk": {
     "namespace": "helix",
