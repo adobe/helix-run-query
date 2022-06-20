@@ -68,7 +68,8 @@ WITH visits AS (
     MAX(fid) AS fid,
     MAX(IF(checkpoint = "top", 1, 0)) AS top,
     MAX(IF(checkpoint = "load", 1, 0)) AS load,
-    MAX(IF(checkpoint = "click", 1, 0)) AS click
+    MAX(IF(checkpoint = "click", 1, 0)) AS click,
+    TIMESTAMP_DIFF(MAX(time), MIN(time), SECOND) AS engagementduration
   FROM helix_rum.CLUSTER_EVENTS(
     @domain,
     CAST(@offset AS INT64),
@@ -93,7 +94,8 @@ urldays AS (
     AVG(cls) AS cls,
     AVG(fid) AS fid,
     LEAST(IF(SUM(top) > 0, SUM(load) / SUM(top), 0), 1) AS load,
-    LEAST(IF(SUM(top) > 0, SUM(click) / SUM(top), 0), 1) AS click
+    LEAST(IF(SUM(top) > 0, SUM(click) / SUM(top), 0), 1) AS click,
+    AVG(engagementduration) AS engagementduration
   FROM visits # FULL JOIN days ON (days.visittime = visits.visittime)
   GROUP BY visittime, url
 ),
@@ -110,6 +112,7 @@ steps AS (
     fid,
     load,
     click,
+    engagementduration,
     TIMESTAMP_DIFF(
       visittime, LAG(visittime) OVER(PARTITION BY url ORDER BY visittime), DAY
     ) AS step
@@ -128,6 +131,7 @@ chains AS (
     fid,
     load,
     click,
+    engagementduration,
     step,
     COUNTIF(step = 1) OVER(PARTITION BY url ORDER BY visittime) AS chainlength
   FROM steps
@@ -177,7 +181,8 @@ cwvquintiles AS (
     APPROX_QUANTILES(DISTINCT cls, 3) AS cls,
     APPROX_QUANTILES(DISTINCT fid, 3) AS fid,
     APPROX_QUANTILES(DISTINCT load, 3) AS load,
-    APPROX_QUANTILES(DISTINCT click, 3) AS click
+    APPROX_QUANTILES(DISTINCT click, 3) AS click,
+    APPROX_QUANTILES(DISTINCT engagementduration, 3) AS engagementduration
   FROM chains
 ),
 
@@ -188,7 +193,8 @@ cwvquintiletable AS (
     cls[OFFSET(num)] AS cls,
     fid[OFFSET(num)] AS fid,
     load[OFFSET(3 - num)] AS load,
-    click[OFFSET(3 - num)] AS click
+    click[OFFSET(3 - num)] AS click,
+    engagementduration[OFFSET(num)] AS engagementduration
   FROM cwvquintiles INNER JOIN UNNEST(GENERATE_ARRAY(0, 3)) AS num
 ),
 
@@ -208,6 +214,7 @@ quintiletable AS (
     cwvquintiletable.fid AS fid,
     cwvquintiletable.load AS load,
     cwvquintiletable.click AS click,
+    cwvquintiletable.engagementduration AS engagementduration,
     powercurvequintiletable.reach AS reach,
     powercurvequintiletable.persistence AS persistence,
     cwvquintiletable.num AS num
@@ -224,14 +231,15 @@ lookmeup AS (
       (
         (
           (clsscore + lcpscore + fidscore) / 3
-        ) + ((reachscore + persistencescore + loadscore) / 3) + (clickscore)
+        ) + ((reachscore + persistencescore + loadscore) / 3)
+        + ((clickscore + engagementdurationscore) / 2)
       ) / 3
     ) AS experiencescore,
     LABELSCORE((clsscore + lcpscore + fidscore) / 3) AS perfscore,
     LABELSCORE(
       (reachscore + persistencescore + loadscore) / 3
     ) AS audiencescore,
-    LABELSCORE(clickscore) AS engagementscore
+    LABELSCORE((clickscore + engagementdurationscore) / 2) AS engagementscore
   FROM (
     SELECT
       host,
@@ -241,6 +249,7 @@ lookmeup AS (
       chained.fid AS fid,
       chained.load AS load,
       chained.click AS click,
+      chained.engagementduration AS engagementduration,
       chained.reach AS reach,
       chained.persistence AS persistence,
       (
@@ -258,6 +267,16 @@ lookmeup AS (
         FROM
           (SELECT num FROM quintiletable WHERE quintiletable.fid <= chained.fid)
       ) AS fidscore,
+      (
+        SELECT MAX(num)
+        FROM
+          (
+            SELECT num
+            FROM
+              quintiletable
+            WHERE quintiletable.engagementduration <= chained.engagementduration
+          )
+      ) AS engagementdurationscore,
       (
         SELECT MIN(num)
         FROM
@@ -300,6 +319,7 @@ lookmeup AS (
           AVG(fid) AS fid,
           AVG(load) AS load,
           AVG(click) AS click,
+          AVG(engagementduration) AS engagementduration,
           COUNTIF(chainlength = 1) AS reach,
           COUNTIF(chainlength = 7) AS persistence
         FROM chains
@@ -319,6 +339,7 @@ lookmeup AS (
     AND loadscore IS NOT NULL
     AND reachscore IS NOT NULL
     AND persistencescore IS NOT NULL
+    AND engagementdurationscore IS NOT NULL
   )
 )
 
