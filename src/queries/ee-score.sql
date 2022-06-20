@@ -129,7 +129,7 @@ chains AS (
     load,
     click,
     step,
-    COUNTIF(step = 1) OVER(PARTITION BY url ORDER BY visittime) AS chain
+    COUNTIF(step = 1) OVER(PARTITION BY url ORDER BY visittime) AS chainlength
   FROM steps
 ),
 
@@ -162,8 +162,8 @@ powercurvequintiles AS (
     SELECT * FROM (
       SELECT
         host,
-        COUNTIF(chain = 1) AS reach,
-        COUNTIF(chain = 7) AS persistence
+        COUNTIF(chainlength = 1) AS reach,
+        COUNTIF(chainlength = 7) AS persistence
       FROM chains
       GROUP BY host
     )
@@ -300,8 +300,8 @@ lookmeup AS (
           AVG(fid) AS fid,
           AVG(load) AS load,
           AVG(click) AS click,
-          COUNTIF(chain = 1) AS reach,
-          COUNTIF(chain = 7) AS persistence
+          COUNTIF(chainlength = 1) AS reach,
+          COUNTIF(chainlength = 7) AS persistence
         FROM chains
         WHERE (host = @domain OR @domain = "-")
           AND host IS NOT NULL
@@ -323,4 +323,5 @@ lookmeup AS (
 )
 
 #SELECT MIN(num) FROM (SELECT * FROM quintiletable WHERE 0.9841262752758466 >= quintiletable.click)
-SELECT * FROM lookmeup
+SELECT host,experiencescore,perfscore,audiencescore,engagementscore FROM lookmeup
+ORDER BY REGEXP_EXTRACT(host, r"\..*") ASC, host ASC
