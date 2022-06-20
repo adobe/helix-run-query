@@ -5,6 +5,7 @@
 --- interval: 60
 --- offset: 0
 --- domain: -
+--- range: 5
 DECLARE upperdate STRING DEFAULT CONCAT(
   CAST(
     EXTRACT(
@@ -49,11 +50,7 @@ DECLARE lowertimestamp STRING DEFAULT CAST(
 CREATE TEMP FUNCTION LABELSCORE(score FLOAT64)
 RETURNS STRING
 AS (
-  IF(
-    score <= 1,
-    "A",
-    IF(score <= 2, "B", IF(score <= 3, "C", IF(score <= 4, "D", "F")))
-  )
+  CHR(64 + CAST(CEIL(score) AS INT64))
 );
 
 WITH visits AS (
@@ -95,7 +92,10 @@ urldays AS (
     AVG(fid) AS fid,
     LEAST(IF(SUM(top) > 0, SUM(load) / SUM(top), 0), 1) AS load,
     LEAST(IF(SUM(top) > 0, SUM(click) / SUM(top), 0), 1) AS click,
-    AVG(engagementduration) AS engagementduration
+    APPROX_QUANTILES(engagementduration, 100)[OFFSET(50)] AS engagementduration,
+    APPROX_QUANTILES(
+      engagementduration, 100
+    )[OFFSET(50)] * SUM(weight) AS cumulativeengagement
   FROM visits # FULL JOIN days ON (days.visittime = visits.visittime)
   GROUP BY visittime, url
 ),
@@ -113,6 +113,7 @@ steps AS (
     load,
     click,
     engagementduration,
+    cumulativeengagement,
     TIMESTAMP_DIFF(
       visittime, LAG(visittime) OVER(PARTITION BY url ORDER BY visittime), DAY
     ) AS step
@@ -132,6 +133,7 @@ chains AS (
     load,
     click,
     engagementduration,
+    cumulativeengagement,
     step,
     COUNTIF(step = 1) OVER(PARTITION BY url ORDER BY visittime) AS chainlength
   FROM steps
@@ -160,8 +162,8 @@ chains AS (
 
 powercurvequintiles AS (
   SELECT
-    APPROX_QUANTILES(DISTINCT reach, 3) AS reach,
-    APPROX_QUANTILES(DISTINCT persistence, 3) AS persistence
+    APPROX_QUANTILES(DISTINCT reach, @range) AS reach,
+    APPROX_QUANTILES(DISTINCT persistence, @range) AS persistence
   FROM (
     SELECT * FROM (
       SELECT
@@ -177,12 +179,15 @@ powercurvequintiles AS (
 
 cwvquintiles AS (
   SELECT
-    APPROX_QUANTILES(DISTINCT lcp, 3) AS lcp,
-    APPROX_QUANTILES(DISTINCT cls, 3) AS cls,
-    APPROX_QUANTILES(DISTINCT fid, 3) AS fid,
-    APPROX_QUANTILES(DISTINCT load, 3) AS load,
-    APPROX_QUANTILES(DISTINCT click, 3) AS click,
-    APPROX_QUANTILES(DISTINCT engagementduration, 3) AS engagementduration
+    APPROX_QUANTILES(DISTINCT lcp, @range) AS lcp,
+    APPROX_QUANTILES(DISTINCT cls, @range) AS cls,
+    APPROX_QUANTILES(DISTINCT fid, @range) AS fid,
+    APPROX_QUANTILES(DISTINCT load, @range) AS load,
+    APPROX_QUANTILES(DISTINCT click, @range) AS click,
+    APPROX_QUANTILES(DISTINCT engagementduration, @range) AS engagementduration,
+    APPROX_QUANTILES(
+      DISTINCT cumulativeengagement, @range
+    ) AS cumulativeengagement
   FROM chains
 ),
 
@@ -192,18 +197,19 @@ cwvquintiletable AS (
     lcp[OFFSET(num)] AS lcp,
     cls[OFFSET(num)] AS cls,
     fid[OFFSET(num)] AS fid,
-    load[OFFSET(3 - num)] AS load,
-    click[OFFSET(3 - num)] AS click,
-    engagementduration[OFFSET(num)] AS engagementduration
-  FROM cwvquintiles INNER JOIN UNNEST(GENERATE_ARRAY(0, 3)) AS num
+    load[OFFSET(@range - num)] AS load,
+    click[OFFSET(@range - num)] AS click,
+    engagementduration[OFFSET(num)] AS engagementduration,
+    cumulativeengagement[OFFSET(num)] AS cumulativeengagement
+  FROM cwvquintiles INNER JOIN UNNEST(GENERATE_ARRAY(0, @range)) AS num
 ),
 
 powercurvequintiletable AS (
   SELECT
     num,
-    reach[OFFSET(3 - num)] AS reach,
-    persistence[OFFSET(3 - num)] AS persistence
-  FROM powercurvequintiles INNER JOIN UNNEST(GENERATE_ARRAY(0, 3)) AS num
+    reach[OFFSET(@range - num)] AS reach,
+    persistence[OFFSET(@range - num)] AS persistence
+  FROM powercurvequintiles INNER JOIN UNNEST(GENERATE_ARRAY(0, @range)) AS num
 ),
 
 quintiletable AS (
@@ -215,6 +221,7 @@ quintiletable AS (
     cwvquintiletable.load AS load,
     cwvquintiletable.click AS click,
     cwvquintiletable.engagementduration AS engagementduration,
+    cwvquintiletable.cumulativeengagement AS cumulativeengagement,
     powercurvequintiletable.reach AS reach,
     powercurvequintiletable.persistence AS persistence,
     cwvquintiletable.num AS num
@@ -232,14 +239,18 @@ lookmeup AS (
         (
           (clsscore + lcpscore + fidscore) / 3
         ) + ((reachscore + persistencescore + loadscore) / 3)
-        + ((clickscore + engagementdurationscore) / 2)
+        + (
+          (clickscore + engagementdurationscore + cumulativeengagementscore) / 3
+        )
       ) / 3
     ) AS experiencescore,
     LABELSCORE((clsscore + lcpscore + fidscore) / 3) AS perfscore,
     LABELSCORE(
       (reachscore + persistencescore + loadscore) / 3
     ) AS audiencescore,
-    LABELSCORE((clickscore + engagementdurationscore) / 2) AS engagementscore
+    LABELSCORE(
+      (clickscore + engagementdurationscore + cumulativeengagementscore) / 3
+    ) AS engagementscore
   FROM (
     SELECT
       host,
@@ -277,6 +288,17 @@ lookmeup AS (
             WHERE quintiletable.engagementduration <= chained.engagementduration
           )
       ) AS engagementdurationscore,
+      (
+        SELECT MAX(num)
+        FROM
+          (
+            SELECT num
+            FROM
+              quintiletable
+            WHERE
+              quintiletable.cumulativeengagement <= chained.cumulativeengagement
+          )
+      ) AS cumulativeengagementscore,
       (
         SELECT MIN(num)
         FROM
@@ -320,6 +342,7 @@ lookmeup AS (
           AVG(load) AS load,
           AVG(click) AS click,
           AVG(engagementduration) AS engagementduration,
+          AVG(cumulativeengagement) AS cumulativeengagement,
           COUNTIF(chainlength = 1) AS reach,
           COUNTIF(chainlength = 7) AS persistence
         FROM chains
@@ -340,6 +363,7 @@ lookmeup AS (
     AND reachscore IS NOT NULL
     AND persistencescore IS NOT NULL
     AND engagementdurationscore IS NOT NULL
+    AND cumulativeengagementscore IS NOT NULL
   )
 )
 
