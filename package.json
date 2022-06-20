@@ -92,6 +92,7 @@
       "src/queries/recent-errors.sql",
       "src/queries/next-resource.sql",
       "src/queries/top-pages.sql",
+      "src/queries/ee-score.sql",
       "src/queries/guess-hostname.sql",
       "src/queries/content-power-curve.sql",
       "src/queries/most-visited-hlx3.sql",
