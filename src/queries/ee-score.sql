@@ -323,5 +323,11 @@ lookmeup AS (
 )
 
 #SELECT MIN(num) FROM (SELECT * FROM quintiletable WHERE 0.9841262752758466 >= quintiletable.click)
-SELECT host,experiencescore,perfscore,audiencescore,engagementscore FROM lookmeup
+SELECT
+  host,
+  experiencescore,
+  perfscore,
+  audiencescore,
+  engagementscore
+FROM lookmeup
 ORDER BY REGEXP_EXTRACT(host, r"\..*") ASC, host ASC
