@@ -203,7 +203,14 @@ powercurvequintiletable AS (
 quintiletable AS (
   # SELECT * FROM powercurve
   SELECT
-    *
+    cls,
+    lcp,
+    fid,
+    load,
+    click,
+    reach,
+    persistence,
+    cwvquintiletable.num AS num
   FROM
     powercurvequintiletable
   INNER JOIN
