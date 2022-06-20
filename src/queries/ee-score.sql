@@ -133,26 +133,26 @@ chains AS (
   FROM steps
 ),
 
-urlchains AS (
-  SELECT
-    url,
-    time,
-    chain,
-    events,
-    visits
-  FROM chains
-  ORDER BY chain DESC
-),
-
-powercurve AS (
-  SELECT
-    MAX(chain) AS persistence,
-    COUNT(url) AS reach
-  FROM urlchains
-  GROUP BY chain
-  ORDER BY MAX(chain) ASC
-  LIMIT 31 OFFSET 1
-),
+# urlchains AS (
+#  SELECT
+#    url,
+#    time,
+#    chain,
+#    events,
+#    visits
+#  FROM chains
+#  ORDER BY chain DESC
+# ),
+#
+# powercurve AS (
+#  SELECT
+#    MAX(chain) AS persistence,
+#    COUNT(url) AS reach
+#  FROM urlchains
+#  GROUP BY chain
+#  ORDER BY MAX(chain) ASC
+#  LIMIT 31 OFFSET 1
+# ),
 
 powercurvequintiles AS (
   SELECT
@@ -203,13 +203,13 @@ powercurvequintiletable AS (
 quintiletable AS (
   # SELECT * FROM powercurve
   SELECT
-    cls,
-    lcp,
-    fid,
-    load,
-    click,
-    reach,
-    persistence,
+    cwvquintiletable.cls AS cls,
+    cwvquintiletable.lcp AS lcp,
+    cwvquintiletable.fid AS fid,
+    cwvquintiletable.load AS load,
+    cwvquintiletable.click AS click,
+    powercurvequintiletable.reach AS reach,
+    powercurvequintiletable.persistence AS persistence,
     cwvquintiletable.num AS num
   FROM
     powercurvequintiletable
