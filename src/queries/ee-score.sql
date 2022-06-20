@@ -61,7 +61,7 @@ WITH visits AS (
     id,
     REGEXP_REPLACE(ANY_VALUE(url), "\\?.*$", "") AS url,
     ANY_VALUE(hostname) AS host,
-    TIMESTAMP_TRUNC(MAX(time), DAY) AS time,
+    TIMESTAMP_TRUNC(MAX(time), DAY) AS visittime,
     MAX(weight) AS weight,
     MAX(lcp) AS lcp,
     MAX(cls) AS cls,
@@ -84,7 +84,7 @@ WITH visits AS (
 
 urldays AS (
   SELECT
-    time,
+    visittime,
     url,
     MAX(host) AS host,
     COUNT(id) AS events,
@@ -94,13 +94,13 @@ urldays AS (
     AVG(fid) AS fid,
     LEAST(IF(SUM(top) > 0, SUM(load) / SUM(top), 0), 1) AS load,
     LEAST(IF(SUM(top) > 0, SUM(click) / SUM(top), 0), 1) AS click
-  FROM visits # FULL JOIN days ON (days.time = visits.time)
-  GROUP BY time, url
+  FROM visits # FULL JOIN days ON (days.visittime = visits.visittime)
+  GROUP BY visittime, url
 ),
 
 steps AS (
   SELECT
-    time,
+    visittime,
     url,
     host,
     events,
@@ -111,14 +111,14 @@ steps AS (
     load,
     click,
     TIMESTAMP_DIFF(
-      time, LAG(time) OVER(PARTITION BY url ORDER BY time), DAY
+      visittime, LAG(visittime) OVER(PARTITION BY url ORDER BY visittime), DAY
     ) AS step
   FROM urldays
 ),
 
 chains AS (
   SELECT
-    time,
+    visittime,
     url,
     host,
     events,
@@ -129,7 +129,7 @@ chains AS (
     load,
     click,
     step,
-    COUNTIF(step = 1) OVER(PARTITION BY url ORDER BY time) AS chain
+    COUNTIF(step = 1) OVER(PARTITION BY url ORDER BY visittime) AS chain
   FROM steps
 ),
 
