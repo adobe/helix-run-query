@@ -1,3 +1,10 @@
+# [2.37.0](https://github.com/adobe/helix-run-query/compare/v2.36.0...v2.37.0) (2022-06-23)
+
+
+### Features
+
+* **queries:** add crux-report query ([a53eb56](https://github.com/adobe/helix-run-query/commit/a53eb5695da8db4e8265cdf945ad38353f184f8d))
+
 # [2.36.0](https://github.com/adobe/helix-run-query/compare/v2.35.1...v2.36.0) (2022-06-15)
 
 
