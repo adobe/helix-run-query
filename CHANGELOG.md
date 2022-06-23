@@ -1,3 +1,10 @@
+## [2.37.1](https://github.com/adobe/helix-run-query/compare/v2.37.0...v2.37.1) (2022-06-23)
+
+
+### Bug Fixes
+
+* **ee-score:** exclude localhost from reports ([89fe394](https://github.com/adobe/helix-run-query/commit/89fe3940dae17e0ba5ad1218b4d45aa8965b64fc))
+
 # [2.37.0](https://github.com/adobe/helix-run-query/compare/v2.36.0...v2.37.0) (2022-06-23)
 
 
