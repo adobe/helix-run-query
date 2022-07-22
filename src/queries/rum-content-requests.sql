@@ -3,7 +3,9 @@
 --- to: 2022-01-02
 --- limit: 1000
 --- offset: 0
+SELECT day, contentrequests, hostname FROM (
 SELECT
+  ROW_NUMBER() OVER (ORDER BY hostname) AS row,
   hostname,
   FORMAT_TIMESTAMP('%F', TIMESTAMP_TRUNC(time, DAY)) AS day,
   SUM(pageviews) AS contentrequests
@@ -27,4 +29,5 @@ WHERE (
 )
 GROUP BY day, hostname
 ORDER BY hostname, day
-LIMIT @limit OFFSET @offset
+)
+WHERE row > CAST(@offset AS INT64) AND row <= CAST(@limit AS INT64)
