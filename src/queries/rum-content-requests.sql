@@ -12,7 +12,7 @@ FROM helix_rum.CLUSTER_PAGEVIEWS(
   @from, # start date
   @to, # end date
   'UTC', # timezone
-  'all', # deviceclass
+  'nobot', # deviceclass
   '-' # not used, generation
 )
 WHERE (
