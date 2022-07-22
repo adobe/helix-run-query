@@ -3,7 +3,7 @@
 --- to: 2022-01-02
 SELECT
   hostname,
-  TIMESTAMP_TRUNC(time, DAY) AS day,
+  FORMAT_TIMESTAMP('%F', TIMESTAMP_TRUNC(time, DAY)) AS day,
   SUM(pageviews) AS contentrequests
 FROM helix_rum.CLUSTER_PAGEVIEWS(
   '-', # url
