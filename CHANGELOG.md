@@ -1,3 +1,18 @@
+# [2.38.0](https://github.com/adobe/helix-run-query/compare/v2.37.5...v2.38.0) (2022-07-22)
+
+
+### Bug Fixes
+
+* **contentrequests:** format timestamp as string ([0881c4a](https://github.com/adobe/helix-run-query/commit/0881c4a25290dad53756c606cb8aef44e62923f7))
+* **contentrequests:** paginate without limit ([0a107da](https://github.com/adobe/helix-run-query/commit/0a107dab156556eb266933c52ceaaabfc307670c))
+
+
+### Features
+
+* **contentrequests:** add limit and offset parameters ([e7dae35](https://github.com/adobe/helix-run-query/commit/e7dae35bb35877d59be7ff2a2aea123422ed45d4))
+* **queries:** add content requests tally ([2c5711c](https://github.com/adobe/helix-run-query/commit/2c5711c8655db9d18ec130bda16d16b3a23e67d3))
+* **rum:** add deviceclass nobot ([eeb59e0](https://github.com/adobe/helix-run-query/commit/eeb59e0a89abcee1dd14979e02a32e785df5bb5c))
+
 ## [2.37.5](https://github.com/adobe/helix-run-query/compare/v2.37.4...v2.37.5) (2022-07-07)
 
 
