@@ -1,6 +1,8 @@
 --- description: List number of content requests per day and hostname
 --- from: 2022-01-01
 --- to: 2022-01-02
+--- limit: 1000
+--- offset: 0
 SELECT
   hostname,
   FORMAT_TIMESTAMP('%F', TIMESTAMP_TRUNC(time, DAY)) AS day,
@@ -25,3 +27,4 @@ WHERE (
 )
 GROUP BY day, hostname
 ORDER BY hostname, day
+LIMIT @limit OFFSET @offset
