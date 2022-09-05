@@ -9,9 +9,7 @@
 
 WITH
 current_data AS (
-  SELECT
-    *,
-    TIMESTAMP_TRUNC(time, DAY) AS date
+  SELECT *
   FROM helix_rum.CLUSTER_CHECKPOINTS(
     @url,
     CAST(@offset AS INT64),
@@ -35,7 +33,9 @@ sources AS (
   FROM current_data
   WHERE
     source IS NOT NULL AND (
-      @checkpoint = '-' OR CAST(@checkpoint AS STRING) = checkpoint
+      CAST(
+        @checkpoint AS STRING
+      ) = '-' OR CAST(@checkpoint AS STRING) = checkpoint
     )
   GROUP BY source, id, checkpoint
 )
