@@ -1,3 +1,11 @@
+## [2.38.4](https://github.com/adobe/helix-run-query/compare/v2.38.3...v2.38.4) (2022-09-05)
+
+
+### Bug Fixes
+
+* **rum-sources:** always treat checkpoint parameter as String ([d97109e](https://github.com/adobe/helix-run-query/commit/d97109ef0b08f608eec7d897dce08893347251cc))
+* **rum-sources:** make sure checkpoint is always treated as a string ([5f92c2e](https://github.com/adobe/helix-run-query/commit/5f92c2eddf5d2c0659968b7a2c9f791db4365088))
+
 ## [2.38.3](https://github.com/adobe/helix-run-query/compare/v2.38.2...v2.38.3) (2022-08-22)
 
 
