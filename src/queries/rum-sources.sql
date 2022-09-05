@@ -32,7 +32,7 @@ sources AS (
     MAX(pageviews) AS views,
     SUM(pageviews) AS actions,
   FROM current_data 
-  WHERE source IS NOT NULL AND (@checkpoint = '-' OR @checkpoint = checkpoint)
+  WHERE source IS NOT NULL AND (@checkpoint = '-' OR CAST(@checkpoint AS STRING) = checkpoint)
   GROUP BY source, id, checkpoint 
 )
 
