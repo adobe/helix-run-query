@@ -1,3 +1,10 @@
+## [2.38.5](https://github.com/adobe/helix-run-query/compare/v2.38.4...v2.38.5) (2022-09-07)
+
+
+### Bug Fixes
+
+* **rum-common:** normalize time zones to GMT if undefined ([78c6186](https://github.com/adobe/helix-run-query/commit/78c6186779a0185b9c966ea11f76ab3231a43b92))
+
 ## [2.38.4](https://github.com/adobe/helix-run-query/compare/v2.38.3...v2.38.4) (2022-09-05)
 
 
