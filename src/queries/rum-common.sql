@@ -26,6 +26,16 @@ CREATE OR REPLACE FUNCTION helix_rum.CLUSTER_FILTERCLASS(user_agent STRING, devi
     (device = "mobile" AND user_agent LIKE "%Mobile%") OR
     (device = "bot" AND user_agent NOT LIKE "Mozilla%"));
 
+CREATE OR REPLACE FUNCTION helix_rum.CLEAN_TIMEZONE(intimezone STRING)
+  RETURNS STRING
+  AS (
+    CASE
+      WHEN intimezone = "undefined" THEN "GMT"
+      WHEN intimezone = "" THEN "GMT"
+      ELSE intimezone 
+    END
+  );
+
 CREATE OR REPLACE TABLE FUNCTION helix_rum.CLUSTER_EVENTS(filterurl STRING, days_offset INT64, days_count INT64, day_min STRING, day_max STRING, timezone STRING, deviceclass STRING, filtergeneration STRING)
 AS
   SELECT 
@@ -33,8 +43,8 @@ AS
   FROM `helix-225321.helix_rum.cluster` 
   WHERE IF(filterurl = '-', TRUE, (url LIKE CONCAT('https://', filterurl, '%')) OR (filterurl LIKE 'localhost%' AND url LIKE CONCAT('http://', filterurl, '%')))
   AND   IF(filterurl = '-', TRUE, (hostname = SPLIT(filterurl, '/')[OFFSET(0)]) OR (filterurl LIKE 'localhost:%' AND hostname = 'localhost'))
-  AND   IF(days_offset >= 0, DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, timezone), INTERVAL days_offset DAY),                TIMESTAMP(day_max, timezone)) >= time
-  AND   IF(days_count >= 0,  DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, timezone), INTERVAL (days_offset + days_count) DAY), TIMESTAMP(day_min, timezone)) <= time
+  AND   IF(days_offset >= 0, DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, helix_rum.CLEAN_TIMEZONE(timezone)), INTERVAL days_offset DAY),                TIMESTAMP(day_max, helix_rum.CLEAN_TIMEZONE(timezone))) >= time
+  AND   IF(days_count >= 0,  DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, helix_rum.CLEAN_TIMEZONE(timezone)), INTERVAL (days_offset + days_count) DAY), TIMESTAMP(day_min, helix_rum.CLEAN_TIMEZONE(timezone))) <= time
   AND   helix_rum.CLUSTER_FILTERCLASS(user_agent, deviceclass)
   AND   IF(filtergeneration = '-', TRUE, generation = filtergeneration)
 ;
