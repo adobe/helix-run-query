@@ -1,3 +1,10 @@
+## [2.38.8](https://github.com/adobe/helix-run-query/compare/v2.38.7...v2.38.8) (2022-09-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-status to v9.2.14 ([#729](https://github.com/adobe/helix-run-query/issues/729)) ([b930ae6](https://github.com/adobe/helix-run-query/commit/b930ae6fef1755582d93ca0f39d9b74774c02b38))
+
 ## [2.38.7](https://github.com/adobe/helix-run-query/compare/v2.38.6...v2.38.7) (2022-09-13)
 
 
