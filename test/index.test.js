@@ -17,7 +17,7 @@
 const assert = require('assert');
 const proxyquire = require('proxyquire');
 const path = require('path');
-const { Request } = require('@adobe/helix-fetch');
+const { Request } = require('@adobe/fetch');
 
 const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
 const FSPersister = require('@pollyjs/persister-fs');
