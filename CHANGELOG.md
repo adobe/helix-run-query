@@ -1,3 +1,10 @@
+## [2.38.9](https://github.com/adobe/helix-run-query/compare/v2.38.8...v2.38.9) (2022-09-25)
+
+
+### Bug Fixes
+
+* @adobe/helix-fetch -> @adobe/fetch ([#732](https://github.com/adobe/helix-run-query/issues/732)) ([d0cf525](https://github.com/adobe/helix-run-query/commit/d0cf525af50a8214753213cab4002a56e17caae1))
+
 ## [2.38.8](https://github.com/adobe/helix-run-query/compare/v2.38.7...v2.38.8) (2022-09-23)
 
 
