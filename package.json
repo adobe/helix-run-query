@@ -39,7 +39,7 @@
     "@adobe/helix-status": "9.2.14",
     "@adobe/helix-universal-logger": "2.0.13",
     "@google-cloud/bigquery": "6.0.3",
-    "dotenv": "16.0.2",
+    "dotenv": "16.0.3",
     "fs-extra": "10.1.0",
     "googleapis": "108.0.0",
     "json-size": "1.0.0"
