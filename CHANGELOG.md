@@ -1,3 +1,10 @@
+## [2.38.10](https://github.com/adobe/helix-run-query/compare/v2.38.9...v2.38.10) (2022-10-03)
+
+
+### Bug Fixes
+
+* **deps:** update dependency dotenv to v16.0.3 ([#734](https://github.com/adobe/helix-run-query/issues/734)) ([98d38eb](https://github.com/adobe/helix-run-query/commit/98d38eb1f2608c7366b298929ea18e3925fc704d))
+
 ## [2.38.9](https://github.com/adobe/helix-run-query/compare/v2.38.8...v2.38.9) (2022-09-25)
 
 
