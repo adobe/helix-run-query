@@ -15,7 +15,7 @@ run ```npm install``` in root of repository
 Assuming you are using httpie as your http client:
 
 ```bash
-curl https://adobeioruntime.net/api/v1/web/helix/helix-services/run-query@v1/next-resource?limit=20 
+curl https://helix-pages.anywhere.run/helix-services/run-query@v2/rum-dashboard
 ```
 
 ```json
