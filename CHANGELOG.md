@@ -1,3 +1,10 @@
+# [2.39.0](https://github.com/adobe/helix-run-query/compare/v2.38.11...v2.39.0) (2022-10-05)
+
+
+### Features
+
+* **experiments:** add topurl fer each experiment ([fe3289d](https://github.com/adobe/helix-run-query/commit/fe3289d5965d6f5f10da2d2b73f366244e32923b))
+
 ## [2.38.11](https://github.com/adobe/helix-run-query/compare/v2.38.10...v2.38.11) (2022-10-05)
 
 
