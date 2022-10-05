@@ -103,12 +103,13 @@ conversion_rates AS (
   SELECT
     experimentations_summary.source AS experiment,
     experimentations_summary.target AS variant,
-    experimentation_events,
-    conversion_events,
-    experimentations,
-    conversions,
+    experimentations_summary.experimentation_events,
+    conversions_summary.conversion_events,
+    experimentations_summary.experimentations,
+    conversions_summary.conversions,
     experimentations_summary.topurl AS topurl,
-    conversions / experimentations AS conversion_rate
+    conversions_summary.conversions / experimentations_summary.experimentations
+    AS conversion_rate
   FROM experimentations_summary FULL JOIN conversions_summary
     ON experimentations_summary.source = conversions_summary.source
       AND experimentations_summary.target = conversions_summary.target
