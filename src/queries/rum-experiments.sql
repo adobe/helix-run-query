@@ -8,9 +8,9 @@
 --- conversioncheckpoint: click
 
 CREATE TEMPORARY FUNCTION
-  CDF(nto FLOAT64)
-  RETURNS FLOAT64
-  LANGUAGE js AS """
+CDF(nto FLOAT64)
+RETURNS FLOAT64
+LANGUAGE js AS """
 {
     var mean = 0.0;
     var sigma = 1.0;
@@ -31,7 +31,7 @@ CREATE TEMPORARY FUNCTION
 }
 """;
 
-WITH 
+WITH
 all_checkpoints AS (
   SELECT * FROM helix_rum.CLUSTER_CHECKPOINTS(
     @domain, # domain or URL
@@ -44,63 +44,78 @@ all_checkpoints AS (
     '-' # not used, generation
   )
 ),
-experiment_checkpoints AS(
-SELECT 
-  source, 
-  target, 
-  id,
-  ANY_VALUE(pageviews) AS pageviews, 
-FROM all_checkpoints
-WHERE checkpoint = 'experiment'
-  AND (source = @experiment OR @experiment = '-') # filter by experiment or show all
-GROUP BY
-  source,
-  target,
-  id
+
+experiment_checkpoints AS (
+  SELECT
+    source,
+    target,
+    id,
+    APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
+    ANY_VALUE(pageviews) AS pageviews
+  FROM all_checkpoints
+  WHERE checkpoint = 'experiment'
+    # filter by experiment or show all
+    AND (source = @experiment OR @experiment = '-')
+  GROUP BY
+    source,
+    target,
+    id
 ),
+
 converted_checkpoints AS (
-SELECT experiment_checkpoints.source, experiment_checkpoints.target, all_checkpoints.id, all_checkpoints.pageviews
-FROM experiment_checkpoints JOIN all_checkpoints
-  ON experiment_checkpoints.id = all_checkpoints.id
-  WHERE all_checkpoints.checkpoint = @conversioncheckpoint # note: at some point we may need further filters here
+  SELECT
+    experiment_checkpoints.source,
+    experiment_checkpoints.target,
+    all_checkpoints.id,
+    all_checkpoints.pageviews
+  FROM experiment_checkpoints INNER JOIN all_checkpoints
+    ON experiment_checkpoints.id = all_checkpoints.id
+  # note: at some point we may need further filters here
+  WHERE all_checkpoints.checkpoint = @conversioncheckpoint
 ),
+
 conversions_summary AS (
-SELECT 
-  source,
-  target,
-  COUNT(DISTINCT id) AS conversion_events,
-  SUM(pageviews) AS conversions
-FROM converted_checkpoints
-GROUP BY
-  source,
-  target
+  SELECT
+    source,
+    target,
+    COUNT(DISTINCT id) AS conversion_events,
+    SUM(pageviews) AS conversions
+  FROM converted_checkpoints
+  GROUP BY
+    source,
+    target
 ),
+
 experimentations_summary AS (
-SELECT 
-  source,
-  target,
-  COUNT(DISTINCT id) AS experimentation_events,
-  SUM(pageviews) AS experimentations
-FROM experiment_checkpoints
-GROUP BY
-  source,
-  target
+  SELECT
+    source,
+    target,
+    COUNT(DISTINCT id) AS experimentation_events,
+    SUM(pageviews) AS experimentations,
+    ANY_VALUE(topurl) AS topurl
+  FROM experiment_checkpoints
+  GROUP BY
+    source,
+    target
 ),
+
 conversion_rates AS (
-SELECT 
-  experimentations_summary.source AS experiment,
-  experimentations_summary.target AS variant,
-  experimentation_events,
-  conversion_events,
-  experimentations,
-  conversions,
-  conversions / experimentations AS conversion_rate
-FROM experimentations_summary FULL JOIN conversions_summary 
-  ON experimentations_summary.source = conversions_summary.source 
-  AND experimentations_summary.target = conversions_summary.target
+  SELECT
+    experimentations_summary.source AS experiment,
+    experimentations_summary.target AS variant,
+    experimentations_summary.experimentation_events,
+    conversions_summary.conversion_events,
+    experimentations_summary.experimentations,
+    conversions_summary.conversions,
+    experimentations_summary.topurl AS topurl,
+    conversions_summary.conversions / experimentations_summary.experimentations
+    AS conversion_rate
+  FROM experimentations_summary FULL JOIN conversions_summary
+    ON experimentations_summary.source = conversions_summary.source
+      AND experimentations_summary.target = conversions_summary.target
 )
 
-SELECT 
+SELECT
   l.experiment,
   l.variant,
   l.experimentation_events AS variant_experimentation_events,
@@ -113,13 +128,64 @@ SELECT
   r.conversions AS control_conversions,
   l.conversion_rate AS variant_conversion_rate,
   r.conversion_rate AS control_conversion_rate,
+  l.topurl AS topurl,
   # Math!
-  (l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events) AS pooled_sample_proportion,
-  SQRT(((l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events)) * ( 1 - ((l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events)) * ( 1/l.experimentations + 1/r.experimentations ))) AS pooled_standard_error,
-  (l.conversion_rate - r.conversion_rate) / SQRT(((l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events)) * ( 1 - ((l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events)) * ( 1/l.experimentations + 1/r.experimentations ))) AS test,
-  CDF((-1) * abs((l.conversion_rate - r.conversion_rate) / SQRT(((l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events)) * ( 1 - ((l.conversion_events + r.conversion_events) / (l.experimentation_events + r.experimentation_events)) * ( 1/l.experimentations + 1/r.experimentations ))))) AS p_value
- FROM conversion_rates AS l JOIN conversion_rates AS r ON
-  l.experiment = r.experiment AND
-  l.variant != r.variant
+  (
+    l.conversion_events + r.conversion_events
+  ) / (
+    l.experimentation_events + r.experimentation_events
+  ) AS pooled_sample_proportion,
+  SQRT(
+    (
+      (
+        l.conversion_events + r.conversion_events
+      ) / (l.experimentation_events + r.experimentation_events)
+    ) * (
+      1 - (
+        (
+          l.conversion_events + r.conversion_events
+        ) / (l.experimentation_events + r.experimentation_events)
+      ) * ( 1 / l.experimentations + 1 / r.experimentations )
+    )
+  ) AS pooled_standard_error,
+  (
+    l.conversion_rate - r.conversion_rate
+  ) / SQRT(
+    (
+      (
+        l.conversion_events + r.conversion_events
+      ) / (l.experimentation_events + r.experimentation_events)
+    ) * (
+      1 - (
+        (
+          l.conversion_events + r.conversion_events
+        ) / (l.experimentation_events + r.experimentation_events)
+      ) * ( 1 / l.experimentations + 1 / r.experimentations )
+    )
+  ) AS test,
+  CDF(
+    (
+      -1
+    ) * ABS(
+      (
+        l.conversion_rate - r.conversion_rate
+      ) / SQRT(
+        (
+          (
+            l.conversion_events + r.conversion_events
+          ) / (l.experimentation_events + r.experimentation_events)
+        ) * (
+          1 - (
+            (
+              l.conversion_events + r.conversion_events
+            ) / (l.experimentation_events + r.experimentation_events)
+          ) * ( 1 / l.experimentations + 1 / r.experimentations )
+        )
+      )
+    )
+  ) AS p_value
+FROM conversion_rates AS l INNER JOIN conversion_rates AS r ON
+    l.experiment = r.experiment
+    AND l.variant != r.variant
 WHERE r.variant = 'control' AND l.variant != 'control'
 LIMIT 100
