@@ -51,6 +51,8 @@ experiment_checkpoints AS (
     target,
     id,
     APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
+    APPROX_QUANTILES(time, 100)[OFFSET(95)] AS t95,
+    APPROX_QUANTILES(time, 100)[OFFSET(5)] AS t5,
     ANY_VALUE(pageviews) AS pageviews
   FROM all_checkpoints
   WHERE checkpoint = 'experiment'
@@ -92,7 +94,9 @@ experimentations_summary AS (
     target,
     COUNT(DISTINCT id) AS experimentation_events,
     SUM(pageviews) AS experimentations,
-    ANY_VALUE(topurl) AS topurl
+    ANY_VALUE(topurl) AS topurl,
+    MAX(t95) AS t95,
+    MIN(t5) AS t5
   FROM experiment_checkpoints
   GROUP BY
     source,
@@ -108,6 +112,8 @@ conversion_rates AS (
     experimentations_summary.experimentations,
     conversions_summary.conversions,
     experimentations_summary.topurl AS topurl,
+    experimentations_summary.t95 AS t95,
+    experimentations_summary.t5 AS t5,
     conversions_summary.conversions / experimentations_summary.experimentations
     AS conversion_rate
   FROM experimentations_summary FULL JOIN conversions_summary
@@ -118,6 +124,8 @@ conversion_rates AS (
 SELECT
   l.experiment,
   l.variant,
+  l.t95 AS time95,
+  l.t5 AS time5,
   l.experimentation_events AS variant_experimentation_events,
   r.experimentation_events AS control_experimentation_events,
   l.conversion_events AS variant_conversion_events,
