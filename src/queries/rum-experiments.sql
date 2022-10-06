@@ -6,6 +6,7 @@
 --- offset: 0
 --- experiment: -
 --- conversioncheckpoint: click
+--- threshold: 500
 
 CREATE TEMPORARY FUNCTION
 CDF(nto FLOAT64)
@@ -96,7 +97,9 @@ experimentations_summary AS (
     SUM(pageviews) AS experimentations,
     ANY_VALUE(topurl) AS topurl,
     MAX(t95) AS t95,
-    MIN(t5) AS t5
+    MIN(t5) AS t5,
+    # time difference in seconds
+    TIMESTAMP_DIFF(MAX(t95), MIN(t5), DAY) AS tdiff
   FROM experiment_checkpoints
   GROUP BY
     source,
@@ -114,86 +117,99 @@ conversion_rates AS (
     experimentations_summary.topurl AS topurl,
     experimentations_summary.t95 AS t95,
     experimentations_summary.t5 AS t5,
+    experimentations_summary.tdiff AS tdiff,
     conversions_summary.conversions / experimentations_summary.experimentations
     AS conversion_rate
   FROM experimentations_summary FULL JOIN conversions_summary
     ON experimentations_summary.source = conversions_summary.source
       AND experimentations_summary.target = conversions_summary.target
-)
+),
 
-SELECT
-  l.experiment,
-  l.variant,
-  l.experimentation_events AS variant_experimentation_events,
-  r.experimentation_events AS control_experimentation_events,
-  l.conversion_events AS variant_conversion_events,
-  r.conversion_events AS control_conversion_events,
-  l.experimentations AS variant_experimentations,
-  r.experimentations AS control_experimentations,
-  l.conversions AS variant_conversions,
-  r.conversions AS control_conversions,
-  l.conversion_rate AS variant_conversion_rate,
-  r.conversion_rate AS control_conversion_rate,
-  l.topurl AS topurl,
-  CAST(l.t95 AS STRING) AS time95,
-  CAST(l.t5 AS STRING) AS time5,
-  # Math!
-  (
-    l.conversion_events + r.conversion_events
-  ) / (
-    l.experimentation_events + r.experimentation_events
-  ) AS pooled_sample_proportion,
-  SQRT(
+all_results AS (
+  SELECT
+    l.experiment,
+    l.variant,
+    l.tdiff AS tdiff,
+    l.experimentation_events AS variant_experimentation_events,
+    r.experimentation_events AS control_experimentation_events,
+    l.conversion_events AS variant_conversion_events,
+    r.conversion_events AS control_conversion_events,
+    l.experimentations AS variant_experimentations,
+    r.experimentations AS control_experimentations,
+    l.conversions AS variant_conversions,
+    r.conversions AS control_conversions,
+    l.conversion_rate AS variant_conversion_rate,
+    r.conversion_rate AS control_conversion_rate,
+    l.topurl AS topurl,
+    CAST(l.t95 AS STRING) AS time95,
+    CAST(l.t5 AS STRING) AS time5,
+    # Math!
     (
+      l.conversion_events + r.conversion_events
+    ) / (
+      l.experimentation_events + r.experimentation_events
+    ) AS pooled_sample_proportion,
+    SQRT(
       (
-        l.conversion_events + r.conversion_events
-      ) / (l.experimentation_events + r.experimentation_events)
-    ) * (
-      1 - (
         (
           l.conversion_events + r.conversion_events
         ) / (l.experimentation_events + r.experimentation_events)
-      ) * ( 1 / l.experimentations + 1 / r.experimentations )
-    )
-  ) AS pooled_standard_error,
-  (
-    l.conversion_rate - r.conversion_rate
-  ) / SQRT(
-    (
-      (
-        l.conversion_events + r.conversion_events
-      ) / (l.experimentation_events + r.experimentation_events)
-    ) * (
-      1 - (
-        (
-          l.conversion_events + r.conversion_events
-        ) / (l.experimentation_events + r.experimentation_events)
-      ) * ( 1 / l.experimentations + 1 / r.experimentations )
-    )
-  ) AS test,
-  CDF(
-    (
-      -1
-    ) * ABS(
-      (
-        l.conversion_rate - r.conversion_rate
-      ) / SQRT(
-        (
+      ) * (
+        1 - (
           (
             l.conversion_events + r.conversion_events
           ) / (l.experimentation_events + r.experimentation_events)
-        ) * (
-          1 - (
+        ) * ( 1 / l.experimentations + 1 / r.experimentations )
+      )
+    ) AS pooled_standard_error,
+    (
+      l.conversion_rate - r.conversion_rate
+    ) / SQRT(
+      (
+        (
+          l.conversion_events + r.conversion_events
+        ) / (l.experimentation_events + r.experimentation_events)
+      ) * (
+        1 - (
+          (
+            l.conversion_events + r.conversion_events
+          ) / (l.experimentation_events + r.experimentation_events)
+        ) * ( 1 / l.experimentations + 1 / r.experimentations )
+      )
+    ) AS test,
+    CDF(
+      (
+        -1
+      ) * ABS(
+        (
+          l.conversion_rate - r.conversion_rate
+        ) / SQRT(
+          (
             (
               l.conversion_events + r.conversion_events
             ) / (l.experimentation_events + r.experimentation_events)
-          ) * ( 1 / l.experimentations + 1 / r.experimentations )
+          ) * (
+            1 - (
+              (
+                l.conversion_events + r.conversion_events
+              ) / (l.experimentation_events + r.experimentation_events)
+            ) * ( 1 / l.experimentations + 1 / r.experimentations )
+          )
         )
       )
-    )
-  ) AS p_value
-FROM conversion_rates AS l INNER JOIN conversion_rates AS r ON
-    l.experiment = r.experiment
-    AND l.variant != r.variant
-WHERE r.variant = 'control' AND l.variant != 'control'
+    ) AS p_value
+  FROM conversion_rates AS l INNER JOIN conversion_rates AS r ON
+      l.experiment = r.experiment
+      AND l.variant != r.variant
+  WHERE r.variant = 'control' AND l.variant != 'control'
+)
+
+SELECT
+  *,
+  CAST(
+    (MAX(tdiff) OVER (PARTITION BY experiment) * @threshold)
+    / (control_conversion_events
+      + (SUM(variant_conversion_events) OVER (PARTITION BY experiment)))
+    - MAX(tdiff) OVER (PARTITION BY experiment) AS INT64) AS remaining_runtime
+FROM all_results
 LIMIT 100
