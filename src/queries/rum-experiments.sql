@@ -124,8 +124,8 @@ conversion_rates AS (
 SELECT
   l.experiment,
   l.variant,
-  l.t95 AS time95,
-  l.t5 AS time5,
+  CAST(l.t95 AS STRING) AS time95,
+  CAST(l.t5 AS STRING) AS time5,
   l.experimentation_events AS variant_experimentation_events,
   r.experimentation_events AS control_experimentation_events,
   l.conversion_events AS variant_conversion_events,
