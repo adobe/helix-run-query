@@ -98,7 +98,7 @@ function createTargets(opts) {
 }
 
 module.exports = {
-  OpenwhiskTarget,
+  // OpenwhiskTarget,
   // AWSTarget,
   createTargets,
 };
