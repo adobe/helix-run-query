@@ -207,7 +207,7 @@ all_results AS (
 SELECT
   *,
   CAST(
-    (MAX(tdiff) OVER (PARTITION BY experiment) * @threshold)
+    (MAX(tdiff) OVER (PARTITION BY experiment) * CAST(@threshold AS INT64))
     / (control_conversion_events
       + (SUM(variant_conversion_events) OVER (PARTITION BY experiment)))
     - MAX(tdiff) OVER (PARTITION BY experiment) AS INT64) AS remaining_runtime
