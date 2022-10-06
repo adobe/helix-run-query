@@ -45,9 +45,7 @@ jobs:
       - run:
           name: revert changes to package-lock.json
           command: git checkout -- package-lock.json
-      - helix-post-deploy/config-wsk
       - helix-post-deploy/config-env
-      - helix-gcloud-setup/load-config
       - run:
           name: Semantic Release
           command: npm run semantic-release
@@ -60,7 +58,7 @@ jobs:
           name: Link Sequences
           command: npm run deploy-routes
       - helix-post-deploy/monitoring:
-          targets: universal, aws
+          targets: aws
   branch-deploy:
     executor: node16
     steps:
@@ -68,8 +66,6 @@ jobs:
       - run:
           name: revert changes to package-lock.json
           command: git checkout -- package-lock.json
-      - helix-post-deploy/config-wsk
-      # - helix-gcloud-setup/load-config
       - run:
           name: Branch Deployment
           command: npm run deploy-ci
