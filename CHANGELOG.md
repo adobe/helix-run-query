@@ -1,3 +1,17 @@
+# [2.40.0](https://github.com/adobe/helix-run-query/compare/v2.39.0...v2.40.0) (2022-10-10)
+
+
+### Bug Fixes
+
+* **experiments:** cast threshold parameter to int ([48601d4](https://github.com/adobe/helix-run-query/commit/48601d426f6ff89a53d0947bbae76f50fdf67f80))
+* **experiments:** format timestamps so that they are easy to parse in JS ([5d76cad](https://github.com/adobe/helix-run-query/commit/5d76cade8a38ea3dd2dda6df81a88308d77cf58d))
+
+
+### Features
+
+* **experiments:** add calculation of remaining runtime to query results ([2055b72](https://github.com/adobe/helix-run-query/commit/2055b72c83c4800bf3d5b2d46091634957fa6f0d))
+* **experiments:** include time range for each experiment ([cbf7aef](https://github.com/adobe/helix-run-query/commit/cbf7aef97627cf66cf1a3f058d53594aebfcb5f8))
+
 # [2.39.0](https://github.com/adobe/helix-run-query/compare/v2.38.11...v2.39.0) (2022-10-05)
 
 
