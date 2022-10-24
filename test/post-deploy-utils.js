@@ -88,7 +88,7 @@ class GoogleTarget extends OpenwhiskTarget {
 }
 
 const ALL_TARGETS = [
-  OpenwhiskTarget,
+  // OpenwhiskTarget,
   AWSTarget,
   // GoogleTarget,
 ];
@@ -98,7 +98,7 @@ function createTargets(opts) {
 }
 
 module.exports = {
-  OpenwhiskTarget,
-  // AWSTarget,
+  // OpenwhiskTarget,
+  AWSTarget,
   createTargets,
 };
