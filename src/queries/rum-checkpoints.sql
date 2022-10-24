@@ -36,8 +36,7 @@ data AS (
   WHERE
     checkpoint IS NOT NULL
   GROUP BY
-    checkpoint,
-    generation
+    checkpoint
   #, url
   ORDER BY ids DESC
 ),
