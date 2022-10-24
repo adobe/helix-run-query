@@ -1,3 +1,10 @@
+## [2.40.3](https://github.com/adobe/helix-run-query/compare/v2.40.2...v2.40.3) (2022-10-24)
+
+
+### Bug Fixes
+
+* **rum-checkpoints:** do not list checkpoints twice if there are multiple generations ([cb00d8b](https://github.com/adobe/helix-run-query/commit/cb00d8b9da07af02b39a7b01554f3a3296dac0cd))
+
 ## [2.40.2](https://github.com/adobe/helix-run-query/compare/v2.40.1...v2.40.2) (2022-10-15)
 
 
