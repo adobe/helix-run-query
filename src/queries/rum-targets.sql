@@ -35,7 +35,7 @@ targets AS (
     MAX(pageviews) AS views
   FROM current_data 
   WHERE target IS NOT NULL 
-    AND (@checkpoint = '-' OR @checkpoint = checkpoint)
+    AND (@checkpoint = '-' OR @checkpoint = CAST(checkpoint AS STRING))
     AND (@source = '-' OR @source = source)
   GROUP BY target, id, checkpoint 
 )
