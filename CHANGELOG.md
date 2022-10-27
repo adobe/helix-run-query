@@ -1,3 +1,14 @@
+## [2.40.4](https://github.com/adobe/helix-run-query/compare/v2.40.3...v2.40.4) (2022-10-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fetch to v3.3.0 ([f035744](https://github.com/adobe/helix-run-query/commit/f0357441debb317fd9f2f1a248159e5c79d6310f))
+* **rum-targets:** fix syntax error ([a67c9d0](https://github.com/adobe/helix-run-query/commit/a67c9d0180183278f83282af6aaa55a1a3a7cb6b))
+* **rum-targets:** force checkpoints to be strings ([10ac77c](https://github.com/adobe/helix-run-query/commit/10ac77c0a21750be6336a5c5ca424f8fdfcdd5a7))
+* **rum-targets:** force checkpoints to be strings ([ea2c69b](https://github.com/adobe/helix-run-query/commit/ea2c69b8599f25e2c756d744750ba664690a9710))
+* **rum-targets:** show all urls by default ([cfc993d](https://github.com/adobe/helix-run-query/commit/cfc993d2b22f4e69fb9c2819ebd4a2cee2edbe24))
+
 ## [2.40.3](https://github.com/adobe/helix-run-query/compare/v2.40.2...v2.40.3) (2022-10-24)
 
 
