@@ -4,7 +4,7 @@
 --- limit: 30
 --- interval: 30
 --- offset: 0
---- url: 
+--- url: -
 --- checkpoint: -
 --- source: -
 --- separator: ;
