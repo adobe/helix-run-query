@@ -1,3 +1,10 @@
+## [2.40.7](https://github.com/adobe/helix-run-query/compare/v2.40.6...v2.40.7) (2022-11-07)
+
+
+### Bug Fixes
+
+* **query:** do not assume data location anymore ([4414b3c](https://github.com/adobe/helix-run-query/commit/4414b3c15f00e51dfa2c91b3b8f0be9bd8e6b3c9))
+
 ## [2.40.6](https://github.com/adobe/helix-run-query/compare/v2.40.5...v2.40.6) (2022-10-31)
 
 
