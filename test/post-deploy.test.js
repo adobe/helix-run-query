@@ -18,7 +18,7 @@ chai.use(chaiHttp);
 const { expect } = chai;
 
 createTargets().forEach((target) => {
-  describe(`Post-Deploy Tests (${target.title()}) https://${target.host()}${target.urlPath()}`, () => {
+  describe(`Post-Deploy Tests (${target.title()}) ${target.host()}${target.urlPath()}`, () => {
     before(function beforeAll() {
       if (!target.enabled()) {
         this.skip();
