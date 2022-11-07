@@ -101,9 +101,8 @@ async function execute(email, key, project, query, service, params = {}, logger 
       projectId: project,
       credentials,
     });
-    const [dataset] = await bq.dataset(`helix_logging_${service}`, {
-      location: 'US',
-    }).get();
+
+    const [dataset] = await bq.dataset(`helix_logging_${service}`, {}).get();
 
     // eslint-disable-next-line no-async-promise-executor
     return new Promise((resolve, reject) => {
