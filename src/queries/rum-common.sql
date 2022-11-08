@@ -85,6 +85,105 @@ AS
   FROM helix_rum.CLUSTER_EVENTS(filterurl, days_offset, days_count, day_min, day_max, timezone, deviceclass, filtergeneration)
   GROUP BY id, checkpoint, target, source;
 
+CREATE OR REPLACE TABLE FUNCTION helix_rum.CLUSTER_SYNTHETIC_CHECKPOINTS(filterurl STRING, days_offset INT64, days_count INT64, day_min STRING, day_max STRING, timezone STRING, deviceclass STRING, filtergeneration STRING)
+AS
+  WITH d AS (
+    SELECT
+      *,
+      MIN(time) OVER(PARTITION BY id) AS start,
+      TIMESTAMP_DIFF(time, MIN(time) OVER(PARTITION BY id), MILLISECOND) AS diff
+    FROM
+      `helix-225321.helix_rum.CLUSTER_CHECKPOINTS`(
+        filterurl,
+        days_offset,
+        days_count,
+        day_min,
+        day_max,
+        timezone,
+        deviceclass,
+        filtergeneration
+      )
+  ),
+
+  t AS (
+    SELECT *
+    FROM
+      UNNEST(
+        [
+          -1,
+          0,
+          1,
+          2,
+          5,
+          10,
+          20,
+          50,
+          100,
+          200,
+          500,
+          1000,
+          2000,
+          5000,
+          10000,
+          20000,
+          500000,
+          100000
+        ]
+      ) AS threshold
+  ),
+
+  a AS (
+    SELECT
+      threshold,
+      diff,
+      time,
+      id,
+      hostname,
+      host,
+      source,
+      target,
+      pageviews,
+      generation,
+      url,
+      referer,
+      user_agent,
+      IF(
+        t.threshold = -1, d.checkpoint, CONCAT('dwell:', t.threshold)
+      ) AS checkpoint,
+      IF(t.threshold = -1, FALSE, TRUE) AS dwellpoint
+    FROM d LEFT JOIN t
+      ON (d.diff >= t.threshold)
+    # WHERE id = '999697183-1667611457398-4cecaf9a26832'
+    # GROUP BY time, checkpoint, id, threshold
+    ORDER BY d.id DESC, d.time ASC, checkpoint ASC
+  ),
+
+  b AS (
+    SELECT
+      *,
+      COUNT(*) OVER(
+        PARTITION BY a.checkpoint
+        ORDER BY diff ASC
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+      ) AS dwellcount FROM a
+  )
+
+  SELECT
+    time,
+    checkpoint,
+    id,
+    hostname,
+    host,
+    source,
+    target,
+    pageviews,
+    generation,
+    url,
+    referer,
+    user_agent
+  FROM b
+  WHERE dwellcount = 1 OR NOT dwellpoint
+
 # SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
 # ORDER BY time DESC
 # LIMIT 10;
