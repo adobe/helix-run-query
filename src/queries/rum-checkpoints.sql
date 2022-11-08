@@ -13,7 +13,7 @@ weightdata AS (
     MAX(pageviews) AS weight,
     ANY_VALUE(url) AS url,
     ANY_VALUE(generation) AS generation
-  FROM helix_rum.CLUSTER_CHECKPOINTS(
+  FROM helix_rum.CLUSTER_SYNTHETIC_CHECKPOINTS(
     @domain,
     0, # offset in days from today, not used
     CAST(@interval AS INT64), # interval in days to consider
