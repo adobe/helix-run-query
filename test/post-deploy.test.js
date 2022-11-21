@@ -40,6 +40,21 @@ createTargets().forEach((target) => {
         });
     }).timeout(60000);
 
+    it('Daily Pageviews', async () => {
+      const path = `${target.urlPath()}/daily-pageviews?url=www.theplayers.com&offset=1`;
+      // eslint-disable-next-line no-console
+      console.log(`testing ${target.host()}${path}`);
+      await chai
+        .request(target.host())
+        .get(path)
+        .then((response) => {
+          expect(response).to.have.status(200);
+          expect(response).to.have.header('Content-Type', /^application\/json/);
+        }).catch((e) => {
+          throw e;
+        });
+    }).timeout(60000);
+
     it('Service reports status', async () => {
       const path = `${target.urlPath()}/_status_check/healthcheck.json`;
       // eslint-disable-next-line no-console
