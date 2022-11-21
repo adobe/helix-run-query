@@ -106,8 +106,9 @@ async function execute(email, key, project, query, service, params = {}, logger 
       const [usdataset] = await bq.dataset(`helix_logging_${service}`, {
         location: 'US',
       }).get();
-      if (!usdataset || !(await usdataset.exists())[0]) {
+      if (!usdataset || !(await usdataset.exists())[0] || usdataset.metadata.location !== 'US') {
         const [fallbackdataset] = await bq.dataset(`helix_logging_${service}`, {
+          location: 'us-west1',
         }).get();
         return fallbackdataset;
       }
