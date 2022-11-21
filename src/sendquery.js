@@ -111,7 +111,7 @@ async function execute(email, key, project, query, service, params = {}, logger 
         }).get();
         return fallbackdataset;
       }
-      return dataset;
+      return usdataset;
     })();
 
     // check if dataset exists in that location
