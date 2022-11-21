@@ -78,14 +78,14 @@ async function logquerystats(job, query, fn) {
  * @param {string} service the serviceid of the published site
  * @param {object} params parameters for substitution into query
  */
-async function execute(email, key, project, query, service = 'rum', params = {}, logger = console) {
+async function execute(email, key, project, query, service, params = {}, logger = console) {
   const {
     headerParams,
     description,
     loadedQuery,
     requestParams,
   } = await processParams(query, params);
-
+  const datasetname = service ? `helix_logging_${service}` : 'helix_rum';
   if (headerParams && headerParams.Authorization === 'fastly') {
     try {
       await authFastly(params.token, params.service);
@@ -103,11 +103,11 @@ async function execute(email, key, project, query, service = 'rum', params = {},
     });
 
     const dataset = await (async () => {
-      const [usdataset] = await bq.dataset(`helix_logging_${service}`, {
+      const [usdataset] = await bq.dataset(datasetname, {
         location: 'US',
       }).get();
       if (!usdataset || !(await usdataset.exists())[0] || usdataset.metadata.location !== 'US') {
-        const [fallbackdataset] = await bq.dataset(`helix_logging_${service}`, {
+        const [fallbackdataset] = await bq.dataset(datasetname, {
           location: 'us-west1',
         }).get();
         return fallbackdataset;
