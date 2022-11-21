@@ -1,3 +1,14 @@
+## [2.40.9](https://github.com/adobe/helix-run-query/compare/v2.40.8...v2.40.9) (2022-11-21)
+
+
+### Bug Fixes
+
+* **sendquery:** better fallback to rum dataset ([e5aeea2](https://github.com/adobe/helix-run-query/commit/e5aeea2ae6178eaa7245b58093bec1128984c1f2))
+* **sendquery:** don't access variable before it has been initialized ([adc51ea](https://github.com/adobe/helix-run-query/commit/adc51eaee28200ab1daaa6f4be4d1ad12f014a81))
+* **sendquery:** make location of the fallback dataset explicit ([aaaba79](https://github.com/adobe/helix-run-query/commit/aaaba79038aa05bbc85e790b5e45fdacc8f5747c))
+* **sendquery:** start with us location, then fall back to default location ([29ac925](https://github.com/adobe/helix-run-query/commit/29ac9252e03ce3e4e1c10797e0e812000a3598ad))
+* **sendquery:** use rum as default dataset ([f5cae37](https://github.com/adobe/helix-run-query/commit/f5cae378c3361be182d002aa9dfecb8188ec6c5d))
+
 ## [2.40.8](https://github.com/adobe/helix-run-query/compare/v2.40.7...v2.40.8) (2022-11-18)
 
 
