@@ -20,7 +20,7 @@ const env = require('../src/env.js');
 describe('bigquery tests (online)', async () => {
   const execWithRealLoad = proxyquire('../src/sendquery.js', { './util.js': { authFastly: () => true } });
 
-  const service = '0Y05iB0rzkbCz7gBWc5v8A';
+  const service = undefined;
 
   it('runs a query with alldatasets replacer', async () => {
     const { results, description, requestParams } = await execWithRealLoad.execute(env.email, env.key, env.projectid, 'top-pages', service, {
