@@ -102,7 +102,19 @@ async function execute(email, key, project, query, service, params = {}, logger 
       credentials,
     });
 
-    const [dataset] = await bq.dataset(`helix_logging_${service}`, {}).get();
+    const dataset = await (async () => {
+      const [usdataset] = await bq.dataset(`helix_logging_${service}`, {
+        location: 'US',
+      }).get();
+      if (!usdataset || !(await usdataset.exists())[0]) {
+        const [fallbackdataset] = await bq.dataset(`helix_logging_${service}`, {
+        }).get();
+        return fallbackdataset;
+      }
+      return dataset;
+    })();
+
+    // check if dataset exists in that location
 
     // eslint-disable-next-line no-async-promise-executor
     return new Promise((resolve, reject) => {
