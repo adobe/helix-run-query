@@ -78,7 +78,7 @@ async function logquerystats(job, query, fn) {
  * @param {string} service the serviceid of the published site
  * @param {object} params parameters for substitution into query
  */
-async function execute(email, key, project, query, service, params = {}, logger = console) {
+async function execute(email, key, project, query, service = 'rum', params = {}, logger = console) {
   const {
     headerParams,
     description,
