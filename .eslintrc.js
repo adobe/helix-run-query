@@ -13,4 +13,9 @@
 module.exports = {
   root: true,
   extends: '@adobe/helix',
+  settings: {
+    'import/resolver': {
+      exports: {},
+    },
+  },
 };
