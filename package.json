@@ -85,6 +85,7 @@
     "name": "helix-services/run-query@${version}",
     "static": [
       "src/queries/recent-errors.sql",
+      "src/queries/dev-urls.sql",
       "src/queries/next-resource.sql",
       "src/queries/top-pages.sql",
       "src/queries/ee-score.sql",
