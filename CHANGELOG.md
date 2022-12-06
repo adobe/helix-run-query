@@ -1,3 +1,10 @@
+# [2.41.0](https://github.com/adobe/helix-run-query/compare/v2.40.10...v2.41.0) (2022-12-06)
+
+
+### Features
+
+* **queries:** get list of URLs accessed on current branch ([767ffed](https://github.com/adobe/helix-run-query/commit/767ffed5ed31643536678e89e36c149541e65fe0))
+
 ## [2.40.10](https://github.com/adobe/helix-run-query/compare/v2.40.9...v2.40.10) (2022-11-29)
 
 
