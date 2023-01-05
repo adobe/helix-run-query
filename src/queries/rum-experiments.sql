@@ -67,14 +67,15 @@ experiment_checkpoints AS (
 
 converted_checkpoints AS (
   SELECT
-    experiment_checkpoints.source,
-    experiment_checkpoints.target,
-    all_checkpoints.id,
-    all_checkpoints.pageviews
+    all_checkpoints.id AS id,
+    ANY_VALUE(experiment_checkpoints.source) AS source,
+    ANY_VALUE(experiment_checkpoints.target) AS target,
+    ANY_VALUE(all_checkpoints.pageviews) AS pageviews
   FROM experiment_checkpoints INNER JOIN all_checkpoints
     ON experiment_checkpoints.id = all_checkpoints.id
   # note: at some point we may need further filters here
   WHERE all_checkpoints.checkpoint = @conversioncheckpoint
+  GROUP BY all_checkpoints.id
 ),
 
 conversions_summary AS (
