@@ -1,3 +1,10 @@
+## [2.41.3](https://github.com/adobe/helix-run-query/compare/v2.41.2...v2.41.3) (2023-01-05)
+
+
+### Bug Fixes
+
+* **experiments:** don't count double clicks when determining conversion rate ([0f6e6aa](https://github.com/adobe/helix-run-query/commit/0f6e6aa8e8294c7cedd975cb7d6cfcef9dc9d4eb))
+
 ## [2.41.2](https://github.com/adobe/helix-run-query/compare/v2.41.1...v2.41.2) (2023-01-03)
 
 
