@@ -79,7 +79,8 @@ workflows:
   version: 2
   build:
     jobs:
-      - build
+      - build:
+          context: Project Helix
       - branch-deploy:
           context: Project Helix
           requires:
@@ -94,3 +95,4 @@ workflows:
           filters:
             branches:
               only: main
+# VS Code Extension Version: 1.5.1
