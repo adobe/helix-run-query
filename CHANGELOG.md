@@ -1,3 +1,11 @@
+## [2.41.6](https://github.com/adobe/helix-run-query/compare/v2.41.5...v2.41.6) (2023-01-09)
+
+
+### Bug Fixes
+
+* redeploy ([710c094](https://github.com/adobe/helix-run-query/commit/710c0942f035959fdc1774f45d327c6a966bf0b8))
+* redeploy ([5409dd2](https://github.com/adobe/helix-run-query/commit/5409dd28a56054fb6ec2f5e196869e0594577699))
+
 ## [2.41.5](https://github.com/adobe/helix-run-query/compare/v2.41.4...v2.41.5) (2023-01-09)
 
 
