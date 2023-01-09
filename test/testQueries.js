@@ -21,7 +21,7 @@ describe('Test Queries', () => {
     const res = await main(new Request('https://helix-run-query.com/recent-errors', {
       headers: {
         'x-token': process.env.HLX_FASTLY_AUTH,
-        'x-service': '6E6ge7REhiWetPCqy9jht2',
+        'x-service': '7TvULgs0Xnls4q3R8tawdg',
       },
     }), {
       env: {

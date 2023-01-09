@@ -24,7 +24,7 @@ const {
 const env = require('../src/env.js');
 
 describe('testing util functions', () => {
-  const service = '6E6ge7REhiWetPCqy9jht2';
+  const service = '7TvULgs0Xnls4q3R8tawdg';
 
   it('loadQuery loads a query', async () => {
     const result = await loadQuery('next-resource');
