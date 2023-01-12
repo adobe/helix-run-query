@@ -1,8 +1,8 @@
 version: 2.1
 executors:
-  node16:
+  node18:
     docker:
-      - image: cimg/node:16.16
+      - image: cimg/node:18.2
 
 orbs:
   helix-post-deploy: adobe/helix-post-deploy@3.0.0
@@ -22,7 +22,7 @@ commands:
 
 jobs:
   build:
-    executor: node16
+    executor: node18
     steps:
       - setup
       - run: mkdir junit
@@ -39,7 +39,7 @@ jobs:
           path: junit
 
   semantic-release:
-    executor: node16
+    executor: node18
     steps:
       - setup
       - run:
@@ -60,7 +60,7 @@ jobs:
       - helix-post-deploy/monitoring:
           targets: universal, aws
   branch-deploy:
-    executor: node16
+    executor: node18
     steps:
       - setup
       - run:
@@ -95,4 +95,5 @@ workflows:
           filters:
             branches:
               only: main
+
 # VS Code Extension Version: 1.5.1
