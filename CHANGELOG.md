@@ -1,3 +1,10 @@
+## [2.41.7](https://github.com/adobe/helix-run-query/compare/v2.41.6...v2.41.7) (2023-01-12)
+
+
+### Bug Fixes
+
+* use node 18 ([#791](https://github.com/adobe/helix-run-query/issues/791)) ([3c7874a](https://github.com/adobe/helix-run-query/commit/3c7874a559387a431f634128207a2b2bdfc9513a))
+
 ## [2.41.6](https://github.com/adobe/helix-run-query/compare/v2.41.5...v2.41.6) (2023-01-09)
 
 
