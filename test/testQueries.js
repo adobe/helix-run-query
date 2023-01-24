@@ -14,7 +14,7 @@
 
 const assert = require('assert');
 const { Request } = require('@adobe/fetch');
-const { main } = require('../src/index');
+const { main } = require('../src/index.js');
 
 describe('Test Queries', () => {
   it('recent-errors', async () => {
