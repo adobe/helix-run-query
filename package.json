@@ -48,7 +48,7 @@
     "@adobe/eslint-config-helix": "2.0.1",
     "@adobe/helix-deploy": "8.1.2",
     "@adobe/helix-universal": "3.3.4",
-    "@adobe/semantic-release-coralogix": "1.1.13",
+    "@adobe/semantic-release-coralogix": "1.1.14",
     "@pollyjs/adapter-node-http": "6.0.5",
     "@pollyjs/core": "6.0.5",
     "@pollyjs/persister-fs": "6.0.5",
