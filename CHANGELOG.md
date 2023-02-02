@@ -1,3 +1,10 @@
+## [2.41.10](https://github.com/adobe/helix-run-query/compare/v2.41.9...v2.41.10) (2023-02-02)
+
+
+### Bug Fixes
+
+* do not create route for minor/patch/latest ([0c05857](https://github.com/adobe/helix-run-query/commit/0c0585708d562a656bbe8a2f475e3a1bed32552b))
+
 ## [2.41.9](https://github.com/adobe/helix-run-query/compare/v2.41.8...v2.41.9) (2023-01-28)
 
 
