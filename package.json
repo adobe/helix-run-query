@@ -12,7 +12,7 @@
     "docs": "npx jsdoc2md -c .jsdoc.json --files 'src/*.js'  > docs/API.md",
     "build": "hedy -v",
     "deploy": "hedy -v --deploy --test=/_status_check/healthcheck.json",
-    "deploy-routes": "hedy --no-build -no-hints -l latest -l major -l minor  --cleanup-patch=1w --cleanup-minor=1w --cleanup-major=1y --cleanup-ci=24h",
+    "deploy-routes": "hedy --no-build -no-hints -l major",
     "deploy-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --cleanup-ci=24h",
     "prepare": "npx husky install"
   },
