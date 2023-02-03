@@ -11,18 +11,16 @@
  */
 
 /* eslint-env mocha */
-const assert = require('assert');
-const proxyquire = require('proxyquire');
-
+import assert from 'assert';
+import esmock from 'esmock';
 // Register the node http adapter so its accessible by all future polly instances
-const env = require('../src/env.js');
+import env from '../src/env.js';
 
 describe('bigquery tests (online)', async () => {
-  const execWithRealLoad = proxyquire('../src/sendquery.js', { './util.js': { authFastly: () => true } });
-
   const service = undefined;
 
   it('runs a query with alldatasets replacer', async () => {
+    const execWithRealLoad = await esmock('../src/sendquery.js', { '../src/util.js': { authFastly: () => true } });
     const { results, description, requestParams } = await execWithRealLoad.execute(env.email, env.key, env.projectid, 'top-pages', service, {
       limit: 10,
       fromDays: 30,

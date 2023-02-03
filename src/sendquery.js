@@ -9,15 +9,20 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const { BigQuery } = require('@google-cloud/bigquery');
-const size = require('json-size');
-const { Response } = require('@adobe/fetch');
-const { auth } = require('./auth.js');
-const {
-  loadQuery, replaceTableNames, cleanHeaderParams,
-  cleanQuery, getHeaderParams, authFastly,
+import { BigQuery } from '@google-cloud/bigquery';
+import size from 'json-size';
+import { Response } from '@adobe/fetch';
+import { auth } from './auth.js';
+
+import {
+  authFastly,
+  cleanHeaderParams,
+  cleanQuery,
+  getHeaderParams,
+  loadQuery,
+  replaceTableNames,
   resolveParameterDiff,
-} = require('./util.js');
+} from './util.js';
 
 /**
  * processes headers and request parameters
@@ -78,7 +83,7 @@ async function logquerystats(job, query, fn) {
  * @param {string} service the serviceid of the published site
  * @param {object} params parameters for substitution into query
  */
-async function execute(email, key, project, query, service, params = {}, logger = console) {
+export async function execute(email, key, project, query, service, params = {}, logger = console) {
   const {
     headerParams,
     description,
@@ -196,7 +201,7 @@ async function execute(email, key, project, query, service, params = {}, logger 
  * get query metadata
  * @param {object} params parameters for substitution into query
  */
-async function queryInfo(pathname, params) {
+export async function queryInfo(pathname, params) {
   const [path] = pathname.split('.');
   const {
     headerParams, description, loadedQuery, requestParams,
@@ -207,5 +212,3 @@ async function queryInfo(pathname, params) {
     headers: cleanHeaderParams(loadedQuery, headerParams, true),
   });
 }
-
-module.exports = { execute, queryInfo };

@@ -9,10 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const initfastly = require('@adobe/fastly-native-promises');
-const fs = require('fs-extra');
-const path = require('path');
-const { MissingQueryError } = require('./missing-query-error.js');
+import initfastly from '@adobe/fastly-native-promises';
+import fs from 'fs-extra';
+import path from 'path';
+import { MissingQueryError } from './missing-query-error.js';
 
 /**
  * authenticates token and service with Fastly
@@ -20,7 +20,7 @@ const { MissingQueryError } = require('./missing-query-error.js');
  * @param {string} token Fastly Authentication Token
  * @param {string} service serviceid for a helix-project
  */
-async function authFastly(token, service) {
+export async function authFastly(token, service) {
   // verify Fastly credentials
   const Fastly = await initfastly(token, service);
   await Fastly.getVersions();
@@ -32,8 +32,8 @@ async function authFastly(token, service) {
  *
  * @param {string} query name of the query file
  */
-async function loadQuery(query) {
-  const pathName = path.resolve(__dirname, 'queries', `${query.replace(/^\//, '')}.sql`);
+export async function loadQuery(query) {
+  const pathName = path.resolve(__rootdir, 'src', 'queries', `${query.replace(/^\//, '')}.sql`);
   return new Promise(((resolve, reject) => {
     fs.readFile(pathName, (err, data) => {
       if (err) {
@@ -51,7 +51,7 @@ async function loadQuery(query) {
  * @param {string} query the content read from a query file
  * @param {object} params query parameters, that are inserted into query
  */
-function cleanHeaderParams(query, params, rmvQueryParams = false) {
+export function cleanHeaderParams(query, params, rmvQueryParams = false) {
   return Object.keys(params)
     .filter((key) => rmvQueryParams !== (query.match(new RegExp(`\\@${key}`, 'g')) != null))
     .filter((key) => key !== 'description')
@@ -78,7 +78,7 @@ function coerce(value) {
  *
  * @param {string} query the content read from a query file
  */
-function getHeaderParams(query) {
+export function getHeaderParams(query) {
   return query.split('\n')
     .filter((e) => e.startsWith('---'))
     .filter((e) => e.indexOf(':') > 0)
@@ -95,7 +95,7 @@ function getHeaderParams(query) {
  *
  * @param {string} query the content read from a query file
  */
-function cleanQuery(query) {
+export function cleanQuery(query) {
   return query.split('\n')
     .filter((e) => !e.startsWith('---'))
     .filter((e) => !e.startsWith('#'))
@@ -107,7 +107,7 @@ function cleanQuery(query) {
  *
  * @param {object} params all parameters contained in a request
  */
-function cleanRequestParams(params) {
+export function cleanRequestParams(params) {
   return Object.keys(params)
     .filter((key) => !key.match(/^[A-Z0-9_]+/))
     .filter((key) => !key.startsWith('__'))
@@ -127,7 +127,7 @@ function cleanRequestParams(params) {
  * @param {string} query a query loaded from loadQuery with placeholders
  * @param {object} replacers an function mapping from placeholders to replacer methods
  */
-async function replaceTableNames(query, replacers) {
+export async function replaceTableNames(query, replacers) {
   const regex = /\^(?<placeholder>[a-z]+)(\((?<args>[^)]+)\))?/;
 
   const replacements = await (query.match(new RegExp(regex, 'g')) || [])
@@ -153,7 +153,7 @@ async function replaceTableNames(query, replacers) {
  * @param {object} params provided parameters
  * @param {object} defaults default parameters in query file
  */
-function resolveParameterDiff(params, defaults) {
+export function resolveParameterDiff(params, defaults) {
   return Object.assign(defaults, params);
 }
 
@@ -165,22 +165,10 @@ function format(entry) {
   }
 }
 
-function csvify(arr) {
+export function csvify(arr) {
   const [first = {}] = arr;
   return [
     Array.from(Object.keys(first)).join(','),
     ...arr.map((line) => Object.values(line).map(format).join(',')),
   ].join('\n');
 }
-
-module.exports = {
-  loadQuery,
-  getHeaderParams,
-  cleanRequestParams,
-  cleanHeaderParams,
-  cleanQuery,
-  authFastly,
-  replaceTableNames,
-  resolveParameterDiff,
-  csvify,
-};
