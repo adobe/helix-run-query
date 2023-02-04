@@ -72,6 +72,7 @@ async function run(request, context) {
   const { pathname } = new URL(request.url);
   const params = context.data;
   params.token = request.headers.has('x-token') ? request.headers.get('x-token') : undefined;
+  /* c8 ignore next */
   params.service = request.headers.has('x-service') ? request.headers.get('x-service') : undefined;
 
   params.GOOGLE_CLIENT_EMAIL = context.env.GOOGLE_CLIENT_EMAIL;

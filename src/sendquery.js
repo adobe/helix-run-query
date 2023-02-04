@@ -170,7 +170,7 @@ export async function execute(email, key, project, query, service, params = {}, 
             })))
             .on(
               'error',
-              /* istanbul ignore next */
+              /* c8 ignore next 3 */
               async (e) => {
                 await logquerystats(job, query, logger.warn);
                 reject(e);
