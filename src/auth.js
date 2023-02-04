@@ -14,9 +14,9 @@
  * @param {String} email the email of the service account to use for all subsequent requests
  * @param {String} key the private key of the service account to use for all subsequent requests
  */
-const { google } = require('googleapis');
+import { google } from 'googleapis';
 
-async function googleauth(email, key) {
+export async function googleauth(email, key) {
   const credentials = {
     client_email: email,
     private_key: key,
@@ -38,7 +38,7 @@ async function googleauth(email, key) {
   return gauth;
 }
 
-async function auth(email, key) {
+export async function auth(email, key) {
   try {
     const credentials = {
       client_email: email,
@@ -55,7 +55,3 @@ async function auth(email, key) {
   Service Account in the Google Cloud Platform Console under IAM.`);
   }
 }
-
-module.exports = {
-  auth, googleauth,
-};

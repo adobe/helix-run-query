@@ -11,18 +11,16 @@
  */
 
 /* eslint-env mocha */
-const assert = require('assert');
-const sinon = require('sinon');
-const path = require('path');
-const { AssertionError } = require('assert');
-const proxyquire = require('proxyquire');
-
-const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
-const FSPersister = require('@pollyjs/persister-fs');
-const { setupMocha: setupPolly } = require('@pollyjs/core');
+import assert, { AssertionError } from 'assert';
+import sinon from 'sinon';
+import path from 'path';
+import esmock from 'esmock';
+import NodeHttpAdapter from '@pollyjs/adapter-node-http';
+import FSPersister from '@pollyjs/persister-fs';
+import { setupMocha as setupPolly } from '@pollyjs/core';
 
 // Register the node http adapter so its accessible by all future polly instances
-const env = require('../src/env.js');
+import env from '../src/env.js';
 
 function getQuery(replacer) {
   return `--- description: good commenting is encouraged\n--- Authorization: none
@@ -37,12 +35,17 @@ function getQuery(replacer) {
 }
 
 describe('bigquery tests', async () => {
-  const goodQuery = '--- description: good comment practices for helix queries is encouraged\nselect req_url from requests LIMIT @limit';
-  const badQuery = 'this query is intentionally broken.';
+  let badExec;
+  let goodExec;
+  let myReplacer;
+  before(async () => {
+    const goodQuery = '--- description: good comment practices for helix queries is encouraged\nselect req_url from requests LIMIT @limit';
+    const badQuery = 'this query is intentionally broken.';
 
-  const badExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => badQuery } });
-  const goodExec = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQuery } });
-  const myReplacer = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => getQuery('myrequests'), authFastly: () => true } });
+    badExec = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => badQuery } });
+    goodExec = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => goodQuery } });
+    myReplacer = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => getQuery('myrequests'), authFastly: () => true } });
+  });
 
   const service = 'fake_name';
 
@@ -63,7 +66,7 @@ describe('bigquery tests', async () => {
     persister: FSPersister,
     persisterOptions: {
       fs: {
-        recordingsDir: path.resolve(__dirname, 'fixtures/recordings'),
+        recordingsDir: path.resolve(__testdir, 'fixtures/recordings'),
       },
     },
   });

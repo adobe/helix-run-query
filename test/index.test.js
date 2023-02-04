@@ -14,24 +14,30 @@
 
 'use strict';
 
-const assert = require('assert');
-const proxyquire = require('proxyquire');
-const path = require('path');
-const { Request } = require('@adobe/fetch');
+import assert from 'assert';
+import esmock from 'esmock';
+import path from 'path';
+import { Request } from '@adobe/fetch';
 
-const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
-const FSPersister = require('@pollyjs/persister-fs');
-const { setupMocha: setupPolly } = require('@pollyjs/core');
-const env = require('../src/env.js');
+import NodeHttpAdapter from '@pollyjs/adapter-node-http';
+import FSPersister from '@pollyjs/persister-fs';
+import { setupMocha as setupPolly } from '@pollyjs/core';
+
+import env from '../src/env.js';
 
 describe('Index Tests', async () => {
-  const goodQueryWithAuth = '--- description: some fake comments that mean nothing\n--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nselect * from requests LIMIT @limit';
+  let index;
+  let badIndex;
 
-  const goodExecWithAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => true } });
-  const execWithBadAuth = proxyquire('../src/sendquery.js', { './util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => Promise.reject(new Error('Failed')) } });
+  before(async () => {
+    const goodQueryWithAuth = '--- description: some fake comments that mean nothing\n--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nselect * from requests LIMIT @limit';
 
-  const index = proxyquire('../src/index.js', { './sendquery.js': goodExecWithAuth }).main;
-  const badIndex = proxyquire('../src/index.js', { './sendquery.js': execWithBadAuth }).main;
+    const goodExecWithAuth = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => true } });
+    const execWithBadAuth = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => Promise.reject(new Error('Failed')) } });
+
+    index = (await esmock('../src/index.js', { '../src/sendquery.js': goodExecWithAuth })).main;
+    badIndex = (await esmock('../src/index.js', { '../src/sendquery.js': execWithBadAuth })).main;
+  });
 
   const service = 'fake_name';
 
@@ -52,7 +58,7 @@ describe('Index Tests', async () => {
     persister: FSPersister,
     persisterOptions: {
       fs: {
-        recordingsDir: path.resolve(__dirname, 'fixtures/recordings'),
+        recordingsDir: path.resolve(__testdir, 'fixtures/recordings'),
       },
     },
   });

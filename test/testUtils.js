@@ -11,17 +11,16 @@
  */
 
 /* eslint-env mocha */
+import assert from 'assert';
+import {
+  authFastly,
+  cleanHeaderParams,
+  cleanQuery, cleanRequestParams, csvify,
+  getHeaderParams,
+  loadQuery, replaceTableNames, resolveParameterDiff,
+} from '../src/util.js';
 
-'use strict';
-
-const assert = require('assert');
-const {
-  loadQuery, getHeaderParams, cleanHeaderParams,
-  cleanQuery, authFastly, replaceTableNames,
-  resolveParameterDiff, cleanRequestParams,
-  csvify,
-} = require('../src/util.js');
-const env = require('../src/env.js');
+import env from '../src/env.js';
 
 describe('testing util functions', () => {
   const service = '7TvULgs0Xnls4q3R8tawdg';

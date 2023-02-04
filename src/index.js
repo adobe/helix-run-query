@@ -9,14 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-const { wrap: status } = require('@adobe/helix-status');
-const wrap = require('@adobe/helix-shared-wrap');
-const { cleanupHeaderValue } = require('@adobe/helix-shared-utils');
-const { logger } = require('@adobe/helix-universal-logger');
-const { Response } = require('@adobe/fetch');
-const bodyData = require('@adobe/helix-shared-body-data');
-const { execute, queryInfo } = require('./sendquery.js');
-const { cleanRequestParams, csvify } = require('./util.js');
+import { helixStatus } from '@adobe/helix-status';
+import wrap from '@adobe/helix-shared-wrap';
+import { cleanupHeaderValue } from '@adobe/helix-shared-utils';
+import { logger } from '@adobe/helix-universal-logger';
+import { Response } from '@adobe/fetch';
+import bodyData from '@adobe/helix-shared-body-data';
+import { execute, queryInfo } from './sendquery.js';
+import { cleanRequestParams, csvify } from './util.js';
 
 async function runExec(params, pathname, log) {
   try {
@@ -72,6 +72,7 @@ async function run(request, context) {
   const { pathname } = new URL(request.url);
   const params = context.data;
   params.token = request.headers.has('x-token') ? request.headers.get('x-token') : undefined;
+  /* c8 ignore next */
   params.service = request.headers.has('x-service') ? request.headers.get('x-service') : undefined;
 
   params.GOOGLE_CLIENT_EMAIL = context.env.GOOGLE_CLIENT_EMAIL;
@@ -86,8 +87,8 @@ async function run(request, context) {
  * @param params Action params
  * @returns {Promise<*>} The response
  */
-module.exports.main = wrap(run)
-  .with(status, {
+export const main = wrap(run)
+  .with(helixStatus, {
     fastly: 'https://api.fastly.com/public-ip-list',
     googleiam: 'https://iam.googleapis.com/$discovery/rest?version=v1',
     googlebigquery: 'https://www.googleapis.com/discovery/v1/apis/bigquery/v2/rest',

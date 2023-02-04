@@ -12,9 +12,10 @@
 
 /* eslint-env mocha */
 
-const assert = require('assert');
-const { Request } = require('@adobe/fetch');
-const { main } = require('../src/index.js');
+import assert from 'assert';
+import { Request } from '@adobe/fetch';
+
+import { main } from '../src/index.js';
 
 describe('Test Queries', () => {
   it('recent-errors', async () => {
