@@ -1,3 +1,10 @@
+## [2.41.12](https://github.com/adobe/helix-run-query/compare/v2.41.11...v2.41.12) (2023-02-13)
+
+
+### Bug Fixes
+
+* **dev-urls:** do not include head.html in results ([c04c216](https://github.com/adobe/helix-run-query/commit/c04c2164fc715e069bb4428f95057b4f9f446c70)), closes [/github.com/hlxsites/nedbank/pull/48#issuecomment-1427466017](https://github.com//github.com/hlxsites/nedbank/pull/48/issues/issuecomment-1427466017)
+
 ## [2.41.11](https://github.com/adobe/helix-run-query/compare/v2.41.10...v2.41.11) (2023-02-04)
 
 
