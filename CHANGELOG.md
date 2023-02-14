@@ -1,3 +1,10 @@
+## [2.41.13](https://github.com/adobe/helix-run-query/compare/v2.41.12...v2.41.13) (2023-02-14)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([b11cf3a](https://github.com/adobe/helix-run-query/commit/b11cf3afaabae19cf6fce3f796404cd160a9cadf))
+
 ## [2.41.12](https://github.com/adobe/helix-run-query/compare/v2.41.11...v2.41.12) (2023-02-13)
 
 
