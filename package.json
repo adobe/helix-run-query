@@ -35,7 +35,7 @@
   "homepage": "https://github.com/adobe/helix-run-query#readme",
   "dependencies": {
     "@adobe/fastly-native-promises": "3.0.2",
-    "@adobe/fetch": "4.0.3",
+    "@adobe/fetch": "4.0.4",
     "@adobe/helix-shared-body-data": "2.0.1",
     "@adobe/helix-shared-utils": "3.0.0",
     "@adobe/helix-shared-wrap": "2.0.0",
@@ -48,8 +48,8 @@
     "json-size": "1.0.0"
   },
   "devDependencies": {
-    "@adobe/eslint-config-helix": "2.0.1",
-    "@adobe/helix-deploy": "9.0.10",
+    "@adobe/eslint-config-helix": "2.0.2",
+    "@adobe/helix-deploy": "9.0.11",
     "@adobe/helix-universal": "4.1.4",
     "@adobe/semantic-release-coralogix": "1.1.18",
     "@pollyjs/adapter-node-http": "6.0.5",
