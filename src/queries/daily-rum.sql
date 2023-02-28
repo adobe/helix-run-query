@@ -1,4 +1,4 @@
---- description: demo rum data
+--- description: rum data for vrapp
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
 --- offset: 0
