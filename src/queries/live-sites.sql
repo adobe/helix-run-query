@@ -1,4 +1,4 @@
---- description: list for demo purposes
+--- description: list for vrapp
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
 --- offset: 0
