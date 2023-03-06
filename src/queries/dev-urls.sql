@@ -18,7 +18,7 @@ WHERE req_http_x_owner = @owner
   AND status_code = "200"
   # AND req_http_Referer LIKE "http://localhost:%"
   AND req_http_x_url NOT LIKE "%.plain.html%"
-  AND req_url NOT LIKE "/head.html%"
+  AND req_url NOT LIKE "%/head.html%"
   AND _table_suffix = CONCAT(
     CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP()) AS String),
     LPAD(CAST(EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS String), 2, "0")
