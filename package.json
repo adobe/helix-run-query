@@ -44,7 +44,7 @@
     "@google-cloud/bigquery": "6.1.0",
     "dotenv": "16.0.3",
     "fs-extra": "11.1.0",
-    "googleapis": "110.0.0",
+    "googleapis": "113.0.0",
     "json-size": "1.0.0"
   },
   "devDependencies": {
