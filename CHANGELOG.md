@@ -1,3 +1,11 @@
+## [2.41.16](https://github.com/adobe/helix-run-query/compare/v2.41.15...v2.41.16) (2023-03-14)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([71409cd](https://github.com/adobe/helix-run-query/commit/71409cd94b116243bc9b5cbee40a3b20bd2fae3b))
+* **dev-urls:** more effective exclusion of `head.html` ([cd122d3](https://github.com/adobe/helix-run-query/commit/cd122d34e943a9e0274e5efba86fb6d0dc64d950))
+
 ## [2.41.15](https://github.com/adobe/helix-run-query/compare/v2.41.14...v2.41.15) (2023-02-28)
 
 
