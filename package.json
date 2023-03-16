@@ -98,8 +98,7 @@
       "src/queries/rum-experiments.sql",
       "src/queries/rum-sources-targets.sql",
       "src/queries/rum-sources.sql",
-      "src/queries/rum-targets.sql",
-      "src/queries/top-pages.sql"
+      "src/queries/rum-targets.sql"
     ]
   }
 }
