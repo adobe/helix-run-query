@@ -6,10 +6,9 @@
 --- domain: -
 --- owner: -
 --- repo: -
---- generationa: -
---- generationb: -
 --- device: all
 --- rising: false
+--- domainkey: secret
 
 CREATE TEMP FUNCTION FILTERCLASS(user_agent STRING, device STRING)
 RETURNS BOOLEAN
@@ -26,7 +25,7 @@ AS (
 
 WITH
 current_data AS (
-  SELECT * FROM helix_rum.CLUSTER_EVENTS(
+  SELECT * FROM helix_rum.EVENTS_V3(
     @domain, # domain or URL
     0, # not used, offset in days from today
     CAST(@interval AS INT64), # interval in days to consider
@@ -34,12 +33,12 @@ current_data AS (
     "2022-05-28", # not used, end date
     "GMT", # timezone
     @device, # device class
-    @generationa # generation
+    @domainkey
   )
 ),
 
 previous_data AS (
-  SELECT * FROM helix_rum.CLUSTER_EVENTS(
+  SELECT * FROM helix_rum.EVENTS_V3(
     @domain, # domain or URL
     # offset in days from today (used only if generation filter is not used)
     IF(@generationb = "-", CAST(@interval AS INT64), 0),
@@ -48,7 +47,7 @@ previous_data AS (
     "2022-05-28", # not used, end date
     "GMT", # timezone
     @device, # device class
-    @generationb # generation
+    @domainkey
   )
 ),
 
