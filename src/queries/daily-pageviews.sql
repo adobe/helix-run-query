@@ -1,7 +1,7 @@
 --- description: Get daily page views for a site according to Helix RUM data
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
---- limit: 30
+--- interval: 30
 --- offset: 0
 --- url: 
 --- granularity: 1
@@ -111,25 +111,25 @@ BEGIN
   SET results = (SELECT SUM(pageviews) FROM (SELECT * FROM temp_pageviews));
 END;
 IF (CAST(@granularity AS STRING) = "auto") THEN
-    CALL helix_rum.UPDATE_PAGEVIEWS(1, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
-    IF (results > (CAST(@limit AS INT64) * 200)) THEN
+    CALL helix_rum.UPDATE_PAGEVIEWS(1, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
+    IF (results > (CAST(@interval AS INT64) * 200)) THEN
         # we have enough results, use the daily granularity
         SELECT * FROM temp_pageviews;
     ELSE
         # we don't have enough results, zoom out
         DROP TABLE temp_pageviews;
-        CALL helix_rum.UPDATE_PAGEVIEWS(7, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
-        IF (results > (CAST(@limit AS INT64) * 200)) THEN
+        CALL helix_rum.UPDATE_PAGEVIEWS(7, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
+        IF (results > (CAST(@interval AS INT64) * 200)) THEN
             # we have enough results, use the weekly granularity
             SELECT * FROM temp_pageviews;
         ELSE
             # we don't have enough results, zoom out to monthly and stop
             DROP TABLE temp_pageviews;
-            CALL helix_rum.UPDATE_PAGEVIEWS(30, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
+            CALL helix_rum.UPDATE_PAGEVIEWS(30, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
             SELECT * FROM temp_pageviews;
         END IF;
     END IF;
 ELSE
-    CALL helix_rum.UPDATE_PAGEVIEWS(CAST(@granularity AS INT64), CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
+    CALL helix_rum.UPDATE_PAGEVIEWS(CAST(@granularity AS INT64), CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
     SELECT * FROM temp_pageviews;
 END IF;
