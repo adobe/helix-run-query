@@ -1,3 +1,10 @@
+# [2.42.0](https://github.com/adobe/helix-run-query/compare/v2.41.17...v2.42.0) (2023-03-16)
+
+
+### Features
+
+* **rum:** add query to report correlation of LCP to click rate for a selected list of valid click target prefixes ([2ed7d28](https://github.com/adobe/helix-run-query/commit/2ed7d286bf65826c04c959a281ac085852fc8f16))
+
 ## [2.41.17](https://github.com/adobe/helix-run-query/compare/v2.41.16...v2.41.17) (2023-03-15)
 
 
