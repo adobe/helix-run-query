@@ -1,7 +1,7 @@
 --- description: Get RUM data by checkpoint to see which checkpoint causes the greatest dropoff in traffic
 --- Authorization: none
 --- interval: 30
---- domain: -
+--- url: -
 --- generation: -
 --- device: all
 
@@ -14,7 +14,7 @@ weightdata AS (
     ANY_VALUE(url) AS url,
     ANY_VALUE(generation) AS generation
   FROM helix_rum.CLUSTER_CHECKPOINTS(
-    @domain,
+    @url,
     0, # offset in days from today, not used
     CAST(@interval AS INT64), # interval in days to consider
     '2022-02-01', # not used, start date

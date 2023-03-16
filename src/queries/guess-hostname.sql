@@ -2,7 +2,7 @@
 --- Authorization: none
 --- limit: 10
 --- interval: 30
---- domain: -
+--- url: -
 --- owner: -
 --- repo: -
 --- ref: -
@@ -34,5 +34,5 @@ SELECT * FROM data WHERE
     (owner = @owner OR @owner = "-") AND
     (repo = @repo OR @repo = "-") AND
     (ref = @ref OR @ref = "-") AND
-    (host = @domain OR @domain = "-")
+    (host = @url OR @url = "-")
 LIMIT CAST(@limit AS INT64)

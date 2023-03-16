@@ -1,7 +1,7 @@
 --- description: Using Helix RUM data, get a report of conversion rates of experiment variants compared to control, including p value.
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
---- domain: -
+--- url: -
 --- interval: 30
 --- offset: 0
 --- experiment: -
@@ -35,7 +35,7 @@ LANGUAGE js AS """
 WITH
 all_checkpoints AS (
   SELECT * FROM helix_rum.CLUSTER_CHECKPOINTS(
-    @domain, # domain or URL
+    @url, # domain or URL
     CAST(@offset AS INT64), # offset in days from today
     CAST(@interval AS INT64), # interval in days to consider
     '2022-02-01', # not used, start date

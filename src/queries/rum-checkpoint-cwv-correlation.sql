@@ -1,7 +1,7 @@
 --- description: Using Helix RUM data, get a report of click rate by LCP Ntile, including a correlation coefficient.
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
---- domain: -
+--- url: -
 --- interval: 30
 --- offset: 0
 --- conversioncheckpoint: click
@@ -17,7 +17,7 @@ WITH alldata AS (
     lcp
   FROM
     `HELIX-225321.HELIX_RUM.CLUSTER_EVENTS`(
-      @domain, @offset, @interval, "", "", "UTC", "all", "-"
+      @url, @offset, @interval, "", "", "UTC", "all", "-"
     )
 ),
 

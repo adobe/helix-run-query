@@ -3,7 +3,7 @@
 --- Access-Control-Allow-Origin: *
 --- limit: 10
 --- interval: 30
---- domain: -
+--- url: -
 --- owner: -
 --- repo: -
 --- generationa: -
@@ -27,7 +27,7 @@ AS (
 WITH
 current_data AS (
   SELECT * FROM helix_rum.CLUSTER_EVENTS(
-    @domain, # domain or URL
+    @url, # domain or URL
     0, # not used, offset in days from today
     CAST(@interval AS INT64), # interval in days to consider
     "2022-02-01", # not used, start date
@@ -40,7 +40,7 @@ current_data AS (
 
 previous_data AS (
   SELECT * FROM helix_rum.CLUSTER_EVENTS(
-    @domain, # domain or URL
+    @url, # domain or URL
     # offset in days from today (used only if generation filter is not used)
     IF(@generationb = "-", CAST(@interval AS INT64), 0),
     CAST(@interval AS INT64), # interval in days to consider
@@ -64,7 +64,7 @@ current_rum_by_id AS (
     MAX(host) AS host,
     MAX(user_agent) AS user_agent,
     IF(
-      @domain = "-" AND @repo = "-" AND @owner = "-",
+      @url = "-" AND @repo = "-" AND @owner = "-",
       REGEXP_EXTRACT(MAX(url), "https://([^/]+)/", 1),
       MAX(url)
     ) AS url,
@@ -76,10 +76,10 @@ current_rum_by_id AS (
   FROM current_data
   WHERE
     url LIKE CONCAT(
-      "https://", @domain, "%"
+      "https://", @url, "%"
     ) OR url LIKE CONCAT(
       "https://%", @repo, "--", @owner, ".hlx%/"
-    ) OR (@domain = "-" AND @repo = "-" AND @owner = "-")
+    ) OR (@url = "-" AND @repo = "-" AND @owner = "-")
   GROUP BY id
 ),
 
@@ -95,7 +95,7 @@ previous_rum_by_id AS (
     MAX(host) AS host,
     MAX(user_agent) AS user_agent,
     IF(
-      @domain = "-" AND @repo = "-" AND @owner = "-",
+      @url = "-" AND @repo = "-" AND @owner = "-",
       REGEXP_EXTRACT(MAX(url), "https://([^/]+)/", 1),
       MAX(url)
     ) AS url,
@@ -107,10 +107,10 @@ previous_rum_by_id AS (
   FROM previous_data
   WHERE
     url LIKE CONCAT(
-      "https://", @domain, "%"
+      "https://", @url, "%"
     ) OR url LIKE CONCAT(
       "https://%", @repo, "--", @owner, ".hlx%/"
-    ) OR (@domain = "-" AND @repo = "-" AND @owner = "-")
+    ) OR (@url = "-" AND @repo = "-" AND @owner = "-")
   GROUP BY id
 ),
 
