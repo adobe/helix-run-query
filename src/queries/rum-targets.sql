@@ -9,6 +9,7 @@
 --- source: -
 --- separator: ;
 --- extract: -
+--- domainkey: secret
 
 WITH
 current_data AS (
@@ -23,7 +24,7 @@ current_data AS (
     '2022-01-31',
     'UTC',
     'all',
-    '-'
+    @domainkey
   )
 ),
 

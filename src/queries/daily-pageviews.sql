@@ -6,6 +6,7 @@
 --- url: 
 --- granularity: 1
 --- timezone: UTC
+--- domainkey: secret
 DECLARE results NUMERIC;
 CREATE OR REPLACE PROCEDURE helix_rum.UPDATE_PAGEVIEWS(
   ingranularity INT64,
@@ -35,7 +36,7 @@ BEGIN
         WHEN 365 THEN TIMESTAMP_TRUNC(time, YEAR)
         ELSE TIMESTAMP_TRUNC(time, DAY)
       END AS date
-    FROM helix_rum.CLUSTER_PAGEVIEWS(
+    FROM helix_rum.PAGEVIEWS_V3(
       inurl, # url
       (inoffset * ingranularity) - 1, # offset
       inlimit * ingranularity, # days to fetch
@@ -43,7 +44,7 @@ BEGIN
       '2022-05-28', # not used, end date
       intimezone, # timezone
       'all', # deviceclass
-      '-' # not used, generation
+      @domainkey # domain key to prevent data sharing
     )
   ),
 

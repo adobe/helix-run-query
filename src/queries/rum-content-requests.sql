@@ -3,13 +3,14 @@
 --- to: 2022-01-02
 --- limit: 1000
 --- offset: 0
+--- domainkey: secret
 SELECT day, contentrequests, hostname FROM (
 SELECT
   ROW_NUMBER() OVER (ORDER BY hostname) AS row,
   hostname,
   FORMAT_TIMESTAMP('%F', TIMESTAMP_TRUNC(time, DAY)) AS day,
   SUM(pageviews) AS contentrequests
-FROM helix_rum.CLUSTER_PAGEVIEWS(
+FROM helix_rum.PAGEVIEWS_V3(
   '-', # url
   -1, # offset
   -1, # days to fetch
@@ -17,7 +18,7 @@ FROM helix_rum.CLUSTER_PAGEVIEWS(
   @to, # end date
   'UTC', # timezone
   'nobot', # deviceclass
-  '-' # not used, generation
+  @domainkey # domainkey
 )
 WHERE (
   hostname NOT LIKE '%.hlx.live'

@@ -7,6 +7,7 @@
 --- conversioncheckpoint: click
 --- ntiles: 10
 --- targets: https://, http://
+--- domainkey: secret
 
 WITH alldata AS (
   SELECT
@@ -16,8 +17,8 @@ WITH alldata AS (
     target,
     lcp
   FROM
-    `HELIX-225321.HELIX_RUM.CLUSTER_EVENTS`(
-      @domain, @offset, @interval, "", "", "UTC", "all", "-"
+    `HELIX-225321.HELIX_RUM.EVENTS_V3`(
+      @domain, @offset, @interval, "", "", "UTC", "all", @domainkey
     )
 ),
 
