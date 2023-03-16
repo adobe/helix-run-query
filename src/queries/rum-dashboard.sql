@@ -3,6 +3,10 @@
 --- Access-Control-Allow-Origin: *
 --- limit: 10
 --- interval: 30
+--- offset: 0
+--- startdate: 2022-02-01
+--- enddate: 2022-05-28
+--- timezone: UTC
 --- domain: -
 --- owner: -
 --- repo: -
@@ -28,11 +32,11 @@ WITH
 current_data AS (
   SELECT * FROM helix_rum.CLUSTER_EVENTS(
     @domain, # domain or URL
-    0, # not used, offset in days from today
+    CAST(@offset AS INT64), # not used, offset in days from today
     CAST(@interval AS INT64), # interval in days to consider
-    "2022-02-01", # not used, start date
-    "2022-05-28", # not used, end date
-    "GMT", # timezone
+    @startdate, # not used, start date
+    @enddate, # not used, end date
+    @timezone, # timezone
     @device, # device class
     @generationa # generation
   )
@@ -42,11 +46,11 @@ previous_data AS (
   SELECT * FROM helix_rum.CLUSTER_EVENTS(
     @domain, # domain or URL
     # offset in days from today (used only if generation filter is not used)
-    IF(@generationb = "-", CAST(@interval AS INT64), 0),
+    IF(@generationb = "-", CAST(@interval AS INT64) + CAST(@offset AS INT64), CAST(@offset AS INT64)),
     CAST(@interval AS INT64), # interval in days to consider
-    "2022-02-01", # not used, start date
-    "2022-05-28", # not used, end date
-    "GMT", # timezone
+    @enddate, # not used, start date
+    DATE_ADD(@enddate, INTERVAL ABS(DATE_DIFF(@enddate, @startdate)) DAY), # not used, end date
+    @timezone, # timezone
     @device, # device class
     @generationb # generation
   )

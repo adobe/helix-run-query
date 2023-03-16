@@ -3,6 +3,9 @@
 --- Access-Control-Allow-Origin: *
 --- limit: 30
 --- interval: 60
+--- startdate: 01-01-2020
+--- enddate: 01-01-2021
+--- timezone: UTC
 --- offset: 0
 --- domain: -
 DECLARE upperdate STRING DEFAULT CONCAT(
@@ -73,9 +76,9 @@ WITH visits AS (
     @domain,
     CAST(@offset AS INT64),
     CAST(@interval AS INT64),
-    "",
-    "",
-    "GMT",
+    @startdate,
+    @enddate,
+    @timezone,
     "all",
     "-"
   )

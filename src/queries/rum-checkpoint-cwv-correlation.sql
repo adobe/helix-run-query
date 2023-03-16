@@ -4,6 +4,9 @@
 --- domain: -
 --- interval: 30
 --- offset: 0
+--- startdate: 2020-01-01
+--- enddate: 2021-01-01
+--- timezone: UTC
 --- conversioncheckpoint: click
 --- ntiles: 10
 --- targets: https://, http://
@@ -17,7 +20,7 @@ WITH alldata AS (
     lcp
   FROM
     `HELIX-225321.HELIX_RUM.CLUSTER_EVENTS`(
-      @domain, @offset, @interval, "", "", "UTC", "all", "-"
+      @domain, @offset, @interval, @startdate, @enddate, @timezone, "all", "-"
     )
 ),
 

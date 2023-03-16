@@ -1,6 +1,7 @@
 --- description: List number of content requests per day and hostname
---- from: 2022-01-01
---- to: 2022-01-02
+--- startdate: 2022-01-01
+--- enddate: 2022-01-02
+--- timezone: UTC
 --- limit: 1000
 --- offset: 0
 SELECT day, contentrequests, hostname FROM (
@@ -11,11 +12,11 @@ SELECT
   SUM(pageviews) AS contentrequests
 FROM helix_rum.CLUSTER_PAGEVIEWS(
   '-', # url
-  -1, # offset
+  CAST(@offset AS INT64), # offset
   -1, # days to fetch
-  @from, # start date
-  @to, # end date
-  'UTC', # timezone
+  @startdate, # start date
+  @enddate, # end date
+  @timezone, # timezone
   'nobot', # deviceclass
   '-' # not used, generation
 )
