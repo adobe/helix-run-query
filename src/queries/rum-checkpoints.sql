@@ -2,8 +2,8 @@
 --- Authorization: none
 --- interval: 30
 --- domain: -
---- generation: -
 --- device: all
+--- domainkey: secret
 
 WITH
 weightdata AS (
@@ -13,7 +13,7 @@ weightdata AS (
     MAX(pageviews) AS weight,
     ANY_VALUE(url) AS url,
     ANY_VALUE(generation) AS generation
-  FROM helix_rum.CLUSTER_CHECKPOINTS(
+  FROM helix_rum.CHECKPOINTS_V3(
     @domain,
     0, # offset in days from today, not used
     CAST(@interval AS INT64), # interval in days to consider
@@ -21,7 +21,7 @@ weightdata AS (
     '2022-05-28', # not used, end date
     'GMT', # timezone
     'all', # device class
-    @generation # generation
+    @domainkey # domain key
   )
   GROUP BY id, checkpoint
 ),
