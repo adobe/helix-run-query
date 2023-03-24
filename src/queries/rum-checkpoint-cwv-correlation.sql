@@ -17,7 +17,7 @@ WITH alldata AS (
     lcp
   FROM
     `helix-225321.helix_rum.CLUSTER_EVENTS`(
-      @domain, @offset, @interval, "", "", "UTC", "all", "-"
+      @domain, CAST(@offset AS INT64), CAST(@interval AS INT64), "", "", "UTC", "all", "-"
     )
 ),
 
