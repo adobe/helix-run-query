@@ -1,3 +1,10 @@
+## [2.42.2](https://github.com/adobe/helix-run-query/compare/v2.42.1...v2.42.2) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rum:** use lowercase project name ([be48a49](https://github.com/adobe/helix-run-query/commit/be48a498e4ff6b72e54e74637f9b9c493ec6c450))
+
 ## [2.42.1](https://github.com/adobe/helix-run-query/compare/v2.42.0...v2.42.1) (2023-03-21)
 
 
