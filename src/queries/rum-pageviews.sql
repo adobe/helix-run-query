@@ -99,7 +99,7 @@ BEGIN
       EXTRACT(MONTH FROM dates.alldates) AS month,
       EXTRACT(DAY FROM dates.alldates) AS day,
       STRING(dates.alldates) AS time,
-      COALESCE(dailydata.urls, 0) AS url,
+      COALESCE(dailydata.urls, 0) AS distinct_urls,
       COALESCE(dailydata.pageviews, 0) AS pageviews
     FROM dates
     FULL JOIN dailydata
