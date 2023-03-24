@@ -60,7 +60,7 @@ events AS (
     NTILE(@ntiles) OVER(ORDER BY ANY_VALUE(lcp)) AS lcp_percentile,
     COUNT(DISTINCT linkclickevents.target) AS linkclicks
   FROM linkclickevents FULL JOIN allids ON linkclickevents.id = allids.id
-  INNER JOIN alllcps ON (allcps.id = allids.id)
+  INNER JOIN alllcps ON (alllcps.id = allids.id)
   GROUP BY allids.id
   ORDER BY lcp DESC
 ),
