@@ -1,3 +1,11 @@
+## [2.42.5](https://github.com/adobe/helix-run-query/compare/v2.42.4...v2.42.5) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rum-cwv:** use correct column name ([3ceb3b8](https://github.com/adobe/helix-run-query/commit/3ceb3b80af5f1ca5330c5fb410dc8bf0d5d3a656))
+* **rum-cwv:** use integer arguments for ntiles ([fc459b3](https://github.com/adobe/helix-run-query/commit/fc459b3a7efce8be703019afc3e00b1b92c74a04))
+
 ## [2.42.4](https://github.com/adobe/helix-run-query/compare/v2.42.3...v2.42.4) (2023-03-24)
 
 
