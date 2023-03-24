@@ -1,3 +1,10 @@
+## [2.42.4](https://github.com/adobe/helix-run-query/compare/v2.42.3...v2.42.4) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rum-cwv:** expect ranges to be ints ([358d8c3](https://github.com/adobe/helix-run-query/commit/358d8c3aeb3a66899f20c9757f321a6b4d8bdc42))
+
 ## [2.42.3](https://github.com/adobe/helix-run-query/compare/v2.42.2...v2.42.3) (2023-03-24)
 
 
