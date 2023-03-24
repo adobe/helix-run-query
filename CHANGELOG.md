@@ -1,3 +1,10 @@
+## [2.42.3](https://github.com/adobe/helix-run-query/compare/v2.42.2...v2.42.3) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rem-cwv:** use correct dataset name for stored function ([6c36ede](https://github.com/adobe/helix-run-query/commit/6c36ede8d92889f8af47361333f8ab9e9f4bc0bb))
+
 ## [2.42.2](https://github.com/adobe/helix-run-query/compare/v2.42.1...v2.42.2) (2023-03-24)
 
 
