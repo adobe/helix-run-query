@@ -13,16 +13,17 @@ weightdata AS (
     MAX(pageviews) AS weight,
     ANY_VALUE(url) AS url,
     ANY_VALUE(generation) AS generation
-  FROM helix_rum.CLUSTER_CHECKPOINTS(
-    @url,
-    0, # offset in days from today, not used
-    CAST(@interval AS INT64), # interval in days to consider
-    '2022-02-01', # not used, start date
-    '2022-05-28', # not used, end date
-    'GMT', # timezone
-    'all', # device class
-    @generation # generation
-  )
+  FROM
+    helix_rum.CLUSTER_CHECKPOINTS(
+      @url,
+      0, # offset in days from today, not used
+      CAST(@interval AS INT64), # interval in days to consider
+      '2022-02-01', # not used, start date
+      '2022-05-28', # not used, end date
+      'GMT', # timezone
+      'all', # device class
+      @generation # generation
+    )
   GROUP BY id, checkpoint
 ),
 
@@ -65,9 +66,11 @@ anydata AS (
 ),
 
 alldata AS (
-  SELECT * FROM (SELECT * FROM anydata
+  SELECT * FROM (
+    SELECT * FROM anydata
     UNION ALL
-    (SELECT * FROM data))
+    (SELECT * FROM data)
+  )
 )
 
 -- SELECT * FROM anydatabyid LIMIT 10
@@ -76,15 +79,16 @@ SELECT
   checkpoint,
   ids AS events,
   views,
-  IF(MAX(views) OVER(
+  IF(MAX(views) OVER (
     ORDER BY views DESC
     ROWS BETWEEN 1 PRECEDING AND 0 FOLLOWING
-    ) != 0, ROUND(100 - (100 * views / MAX(views) OVER(
-        ORDER BY views DESC
-        ROWS BETWEEN 1 PRECEDING AND 0 FOLLOWING
-      )), 1), 0) AS percent_dropoff,
+  ) != 0, ROUND(100 - (100 * views / MAX(views) OVER (
+    ORDER BY views DESC
+    ROWS BETWEEN 1 PRECEDING AND 0 FOLLOWING
+  )), 1), 0) AS percent_dropoff,
   IF(MAX(views) OVER (
-      ORDER BY views DESC) != 0, ROUND(100 * views / MAX(views) OVER (
-        ORDER BY views DESC), 1), 0) AS percent_total
+    ORDER BY views DESC) != 0, ROUND(100 * views / MAX(views) OVER (
+    ORDER BY views DESC
+  ), 1), 0) AS percent_total
 
 FROM alldata
