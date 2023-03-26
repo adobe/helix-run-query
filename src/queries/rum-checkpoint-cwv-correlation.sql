@@ -17,7 +17,14 @@ WITH alldata AS (
     lcp
   FROM
     `helix-225321.helix_rum.CLUSTER_EVENTS`(
-      @domain, CAST(@offset AS INT64), CAST(@interval AS INT64), "", "", "UTC", "all", "-"
+      @domain,
+      CAST(@offset AS INT64),
+      CAST(@interval AS INT64),
+      "",
+      "",
+      "UTC",
+      "all",
+      "-"
     )
 ),
 
@@ -57,7 +64,8 @@ events AS (
   SELECT
     allids.id,
     ANY_VALUE(alllcps.lcp) AS lcp,
-    NTILE(CAST(@ntiles AS INT64)) OVER(ORDER BY ANY_VALUE(lcp)) AS lcp_percentile,
+    NTILE(CAST(@ntiles AS INT64))
+    OVER (ORDER BY ANY_VALUE(lcp)) AS lcp_percentile,
     COUNT(DISTINCT linkclickevents.target) AS linkclicks
   FROM linkclickevents FULL JOIN allids ON linkclickevents.id = allids.id
   INNER JOIN alllcps ON (alllcps.id = allids.id)
