@@ -1,7 +1,7 @@
 --- description: Using Helix RUM data, get a report of conversion rates of experiment variants compared to control, including p value.
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
---- domain: -
+--- url: -
 --- interval: 30
 --- offset: 0
 --- experiment: -
@@ -35,16 +35,17 @@ LANGUAGE js AS """
 
 WITH
 all_checkpoints AS (
-  SELECT * FROM helix_rum.CHECKPOINTS_V3(
-    @domain, # domain or URL
-    CAST(@offset AS INT64), # offset in days from today
-    CAST(@interval AS INT64), # interval in days to consider
-    '2022-02-01', # not used, start date
-    '2022-05-28', # not used, end date
-    'GMT', # timezone
-    'all', # device class
-    @domainkey
-  )
+  SELECT * FROM
+    helix_rum.CHECKPOINTS_V3(
+      @url, # domain or URL
+      CAST(@offset AS INT64), # offset in days from today
+      CAST(@interval AS INT64), # interval in days to consider
+      '2022-02-01', # not used, start date
+      '2022-05-28', # not used, end date
+      'GMT', # timezone
+      'all', # device class
+      @domainkey
+    )
 ),
 
 experiment_checkpoints AS (
@@ -57,7 +58,8 @@ experiment_checkpoints AS (
     APPROX_QUANTILES(time, 100)[OFFSET(5)] AS t5,
     ANY_VALUE(pageviews) AS pageviews
   FROM all_checkpoints
-  WHERE checkpoint = 'experiment'
+  WHERE
+    checkpoint = 'experiment'
     # filter by experiment or show all
     AND (source = @experiment OR @experiment = '-')
   GROUP BY
@@ -123,7 +125,8 @@ conversion_rates AS (
     conversions_summary.conversions / experimentations_summary.experimentations
     AS conversion_rate
   FROM experimentations_summary FULL JOIN conversions_summary
-    ON experimentations_summary.source = conversions_summary.source
+    ON
+      experimentations_summary.source = conversions_summary.source
       AND experimentations_summary.target = conversions_summary.target
 ),
 
@@ -161,7 +164,7 @@ all_results AS (
           (
             l.conversion_events + r.conversion_events
           ) / (l.experimentation_events + r.experimentation_events)
-        ) * ( 1 / l.experimentations + 1 / r.experimentations )
+        ) * (1 / l.experimentations + 1 / r.experimentations)
       )
     ) AS pooled_standard_error,
     (
@@ -176,7 +179,7 @@ all_results AS (
           (
             l.conversion_events + r.conversion_events
           ) / (l.experimentation_events + r.experimentation_events)
-        ) * ( 1 / l.experimentations + 1 / r.experimentations )
+        ) * (1 / l.experimentations + 1 / r.experimentations)
       )
     ) AS test,
     CDF(
@@ -195,14 +198,15 @@ all_results AS (
               (
                 l.conversion_events + r.conversion_events
               ) / (l.experimentation_events + r.experimentation_events)
-            ) * ( 1 / l.experimentations + 1 / r.experimentations )
+            ) * (1 / l.experimentations + 1 / r.experimentations)
           )
         )
       )
     ) AS p_value
-  FROM conversion_rates AS l INNER JOIN conversion_rates AS r ON
-      l.experiment = r.experiment
-      AND l.variant != r.variant
+  FROM conversion_rates AS l INNER JOIN
+    conversion_rates AS r ON
+    l.experiment = r.experiment
+    AND l.variant != r.variant
   WHERE r.variant = 'control' AND l.variant != 'control'
 )
 
@@ -210,8 +214,11 @@ SELECT
   *,
   CAST(
     (MAX(tdiff) OVER (PARTITION BY experiment) * CAST(@threshold AS INT64))
-    / (control_conversion_events
-      + (SUM(variant_conversion_events) OVER (PARTITION BY experiment)))
-    - MAX(tdiff) OVER (PARTITION BY experiment) AS INT64) AS remaining_runtime
+    / (
+      control_conversion_events
+      + (SUM(variant_conversion_events) OVER (PARTITION BY experiment))
+    )
+    - MAX(tdiff) OVER (PARTITION BY experiment) AS INT64
+  ) AS remaining_runtime
 FROM all_results
 LIMIT 100

@@ -3,7 +3,7 @@
 --- Access-Control-Allow-Origin: *
 --- limit: 10
 --- interval: 30
---- domain: -
+--- url: -
 --- owner: -
 --- repo: -
 --- device: all
@@ -18,37 +18,40 @@ AS (
     device = "desktop"
     AND user_agent NOT LIKE "%Mobile%"
     AND user_agent LIKE "Mozilla%"
-  ) OR
-  (device = "mobile" AND user_agent LIKE "%Mobile%") OR
-  (device = "bot" AND user_agent NOT LIKE "Mozilla%"));
+  )
+  OR (device = "mobile" AND user_agent LIKE "%Mobile%")
+  OR (device = "bot" AND user_agent NOT LIKE "Mozilla%")
+);
 
 
 WITH
 current_data AS (
-  SELECT * FROM helix_rum.EVENTS_V3(
-    @domain, # domain or URL
-    0, # not used, offset in days from today
-    CAST(@interval AS INT64), # interval in days to consider
-    "2022-02-01", # not used, start date
-    "2022-05-28", # not used, end date
-    "GMT", # timezone
-    @device, # device class
-    @domainkey
-  )
+  SELECT * FROM
+    helix_rum.EVENTS_V3(
+      @url, # domain or URL
+      0, # not used, offset in days from today
+      CAST(@interval AS INT64), # interval in days to consider
+      "2022-02-01", # not used, start date
+      "2022-05-28", # not used, end date
+      "GMT", # timezone
+      @device, # device class
+      @domainkey
+    )
 ),
 
 previous_data AS (
-  SELECT * FROM helix_rum.EVENTS_V3(
-    @domain, # domain or URL
-    # offset in days from today (used only if generation filter is not used)
-    IF(@generationb = "-", CAST(@interval AS INT64), 0),
-    CAST(@interval AS INT64), # interval in days to consider
-    "2022-02-01", # not used, start date
-    "2022-05-28", # not used, end date
-    "GMT", # timezone
-    @device, # device class
-    @domainkey
-  )
+  SELECT * FROM
+    helix_rum.EVENTS_V3(
+      @url, # domain or URL
+      # offset in days from today (used only if generation filter is not used)
+      IF(@generationb = "-", CAST(@interval AS INT64), 0),
+      CAST(@interval AS INT64), # interval in days to consider
+      "2022-02-01", # not used, start date
+      "2022-05-28", # not used, end date
+      "GMT", # timezone
+      @device, # device class
+      @domainkey
+    )
 ),
 
 current_rum_by_id AS (
@@ -63,7 +66,7 @@ current_rum_by_id AS (
     MAX(host) AS host,
     MAX(user_agent) AS user_agent,
     IF(
-      @domain = "-" AND @repo = "-" AND @owner = "-",
+      @url = "-" AND @repo = "-" AND @owner = "-",
       REGEXP_EXTRACT(MAX(url), "https://([^/]+)/", 1),
       MAX(url)
     ) AS url,
@@ -75,10 +78,10 @@ current_rum_by_id AS (
   FROM current_data
   WHERE
     url LIKE CONCAT(
-      "https://", @domain, "%"
+      "https://", @url, "%"
     ) OR url LIKE CONCAT(
       "https://%", @repo, "--", @owner, ".hlx%/"
-    ) OR (@domain = "-" AND @repo = "-" AND @owner = "-")
+    ) OR (@url = "-" AND @repo = "-" AND @owner = "-")
   GROUP BY id
 ),
 
@@ -94,7 +97,7 @@ previous_rum_by_id AS (
     MAX(host) AS host,
     MAX(user_agent) AS user_agent,
     IF(
-      @domain = "-" AND @repo = "-" AND @owner = "-",
+      @url = "-" AND @repo = "-" AND @owner = "-",
       REGEXP_EXTRACT(MAX(url), "https://([^/]+)/", 1),
       MAX(url)
     ) AS url,
@@ -106,10 +109,10 @@ previous_rum_by_id AS (
   FROM previous_data
   WHERE
     url LIKE CONCAT(
-      "https://", @domain, "%"
+      "https://", @url, "%"
     ) OR url LIKE CONCAT(
       "https://%", @repo, "--", @owner, ".hlx%/"
-    ) OR (@domain = "-" AND @repo = "-" AND @owner = "-")
+    ) OR (@url = "-" AND @repo = "-" AND @owner = "-")
   GROUP BY id
 ),
 
@@ -309,7 +312,7 @@ current_truncated_rum_by_url AS (
       avgcls,
       url,
       ROW_NUMBER() OVER (ORDER BY pageviews DESC) AS rank
-      FROM current_rum_by_url) AS ranked,
+    FROM current_rum_by_url) AS ranked,
     current_event_count
   GROUP BY url
 ),
@@ -332,7 +335,7 @@ previous_truncated_rum_by_url AS (
     (SELECT
       *,
       ROW_NUMBER() OVER (ORDER BY pageviews DESC) AS rank
-      FROM previous_rum_by_url) AS ranked,
+    FROM previous_rum_by_url) AS ranked,
     previous_event_count
   GROUP BY url
 )
@@ -388,15 +391,16 @@ FROM (
     previous_truncated_rum_by_url.avgcls AS avgcls_1,
     previous_truncated_rum_by_url.rumshare AS rumshare_1,
     previous_truncated_rum_by_url.url AS url_1,
-    ROW_NUMBER() OVER (ORDER BY
-      IF(
-        @rising,
-        COALESCE(
-          current_truncated_rum_by_url.pageviews, 0
-        ) - COALESCE(previous_truncated_rum_by_url.pageviews, 0),
-        0
-      ) DESC,
-      current_truncated_rum_by_url.pageviews DESC
+    ROW_NUMBER() OVER (
+      ORDER BY
+        IF(
+          @rising,
+          COALESCE(
+            current_truncated_rum_by_url.pageviews, 0
+          ) - COALESCE(previous_truncated_rum_by_url.pageviews, 0),
+          0
+        ) DESC,
+        current_truncated_rum_by_url.pageviews DESC
     ) AS rank,
     COALESCE(
       current_truncated_rum_by_url.url, previous_truncated_rum_by_url.url
@@ -419,4 +423,4 @@ FROM (
     current_truncated_rum_by_url.pageviews DESC,
     previous_truncated_rum_by_url.pageviews DESC
 ) WHERE
-rank <= @limit OR url = "Other" OR @rising
+  rank <= @limit OR url = "Other" OR @rising
