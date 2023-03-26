@@ -22,7 +22,6 @@ describe('Test Queries', () => {
     const res = await main(new Request('https://helix-run-query.com/rum-dashboard?url=www.hlx.live&domain=www.hlx.live', {
       headers: {
         'x-token': process.env.HLX_FASTLY_AUTH,
-        'x-service': '6v0sHgrPTGUGS5PHOXZ0H1',
       },
     }), {
       env: {
