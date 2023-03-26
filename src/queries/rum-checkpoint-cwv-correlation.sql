@@ -17,7 +17,7 @@ WITH alldata AS (
     target,
     lcp
   FROM
-    `helix-225321.helix_rum.EVENTS_V3`(
+    `HELIX-225321.HELIX_RUM.EVENTS_V3`(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
@@ -86,17 +86,58 @@ clickrates AS (
 
 correlation AS (
   SELECT CORR(lcp, click_rate) AS correlation FROM clickrates
-)
+),
 
+good_correlation AS (
+  SELECT CORR(lcp, click_rate) AS good_correlation
+  FROM clickrates
+  WHERE lcp <= 2500 AND lcp_percentile > 1 # ignore the first percentile (outliers) and all values that are not good lcp
+),
+
+best_rates AS (
+  SELECT
+    lcp AS best_lcp,
+    max_rate
+  FROM (
+    SELECT
+      lcp,
+      click_rate,
+      MAX(click_rate) OVER () AS max_rate
+    FROM clickrates
+    ORDER BY lcp ASC
+  )
+  WHERE click_rate = max_rate
+),
+
+boost_potential AS (
+  SELECT
+    clickrates.lcp,
+    clickrates.click_rate,
+    best_rates.best_lcp,
+    best_rates.max_rate,
+    clickrates.lcp - best_rates.best_lcp AS lcp_diff,
+    (best_rates.max_rate - clickrates.click_rate)
+    / clickrates.click_rate AS click_rate_boost
+  FROM clickrates
+  FULL JOIN best_rates ON (true)
+  WHERE clickrates.lcp - best_rates.best_lcp < 1000
+  ORDER BY clickrates.lcp DESC
+  LIMIT 1
+)
 
 SELECT
   clickrates.lcp_percentile,
   clickrates.lcp,
   clickrates.click_rate,
-  correlation.correlation
-FROM clickrates FULL JOIN correlation ON (true)
+  correlation.correlation,
+  good_correlation.good_correlation,
+  boost_potential.click_rate_boost,
+  boost_potential.lcp_diff
+FROM clickrates
+FULL JOIN correlation ON (true)
+FULL JOIN good_correlation ON (true)
+FULL JOIN boost_potential ON (true)
 ORDER BY clickrates.lcp_percentile
-
 
 # SELECT
 #   target,
