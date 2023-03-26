@@ -120,8 +120,8 @@ CREATE OR REPLACE TABLE
     CLS,
     referer,
     id,
-    source,
-    target,
+    SOURCE,
+    TARGET,
     weight,
     checkpoint
   FROM
@@ -133,10 +133,15 @@ CREATE OR REPLACE TABLE
       OR rumdata.url LIKE CONCAT("https://", validkeys.hostname_prefix, "/%")
       OR validkeys.hostname_prefix = "" )
   WHERE
-  IF
-    (filterurl = '-', TRUE, (url LIKE CONCAT('https://', filterurl, '%'))
+    ( (filterurl = '-') # any URL goes
+      OR (url LIKE CONCAT('https://', filterurl, '%')) # default behavior,
       OR (filterurl LIKE 'localhost%'
-        AND url LIKE CONCAT('http://', filterurl, '%')))
+        AND url LIKE CONCAT('http://', filterurl, '%')) # localhost
+      OR (ENDS_WITH(filterurl, '$')
+        AND url = CONCAT('https://', REPLACE(filterurl, '$', ''))) # strict URL
+      OR (ENDS_WITH(filterurl, '?')
+        AND url = CONCAT('https://', REPLACE(filterurl, '?', ''))) # strict URL, but URL params are supported
+      )
     AND
   IF
     (filterurl = '-', TRUE, (hostname = SPLIT(filterurl, '/')[
