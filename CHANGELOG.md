@@ -1,3 +1,53 @@
+## [2.42.6](https://github.com/adobe/helix-run-query/compare/v2.42.5...v2.42.6) (2023-03-25)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([d26cc58](https://github.com/adobe/helix-run-query/commit/d26cc583656d2650bfd66b86283f31d30cf87095))
+
+## [2.42.5](https://github.com/adobe/helix-run-query/compare/v2.42.4...v2.42.5) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rum-cwv:** use correct column name ([3ceb3b8](https://github.com/adobe/helix-run-query/commit/3ceb3b80af5f1ca5330c5fb410dc8bf0d5d3a656))
+* **rum-cwv:** use integer arguments for ntiles ([fc459b3](https://github.com/adobe/helix-run-query/commit/fc459b3a7efce8be703019afc3e00b1b92c74a04))
+
+## [2.42.4](https://github.com/adobe/helix-run-query/compare/v2.42.3...v2.42.4) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rum-cwv:** expect ranges to be ints ([358d8c3](https://github.com/adobe/helix-run-query/commit/358d8c3aeb3a66899f20c9757f321a6b4d8bdc42))
+
+## [2.42.3](https://github.com/adobe/helix-run-query/compare/v2.42.2...v2.42.3) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rem-cwv:** use correct dataset name for stored function ([6c36ede](https://github.com/adobe/helix-run-query/commit/6c36ede8d92889f8af47361333f8ab9e9f4bc0bb))
+
+## [2.42.2](https://github.com/adobe/helix-run-query/compare/v2.42.1...v2.42.2) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rum:** use lowercase project name ([be48a49](https://github.com/adobe/helix-run-query/commit/be48a498e4ff6b72e54e74637f9b9c493ec6c450))
+
+## [2.42.1](https://github.com/adobe/helix-run-query/compare/v2.42.0...v2.42.1) (2023-03-21)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([04460b1](https://github.com/adobe/helix-run-query/commit/04460b15e87b7154f0d362feccfd0c0322d30435))
+
+# [2.42.0](https://github.com/adobe/helix-run-query/compare/v2.41.17...v2.42.0) (2023-03-16)
+
+
+### Features
+
+* **rum:** add query to report correlation of LCP to click rate for a selected list of valid click target prefixes ([2ed7d28](https://github.com/adobe/helix-run-query/commit/2ed7d286bf65826c04c959a281ac085852fc8f16))
+
 ## [2.41.17](https://github.com/adobe/helix-run-query/compare/v2.41.16...v2.41.17) (2023-03-15)
 
 
