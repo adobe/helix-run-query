@@ -7,7 +7,7 @@
 --- enddate: 01-01-2021
 --- timezone: UTC
 --- offset: 0
---- domain: -
+--- url: -
 DECLARE upperdate STRING DEFAULT CONCAT(
   CAST(
     EXTRACT(
@@ -18,7 +18,9 @@ DECLARE upperdate STRING DEFAULT CONCAT(
   ),
   LPAD(CAST(EXTRACT(MONTH FROM TIMESTAMP_SUB(
     CURRENT_TIMESTAMP(),
-    INTERVAL CAST(@offset AS INT64) DAY)) AS String), 2, "0"));
+    INTERVAL CAST(@offset AS INT64) DAY
+  )) AS String), 2, "0")
+);
 
 DECLARE lowerdate STRING DEFAULT CONCAT(
   CAST(
@@ -32,7 +34,8 @@ DECLARE lowerdate STRING DEFAULT CONCAT(
   LPAD(CAST(EXTRACT(MONTH FROM TIMESTAMP_SUB(
     CURRENT_TIMESTAMP(),
     INTERVAL SAFE_ADD(CAST(@interval AS INT64), CAST(@offset AS INT64)) DAY
-    )) AS String), 2, "0"));
+  )) AS String), 2, "0")
+);
 
 DECLARE uppertimestamp STRING DEFAULT CAST(
   UNIX_MICROS(
@@ -72,16 +75,17 @@ WITH visits AS (
     MAX(IF(checkpoint = "top", 1, 0)) AS top,
     MAX(IF(checkpoint = "load", 1, 0)) AS load,
     MAX(IF(checkpoint = "click", 1, 0)) AS click
-  FROM helix_rum.CLUSTER_EVENTS(
-    @domain,
-    CAST(@offset AS INT64),
-    CAST(@interval AS INT64),
-    @startdate,
-    @enddate,
-    @timezone,
-    "all",
-    "-"
-  )
+  FROM
+    helix_rum.CLUSTER_EVENTS(
+      @url,
+      CAST(@offset AS INT64),
+      CAST(@interval AS INT64),
+      @startdate,
+      @enddate,
+      @timezone,
+      "all",
+      "-"
+    )
   GROUP BY id
 ),
 
@@ -114,7 +118,7 @@ steps AS (
     load,
     click,
     TIMESTAMP_DIFF(
-      visittime, LAG(visittime) OVER(PARTITION BY url ORDER BY visittime), DAY
+      visittime, LAG(visittime) OVER (PARTITION BY url ORDER BY visittime), DAY
     ) AS step
   FROM urldays
 ),
@@ -132,7 +136,7 @@ chains AS (
     load,
     click,
     step,
-    COUNTIF(step = 1) OVER(PARTITION BY url ORDER BY visittime) AS chainlength
+    COUNTIF(step = 1) OVER (PARTITION BY url ORDER BY visittime) AS chainlength
   FROM steps
 ),
 
@@ -296,33 +300,36 @@ lookmeup AS (
           )
       ) AS persistencescore
     FROM (
-        SELECT
-          host,
-          AVG(cls) AS cls,
-          AVG(lcp) AS lcp,
-          AVG(fid) AS fid,
-          AVG(load) AS load,
-          AVG(click) AS click,
-          COUNTIF(chainlength = 1) AS reach,
-          COUNTIF(chainlength = 7) AS persistence
-        FROM chains
-        WHERE (host = @domain OR @domain = "-")
-          AND host IS NOT NULL
-          AND host NOT LIKE "%.hlx.%"
-          AND host != "localhost"
-        GROUP BY host
-        ORDER BY host DESC
-      ) AS chained
+      SELECT
+        host,
+        AVG(cls) AS cls,
+        AVG(lcp) AS lcp,
+        AVG(fid) AS fid,
+        AVG(load) AS load,
+        AVG(click) AS click,
+        COUNTIF(chainlength = 1) AS reach,
+        COUNTIF(chainlength = 7) AS persistence
+      FROM chains
+      WHERE
+        (host = @domain OR @domain = "-")
+        AND host IS NOT NULL
+        AND host NOT LIKE "%.hlx.%"
+        AND host != "localhost"
+      GROUP BY host
+      ORDER BY host DESC
+    ) AS chained
   )
-  WHERE host = @domain OR (@domain = "-"
-    AND clsscore IS NOT NULL
-    AND fidscore IS NOT NULL
-    AND lcpscore IS NOT NULL
-    AND clickscore IS NOT NULL
-    AND loadscore IS NOT NULL
-    AND reachscore IS NOT NULL
-    AND persistencescore IS NOT NULL
-  )
+  WHERE
+    host = @domain OR (
+      @domain = "-"
+      AND clsscore IS NOT NULL
+      AND fidscore IS NOT NULL
+      AND lcpscore IS NOT NULL
+      AND clickscore IS NOT NULL
+      AND loadscore IS NOT NULL
+      AND reachscore IS NOT NULL
+      AND persistencescore IS NOT NULL
+    )
 )
 
 #SELECT MIN(num) FROM (SELECT * FROM quintiletable WHERE 0.9841262752758466 >= quintiletable.click)
