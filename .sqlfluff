@@ -1,14 +1,15 @@
 [sqlfluff]
 dialect = bigquery
 
-[sqlfluff:rules]
+[sqlfluff:indentation]
 tab_space_size = 2
 
-[sqlfluff:rules:L010]
+[sqlfluff:rules:capitalisation.keywords]
 capitalisation_policy = upper
 
-[sqlfluff:rules:L030]
+[sqlfluff:rules:capitalisation.functions]
 extended_capitalisation_policy = upper
+ignore_words_regex = ^`helix-225321.helix_rum.[A-Z_]+`$
 
-[sqlfluff:rules:L016]
+[sqlfluff:rules:layout.long_lines]
 ignore_comment_lines = true
