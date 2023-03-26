@@ -18,46 +18,8 @@ import { Request } from '@adobe/fetch';
 import { main } from '../src/index.js';
 
 describe('Test Queries', () => {
-  it('recent-errors', async () => {
-    const res = await main(new Request('https://helix-run-query.com/recent-errors', {
-      headers: {
-        'x-token': process.env.HLX_FASTLY_AUTH,
-        'x-service': '7TvULgs0Xnls4q3R8tawdg',
-      },
-    }), {
-      env: {
-        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
-        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
-        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
-      },
-    });
-    assert.ok(res);
-    const results = await res.json();
-    assert.ok(results);
-    console.table(results.results);
-  }).timeout(100000);
-
-  it('next-resource', async () => {
-    const res = await main(new Request('https://helix-run-query.com/next-resource', {
-      headers: {
-        'x-token': process.env.HLX_FASTLY_AUTH,
-        'x-service': '6v0sHgrPTGUGS5PHOXZ0H1',
-      },
-    }), {
-      env: {
-        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
-        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
-        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
-      },
-    });
-    assert.ok(res);
-    const results = await res.json();
-    assert.ok(results);
-    // console.table(results.results);
-  }).timeout(100000);
-
-  it('most-visited', async () => {
-    const res = await main(new Request('https://helix-run-query.com/most-visited-hlx3', {
+  it('rum-dashboard', async () => {
+    const res = await main(new Request('https://helix-run-query.com/rum-dashboard?url=www.hlx.live&domain=www.hlx.live', {
       headers: {
         'x-token': process.env.HLX_FASTLY_AUTH,
         'x-service': '6v0sHgrPTGUGS5PHOXZ0H1',
