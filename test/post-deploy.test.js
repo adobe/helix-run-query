@@ -25,8 +25,8 @@ createTargets().forEach((target) => {
       }
     });
 
-    it('Most Visited', async () => {
-      const path = `${target.urlPath()}/most-visited-hlx3`;
+    it('RUM Dashboard', async () => {
+      const path = `${target.urlPath()}/rum-dashboard`;
       // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
       await chai
