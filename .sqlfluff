@@ -15,4 +15,4 @@ ignore_words_regex = ^`helix-225321.helix_rum.[A-Z_]+`$
 ignore_comment_lines = true
 
 [sqlfluff:rules:references.keywords]
-ignore_words = source,target
+ignore_words = source,target,date
