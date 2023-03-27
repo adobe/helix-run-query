@@ -49,10 +49,14 @@ previous_data AS (
     helix_rum.CLUSTER_EVENTS(
       @url, # domain or URL
       # offset in days from today (used only if generation filter is not used)
-      IF(@generationb = "-", CAST(@interval AS INT64) + CAST(@offset AS INT64), CAST(@offset AS INT64)),
+      IF(
+        @generationb = "-",
+        CAST(@interval AS INT64) + CAST(@offset AS INT64),
+        CAST(@offset AS INT64)
+      ),
       CAST(@interval AS INT64), # interval in days to consider
       @enddate, # not used, start date
-      DATE_ADD(@enddate, INTERVAL ABS(DATE_DIFF(@enddate, @startdate)) DAY), # not used, end date
+      FORMAT_DATE("%F", DATE_ADD(@enddate, INTERVAL ABS(DATE_DIFF(DATE(@enddate, @timezone), DATE(@startdate, @timezone), DAY)) DAY)), # not used, end date
       @timezone, # timezone
       @device, # device class
       @generationb # generation
