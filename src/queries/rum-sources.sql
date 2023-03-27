@@ -13,16 +13,17 @@
 WITH
 current_data AS (
   SELECT *
-  FROM helix_rum.CLUSTER_CHECKPOINTS(
-    @url,
-    CAST(@offset AS INT64),
-    CAST(@interval AS INT64),
-    @startdate,
-    @enddate,
-    @timezone,
-    'all',
-    '-'
-  )
+  FROM
+    helix_rum.CLUSTER_CHECKPOINTS(
+      @url,
+      CAST(@offset AS INT64),
+      CAST(@interval AS INT64),
+      @startdate,
+      @enddate,
+      @timezone,
+      'all',
+      '-'
+    )
 ),
 
 sources AS (
