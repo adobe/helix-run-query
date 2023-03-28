@@ -47,12 +47,8 @@ previous_data AS (
   SELECT * FROM
     helix_rum.EVENTS_V3(
       @url, # domain or URL
-      # offset in days from today (used only if generation filter is not used)
-      IF(
-        @generationb = "-",
-        CAST(@interval AS INT64) + CAST(@offset AS INT64),
-        CAST(@offset AS INT64)
-      ),
+      # offset in days from today
+      CAST(@interval AS INT64) + CAST(@offset AS INT64),
       CAST(@interval AS INT64), # interval in days to consider
       @enddate, # not used, start date
       FORMAT_DATE("%F", DATE_ADD(@enddate, INTERVAL ABS(DATE_DIFF(DATE(@enddate, @timezone), DATE(@startdate, @timezone), DAY)) DAY)), # not used, end date
