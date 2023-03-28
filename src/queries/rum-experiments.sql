@@ -4,6 +4,9 @@
 --- url: -
 --- interval: 30
 --- offset: 0
+--- startdate: -
+--- enddate: -
+--- timezone: UTC
 --- experiment: -
 --- conversioncheckpoint: click
 --- threshold: 500
@@ -40,9 +43,9 @@ all_checkpoints AS (
       @url, # domain or URL
       CAST(@offset AS INT64), # offset in days from today
       CAST(@interval AS INT64), # interval in days to consider
-      '2022-02-01', # not used, start date
-      '2022-05-28', # not used, end date
-      'GMT', # timezone
+      @startdate, # not used, start date
+      @enddate, # not used, end date
+      @timezone, # timezone
       'all', # device class
       @domainkey
     )

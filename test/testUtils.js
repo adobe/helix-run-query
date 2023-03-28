@@ -26,7 +26,7 @@ describe('testing util functions', () => {
   const service = '7TvULgs0Xnls4q3R8tawdg';
 
   it('loadQuery loads a query', async () => {
-    const result = await loadQuery('next-resource');
+    const result = await loadQuery('rum-dashboard');
     assert.ok(result.match(/select/i));
   });
 

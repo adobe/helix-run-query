@@ -4,6 +4,9 @@
 --- limit: 30
 --- interval: 30
 --- offset: 0
+--- startdate: 2022-01-01
+--- enddate: 2022-01-31
+--- timezone: UTC
 --- url: -
 --- checkpoint: -
 --- domainkey: secret
@@ -11,16 +14,17 @@
 WITH
 current_data AS (
   SELECT *
-  FROM helix_rum.CHECKPOINTS_V3(
-    @url,
-    CAST(@offset AS INT64),
-    CAST(@interval AS INT64),
-    '2022-01-01',
-    '2022-01-31',
-    'UTC',
-    'all',
-    @domainkey
-  )
+  FROM
+    helix_rum.CHECKPOINTS_V3(
+      @url,
+      CAST(@offset AS INT64),
+      CAST(@interval AS INT64),
+      @startdate,
+      @enddate,
+      @timezone,
+      'all',
+      @domainkey
+    )
 ),
 
 sources AS (
