@@ -4,24 +4,27 @@
 --- limit: 30
 --- interval: 30
 --- offset: 0
+--- startdate: 2022-01-01
+--- enddate: 2022-01-31
+--- timezone: UTC
 --- url: -
 --- checkpoint: -
 --- source: -
 
 WITH
 current_data AS (
-  SELECT
-    *
-  FROM helix_rum.CLUSTER_CHECKPOINTS(
-    @url,
-    CAST(@offset AS INT64),
-    CAST(@interval AS INT64),
-    '2022-01-01',
-    '2022-01-31',
-    'UTC',
-    'all',
-    '-'
-  )
+  SELECT *
+  FROM
+    helix_rum.CLUSTER_CHECKPOINTS(
+      @url,
+      CAST(@offset AS INT64),
+      CAST(@interval AS INT64),
+      @startdate,
+      @enddate,
+      @timezone,
+      'all',
+      '-'
+    )
 ),
 
 sources AS (
@@ -35,7 +38,8 @@ sources AS (
     MAX(pageviews) AS views,
     SUM(pageviews) AS actions
   FROM current_data
-  WHERE source IS NOT NULL
+  WHERE
+    source IS NOT NULL
     AND (@source = '-' OR source = @source)
     AND (@checkpoint = '-' OR @checkpoint = checkpoint)
   GROUP BY source, id, checkpoint, target

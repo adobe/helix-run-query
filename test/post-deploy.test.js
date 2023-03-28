@@ -41,7 +41,7 @@ createTargets().forEach((target) => {
     }).timeout(60000);
 
     it('Daily Pageviews', async () => {
-      const path = `${target.urlPath()}/daily-pageviews?url=www.theplayers.com&offset=1`;
+      const path = `${target.urlPath()}/rum-pageviews?url=www.theplayers.com&offset=1`;
       // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
       await chai

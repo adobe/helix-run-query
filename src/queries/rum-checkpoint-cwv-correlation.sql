@@ -4,6 +4,9 @@
 --- url: -
 --- interval: 30
 --- offset: 0
+--- startdate: 2020-01-01
+--- enddate: 2021-01-01
+--- timezone: UTC
 --- conversioncheckpoint: click
 --- ntiles: 10
 --- targets: https://, http://
@@ -20,8 +23,8 @@ WITH alldata AS (
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
-      "",
-      "",
+      @startdate,
+      @enddate,
       "UTC",
       "all",
       "-"
