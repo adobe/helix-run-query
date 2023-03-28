@@ -33,6 +33,8 @@ jobs:
           $(echo ${{ steps.get_file_changes.outputs.files_modified }} |
           tr -s ' ' '\n' |
           grep -E '^src/queries.*[.]sql$' |
+          # ignore files containing 'common' in the file name
+          grep -v 'common' |
           tr -s '\n' ' ') \
           $(echo ${{ steps.get_file_changes.outputs.files_added }} |
           tr -s ' ' '\n' |
