@@ -1,4 +1,4 @@
---- description: list for vrapp
+--- description: github prs
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
 --- offset: 0
