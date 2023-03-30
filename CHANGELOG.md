@@ -1,3 +1,10 @@
+## [2.42.8](https://github.com/adobe/helix-run-query/compare/v2.42.7...v2.42.8) (2023-03-30)
+
+
+### Bug Fixes
+
+* **src/queries:** update queries ([#843](https://github.com/adobe/helix-run-query/issues/843)) ([355648f](https://github.com/adobe/helix-run-query/commit/355648f617b729566028d80b15afe84e580476b8)), closes [#844](https://github.com/adobe/helix-run-query/issues/844)
+
 ## [2.42.7](https://github.com/adobe/helix-run-query/compare/v2.42.6...v2.42.7) (2023-03-27)
 
 
