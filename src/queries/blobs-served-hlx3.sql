@@ -17,30 +17,70 @@
 --- limit: 100
 --- offset: 0
 SELECT * FROM (
-SELECT
-    IF(req_http_X_Owner != "", req_http_X_Owner, REGEXP_EXTRACT(req_http_host, "[^\\-\\.]+--([^\\-\\.]+)\\.", 1))  AS owner,
-    IF(req_http_X_Repo != "", req_http_X_Repo,
+    SELECT
+        REQ_HTTP_X_URL AS URL,
         IF(
-            ARRAY_LENGTH(SPLIT(SPLIT(req_http_host, '.')[OFFSET(0)], '--')) = 3,
-            SPLIT(SPLIT(req_http_host, '.')[OFFSET(0)], '--')[OFFSET(1)],
-            SPLIT(SPLIT(req_http_host, '.')[OFFSET(0)], '--')[OFFSET(0)]
-                ))AS repo,
-    REGEXP_EXTRACT(req_http_X_URL, "_([0-9a-f]+)\\.[a-z]+\\??", 1) AS id,
-    req_http_X_URL AS url,
-    REGEXP_EXTRACT(req_http_X_URL, "_[0-9a-f]+\\.([a-z]+)\\??", 1) AS format,
-    TIMESTAMP_MICROS(CAST(MAX(time_start_usec) AS INT64)) AS latestreq,
-    TIMESTAMP_MICROS(CAST(MIN(time_start_usec) AS INT64)) AS earliestreq,
-    COUNT(time_start_usec) AS requests,
-    MAX(req_http_host) AS host,
-FROM `helix_logging_7TvULgs0Xnls4q3R8tawdg.requests*`
-WHERE req_http_X_URL LIKE "%_media%"
-    AND status_code = CAST(@status AS STRING) AND
-    _TABLE_SUFFIX <= CONCAT(CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP()) AS String), LPAD(CAST(EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS String), 2, "0")) AND
-    _TABLE_SUFFIX >= CONCAT(CAST(EXTRACT(YEAR FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL @fromHours HOUR)) AS String), LPAD(CAST(EXTRACT(MONTH FROM TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL @fromHours HOUR)) AS String), 2, "0")) AND
-    time_start_usec > CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL @fromHours HOUR)) AS STRING) AND
-    time_start_usec < CAST(UNIX_MICROS(TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 0 DAY)) AS STRING)
-GROUP BY owner, repo, id, format, url
-ORDER BY requests DESC
+            REQ_HTTP_X_OWNER != "",
+            REQ_HTTP_X_OWNER,
+            REGEXP_EXTRACT(REQ_HTTP_HOST, "[^\\-\\.]+--([^\\-\\.]+)\\.", 1)
+        ) AS OWNER,
+        IF(REQ_HTTP_X_REPO != "", REQ_HTTP_X_REPO,
+            IF(
+                ARRAY_LENGTH(
+                    SPLIT(SPLIT(REQ_HTTP_HOST, ".") [OFFSET(0)], "--")
+                ) = 3,
+                SPLIT(SPLIT(REQ_HTTP_HOST, ".") [OFFSET(0)], "--") [OFFSET(1)],
+                SPLIT(SPLIT(REQ_HTTP_HOST, ".") [OFFSET(0)], "--") [OFFSET(0)]
+            )) AS REPO,
+        REGEXP_EXTRACT(REQ_HTTP_X_URL, "_([0-9a-f]+)\\.[a-z]+\\??", 1) AS ID,
+        REGEXP_EXTRACT(
+            REQ_HTTP_X_URL, "_[0-9a-f]+\\.([a-z]+)\\??", 1
+        ) AS FORMAT,
+        TIMESTAMP_MICROS(CAST(MAX(TIME_START_USEC) AS INT64)) AS LATESTREQ,
+        TIMESTAMP_MICROS(CAST(MIN(TIME_START_USEC) AS INT64)) AS EARLIESTREQ,
+        COUNT(TIME_START_USEC) AS REQUESTS,
+        MAX(REQ_HTTP_HOST) AS HOST
+    FROM `helix_logging_7TvULgs0Xnls4q3R8tawdg.requests*`
+    WHERE REQ_HTTP_X_URL LIKE "%_media%"
+        AND STATUS_CODE = CAST(@status AS STRING)
+        AND _TABLE_SUFFIX <= CONCAT(
+            CAST(EXTRACT(YEAR FROM CURRENT_TIMESTAMP()) AS String),
+            LPAD(
+                CAST(EXTRACT(MONTH FROM CURRENT_TIMESTAMP()) AS String), 2, "0"
+            )
+        )
+        AND _TABLE_SUFFIX >= CONCAT(
+            CAST(
+                EXTRACT(
+                    YEAR FROM TIMESTAMP_SUB(
+                        CURRENT_TIMESTAMP(), INTERVAL @fromHours HOUR
+                    )
+                ) AS String
+            ),
+            LPAD(
+                CAST(
+                    EXTRACT(
+                        MONTH FROM TIMESTAMP_SUB(
+                            CURRENT_TIMESTAMP(), INTERVAL @fromHours HOUR
+                        )
+                    ) AS String
+                ),
+                2,
+                "0"
+            )
+        )
+        AND TIME_START_USEC > CAST(
+            UNIX_MICROS(
+                TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL @fromHours HOUR)
+            ) AS STRING
+        )
+        AND TIME_START_USEC < CAST(
+            UNIX_MICROS(
+                TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 0 DAY)
+            ) AS STRING
+        )
+    GROUP BY OWNER, REPO, ID, FORMAT, URL
+    ORDER BY REQUESTS DESC
 )
-WHERE id IS NOT NULL AND format IS NOT NULL
+WHERE ID IS NOT NULL AND FORMAT IS NOT NULL
 LIMIT @limit OFFSET @offset
