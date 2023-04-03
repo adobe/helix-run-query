@@ -1,3 +1,10 @@
+## [2.42.9](https://github.com/adobe/helix-run-query/compare/v2.42.8...v2.42.9) (2023-04-03)
+
+
+### Reverts
+
+* Revert "fix(src/queries): update queries (#843)" ([857c4c0](https://github.com/adobe/helix-run-query/commit/857c4c0fc53a622c5aed075c9e02c73b151cacb0)), closes [#843](https://github.com/adobe/helix-run-query/issues/843)
+
 ## [2.42.8](https://github.com/adobe/helix-run-query/compare/v2.42.7...v2.42.8) (2023-03-30)
 
 
