@@ -1,3 +1,10 @@
+## [2.42.10](https://github.com/adobe/helix-run-query/compare/v2.42.9...v2.42.10) (2023-04-06)
+
+
+### Bug Fixes
+
+* **rum-checkpoint-urls:** cast parameter as int ([92ff637](https://github.com/adobe/helix-run-query/commit/92ff637dd810449d0417d5e3ad1c4a644b216f18))
+
 ## [2.42.9](https://github.com/adobe/helix-run-query/compare/v2.42.8...v2.42.9) (2023-04-03)
 
 
