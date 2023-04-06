@@ -59,8 +59,12 @@ async function runExec(params, pathname, log) {
       },
     });
   } catch (e) {
+    let status = e.statusCode || 500;
+    if (e?.errors?.[0].reason === 'invalidQuery') {
+      status = 400;
+    }
     return new Response(e.message, {
-      status: e.statusCode || 500,
+      status,
       headers: {
         'x-error': cleanupHeaderValue(e.message),
       },
