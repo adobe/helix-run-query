@@ -105,6 +105,8 @@
       "src/queries/rum-sources-targets.sql",
       "src/queries/rum-content-requests.sql",
       "src/queries/daily-rum.sql",
+      "src/queries/site4s.sql",
+      "src/queries/github-prs.sql",
       "src/queries/live-sites.sql",
       "src/queries/rum-checkpoint-cwv-correlation.sql"
     ]
