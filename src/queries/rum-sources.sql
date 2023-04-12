@@ -6,6 +6,7 @@
 --- offset: 0
 --- url: -
 --- checkpoint: -
+--- source: -
 
 WITH
 current_data AS (
@@ -36,7 +37,7 @@ sources AS (
       CAST(
         @checkpoint AS STRING
       ) = '-' OR CAST(@checkpoint AS STRING) = checkpoint
-    )
+    ) AND (source = @source OR @source = '-')
   GROUP BY source, id, checkpoint
 )
 
