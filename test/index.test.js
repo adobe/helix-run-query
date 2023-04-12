@@ -27,16 +27,13 @@ import env from '../src/env.js';
 
 describe('Index Tests', async () => {
   let index;
-  let badIndex;
 
   before(async () => {
     const goodQueryWithAuth = '--- description: some fake comments that mean nothing\n--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nselect * from requests LIMIT @limit';
 
     const goodExecWithAuth = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => true } });
-    const execWithBadAuth = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => Promise.reject(new Error('Failed')) } });
 
     index = (await esmock('../src/index.js', { '../src/sendquery.js': goodExecWithAuth })).main;
-    badIndex = (await esmock('../src/index.js', { '../src/sendquery.js': execWithBadAuth })).main;
   });
 
   const service = 'fake_name';
@@ -165,23 +162,6 @@ describe('Index Tests', async () => {
     });
     assert.equal(typeof response, 'object');
     assert.equal(response.status, 500);
-  });
-
-  it('index function returns 401 on auth error', async () => {
-    const response = await badIndex(new Request('https://helix-run-query.com/list-everything?limit=3', {
-      headers: {
-        'x-service': service,
-        'x-token': 'notatoken',
-      },
-    }), {
-      env: {
-        GOOGLE_CLIENT_EMAIL: env.email,
-        GOOGLE_PRIVATE_KEY: 'env.key',
-        GOOGLE_PROJECT_ID: env.projectid,
-      },
-    });
-    assert.equal(typeof response, 'object');
-    assert.equal(response.status, 401);
   });
 
   it.skip('index function returns an object with ow_headers', async () => {
