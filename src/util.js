@@ -105,36 +105,6 @@ export function cleanRequestParams(params) {
 }
 
 /**
- * replaces tablename with union of tables from one dataset or multiple datasets
- * i.e:
- * if query inputted is SELECT req_url FROM ^myrequest
- * output will become SELECT req_url FROM (SELECT * FROM helix_logging_myService.requests*)
- *
- * @param {string} query a query loaded from loadQuery with placeholders
- * @param {object} replacers an function mapping from placeholders to replacer methods
- */
-export async function replaceTableNames(query, replacers) {
-  const regex = /\^(?<placeholder>[a-z]+)(\((?<args>[^)]+)\))?/;
-
-  const replacements = await (query.match(new RegExp(regex, 'g')) || [])
-    .map((placeholder) => placeholder.match(regex))
-    .map((placeholder) => placeholder.groups)
-    .reduce(async (pvp, { placeholder, args = '' }) => {
-      const pv = await pvp;
-      if (pv[placeholder]) {
-        return pv;
-      }
-      pv[placeholder] = await replacers[placeholder](args.split(',').map((arg) => arg.trim()));
-      return pv;
-    }, {});
-
-  return Object
-    .keys(replacements)
-    .reduce((q, placeholder) => q
-      .replace(new RegExp(`\\^${placeholder}(\\([^)]+\\))?`, 'g'), replacements[placeholder]), query);
-}
-
-/**
  * fills in missing query parameters (if any) with defaults from query file
  * @param {object} params provided parameters
  * @param {object} defaults default parameters in query file
