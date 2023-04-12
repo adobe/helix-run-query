@@ -30,7 +30,7 @@ async function runExec(params, pathname, log) {
       params.GOOGLE_PRIVATE_KEY,
       params.GOOGLE_PROJECT_ID,
       pathname.replace(/\..*$/, ''),
-      params.service,
+      undefined, // service parameter is no longer used
       cleanRequestParams(params),
       log,
     );
@@ -40,7 +40,6 @@ async function runExec(params, pathname, log) {
         status: 200,
         headers: {
           'content-type': 'text/csv',
-          Vary: 'X-Token, X-Service',
           ...headers,
         },
       });
@@ -54,7 +53,6 @@ async function runExec(params, pathname, log) {
       status: 200,
       headers: {
         'content-type': 'application/json',
-        Vary: 'X-Token, X-Service',
         ...headers,
       },
     });
@@ -71,9 +69,7 @@ async function runExec(params, pathname, log) {
 async function run(request, context) {
   const { pathname } = new URL(request.url);
   const params = context.data;
-  params.token = request.headers.has('x-token') ? request.headers.get('x-token') : undefined;
   /* c8 ignore next */
-  params.service = request.headers.has('x-service') ? request.headers.get('x-service') : undefined;
 
   params.GOOGLE_CLIENT_EMAIL = context.env.GOOGLE_CLIENT_EMAIL;
   params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
