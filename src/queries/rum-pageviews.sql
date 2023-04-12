@@ -113,7 +113,7 @@ BEGIN
   SET results = (SELECT SUM(pageviews) FROM (SELECT * FROM temp_pageviews));
 END;
 IF (CAST(@granularity AS STRING) = "auto") THEN
-    CALL helix_rum.UPDATE_PAGEVIEWS(1, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, @domainkey results);
+    CALL helix_rum.UPDATE_PAGEVIEWS(1, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, @domainkey, results);
     IF (results > (CAST(@interval AS INT64) * 200)) THEN
         # we have enough results, use the daily granularity
         SELECT * FROM temp_pageviews;
