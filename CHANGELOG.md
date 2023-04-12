@@ -1,3 +1,10 @@
+## [2.42.11](https://github.com/adobe/helix-run-query/compare/v2.42.10...v2.42.11) (2023-04-12)
+
+
+### Bug Fixes
+
+* **rum-sources:** added source filter ([4168a92](https://github.com/adobe/helix-run-query/commit/4168a922522dd3830aa8e69b7c3c65e2283938cc))
+
 ## [2.42.10](https://github.com/adobe/helix-run-query/compare/v2.42.9...v2.42.10) (2023-04-06)
 
 
