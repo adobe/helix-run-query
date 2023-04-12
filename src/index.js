@@ -44,6 +44,7 @@ async function runExec(params, pathname, log) {
         },
       });
     }
+    delete requestParams.domainkey; // don't leak the domainkey
     return new Response(JSON.stringify({
       results,
       description,

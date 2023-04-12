@@ -32,12 +32,15 @@ describe('Test Queries', () => {
     });
     assert.ok(res);
     const results = await res.text();
+    assert.ok(results);
+    let json;
     try {
-      assert.ok(JSON.parse(results));
+      json = JSON.parse(results);
     } catch (e) {
       assert.fail(`${results} is not valid JSON`);
     }
-    assert.ok(results);
-    console.table(JSON.parse(results).results);
+    assert.ok(json.results);
+    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+    console.table(json.results);
   }).timeout(100000);
 });
