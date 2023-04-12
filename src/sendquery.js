@@ -15,7 +15,6 @@ import { Response } from '@adobe/fetch';
 import { auth } from './auth.js';
 
 import {
-  authFastly,
   cleanHeaderParams,
   cleanQuery,
   getHeaderParams,
@@ -91,14 +90,6 @@ export async function execute(email, key, project, query, service, params = {}, 
     requestParams,
   } = await processParams(query, params);
   const datasetname = service ? `helix_logging_${service}` : 'helix_rum';
-  if (headerParams && headerParams.Authorization === 'fastly') {
-    try {
-      await authFastly(params.token, params.service);
-    } catch (e) {
-      e.statusCode = 401;
-      throw e;
-    }
-  }
   delete headerParams.Authorization;
   try {
     const credentials = await auth(email, key.replace(/\\n/g, '\n'));

@@ -13,18 +13,13 @@
 /* eslint-env mocha */
 import assert from 'assert';
 import {
-  authFastly,
   cleanHeaderParams,
   cleanQuery, cleanRequestParams, csvify,
   getHeaderParams,
   loadQuery, replaceTableNames, resolveParameterDiff,
 } from '../src/util.js';
 
-import env from '../src/env.js';
-
 describe('testing util functions', () => {
-  const service = '7TvULgs0Xnls4q3R8tawdg';
-
   it('loadQuery loads a query', async () => {
     const result = await loadQuery('rum-dashboard');
     assert.ok(result.match(/select/i));
@@ -74,25 +69,6 @@ SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Ty
     LIMIT @limit`;
     const ACTUAL = cleanQuery(fakeQuery);
     assert.equal(EXPECTED, ACTUAL);
-  });
-
-  it('authFastly correctly authenticates', async () => {
-    const ret = await authFastly(env.token, service);
-    assert.equal(true, ret);
-  });
-
-  it('authFastly rejects with bad token', async () => {
-    const handle = async () => {
-      await authFastly('bad token', service);
-    };
-    assert.rejects(handle);
-  });
-
-  it('authFastly rejects with bad serviceid', async () => {
-    const handle = async () => {
-      await authFastly(env.token, 'bad service');
-    };
-    assert.rejects(handle);
   });
 
   it('replaceTableName works', async () => {

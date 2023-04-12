@@ -9,23 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import initfastly from '@adobe/fastly-native-promises';
 import fs from 'fs-extra';
 import path from 'path';
 import { MissingQueryError } from './missing-query-error.js';
-
-/**
- * authenticates token and service with Fastly
- *
- * @param {string} token Fastly Authentication Token
- * @param {string} service serviceid for a helix-project
- */
-export async function authFastly(token, service) {
-  // verify Fastly credentials
-  const Fastly = await initfastly(token, service);
-  await Fastly.getVersions();
-  return true;
-}
 
 /**
  * reads a query file and loads it into memory
