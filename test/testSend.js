@@ -22,29 +22,15 @@ import { setupMocha as setupPolly } from '@pollyjs/core';
 // Register the node http adapter so its accessible by all future polly instances
 import env from '../src/env.js';
 
-function getQuery(replacer) {
-  return `--- description: good commenting is encouraged\n--- Authorization: none
-  SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Type, status_code
-  FROM ( 
-    ^${replacer}
-  )
-  GROUP BY
-    req_url, resp_http_Content_Type, status_code 
-  ORDER BY visits DESC
-  LIMIT @limit`;
-}
-
 describe('bigquery tests', async () => {
   let badExec;
   let goodExec;
-  let myReplacer;
   before(async () => {
-    const goodQuery = '--- description: good comment practices for helix queries is encouraged\nselect req_url from requests LIMIT @limit';
+    const goodQuery = '--- description: good comment practices for helix queries is encouraged\nSELECT * FROM `helix-225321.helix_rum.cluster` WHERE DATE(time) = "2023-04-12" LIMIT @limit';
     const badQuery = 'this query is intentionally broken.';
 
     badExec = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => badQuery } });
     goodExec = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => goodQuery } });
-    myReplacer = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => getQuery('myrequests'), authFastly: () => true } });
   });
 
   const service = 'fake_name';
@@ -107,16 +93,6 @@ describe('bigquery tests', async () => {
     });
     assert.ok(Array.isArray(results));
     assert.equal(description, 'good comment practices for helix queries is encouraged');
-    assert.deepEqual(requestParams, { limit: 3 });
-    assert.equal(results.length, 3);
-  });
-
-  it('runs a query with myrequest replacer', async () => {
-    const { results, description, requestParams } = await myReplacer.execute(env.email, env.key, env.projectid, 'next-resource', service, {
-      limit: 3,
-    });
-    assert.ok(Array.isArray(results));
-    assert.equal(description, 'good commenting is encouraged');
     assert.deepEqual(requestParams, { limit: 3 });
     assert.equal(results.length, 3);
   });

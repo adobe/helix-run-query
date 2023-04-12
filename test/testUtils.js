@@ -16,7 +16,7 @@ import {
   cleanHeaderParams,
   cleanQuery, cleanRequestParams, csvify,
   getHeaderParams,
-  loadQuery, replaceTableNames, resolveParameterDiff,
+  loadQuery, resolveParameterDiff,
 } from '../src/util.js';
 
 describe('testing util functions', () => {
@@ -69,37 +69,6 @@ SELECT req_url, count(req_http_X_CDN_Request_ID) AS visits, resp_http_Content_Ty
     LIMIT @limit`;
     const ACTUAL = cleanQuery(fakeQuery);
     assert.equal(EXPECTED, ACTUAL);
-  });
-
-  it('replaceTableName works', async () => {
-    const result = await replaceTableNames('foo ^bar baz', { bar: () => 'bar' });
-
-    assert.equal(result, 'foo bar baz');
-  });
-
-  it('replaceTableName works with promises', async () => {
-    const result = await replaceTableNames('foo ^bar baz', { bar: () => Promise.resolve('bar') });
-
-    assert.equal(result, 'foo bar baz');
-  });
-
-  it('replaceTableName works when not needed', async () => {
-    const result = await replaceTableNames('foo bar baz', { bar: () => 'bar' });
-
-    assert.equal(result, 'foo bar baz');
-  });
-
-  it('replaceTableName does not repeat', async () => {
-    let i = 0;
-    const result = await replaceTableNames('foo ^bar ^bar ^bar ^bar ^bar ^bar baz', {
-      bar: () => {
-        i += 1;
-        return 'bar';
-      },
-    });
-
-    assert.equal(result, 'foo bar bar bar bar bar bar baz');
-    assert.equal(i, 1);
   });
 
   it('resolveParameterDiff fills in empty params with defaults', () => {

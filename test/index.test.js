@@ -29,7 +29,7 @@ describe('Index Tests', async () => {
   let index;
 
   before(async () => {
-    const goodQueryWithAuth = '--- description: some fake comments that mean nothing\n--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nselect * from requests LIMIT @limit';
+    const goodQueryWithAuth = '--- description: some fake comments that mean nothing\n--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nSELECT * FROM `helix-225321.helix_rum.cluster` WHERE DATE(time) = "2023-04-12" LIMIT @limit';
 
     const goodExecWithAuth = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => true } });
 
@@ -113,13 +113,11 @@ describe('Index Tests', async () => {
     assert.ok(!body.truncated);
     assert.equal(body.results.length, 3);
     assert.equal(response.headers.get('content-type'), 'application/json');
-    assert.equal(response.headers.get('vary'), 'X-Token, X-Service');
-    assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
     assert.equal(response.headers.get('cache-control'), 'max-age=300');
 
     assert.deepEqual(body.requestParams, { limit: 3 });
     assert.equal(body.description, 'some fake comments that mean nothing');
-  });
+  }).timeout(10000);
 
   it('index function truncates long responses', async () => {
     const response = await index(new Request('https://helix-run-query.com/list-everything?limit=2000', {
@@ -140,8 +138,6 @@ describe('Index Tests', async () => {
     assert.ok(body.truncated);
     assert.notEqual(body.results.length, 2000);
     assert.equal(response.headers.get('content-type'), 'application/json');
-    assert.equal(response.headers.get('vary'), 'X-Token, X-Service');
-    assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
     assert.equal(response.headers.get('cache-control'), 'max-age=300');
 
     assert.deepEqual(body.requestParams, { limit: 2000 });

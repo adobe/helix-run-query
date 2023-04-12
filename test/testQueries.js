@@ -21,7 +21,7 @@ describe('Test Queries', () => {
   it('rum-dashboard', async () => {
     const res = await main(new Request('https://helix-run-query.com/rum-dashboard?url=www.hlx.live&domain=www.hlx.live', {
       headers: {
-        'x-token': process.env.HLX_FASTLY_AUTH,
+        Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
       },
     }), {
       env: {
@@ -31,8 +31,13 @@ describe('Test Queries', () => {
       },
     });
     assert.ok(res);
-    const results = await res.json();
+    const results = await res.text();
+    try {
+      assert.ok(JSON.parse(results));
+    } catch (e) {
+      assert.fail(`${results} is not valid JSON`);
+    }
     assert.ok(results);
-    console.table(results.results);
+    console.table(JSON.parse(results).results);
   }).timeout(100000);
 });
