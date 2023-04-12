@@ -225,6 +225,39 @@ GROUP BY
   target,
   source;
 
+CREATE OR REPLACE PROCEDURE
+  helix_rum.ROTATE_DOMAIN_KEYS( IN indomainkey STRING,
+    IN inurl STRING,
+    IN intimezone STRING,
+    IN ingraceperiod INT64,
+    IN inexpirydate STRING,
+    OUT outnewkey STRING)
+BEGIN
+UPDATE
+  `helix-225321.helix_reporting.domain_keys`
+SET
+  revoke_date = DATE_ADD(CURRENT_DATE(intimezone), INTERVAL ingraceperiod DAY)
+WHERE
+  # hostname prefix matches
+  hostname_prefix = inurl AND
+  # key is still valid
+  (revoke_date IS NULL
+    OR revoke_date > CURRENT_DATE(intimezone));
+  # generate random key
+SET
+  outnewkey = GENERATE_UUID();
+INSERT INTO
+  `helix-225321.helix_reporting.domain_keys` (hostname_prefix,
+    KEY,
+    revoke_date)
+VALUES
+  (inurl, outnewkey,
+  IF
+    (inexpirydate = "-", NULL, DATE(inexpirydate)));
+SET
+  outnewkey = outnewkey;
+END
+
 # SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
 # ORDER BY time DESC
 # LIMIT 10;

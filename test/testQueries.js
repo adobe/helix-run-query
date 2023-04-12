@@ -43,4 +43,56 @@ describe('Test Queries', () => {
     assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
     console.table(json.results);
   }).timeout(100000);
+
+  it('rotate-domainkeys (success)', async () => {
+    const res = await main(new Request('https://helix-run-query.com/rotate-domainkeys?url=adobe.com', {
+      headers: {
+        Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
+      },
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+      },
+    });
+    assert.ok(res);
+    const results = await res.text();
+    assert.ok(results);
+    let json;
+    try {
+      json = JSON.parse(results);
+    } catch (e) {
+      assert.fail(`${results} is not valid JSON`);
+    }
+    assert.ok(json.results);
+    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+    console.table(json.results);
+  }).timeout(100000);
+
+  it('rotate-domainkeys (failure)', async () => {
+    const res = await main(new Request('https://helix-run-query.com/rotate-domainkeys?url=adobe.com', {
+      headers: {
+        Authorization: 'Bearer Invalidsecret',
+      },
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+      },
+    });
+    assert.ok(res);
+    const results = await res.text();
+    assert.ok(results);
+    let json;
+    try {
+      json = JSON.parse(results);
+    } catch (e) {
+      assert.fail(`${results} is not valid JSON`);
+    }
+    assert.ok(json.results);
+    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+    console.table(json.results);
+  }).timeout(100000);
 });

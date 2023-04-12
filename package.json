@@ -88,6 +88,7 @@
       "src/queries/dev-urls.sql",
       "src/queries/ee-score.sql",
       "src/queries/guess-hostname.sql",
+      "src/queries/rotate-domainkey.sql",
       "src/queries/rum-checkpoint-cwv-correlation.sql",
       "src/queries/rum-checkpoint-urls.sql",
       "src/queries/rum-checkpoints.sql",
