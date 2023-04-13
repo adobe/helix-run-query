@@ -6,6 +6,7 @@
 --- newkey: -
 --- graceperiod: 1
 --- expiry: -
+--- readonly: true
 DECLARE newkey STRING;
 
 IF EXISTS (
@@ -18,6 +19,7 @@ IF EXISTS (
     key = @domainkey
     AND (revoke_date IS NULL OR revoke_date > CURRENT_DATE(@timezone))
     AND (hostname_prefix = "" OR hostname_prefix = @url)
+    AND readonly = FALSE
 ) THEN
   SET newkey = IF(@newkey = "-", GENERATE_UUID(), @newkey);
   CALL helix_rum . ROTATE_DOMAIN_KEYS (
@@ -26,7 +28,8 @@ IF EXISTS (
     @timezone,
     CAST(@graceperiod AS INT64),
     @expiry,
-    newkey
+    newkey,
+    CAST(@readonly AS BOOL)
   );
 END IF;
 

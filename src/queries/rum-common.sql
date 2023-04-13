@@ -231,7 +231,8 @@ CREATE OR REPLACE PROCEDURE
     IN intimezone STRING,
     IN ingraceperiod INT64,
     IN inexpirydate STRING,
-    IN innewkey STRING)
+    IN innewkey STRING,
+    IN inreadonly BOOL)
 BEGIN
 UPDATE
   `helix-225321.helix_reporting.domain_keys`
@@ -247,11 +248,13 @@ WHERE
 INSERT INTO
   `helix-225321.helix_reporting.domain_keys` (hostname_prefix,
     KEY,
-    revoke_date)
+    revoke_date,
+    readonly)
 VALUES
   (inurl, innewkey,
   IF
-    (inexpirydate = "-", NULL, DATE(inexpirydate)));
+    (inexpirydate = "-", NULL, DATE(inexpirydate)),
+    inreadonly);
 END
 
 # SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
