@@ -20,7 +20,7 @@ WITH alldata AS (
     target,
     lcp
   FROM
-    `HELIX-225321.HELIX_RUM.EVENTS_V3`(
+    `helix-225321.helix_rum.EVENTS_V3`(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
