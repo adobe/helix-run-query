@@ -31,11 +31,14 @@ createTargets().forEach((target) => {
       console.log(`testing ${target.host()}${path}`);
       await chai
         .request(target.host())
+        // set Authorization header to the universal token
+        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .get(path)
         .then((response) => {
           expect(response).to.have.status(200);
           expect(response).to.have.header('Content-Type', /^application\/json/);
-        }).catch((e) => {
+        })
+        .catch((e) => {
           throw e;
         });
     }).timeout(60000);
@@ -46,11 +49,13 @@ createTargets().forEach((target) => {
       console.log(`testing ${target.host()}${path}`);
       await chai
         .request(target.host())
+        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .get(path)
         .then((response) => {
           expect(response).to.have.status(200);
           expect(response).to.have.header('Content-Type', /^application\/json/);
-        }).catch((e) => {
+        })
+        .catch((e) => {
           throw e;
         });
     }).timeout(60000);
@@ -61,11 +66,13 @@ createTargets().forEach((target) => {
       console.log(`testing ${target.host()}${path}`);
       await chai
         .request(target.host())
+        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .get(path)
         .then((response) => {
           expect(response).to.have.status(200);
           expect(response).to.have.header('Content-Type', /^application\/json/);
-        }).catch((e) => {
+        })
+        .catch((e) => {
           throw e;
         });
     }).timeout(10000);
