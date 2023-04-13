@@ -71,7 +71,7 @@ async function run(request, context) {
   const { pathname } = new URL(request.url);
   const params = context.data;
   /* c8 ignore next */
-  params.domainkey = request.headers.has('authorization') ? request.headers.get('authorization').split(' ').pop() : 'secret';
+  params.domainkey = request.headers.has('authorization') ? request.headers.get('authorization').split(' ').pop() : params.domainkey || 'secret';
 
   params.GOOGLE_CLIENT_EMAIL = context.env.GOOGLE_CLIENT_EMAIL;
   params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
