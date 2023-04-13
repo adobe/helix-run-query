@@ -231,7 +231,7 @@ CREATE OR REPLACE PROCEDURE
     IN intimezone STRING,
     IN ingraceperiod INT64,
     IN inexpirydate STRING,
-    OUT outnewkey STRING)
+    IN innewkey STRING)
 BEGIN
 UPDATE
   `helix-225321.helix_reporting.domain_keys`
@@ -242,20 +242,16 @@ WHERE
   hostname_prefix = inurl AND
   # key is still valid
   (revoke_date IS NULL
-    OR revoke_date > CURRENT_DATE(intimezone));
-  # generate random key
-SET
-  outnewkey = GENERATE_UUID();
+    OR revoke_date > CURRENT_DATE(intimezone)) AND
+  ingraceperiod > 0;
 INSERT INTO
   `helix-225321.helix_reporting.domain_keys` (hostname_prefix,
     KEY,
     revoke_date)
 VALUES
-  (inurl, outnewkey,
+  (inurl, innewkey,
   IF
     (inexpirydate = "-", NULL, DATE(inexpirydate)));
-SET
-  outnewkey = outnewkey;
 END
 
 # SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')

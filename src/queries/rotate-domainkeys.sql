@@ -3,9 +3,10 @@
 --- url: -
 --- device: all
 --- domainkey: secret
+--- newkey: -
 --- graceperiod: 1
 --- expiry: -
-DECLARE outnewkey STRING;
+DECLARE newkey STRING;
 
 IF EXISTS(
     SELECT * FROM `helix-225321.helix_reporting.domain_keys`
@@ -14,17 +15,18 @@ IF EXISTS(
       OR revoke_date > CURRENT_DATE(@timezone)) and
     (hostname_prefix = "" OR hostname_prefix = @url)
   ) THEN
+  SET newkey = IF(@newkey = "-", GENERATE_UUID(), @newkey);
   CALL helix_rum.ROTATE_DOMAIN_KEYS(
   @domainkey,
-  @url,
+  IF(@url = "-", "", @url),
   @timezone,
   CAST(@graceperiod AS INT64),
   @expiry,
-  outnewkey);
+  newkey);
 END IF;
 
 SELECT 
-  @url AS hostname_prefix,
+  IF(@url = "-", "", @url) AS hostname_prefix,
   IF(EXISTS(
     SELECT * FROM `helix-225321.helix_reporting.domain_keys`
     WHERE key = @domainkey AND
@@ -32,5 +34,5 @@ SELECT
       OR revoke_date > CURRENT_DATE(@timezone)) and
     (hostname_prefix = "" OR hostname_prefix = @url)
   ), "success", "failure") AS status,
-  outnewkey AS key,
+  newkey AS key,
   IF(@expiry = "-", NULL, @expiry) AS revoke_date
