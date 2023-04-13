@@ -31,9 +31,9 @@ createTargets().forEach((target) => {
       console.log(`testing ${target.host()}${path}`);
       await chai
         .request(target.host())
+        .get(path)
         // set Authorization header to the universal token
         .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
-        .get(path)
         .then((response) => {
           expect(response).to.have.status(200);
           expect(response).to.have.header('Content-Type', /^application\/json/);
@@ -49,8 +49,8 @@ createTargets().forEach((target) => {
       console.log(`testing ${target.host()}${path}`);
       await chai
         .request(target.host())
-        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .get(path)
+        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .then((response) => {
           expect(response).to.have.status(200);
           expect(response).to.have.header('Content-Type', /^application\/json/);
@@ -66,8 +66,8 @@ createTargets().forEach((target) => {
       console.log(`testing ${target.host()}${path}`);
       await chai
         .request(target.host())
-        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .get(path)
+        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .then((response) => {
           expect(response).to.have.status(200);
           expect(response).to.have.header('Content-Type', /^application\/json/);
