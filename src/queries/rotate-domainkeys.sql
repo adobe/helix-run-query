@@ -12,17 +12,17 @@ DECLARE newkey STRING;
 IF EXISTS (
   SELECT
     hostname_prefix,
-    key,
+    key_bytes,
     revoke_date
   FROM `helix-225321.helix_reporting.domain_keys`
   WHERE
-    key = @domainkey
+    key_bytes = SHA512(@domainkey)
     AND (revoke_date IS NULL OR revoke_date > CURRENT_DATE(@timezone))
     AND (hostname_prefix = "" OR hostname_prefix = @url)
     AND readonly = FALSE
 ) THEN
   SET newkey = IF(@newkey = "-", GENERATE_UUID(), @newkey);
-  CALL helix_rum . ROTATE_DOMAIN_KEYS (
+  CALL helix_rum . ROTATE_DOMAIN_KEYS(
     @domainkey,
     IF(@url = "-", "", @url),
     @timezone,
@@ -39,7 +39,7 @@ SELECT
   IF(EXISTS (
     SELECT * FROM `helix-225321.helix_reporting.domain_keys`
     WHERE
-      key = @domainkey
+      key_bytes = SHA512(@domainkey)
       AND (revoke_date IS NULL OR revoke_date > CURRENT_DATE(@timezone))
       AND (hostname_prefix = "" OR hostname_prefix = @url)
   ), "success", "failure") AS status,

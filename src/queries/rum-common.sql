@@ -101,7 +101,7 @@ CREATE OR REPLACE TABLE
     FROM
       `helix-225321.helix_reporting.domain_keys`
     WHERE
-      KEY = domainkey
+      key_bytes = SHA512(domainkey)
       AND (revoke_date IS NULL
         OR revoke_date > CURRENT_DATE(timezone))
       AND (hostname_prefix = ""
@@ -247,11 +247,11 @@ WHERE
   ingraceperiod > 0;
 INSERT INTO
   `helix-225321.helix_reporting.domain_keys` (hostname_prefix,
-    KEY,
+    key_bytes,
     revoke_date,
     readonly)
 VALUES
-  (inurl, innewkey,
+  (inurl, SHA512(innewkey),
   IF
     (inexpirydate = "-", NULL, DATE(inexpirydate)),
     inreadonly);
