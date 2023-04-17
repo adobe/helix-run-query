@@ -10,6 +10,7 @@
 --- experiment: -
 --- conversioncheckpoint: click
 --- threshold: 500
+--- domainkey: secret
 
 CREATE TEMPORARY FUNCTION
 CDF(nto FLOAT64)
@@ -38,7 +39,7 @@ LANGUAGE js AS """
 WITH
 all_checkpoints AS (
   SELECT * FROM
-    helix_rum.CLUSTER_CHECKPOINTS(
+    helix_rum.CHECKPOINTS_V3(
       @url, # domain or URL
       CAST(@offset AS INT64), # offset in days from today
       CAST(@interval AS INT64), # interval in days to consider
@@ -46,7 +47,7 @@ all_checkpoints AS (
       @enddate, # not used, end date
       @timezone, # timezone
       'all', # device class
-      '-' # not used, generation
+      @domainkey
     )
 ),
 

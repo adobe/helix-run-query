@@ -34,7 +34,6 @@
   },
   "homepage": "https://github.com/adobe/helix-run-query#readme",
   "dependencies": {
-    "@adobe/fastly-native-promises": "3.0.3",
     "@adobe/fetch": "4.0.6",
     "@adobe/helix-shared-body-data": "2.0.1",
     "@adobe/helix-shared-utils": "3.0.0",
@@ -89,6 +88,7 @@
       "src/queries/dev-urls.sql",
       "src/queries/ee-score.sql",
       "src/queries/guess-hostname.sql",
+      "src/queries/rotate-domainkeys.sql",
       "src/queries/rum-checkpoint-cwv-correlation.sql",
       "src/queries/rum-checkpoint-urls.sql",
       "src/queries/rum-checkpoints.sql",

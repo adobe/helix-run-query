@@ -4,6 +4,7 @@
 --- timezone: UTC
 --- limit: 1000
 --- offset: 0
+--- domainkey: secret
 SELECT
   day,
   contentrequests,
@@ -15,7 +16,7 @@ FROM (
     FORMAT_TIMESTAMP('%F', TIMESTAMP_TRUNC(time, DAY)) AS day,
     SUM(pageviews) AS contentrequests
   FROM
-    helix_rum.CLUSTER_PAGEVIEWS(
+    helix_rum.PAGEVIEWS_V3(
       '-', # url
       CAST(@offset AS INT64), # offset
       -1, # days to fetch
@@ -23,7 +24,7 @@ FROM (
       @enddate, # end date
       @timezone, # timezone
       'nobot', # deviceclass
-      '-' # not used, generation
+      @domainkey # domainkey
     )
   WHERE (
     hostname NOT LIKE '%.hlx.live'

@@ -8,6 +8,7 @@
 --- timezone: UTC
 --- offset: 0
 --- url: -
+--- domainkey: secret
 DECLARE upperdate STRING DEFAULT CONCAT(
   CAST(
     EXTRACT(
@@ -76,7 +77,7 @@ WITH visits AS (
     MAX(IF(checkpoint = "load", 1, 0)) AS load,
     MAX(IF(checkpoint = "click", 1, 0)) AS click
   FROM
-    helix_rum.CLUSTER_EVENTS(
+    helix_rum.EVENTS_V3(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
@@ -84,7 +85,7 @@ WITH visits AS (
       @enddate,
       @timezone,
       "all",
-      "-"
+      @domainkey
     )
   GROUP BY id
 ),

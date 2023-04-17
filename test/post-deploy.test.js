@@ -32,10 +32,13 @@ createTargets().forEach((target) => {
       await chai
         .request(target.host())
         .get(path)
+        // set Authorization header to the universal token
+        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .then((response) => {
           expect(response).to.have.status(200);
           expect(response).to.have.header('Content-Type', /^application\/json/);
-        }).catch((e) => {
+        })
+        .catch((e) => {
           throw e;
         });
     }).timeout(60000);
@@ -47,10 +50,12 @@ createTargets().forEach((target) => {
       await chai
         .request(target.host())
         .get(path)
+        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .then((response) => {
           expect(response).to.have.status(200);
           expect(response).to.have.header('Content-Type', /^application\/json/);
-        }).catch((e) => {
+        })
+        .catch((e) => {
           throw e;
         });
     }).timeout(60000);
@@ -62,10 +67,12 @@ createTargets().forEach((target) => {
       await chai
         .request(target.host())
         .get(path)
+        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .then((response) => {
           expect(response).to.have.status(200);
           expect(response).to.have.header('Content-Type', /^application\/json/);
-        }).catch((e) => {
+        })
+        .catch((e) => {
           throw e;
         });
     }).timeout(10000);

@@ -85,6 +85,178 @@ AS
   FROM helix_rum.CLUSTER_EVENTS(filterurl, days_offset, days_count, day_min, day_max, timezone, deviceclass, filtergeneration)
   GROUP BY id, checkpoint, target, source;
 
+CREATE OR REPLACE TABLE
+  FUNCTION `helix-225321.helix_rum.EVENTS_V3`(filterurl STRING,
+    days_offset INT64,
+    days_count INT64,
+    day_min STRING,
+    day_max STRING,
+    timezone STRING,
+    deviceclass STRING,
+    domainkey STRING) AS (
+  WITH
+    validkeys AS (
+    SELECT
+      *
+    FROM
+      `helix-225321.helix_reporting.domain_keys`
+    WHERE
+      key_bytes = SHA512(domainkey)
+      AND (revoke_date IS NULL
+        OR revoke_date > CURRENT_DATE(timezone))
+      AND (hostname_prefix = ""
+        OR filterurl LIKE CONCAT("%.", hostname_prefix)
+        OR filterurl LIKE CONCAT("%.", hostname_prefix, "/%")
+        OR filterurl LIKE CONCAT(hostname_prefix)
+        OR filterurl LIKE CONCAT(hostname_prefix, "/%")))
+  SELECT
+    hostname,
+    host,
+    user_agent,
+    time,
+    url,
+    LCP,
+    FID,
+    CLS,
+    referer,
+    id,
+    SOURCE,
+    TARGET,
+    weight,
+    checkpoint
+  FROM
+    `helix-225321.helix_rum.cluster` AS rumdata
+  JOIN
+    validkeys
+  ON
+    ( rumdata.url LIKE CONCAT("https://%.", validkeys.hostname_prefix, "/%")
+      OR rumdata.url LIKE CONCAT("https://", validkeys.hostname_prefix, "/%")
+      OR validkeys.hostname_prefix = "" )
+  WHERE
+    ( (filterurl = '-') # any URL goes
+      OR (url LIKE CONCAT('https://', filterurl, '%')) # default behavior,
+      OR (filterurl LIKE 'localhost%'
+        AND url LIKE CONCAT('http://', filterurl, '%')) # localhost
+      OR (ENDS_WITH(filterurl, '$')
+        AND url = CONCAT('https://', REPLACE(filterurl, '$', ''))) # strict URL
+      OR (ENDS_WITH(filterurl, '?')
+        AND url = CONCAT('https://', REPLACE(filterurl, '?', ''))) # strict URL, but URL params are supported
+      )
+    AND
+  IF
+    (filterurl = '-', TRUE, (hostname = SPLIT(filterurl, '/')[
+      OFFSET
+        (0)])
+      OR (filterurl LIKE 'localhost:%'
+        AND hostname = 'localhost'))
+    AND
+  IF
+    (days_offset >= 0, DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, helix_rum.CLEAN_TIMEZONE(timezone)), INTERVAL days_offset DAY), TIMESTAMP(day_max, helix_rum.CLEAN_TIMEZONE(timezone))) >= time
+    AND
+  IF
+    (days_count >= 0, DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, helix_rum.CLEAN_TIMEZONE(timezone)), INTERVAL (days_offset + days_count) DAY), TIMESTAMP(day_min, helix_rum.CLEAN_TIMEZONE(timezone))) <= time
+    AND helix_rum.CLUSTER_FILTERCLASS(user_agent,
+      deviceclass) );
+CREATE OR REPLACE TABLE
+  FUNCTION helix_rum.PAGEVIEWS_V3(filterurl STRING,
+    days_offset INT64,
+    days_count INT64,
+    day_min STRING,
+    day_max STRING,
+    timezone STRING,
+    deviceclass STRING,
+    domainkey STRING) AS
+SELECT
+  ANY_VALUE(hostname) AS hostname,
+  ANY_VALUE(host) AS host,
+  MAX(time) AS time,
+  MAX(weight) AS pageviews,
+  MAX(LCP) AS LCP,
+  MAX(CLS) AS CLS,
+  MAX(FID) AS FID,
+  ANY_VALUE(url) AS url,
+  ANY_VALUE(referer) AS referer,
+  ANY_VALUE(user_agent) AS user_agent,
+  id
+FROM
+  helix_rum.EVENTS_V3(filterurl,
+    days_offset,
+    days_count,
+    day_min,
+    day_max,
+    timezone,
+    deviceclass,
+    domainkey)
+GROUP BY
+  id;
+CREATE OR REPLACE TABLE
+  FUNCTION helix_rum.CHECKPOINTS_V3(filterurl STRING,
+    days_offset INT64,
+    days_count INT64,
+    day_min STRING,
+    day_max STRING,
+    timezone STRING,
+    deviceclass STRING,
+    domainkey STRING) AS
+SELECT
+  ANY_VALUE(hostname) AS hostname,
+  ANY_VALUE(host) AS host,
+  MAX(time) AS time,
+  checkpoint,
+  source,
+  target,
+  MAX(weight) AS pageviews,
+  id,
+  ANY_VALUE(url) AS url,
+  ANY_VALUE(referer) AS referer,
+  ANY_VALUE(user_agent) AS user_agent,
+FROM
+  helix_rum.EVENTS_V3(filterurl,
+    days_offset,
+    days_count,
+    day_min,
+    day_max,
+    timezone,
+    deviceclass,
+    domainkey)
+GROUP BY
+  id,
+  checkpoint,
+  target,
+  source;
+
+CREATE OR REPLACE PROCEDURE
+  helix_rum.ROTATE_DOMAIN_KEYS( IN indomainkey STRING,
+    IN inurl STRING,
+    IN intimezone STRING,
+    IN ingraceperiod INT64,
+    IN inexpirydate STRING,
+    IN innewkey STRING,
+    IN inreadonly BOOL)
+BEGIN
+UPDATE
+  `helix-225321.helix_reporting.domain_keys`
+SET
+  revoke_date = DATE_ADD(CURRENT_DATE(intimezone), INTERVAL ingraceperiod DAY)
+WHERE
+  # hostname prefix matches
+  hostname_prefix = inurl AND
+  # key is still valid
+  (revoke_date IS NULL
+    OR revoke_date > CURRENT_DATE(intimezone)) AND
+  ingraceperiod > 0;
+INSERT INTO
+  `helix-225321.helix_reporting.domain_keys` (hostname_prefix,
+    key_bytes,
+    revoke_date,
+    readonly)
+VALUES
+  (inurl, SHA512(innewkey),
+  IF
+    (inexpirydate = "-", NULL, DATE(inexpirydate)),
+    inreadonly);
+END
+
 # SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
 # ORDER BY time DESC
 # LIMIT 10;

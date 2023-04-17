@@ -21,7 +21,7 @@ describe('Test Queries', () => {
   it('rum-dashboard', async () => {
     const res = await main(new Request('https://helix-run-query.com/rum-dashboard?url=www.hlx.live&domain=www.hlx.live', {
       headers: {
-        'x-token': process.env.HLX_FASTLY_AUTH,
+        Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
       },
     }), {
       env: {
@@ -31,8 +31,115 @@ describe('Test Queries', () => {
       },
     });
     assert.ok(res);
-    const results = await res.json();
+    const results = await res.text();
     assert.ok(results);
-    console.table(results.results);
+    let json;
+    try {
+      json = JSON.parse(results);
+    } catch (e) {
+      assert.fail(`${results} is not valid JSON`);
+    }
+    assert.ok(json.results);
+    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+  }).timeout(100000);
+
+  it('rum-dashboard (url auth)', async () => {
+    const res = await main(new Request(`https://helix-run-query.com/rum-dashboard?url=www.hlx.live&domain=www.hlx.live&domainkey=${process.env.UNIVERSAL_TOKEN}`, {
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+      },
+    });
+    assert.ok(res);
+    const results = await res.text();
+    assert.ok(results);
+    let json;
+    try {
+      json = JSON.parse(results);
+    } catch (e) {
+      assert.fail(`${results} is not valid JSON`);
+    }
+    assert.ok(json.results);
+    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+  }).timeout(100000);
+
+  it('rotate-domainkeys (success)', async () => {
+    const res = await main(new Request('https://helix-run-query.com/rotate-domainkeys?url=test.adobe.com', {
+      headers: {
+        Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
+      },
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+      },
+    });
+    assert.ok(res);
+    const results = await res.text();
+    assert.ok(results);
+    let json;
+    try {
+      json = JSON.parse(results);
+    } catch (e) {
+      assert.fail(`${results} is not valid JSON`);
+    }
+    assert.ok(json.results);
+    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+  }).timeout(100000);
+
+  it('rotate-domainkeys (force)', async () => {
+    const res = await main(new Request('https://helix-run-query.com/rotate-domainkeys', {
+      headers: {
+        Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      method: 'POST',
+      body: `url=test.adobe.com&newkey=${Math.random()}key`,
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+      },
+    });
+    assert.ok(res);
+    const results = await res.text();
+    assert.ok(results);
+    let json;
+    try {
+      json = JSON.parse(results);
+    } catch (e) {
+      assert.fail(`${results} is not valid JSON`);
+    }
+    assert.ok(json.results);
+    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+  }).timeout(100000);
+
+  it('rotate-domainkeys (failure)', async () => {
+    const res = await main(new Request('https://helix-run-query.com/rotate-domainkeys?url=test.adobe.com', {
+      headers: {
+        Authorization: 'Bearer Invalidsecret',
+      },
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+      },
+    });
+    assert.ok(res);
+    const results = await res.text();
+    assert.ok(results);
+    let json;
+    try {
+      json = JSON.parse(results);
+    } catch (e) {
+      assert.fail(`${results} is not valid JSON`);
+    }
+    assert.ok(json.results);
+    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
   }).timeout(100000);
 });

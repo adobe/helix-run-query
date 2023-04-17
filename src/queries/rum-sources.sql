@@ -9,12 +9,13 @@
 --- timezone: UTC
 --- url: -
 --- checkpoint: -
+--- domainkey: secret
 
 WITH
 current_data AS (
   SELECT *
   FROM
-    helix_rum.CLUSTER_CHECKPOINTS(
+    helix_rum.CHECKPOINTS_V3(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
@@ -22,7 +23,7 @@ current_data AS (
       @enddate,
       @timezone,
       'all',
-      '-'
+      @domainkey
     )
 ),
 

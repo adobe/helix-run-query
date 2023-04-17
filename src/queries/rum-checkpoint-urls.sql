@@ -10,6 +10,7 @@
 --- url: 
 --- checkpoint: -
 --- source: -
+--- domainkey: secret
 
 WITH
 current_data AS (
@@ -25,7 +26,7 @@ current_data AS (
       @enddate,
       @timezone,
       'all',
-      '-'
+      @domainkey
     )
 ),
 

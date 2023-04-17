@@ -6,8 +6,8 @@
 --- enddate: 2022-05-28
 --- timezone: UTC
 --- url: -
---- generation: -
 --- device: all
+--- domainkey: secret
 
 WITH
 weightdata AS (
@@ -18,7 +18,7 @@ weightdata AS (
     ANY_VALUE(url) AS url,
     ANY_VALUE(generation) AS generation
   FROM
-    helix_rum.CLUSTER_CHECKPOINTS(
+    helix_rum.CHECKPOINTS_V3(
       @url,
       CAST(@offset AS INT64), # offset in days
       CAST(@interval AS INT64), # interval in days to consider
@@ -26,7 +26,7 @@ weightdata AS (
       @enddate, # end date
       @timezone, # timezone
       'all', # device class
-      @generation # generation
+      @domainkey # domain key
     )
   GROUP BY id, checkpoint
 ),
