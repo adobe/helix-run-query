@@ -279,7 +279,7 @@ describe('Test SSHONify', () => {
       JSON.parse(sshon),
       {
         ':names': [
-          'result',
+          'results',
           'meta',
         ],
         ':type': 'multi-sheet',
@@ -322,6 +322,11 @@ describe('Test SSHONify', () => {
               value: '-',
             },
           ],
+          columns: [
+            'name',
+            'value',
+            'type',
+          ],
           limit: 7,
           offset: 0,
           total: 7,
@@ -330,6 +335,17 @@ describe('Test SSHONify', () => {
           limit: 30,
           offset: '0',
           total: '0',
+          columns: [
+            'checkpoint',
+            'source',
+            'ids',
+            'pages',
+            'topurl',
+            'views',
+            'actions',
+            'actions_per_view',
+
+          ],
           data: [{
             checkpoint: 'viewblock', source: '.article-header', ids: 3258, pages: 1031, topurl: 'https://blog.adobe.com/en/publish/2023/04/17/reimagining-video-audio-adobe-firefly', views: '32580', actions: '32580', actions_per_view: '1',
           }, {

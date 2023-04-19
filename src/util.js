@@ -141,7 +141,7 @@ export function csvify(arr) {
  */
 export function sshonify(results, description, requestParams, truncated) {
   const sson = {
-    ':names': ['result', 'meta'],
+    ':names': ['results', 'meta'],
     ':type': 'multi-sheet',
     ':version': 3,
     results: {
@@ -149,11 +149,13 @@ export function sshonify(results, description, requestParams, truncated) {
       offset: requestParams.offset || 0,
       total: requestParams.offset || 0 + results.length + (truncated ? 1 : 0),
       data: results,
+      columns: Object.keys(results[0] || {}),
     },
     meta: {
       limit: 1 + Object.keys(requestParams).length,
       offset: 0,
       total: 1 + Object.keys(requestParams).length,
+      columns: ['name', 'value', 'type'],
       data: [
         {
           name: 'description',
