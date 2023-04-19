@@ -16,7 +16,7 @@ import { logger } from '@adobe/helix-universal-logger';
 import { Response } from '@adobe/fetch';
 import bodyData from '@adobe/helix-shared-body-data';
 import { execute, queryInfo } from './sendquery.js';
-import { cleanRequestParams, csvify } from './util.js';
+import { cleanRequestParams, csvify, sshonify } from './util.js';
 
 async function runExec(params, pathname, log) {
   try {
@@ -45,12 +45,12 @@ async function runExec(params, pathname, log) {
       });
     }
     delete requestParams.domainkey; // don't leak the domainkey
-    return new Response(JSON.stringify({
+    return new Response(sshonify(
       results,
       description,
       requestParams,
       truncated,
-    }), {
+    ), {
       status: 200,
       headers: {
         'content-type': 'application/json',
