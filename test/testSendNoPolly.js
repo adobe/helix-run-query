@@ -19,7 +19,7 @@ import env from '../src/env.js';
 describe('bigquery tests (online)', async () => {
   const service = undefined;
 
-  it('runs a query with alldatasets replacer', async () => {
+  it.skip('runs a query with alldatasets replacer', async () => {
     const execWithRealLoad = await esmock('../src/sendquery.js', { '../src/util.js': { authFastly: () => true } });
     const { results, description, requestParams } = await execWithRealLoad.execute(env.email, env.key, env.projectid, 'top-pages', service, {
       limit: 10,

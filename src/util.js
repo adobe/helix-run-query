@@ -9,23 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import initfastly from '@adobe/fastly-native-promises';
 import fs from 'fs-extra';
 import path from 'path';
 import { MissingQueryError } from './missing-query-error.js';
-
-/**
- * authenticates token and service with Fastly
- *
- * @param {string} token Fastly Authentication Token
- * @param {string} service serviceid for a helix-project
- */
-export async function authFastly(token, service) {
-  // verify Fastly credentials
-  const Fastly = await initfastly(token, service);
-  await Fastly.getVersions();
-  return true;
-}
 
 /**
  * reads a query file and loads it into memory
@@ -116,36 +102,6 @@ export function cleanRequestParams(params) {
       cleanedobj[key] = params[key];
       return cleanedobj;
     }, {});
-}
-
-/**
- * replaces tablename with union of tables from one dataset or multiple datasets
- * i.e:
- * if query inputted is SELECT req_url FROM ^myrequest
- * output will become SELECT req_url FROM (SELECT * FROM helix_logging_myService.requests*)
- *
- * @param {string} query a query loaded from loadQuery with placeholders
- * @param {object} replacers an function mapping from placeholders to replacer methods
- */
-export async function replaceTableNames(query, replacers) {
-  const regex = /\^(?<placeholder>[a-z]+)(\((?<args>[^)]+)\))?/;
-
-  const replacements = await (query.match(new RegExp(regex, 'g')) || [])
-    .map((placeholder) => placeholder.match(regex))
-    .map((placeholder) => placeholder.groups)
-    .reduce(async (pvp, { placeholder, args = '' }) => {
-      const pv = await pvp;
-      if (pv[placeholder]) {
-        return pv;
-      }
-      pv[placeholder] = await replacers[placeholder](args.split(',').map((arg) => arg.trim()));
-      return pv;
-    }, {});
-
-  return Object
-    .keys(replacements)
-    .reduce((q, placeholder) => q
-      .replace(new RegExp(`\\^${placeholder}(\\([^)]+\\))?`, 'g'), replacements[placeholder]), query);
 }
 
 /**

@@ -15,12 +15,10 @@ import { Response } from '@adobe/fetch';
 import { auth } from './auth.js';
 
 import {
-  authFastly,
   cleanHeaderParams,
   cleanQuery,
   getHeaderParams,
   loadQuery,
-  replaceTableNames,
   resolveParameterDiff,
 } from './util.js';
 
@@ -48,31 +46,6 @@ async function processParams(query, params) {
   };
 }
 
-async function logquerystats(job, query, fn) {
-  const [metadata] = await job.getMetadata();
-  const centsperterra = 5;
-  const minbytes = 1024 * 1024;
-  const billed = parseInt(metadata.statistics.query.totalBytesBilled, 10);
-  const billedbytes = Math.max(billed, billed && minbytes);
-  const billedterrabytes = billedbytes / 1024 / 1024 / 1024 / 1024;
-
-  const billedcents = billedterrabytes * centsperterra;
-  const cf = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    minimumSignificantDigits: 2,
-    maximumSignificantDigits: 2,
-  });
-  const nf = new Intl.NumberFormat('en-US', {
-    style: 'unit',
-    unit: 'gigabyte',
-    maximumSignificantDigits: 3,
-  });
-  fn(`BigQuery job ${job
-    .id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ${cf.format(billedcents)}`);
-}
-
 /**
  * executes a query using Google Bigquery API
  *
@@ -83,23 +56,13 @@ async function logquerystats(job, query, fn) {
  * @param {string} service the serviceid of the published site
  * @param {object} params parameters for substitution into query
  */
-export async function execute(email, key, project, query, service, params = {}, logger = console) {
+export async function execute(email, key, project, query, _, params = {}) {
   const {
     headerParams,
     description,
     loadedQuery,
     requestParams,
   } = await processParams(query, params);
-  const datasetname = service ? `helix_logging_${service}` : 'helix_rum';
-  if (headerParams && headerParams.Authorization === 'fastly') {
-    try {
-      await authFastly(params.token, params.service);
-    } catch (e) {
-      e.statusCode = 401;
-      throw e;
-    }
-  }
-  delete headerParams.Authorization;
   try {
     const credentials = await auth(email, key.replace(/\\n/g, '\n'));
     const bq = new BigQuery({
@@ -107,23 +70,10 @@ export async function execute(email, key, project, query, service, params = {}, 
       credentials,
     });
 
-    const dataset = await (async () => {
-      const [usdataset] = await bq.dataset(datasetname, {
-        location: 'US',
-      }).get();
-      if (!usdataset || !(await usdataset.exists())[0] || usdataset.metadata.location !== 'US') {
-        const [fallbackdataset] = await bq.dataset(datasetname, {
-          location: 'us-west1',
-        }).get();
-        return fallbackdataset;
-      }
-      return usdataset;
-    })();
-
     // check if dataset exists in that location
 
     // eslint-disable-next-line no-async-promise-executor
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const results = [];
       let avgsize = 0;
       const maxsize = 1024 * 1024 * 0.9;
@@ -141,59 +91,39 @@ export async function execute(email, key, project, query, service, params = {}, 
         return true;
       };
 
-      replaceTableNames(loadedQuery, {
-        myrequests: () => `SELECT * FROM \`${dataset.id}.requests*\``,
-        allrequests: async (columnnames = ['*']) => {
-          const [alldatasets] = await bq.getDatasets();
-          return alldatasets
-            .filter(({ id }) => id.match(/^helix_logging_[0-9][a-zA-Z0-9]{21}/g))
-            .filter(({ metadata }) => metadata.location === 'US')
-            .map(({ id }) => id)
-            .map((id) => `SELECT ${columnnames.join(', ')} FROM \`${id}.requests*\``)
-            .join(' UNION ALL\n');
-        },
-      }).then(async (q) => {
-        try {
-          const [job] = await dataset.createQueryJob({
-            query: q,
-            maxResults: params.limit,
-            params: requestParams,
-          });
-          const stream = job.getQueryResultsStream({});
-          stream
-            .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
-              headers,
-              truncated: true,
-              results,
-              description,
-              requestParams,
-            })))
-            .on(
-              'error',
-              /* c8 ignore next 3 */
-              async (e) => {
-                await logquerystats(job, query, logger.warn);
-                reject(e);
-              },
-            )
-            .on('end', async () => {
-              await logquerystats(job, query, logger.info);
-              resolve({
-                headers,
-                truncated: false,
-                results,
-                description,
-                requestParams,
-              });
-            });
-        } catch (e) {
-          logger.error(`Unable to execute query ${query} (${e.errors[0].reason}): ${e.errors[0].message}`);
-          reject(e);
-        }
+      const q = loadedQuery;
+      const stream = await bq.createQueryStream({
+        query: q,
+        maxResults: params.limit,
+        params: requestParams,
       });
+      stream
+        .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
+          headers,
+          truncated: true,
+          results,
+          description,
+          requestParams,
+        })))
+        .on(
+          'error',
+          /* c8 ignore next 3 */
+          async (e) => {
+            reject(e);
+          },
+        )
+        .on('end', async () => {
+          resolve({
+            headers,
+            truncated: false,
+            results,
+            description,
+            requestParams,
+          });
+        });
     });
   } catch (e) {
-    throw new Error(`Unable to execute Google Query: ${e.message}`);
+    throw new Error(`Unable to execute Google Query ${query}: ${e.message}`);
   }
 }
 

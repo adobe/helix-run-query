@@ -1,12 +1,16 @@
 --- description: Using Helix RUM data, get a report of click rate by LCP Ntile, including a correlation coefficient.
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
---- domain: -
+--- url: -
 --- interval: 30
 --- offset: 0
+--- startdate: 2020-01-01
+--- enddate: 2021-01-01
+--- timezone: UTC
 --- conversioncheckpoint: click
 --- ntiles: 10
 --- targets: https://, http://
+--- domainkey: secret
 
 WITH alldata AS (
   SELECT
@@ -16,12 +20,12 @@ WITH alldata AS (
     target,
     lcp
   FROM
-    `helix-225321.helix_rum.CLUSTER_EVENTS`(
-      @domain,
+    `helix-225321.helix_rum.EVENTS_V3`(
+      @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
-      "",
-      "",
+      @startdate,
+      @enddate,
       "UTC",
       "all",
       "-"
@@ -85,17 +89,58 @@ clickrates AS (
 
 correlation AS (
   SELECT CORR(lcp, click_rate) AS correlation FROM clickrates
-)
+),
 
+good_correlation AS (
+  SELECT CORR(lcp, click_rate) AS good_correlation
+  FROM clickrates
+  WHERE lcp <= 2500 AND lcp_percentile > 1 # ignore the first percentile (outliers) and all values that are not good lcp
+),
+
+best_rates AS (
+  SELECT
+    lcp AS best_lcp,
+    max_rate
+  FROM (
+    SELECT
+      lcp,
+      click_rate,
+      MAX(click_rate) OVER () AS max_rate
+    FROM clickrates
+    ORDER BY lcp ASC
+  )
+  WHERE click_rate = max_rate
+),
+
+boost_potential AS (
+  SELECT
+    clickrates.lcp,
+    clickrates.click_rate,
+    best_rates.best_lcp,
+    best_rates.max_rate,
+    clickrates.lcp - best_rates.best_lcp AS lcp_diff,
+    (best_rates.max_rate - clickrates.click_rate)
+    / clickrates.click_rate AS click_rate_boost
+  FROM clickrates
+  FULL JOIN best_rates ON (true)
+  WHERE clickrates.lcp - best_rates.best_lcp < 1000
+  ORDER BY clickrates.lcp DESC
+  LIMIT 1
+)
 
 SELECT
   clickrates.lcp_percentile,
   clickrates.lcp,
   clickrates.click_rate,
-  correlation.correlation
-FROM clickrates FULL JOIN correlation ON (true)
+  correlation.correlation,
+  good_correlation.good_correlation,
+  boost_potential.click_rate_boost,
+  boost_potential.lcp_diff
+FROM clickrates
+FULL JOIN correlation ON (true)
+FULL JOIN good_correlation ON (true)
+FULL JOIN boost_potential ON (true)
 ORDER BY clickrates.lcp_percentile
-
 
 # SELECT
 #   target,
