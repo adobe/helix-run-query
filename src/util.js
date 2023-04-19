@@ -128,3 +128,45 @@ export function csvify(arr) {
     ...arr.map((line) => Object.values(line).map(format).join(',')),
   ].join('\n');
 }
+
+/**
+ * SSHON is Simple Spreadsheet Object Notation (read: Sean, like Jason), the
+ * format used by Helix to serve spreadsheets. This function converts a SQL
+ * result set into a SSHON string.
+ * @param {object[]} results the SQL result set
+ * @param {string} description the description of the query
+ * @param {object} requestParams the request parameters
+ * @param {boolean} truncated whether the result set was truncated
+ * @returns {string} the SSHON string
+ */
+export function sshonify(results, description, requestParams, truncated) {
+  const sson = {
+    ':names': ['result', 'meta'],
+    ':type': 'multi-sheet',
+    ':version': 3,
+    results: {
+      limit: Math.max(requestParams.limit || 1, results.length),
+      offset: requestParams.offset || 0,
+      total: requestParams.offset || 0 + results.length + (truncated ? 1 : 0),
+      data: results,
+    },
+    meta: {
+      limit: 1 + Object.keys(requestParams).length,
+      offset: 0,
+      total: 1 + Object.keys(requestParams).length,
+      data: [
+        {
+          name: 'description',
+          value: description,
+          type: 'query description',
+        },
+        ...Object.entries(requestParams).map(([key, value]) => ({
+          name: key,
+          value,
+          type: 'request parameter',
+        })),
+      ],
+    },
+  };
+  return JSON.stringify(sson);
+}
