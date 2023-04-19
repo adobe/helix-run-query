@@ -56,4 +56,3 @@ SELECT
 FROM checkpoint_urls
 ORDER BY views DESC
 LIMIT CAST(@limit AS INT64)
-
