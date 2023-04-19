@@ -1,3 +1,116 @@
+## [2.42.15](https://github.com/adobe/helix-run-query/compare/v2.42.14...v2.42.15) (2023-04-18)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([02b8808](https://github.com/adobe/helix-run-query/commit/02b88082cbdb38b0e9687b6de936dc585d403935))
+
+## [2.42.14](https://github.com/adobe/helix-run-query/compare/v2.42.13...v2.42.14) (2023-04-15)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v118 ([#854](https://github.com/adobe/helix-run-query/issues/854)) ([6c937aa](https://github.com/adobe/helix-run-query/commit/6c937aabaf4cf9c80d5868c88b918f9305ad5423))
+
+## [2.42.13](https://github.com/adobe/helix-run-query/compare/v2.42.12...v2.42.13) (2023-04-14)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([4f96767](https://github.com/adobe/helix-run-query/commit/4f96767ae0556b1b505b862a43ed2591b0ca8d0e))
+
+## [2.42.12](https://github.com/adobe/helix-run-query/compare/v2.42.11...v2.42.12) (2023-04-13)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([8874daa](https://github.com/adobe/helix-run-query/commit/8874daae3261706d452e95fbe8d4c78503efc2fe))
+
+## [2.42.11](https://github.com/adobe/helix-run-query/compare/v2.42.10...v2.42.11) (2023-04-12)
+
+
+### Bug Fixes
+
+* **rum-sources:** added source filter ([4168a92](https://github.com/adobe/helix-run-query/commit/4168a922522dd3830aa8e69b7c3c65e2283938cc))
+
+## [2.42.10](https://github.com/adobe/helix-run-query/compare/v2.42.9...v2.42.10) (2023-04-06)
+
+
+### Bug Fixes
+
+* **rum-checkpoint-urls:** cast parameter as int ([92ff637](https://github.com/adobe/helix-run-query/commit/92ff637dd810449d0417d5e3ad1c4a644b216f18))
+
+## [2.42.9](https://github.com/adobe/helix-run-query/compare/v2.42.8...v2.42.9) (2023-04-03)
+
+
+### Reverts
+
+* Revert "fix(src/queries): update queries (#843)" ([857c4c0](https://github.com/adobe/helix-run-query/commit/857c4c0fc53a622c5aed075c9e02c73b151cacb0)), closes [#843](https://github.com/adobe/helix-run-query/issues/843)
+
+## [2.42.8](https://github.com/adobe/helix-run-query/compare/v2.42.7...v2.42.8) (2023-03-30)
+
+
+### Bug Fixes
+
+* **src/queries:** update queries ([#843](https://github.com/adobe/helix-run-query/issues/843)) ([355648f](https://github.com/adobe/helix-run-query/commit/355648f617b729566028d80b15afe84e580476b8)), closes [#844](https://github.com/adobe/helix-run-query/issues/844)
+
+## [2.42.7](https://github.com/adobe/helix-run-query/compare/v2.42.6...v2.42.7) (2023-03-27)
+
+
+### Bug Fixes
+
+* **deps:** update external major ([#842](https://github.com/adobe/helix-run-query/issues/842)) ([404ef7a](https://github.com/adobe/helix-run-query/commit/404ef7abc5e1bb7f08676685f3271cd59e6c23db))
+
+## [2.42.6](https://github.com/adobe/helix-run-query/compare/v2.42.5...v2.42.6) (2023-03-25)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([d26cc58](https://github.com/adobe/helix-run-query/commit/d26cc583656d2650bfd66b86283f31d30cf87095))
+
+## [2.42.5](https://github.com/adobe/helix-run-query/compare/v2.42.4...v2.42.5) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rum-cwv:** use correct column name ([3ceb3b8](https://github.com/adobe/helix-run-query/commit/3ceb3b80af5f1ca5330c5fb410dc8bf0d5d3a656))
+* **rum-cwv:** use integer arguments for ntiles ([fc459b3](https://github.com/adobe/helix-run-query/commit/fc459b3a7efce8be703019afc3e00b1b92c74a04))
+
+## [2.42.4](https://github.com/adobe/helix-run-query/compare/v2.42.3...v2.42.4) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rum-cwv:** expect ranges to be ints ([358d8c3](https://github.com/adobe/helix-run-query/commit/358d8c3aeb3a66899f20c9757f321a6b4d8bdc42))
+
+## [2.42.3](https://github.com/adobe/helix-run-query/compare/v2.42.2...v2.42.3) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rem-cwv:** use correct dataset name for stored function ([6c36ede](https://github.com/adobe/helix-run-query/commit/6c36ede8d92889f8af47361333f8ab9e9f4bc0bb))
+
+## [2.42.2](https://github.com/adobe/helix-run-query/compare/v2.42.1...v2.42.2) (2023-03-24)
+
+
+### Bug Fixes
+
+* **rum:** use lowercase project name ([be48a49](https://github.com/adobe/helix-run-query/commit/be48a498e4ff6b72e54e74637f9b9c493ec6c450))
+
+## [2.42.1](https://github.com/adobe/helix-run-query/compare/v2.42.0...v2.42.1) (2023-03-21)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([04460b1](https://github.com/adobe/helix-run-query/commit/04460b15e87b7154f0d362feccfd0c0322d30435))
+
+# [2.42.0](https://github.com/adobe/helix-run-query/compare/v2.41.17...v2.42.0) (2023-03-16)
+
+
+### Features
+
+* **rum:** add query to report correlation of LCP to click rate for a selected list of valid click target prefixes ([2ed7d28](https://github.com/adobe/helix-run-query/commit/2ed7d286bf65826c04c959a281ac085852fc8f16))
+
 ## [2.41.17](https://github.com/adobe/helix-run-query/compare/v2.41.16...v2.41.17) (2023-03-15)
 
 

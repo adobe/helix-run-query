@@ -37,7 +37,7 @@ sources AS (
   FROM current_data
   WHERE source IS NOT NULL
     AND (@source = '-' OR source = @source)
-    AND (@checkpoint = '-' OR @checkpoint = checkpoint)
+    AND (CAST(@checkpoint AS STRING) = '-' OR CAST(@checkpoint AS STRING) = checkpoint)
   GROUP BY source, id, checkpoint, target
 )
 

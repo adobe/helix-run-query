@@ -46,4 +46,4 @@ SELECT
   source
 FROM checkpoint_urls
 ORDER BY views DESC
-LIMIT @limit
+LIMIT CAST(@limit AS INT64)
