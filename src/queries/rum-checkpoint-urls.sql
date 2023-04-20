@@ -18,7 +18,7 @@ current_data AS (
     *,
     TIMESTAMP_TRUNC(time, DAY) AS date
   FROM
-    helix_rum.CLUSTER_CHECKPOINTS(
+    helix_rum.CHECKPOINTS_V3(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
@@ -40,7 +40,10 @@ checkpoint_urls AS (
     SUM(pageviews) AS actions
   FROM current_data
   WHERE
-    (checkpoint = @checkpoint OR @checkpoint = '-')
+    (
+      checkpoint = CAST(@checkpoint AS STRING)
+      OR CAST(@checkpoint AS STRING) = '-'
+    )
     AND (source = @source OR @source = '-')
   GROUP BY url, checkpoint, source
 )
