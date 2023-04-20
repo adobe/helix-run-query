@@ -1,3 +1,10 @@
+## [2.42.16](https://github.com/adobe/helix-run-query/compare/v2.42.15...v2.42.16) (2023-04-20)
+
+
+### Bug Fixes
+
+* **rum-checkpoint-urls:** avoid type error ([d6263fb](https://github.com/adobe/helix-run-query/commit/d6263fb5d485a6688975fb1438017a7407c0d6c6))
+
 ## [2.42.15](https://github.com/adobe/helix-run-query/compare/v2.42.14...v2.42.15) (2023-04-18)
 
 
