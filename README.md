@@ -8,29 +8,74 @@
 [![LGTM Code Quality Grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/adobe/helix-run-query.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/adobe/helix-run-query)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) 
 
-## Installation
-run ```npm install``` in root of repository
-
 ## Usage
-Assuming you are using httpie as your http client:
+Assuming you are using `curl` as your http client:
 
 ```bash
-curl https://helix-pages.anywhere.run/helix-services/run-query@v2/rum-dashboard
+curl https://helix-pages.anywhere.run/helix-services/run-query@v3/rum-dashboard
 ```
 
 ```json
 {
-    "results": [
+    "results": {
+      "data": [
         {
             "req_url": "https://helix-secret.fake",
             "resp_http_Content_Type": "text/html; charset=UTF-8",
             "status_code": "404",
             "visits": 1
         }
-    ],
-    "truncated": false
+      ],
+    }
 }
 ```
+
+The data is returned in Franklin's Spreadsheet Object Notation (SSHON) format. For more information, see [Franklin's documentation](https://www.hlx.live/developer/spreadsheets). There are two sheets, one called `meta` with information about the query and the other called `results` with the actual data.
+
+### Authentication
+
+The service is protected by shared secrets that apply to a domain and all subdomains. These secrets are called domain keys.
+
+You can pass the domain key in two ways:
+- as a query parameter `?domainkey=…`
+- as an `Authorization: Bearer …` header
+
+Domain keys can be read-only or read-write. Read-write domain keys allow you
+to issue new domain keys and revoke exiting keys. They should never be passed
+to the service in a GET request.
+
+It is best practice to use read-write domain keys only to issue new read-only
+keys and work with those.
+
+### Query Parameters
+
+Each query can define a set of query parameters, but the following parameters are
+supported almost universally:
+
+- `limit` - the maximum number of rows to return
+- `interval` – the number of days of data to return
+- `offset` – the number of rows or days to skip
+- `startdate` – the start date of the data to return (this will only take effect if `interval` is not set)
+- `enddate` – the end date of the data to return (this will only take effect if `interval` is not set)
+- `timezone` – the timezone to use for the dates (defaults to `UTC`)
+- `url` – the URL to filter the data by. By default, the URL is taken as a partial filter, so `url=https://www.adobe.com/` will include `https://www.adobe.com/`, `https://www.adobe.com/?campaign=exapmle`, and `https://www.adobe.com/en/`. If you want to filter by an exact URL, use `url=https://www.adobe.com/$`. If you want to filter by an exact URL, but allow URL parameters, use `url=https://www.adobe.com/?`
+- `checkpoint` – filter results by a particular checkpoint. The list of common checkpoints can be found [here](https://www.hlx.live/developer/rum#checkpoints).
+- `device` – filter results by a particular class. Possible values are `all` (default), `desktop`, `mobile`, and `bot`.
+- `source` – filter results by a particular source parameter value
+
+# Deprecation Notice
+
+`helix-run-query@v2` is deprecated and will be removed in the future. Please use `helix-run-query@v3` instead.
+
+## Changes from v2 to v3
+
+- the output format has changed from a custom format to Franklin's Spreadsheet Object Notation (SSHON)
+- the `domain` parameter has been removed and replaced with `url`
+- the `url` parameter now supports partial matching and exact matching
+
+For a full list of changes, please see the [CHANGELOG](CHANGELOG.md#300-2023-04-21).
+
+# Development
 
 ## Required Environment Variables
 
