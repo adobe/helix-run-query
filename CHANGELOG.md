@@ -1,3 +1,10 @@
+# [2.43.0](https://github.com/adobe/helix-run-query/compare/v2.42.16...v2.43.0) (2023-04-20)
+
+
+### Features
+
+* **index:** add deprecation header for upcoming v3 ([7173cfa](https://github.com/adobe/helix-run-query/commit/7173cfacd83c7964b0b739fa9446a5cf73294557))
+
 ## [2.42.16](https://github.com/adobe/helix-run-query/compare/v2.42.15...v2.42.16) (2023-04-20)
 
 
