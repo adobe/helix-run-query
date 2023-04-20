@@ -40,7 +40,7 @@ describe('Test Queries', () => {
       assert.fail(`${results} is not valid JSON`);
     }
     assert.ok(json.results.data);
-    assert.ok(!json.meta.data.filter((e) => e.name === 'domainkey'), 'domainkey should not be in requestParams');
+    assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 
   it('rum-dashboard (url auth)', async () => {
@@ -61,8 +61,8 @@ describe('Test Queries', () => {
     } catch (e) {
       assert.fail(`${results} is not valid JSON`);
     }
-    assert.ok(json.results);
-    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+    assert.ok(json.results.data);
+    assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 
   it('rotate-domainkeys (success)', async () => {
@@ -86,8 +86,8 @@ describe('Test Queries', () => {
     } catch (e) {
       assert.fail(`${results} is not valid JSON`);
     }
-    assert.ok(json.results);
-    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+    assert.ok(json.results.data);
+    assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 
   it('rotate-domainkeys (force)', async () => {
@@ -114,8 +114,8 @@ describe('Test Queries', () => {
     } catch (e) {
       assert.fail(`${results} is not valid JSON`);
     }
-    assert.ok(json.results);
-    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+    assert.ok(json.results.data);
+    assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 
   it('rotate-domainkeys (failure)', async () => {
@@ -139,7 +139,7 @@ describe('Test Queries', () => {
     } catch (e) {
       assert.fail(`${results} is not valid JSON`);
     }
-    assert.ok(json.results);
-    assert.ok(!json.requestParams.domainkey, 'domainkey should not be in requestParams');
+    assert.ok(json.results.data);
+    assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 });
