@@ -143,14 +143,15 @@ describe('Index Tests', async () => {
     const body = await response.json();
 
     assert.equal(typeof body, 'object');
-    assert.ok(Array.isArray(body.results));
-    assert.ok(body.truncated);
-    assert.notEqual(body.results.length, 2000);
+    assert.ok(Array.isArray(body.results.data));
+    assert.ok(body.results.total < body.results.limit);
+    assert.notEqual(body.results.data.length, 2000);
     assert.equal(response.headers.get('content-type'), 'application/json');
     assert.equal(response.headers.get('cache-control'), 'max-age=300');
 
-    assert.deepEqual(body.requestParams, { limit: 2000 });
-    assert.equal(body.description, 'some fake comments that mean nothing');
+    assert.deepEqual(body.meta.data, [
+      { name: 'description', type: 'query description', value: 'some fake comments that mean nothing' },
+      { name: 'limit', type: 'request parameter', value: 2000 }]);
   }).timeout(10000);
 
   it('index function returns 500 on error', async () => {
