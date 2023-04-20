@@ -412,4 +412,82 @@ describe('Test SSHONify', () => {
 
     );
   });
+
+  it('SSHONify generates SSHON from empty results', () => {
+    const input = {
+      results: [],
+      description: 'Get popularity data for RUM source attribute values, filtered by checkpoint',
+      requestParams: {
+        limit: 30, interval: 1, offset: '0', url: 'blog.adobe.com', checkpoint: 'viewblock', source: '-',
+      },
+      truncated: false,
+    };
+    const sshon = sshonify(input.results, input.description, input.requestParams, input.truncated);
+    assert.deepStrictEqual(
+      JSON.parse(sshon),
+      {
+        ':names': [
+          'results',
+          'meta',
+        ],
+        ':type': 'multi-sheet',
+        ':version': 3,
+        meta: {
+          data: [
+            {
+              name: 'description',
+              type: 'query description',
+              value: 'Get popularity data for RUM source attribute values, filtered by checkpoint',
+            },
+            {
+              name: 'limit',
+              type: 'request parameter',
+              value: 30,
+            },
+            {
+              name: 'interval',
+              type: 'request parameter',
+              value: 1,
+            },
+            {
+              name: 'offset',
+              type: 'request parameter',
+              value: '0',
+            },
+            {
+              name: 'url',
+              type: 'request parameter',
+              value: 'blog.adobe.com',
+            },
+            {
+              name: 'checkpoint',
+              type: 'request parameter',
+              value: 'viewblock',
+            },
+            {
+              name: 'source',
+              type: 'request parameter',
+              value: '-',
+            },
+          ],
+          columns: [
+            'name',
+            'value',
+            'type',
+          ],
+          limit: 7,
+          offset: 0,
+          total: 7,
+        },
+        results: {
+          limit: 30,
+          offset: '0',
+          total: '0',
+          columns: [],
+          data: [],
+        },
+      },
+
+    );
+  });
 });
