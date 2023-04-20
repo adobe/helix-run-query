@@ -109,14 +109,23 @@ describe('Index Tests', async () => {
     const body = await response.json();
 
     assert.equal(typeof body, 'object');
-    assert.ok(Array.isArray(body.results));
-    assert.ok(!body.truncated);
-    assert.equal(body.results.length, 3);
+    assert.ok(Array.isArray(body.results.data));
+    assert.ok(!body.results.truncated);
+    assert.equal(body.results.data.length, 3);
     assert.equal(response.headers.get('content-type'), 'application/json');
     assert.equal(response.headers.get('cache-control'), 'max-age=300');
 
-    assert.deepEqual(body.requestParams, { limit: 3 });
-    assert.equal(body.description, 'some fake comments that mean nothing');
+    assert.deepEqual(body.meta.data, [
+      {
+        name: 'description',
+        type: 'query description',
+        value: 'some fake comments that mean nothing',
+      },
+      {
+        name: 'limit',
+        type: 'request parameter',
+        value: 3,
+      }]);
   }).timeout(10000);
 
   it('index function truncates long responses', async () => {
