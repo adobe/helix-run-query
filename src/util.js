@@ -9,23 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import initfastly from '@adobe/fastly-native-promises';
 import fs from 'fs-extra';
 import path from 'path';
 import { MissingQueryError } from './missing-query-error.js';
-
-/**
- * authenticates token and service with Fastly
- *
- * @param {string} token Fastly Authentication Token
- * @param {string} service serviceid for a helix-project
- */
-export async function authFastly(token, service) {
-  // verify Fastly credentials
-  const Fastly = await initfastly(token, service);
-  await Fastly.getVersions();
-  return true;
-}
 
 /**
  * reads a query file and loads it into memory
@@ -119,36 +105,6 @@ export function cleanRequestParams(params) {
 }
 
 /**
- * replaces tablename with union of tables from one dataset or multiple datasets
- * i.e:
- * if query inputted is SELECT req_url FROM ^myrequest
- * output will become SELECT req_url FROM (SELECT * FROM helix_logging_myService.requests*)
- *
- * @param {string} query a query loaded from loadQuery with placeholders
- * @param {object} replacers an function mapping from placeholders to replacer methods
- */
-export async function replaceTableNames(query, replacers) {
-  const regex = /\^(?<placeholder>[a-z]+)(\((?<args>[^)]+)\))?/;
-
-  const replacements = await (query.match(new RegExp(regex, 'g')) || [])
-    .map((placeholder) => placeholder.match(regex))
-    .map((placeholder) => placeholder.groups)
-    .reduce(async (pvp, { placeholder, args = '' }) => {
-      const pv = await pvp;
-      if (pv[placeholder]) {
-        return pv;
-      }
-      pv[placeholder] = await replacers[placeholder](args.split(',').map((arg) => arg.trim()));
-      return pv;
-    }, {});
-
-  return Object
-    .keys(replacements)
-    .reduce((q, placeholder) => q
-      .replace(new RegExp(`\\^${placeholder}(\\([^)]+\\))?`, 'g'), replacements[placeholder]), query);
-}
-
-/**
  * fills in missing query parameters (if any) with defaults from query file
  * @param {object} params provided parameters
  * @param {object} defaults default parameters in query file
@@ -171,4 +127,48 @@ export function csvify(arr) {
     Array.from(Object.keys(first)).join(','),
     ...arr.map((line) => Object.values(line).map(format).join(',')),
   ].join('\n');
+}
+
+/**
+ * SSHON is Simple Spreadsheet Object Notation (read: Sean, like Jason), the
+ * format used by Helix to serve spreadsheets. This function converts a SQL
+ * result set into a SSHON string.
+ * @param {object[]} results the SQL result set
+ * @param {string} description the description of the query
+ * @param {object} requestParams the request parameters
+ * @param {boolean} truncated whether the result set was truncated
+ * @returns {string} the SSHON string
+ */
+export function sshonify(results, description, requestParams, truncated) {
+  const sson = {
+    ':names': ['results', 'meta'],
+    ':type': 'multi-sheet',
+    ':version': 3,
+    results: {
+      limit: Math.max(requestParams.limit || 1, results.length),
+      offset: requestParams.offset || 0,
+      total: requestParams.offset || 0 + results.length + (truncated ? 1 : 0),
+      data: results,
+      columns: Object.keys(results[0] || {}),
+    },
+    meta: {
+      limit: 1 + Object.keys(requestParams).length,
+      offset: 0,
+      total: 1 + Object.keys(requestParams).length,
+      columns: ['name', 'value', 'type'],
+      data: [
+        {
+          name: 'description',
+          value: description,
+          type: 'query description',
+        },
+        ...Object.entries(requestParams).map(([key, value]) => ({
+          name: key,
+          value,
+          type: 'request parameter',
+        })),
+      ],
+    },
+  };
+  return JSON.stringify(sson);
 }

@@ -16,7 +16,7 @@ import { logger } from '@adobe/helix-universal-logger';
 import { Response } from '@adobe/fetch';
 import bodyData from '@adobe/helix-shared-body-data';
 import { execute, queryInfo } from './sendquery.js';
-import { cleanRequestParams, csvify } from './util.js';
+import { cleanRequestParams, csvify, sshonify } from './util.js';
 
 async function runExec(params, pathname, log) {
   const deprecationHeaders = {
@@ -35,7 +35,7 @@ async function runExec(params, pathname, log) {
       params.GOOGLE_PRIVATE_KEY,
       params.GOOGLE_PROJECT_ID,
       pathname.replace(/\..*$/, ''),
-      params.service,
+      undefined, // service parameter is no longer used
       cleanRequestParams(params),
       log,
     );
@@ -45,22 +45,21 @@ async function runExec(params, pathname, log) {
         status: 200,
         headers: {
           'content-type': 'text/csv',
-          Vary: 'X-Token, X-Service',
           ...headers,
           ...deprecationHeaders,
         },
       });
     }
-    return new Response(JSON.stringify({
+    delete requestParams.domainkey; // don't leak the domainkey
+    return new Response(sshonify(
       results,
       description,
       requestParams,
       truncated,
-    }), {
+    ), {
       status: 200,
       headers: {
         'content-type': 'application/json',
-        Vary: 'X-Token, X-Service',
         ...headers,
         ...deprecationHeaders,
       },
@@ -79,9 +78,8 @@ async function runExec(params, pathname, log) {
 async function run(request, context) {
   const { pathname } = new URL(request.url);
   const params = context.data;
-  params.token = request.headers.has('x-token') ? request.headers.get('x-token') : undefined;
   /* c8 ignore next */
-  params.service = request.headers.has('x-service') ? request.headers.get('x-service') : undefined;
+  params.domainkey = request.headers.has('authorization') ? request.headers.get('authorization').split(' ').pop() : params.domainkey || 'secret';
 
   params.GOOGLE_CLIENT_EMAIL = context.env.GOOGLE_CLIENT_EMAIL;
   params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
@@ -97,7 +95,6 @@ async function run(request, context) {
  */
 export const main = wrap(run)
   .with(helixStatus, {
-    fastly: 'https://api.fastly.com/public-ip-list',
     googleiam: 'https://iam.googleapis.com/$discovery/rest?version=v1',
     googlebigquery: 'https://www.googleapis.com/discovery/v1/apis/bigquery/v2/rest',
   })

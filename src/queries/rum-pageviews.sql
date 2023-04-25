@@ -1,11 +1,12 @@
 --- description: Get daily page views for a site according to Helix RUM data
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
---- limit: 30
+--- interval: 30
 --- offset: 0
 --- url: 
 --- granularity: 1
 --- timezone: UTC
+--- domainkey: secret
 DECLARE results NUMERIC;
 CREATE OR REPLACE PROCEDURE helix_rum.UPDATE_PAGEVIEWS(
   ingranularity INT64,
@@ -13,6 +14,7 @@ CREATE OR REPLACE PROCEDURE helix_rum.UPDATE_PAGEVIEWS(
   inoffset INT64,
   inurl STRING,
   intimezone STRING,
+  indomainkey STRING,
   OUT results NUMERIC
 )
 BEGIN
@@ -35,7 +37,7 @@ BEGIN
         WHEN 365 THEN TIMESTAMP_TRUNC(time, YEAR)
         ELSE TIMESTAMP_TRUNC(time, DAY)
       END AS date
-    FROM helix_rum.CLUSTER_PAGEVIEWS(
+    FROM helix_rum.PAGEVIEWS_V3(
       inurl, # url
       (inoffset * ingranularity) - 1, # offset
       inlimit * ingranularity, # days to fetch
@@ -43,7 +45,7 @@ BEGIN
       '2022-05-28', # not used, end date
       intimezone, # timezone
       'all', # deviceclass
-      '-' # not used, generation
+      indomainkey # domain key to prevent data sharing
     )
   ),
 
@@ -99,7 +101,7 @@ BEGIN
       EXTRACT(MONTH FROM dates.alldates) AS month,
       EXTRACT(DAY FROM dates.alldates) AS day,
       STRING(dates.alldates) AS time,
-      COALESCE(dailydata.urls, 0) AS url,
+      COALESCE(dailydata.urls, 0) AS distinct_urls,
       COALESCE(dailydata.pageviews, 0) AS pageviews
     FROM dates
     FULL JOIN dailydata
@@ -111,25 +113,25 @@ BEGIN
   SET results = (SELECT SUM(pageviews) FROM (SELECT * FROM temp_pageviews));
 END;
 IF (CAST(@granularity AS STRING) = "auto") THEN
-    CALL helix_rum.UPDATE_PAGEVIEWS(1, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
-    IF (results > (CAST(@limit AS INT64) * 200)) THEN
+    CALL helix_rum.UPDATE_PAGEVIEWS(1, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, @domainkey, results);
+    IF (results > (CAST(@interval AS INT64) * 200)) THEN
         # we have enough results, use the daily granularity
         SELECT * FROM temp_pageviews;
     ELSE
         # we don't have enough results, zoom out
         DROP TABLE temp_pageviews;
-        CALL helix_rum.UPDATE_PAGEVIEWS(7, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
-        IF (results > (CAST(@limit AS INT64) * 200)) THEN
+        CALL helix_rum.UPDATE_PAGEVIEWS(7, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, @domainkey, results);
+        IF (results > (CAST(@interval AS INT64) * 200)) THEN
             # we have enough results, use the weekly granularity
             SELECT * FROM temp_pageviews;
         ELSE
             # we don't have enough results, zoom out to monthly and stop
             DROP TABLE temp_pageviews;
-            CALL helix_rum.UPDATE_PAGEVIEWS(30, CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
+            CALL helix_rum.UPDATE_PAGEVIEWS(30, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, @domainkey, results);
             SELECT * FROM temp_pageviews;
         END IF;
     END IF;
 ELSE
-    CALL helix_rum.UPDATE_PAGEVIEWS(CAST(@granularity AS INT64), CAST(@limit AS INT64), CAST(@offset AS INT64), @url, @timezone, results);
+    CALL helix_rum.UPDATE_PAGEVIEWS(CAST(@granularity AS INT64), CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, @domainkey, results);
     SELECT * FROM temp_pageviews;
 END IF;

@@ -27,16 +27,13 @@ import env from '../src/env.js';
 
 describe('Index Tests', async () => {
   let index;
-  let badIndex;
 
   before(async () => {
-    const goodQueryWithAuth = '--- description: some fake comments that mean nothing\n--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nselect * from requests LIMIT @limit';
+    const goodQueryWithAuth = '--- description: some fake comments that mean nothing\n--- Vary2: X-Token, X-Service\n--- Authorization: fastly\n--- Cache-Control: max-age=300\nSELECT * FROM `helix-225321.helix_rum.cluster` WHERE DATE(time) = "2023-04-12" LIMIT @limit';
 
     const goodExecWithAuth = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => true } });
-    const execWithBadAuth = await esmock('../src/sendquery.js', { '../src/util.js': { loadQuery: () => goodQueryWithAuth, authFastly: () => Promise.reject(new Error('Failed')) } });
 
     index = (await esmock('../src/index.js', { '../src/sendquery.js': goodExecWithAuth })).main;
-    badIndex = (await esmock('../src/index.js', { '../src/sendquery.js': execWithBadAuth })).main;
   });
 
   const service = 'fake_name';
@@ -112,17 +109,24 @@ describe('Index Tests', async () => {
     const body = await response.json();
 
     assert.equal(typeof body, 'object');
-    assert.ok(Array.isArray(body.results));
-    assert.ok(!body.truncated);
-    assert.equal(body.results.length, 3);
+    assert.ok(Array.isArray(body.results.data));
+    assert.ok(!body.results.truncated);
+    assert.equal(body.results.data.length, 3);
     assert.equal(response.headers.get('content-type'), 'application/json');
-    assert.equal(response.headers.get('vary'), 'X-Token, X-Service');
-    assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
     assert.equal(response.headers.get('cache-control'), 'max-age=300');
 
-    assert.deepEqual(body.requestParams, { limit: 3 });
-    assert.equal(body.description, 'some fake comments that mean nothing');
-  });
+    assert.deepEqual(body.meta.data, [
+      {
+        name: 'description',
+        type: 'query description',
+        value: 'some fake comments that mean nothing',
+      },
+      {
+        name: 'limit',
+        type: 'request parameter',
+        value: 3,
+      }]);
+  }).timeout(10000);
 
   it('index function truncates long responses', async () => {
     const response = await index(new Request('https://helix-run-query.com/list-everything?limit=2000', {
@@ -139,16 +143,15 @@ describe('Index Tests', async () => {
     const body = await response.json();
 
     assert.equal(typeof body, 'object');
-    assert.ok(Array.isArray(body.results));
-    assert.ok(body.truncated);
-    assert.notEqual(body.results.length, 2000);
+    assert.ok(Array.isArray(body.results.data));
+    assert.ok(body.results.total < body.results.limit);
+    assert.notEqual(body.results.data.length, 2000);
     assert.equal(response.headers.get('content-type'), 'application/json');
-    assert.equal(response.headers.get('vary'), 'X-Token, X-Service');
-    assert.equal(response.headers.get('vary2'), 'X-Token, X-Service');
     assert.equal(response.headers.get('cache-control'), 'max-age=300');
 
-    assert.deepEqual(body.requestParams, { limit: 2000 });
-    assert.equal(body.description, 'some fake comments that mean nothing');
+    assert.deepEqual(body.meta.data, [
+      { name: 'description', type: 'query description', value: 'some fake comments that mean nothing' },
+      { name: 'limit', type: 'request parameter', value: 2000 }]);
   }).timeout(10000);
 
   it('index function returns 500 on error', async () => {
@@ -165,23 +168,6 @@ describe('Index Tests', async () => {
     });
     assert.equal(typeof response, 'object');
     assert.equal(response.status, 500);
-  });
-
-  it('index function returns 401 on auth error', async () => {
-    const response = await badIndex(new Request('https://helix-run-query.com/list-everything?limit=3', {
-      headers: {
-        'x-service': service,
-        'x-token': 'notatoken',
-      },
-    }), {
-      env: {
-        GOOGLE_CLIENT_EMAIL: env.email,
-        GOOGLE_PRIVATE_KEY: 'env.key',
-        GOOGLE_PROJECT_ID: env.projectid,
-      },
-    });
-    assert.equal(typeof response, 'object');
-    assert.equal(response.status, 401);
   });
 
   it.skip('index function returns an object with ow_headers', async () => {
