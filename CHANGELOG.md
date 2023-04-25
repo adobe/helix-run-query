@@ -1,3 +1,81 @@
+# [3.0.0](https://github.com/adobe/helix-run-query/compare/v2.43.0...v3.0.0) (2023-04-25)
+
+
+### Bug Fixes
+
+* **daily-pageviews:** rename limit parameter to interval ([fbb0a0c](https://github.com/adobe/helix-run-query/commit/fbb0a0ca4c403ec3dda4d9ca726255dd6416cf42))
+* **domainkeys:** new domain keys are now read-only by default, and can't revoke existing keys ([0781476](https://github.com/adobe/helix-run-query/commit/0781476261d8d82c6f279a2f00a3220cec89bd95))
+* **index:** do not expose domain key parameter in response ([46b3f43](https://github.com/adobe/helix-run-query/commit/46b3f4372e8a273b88f9c83416e99fa4292f139f))
+* **index:** do not report fastly status in check anymore ([047ccf0](https://github.com/adobe/helix-run-query/commit/047ccf0632a670fe0cdd1f5b9369dc677991902d))
+* **pageviews:** rename daily-pageviews to rum-pageviews ([a1afe4c](https://github.com/adobe/helix-run-query/commit/a1afe4cdbbb761c7fe1829d20bffd958b96d6ccf))
+* **queries:** always use the `url` parameter to indicate the base url ([565edd7](https://github.com/adobe/helix-run-query/commit/565edd7c990923130155899096828496afe28455))
+* **queries:** remove unused top-pages query ([63405d7](https://github.com/adobe/helix-run-query/commit/63405d785b3d8d2688411aad8adb4e6dd50495d9))
+* **queries:** use hashed keys in storage ([5b66966](https://github.com/adobe/helix-run-query/commit/5b66966723e5c4b49c2a6f140fd8a94ddf8574d2))
+* **rum-dashboard:** cast dates back to strings after date math ([81e4340](https://github.com/adobe/helix-run-query/commit/81e4340abdf67c9025dd8173e5bd95e68f55825c))
+* **rum-dashboard:** remove unused generationb parameter ([9dab010](https://github.com/adobe/helix-run-query/commit/9dab01093c8864ccbdec38cf39df4c66d8d9c302))
+* **rum-pageviews:** fix sql syntax error ([7f62ece](https://github.com/adobe/helix-run-query/commit/7f62eced66b884638e28801356021e0a84fbcbdb))
+* **rum-pageviews:** rename `url` output column to `distinct_urls` ([6ac4b23](https://github.com/adobe/helix-run-query/commit/6ac4b230aa02e537e08312da14702bf602d67649))
+* **rum-pageviews:** turn domainkey into a function parameter ([4fa8e1a](https://github.com/adobe/helix-run-query/commit/4fa8e1a82a7ce5649a71f10d973ed0826096e7c5))
+* **sendquery:** remove the `alldatasets` replacer function ([8b6bda2](https://github.com/adobe/helix-run-query/commit/8b6bda238446140f64237900f742334f83ac542d))
+
+
+### chore
+
+* introduce collection branch for all breaking changes that will lead to v3 ([f4917a2](https://github.com/adobe/helix-run-query/commit/f4917a26dd5ef5d20e4113d38eeaf67a9fe89be4))
+* **queries:** remove unused queries ([3cc0e0e](https://github.com/adobe/helix-run-query/commit/3cc0e0ef6cd706a15e182b7ab2d4d3ddba600ec9))
+
+
+### Code Refactoring
+
+* **index:** remove support for Fastly authentication ([6b158cb](https://github.com/adobe/helix-run-query/commit/6b158cb967f0a4549d14cb635257cc99efd3d064))
+* **index:** remove support for token and service parameters ([0976d9a](https://github.com/adobe/helix-run-query/commit/0976d9a5c717bd401daa6f4bcd76bd2a4f5cf01b))
+* **sendquery:** simplify query execution ([8f5791b](https://github.com/adobe/helix-run-query/commit/8f5791b1eb17f67ccaed39eb5fd122dbe0dc7f18))
+
+
+### Documentation
+
+* **readme:** update usage info, add deprecation notice ([b1fcfa2](https://github.com/adobe/helix-run-query/commit/b1fcfa2d519dd6a5f7481d5ed33f24458d31c04c))
+
+
+### Features
+
+* **common:** add domainkey parameter to common table valued functions ([03cfc8b](https://github.com/adobe/helix-run-query/commit/03cfc8b0aa7e236c0ff05cd3cbce688f3d137fec))
+* **common:** URL based filters now support suffixes `$` (exact match, without URL params) and `?` (exact match, URL params included) ([2f2fb2e](https://github.com/adobe/helix-run-query/commit/2f2fb2e1174cf52b00b6c81d5cbf9cdf440e0443))
+* **cwv-correlation:** add correlation coefficient within 'good' range, calculate 1-second conversion boost factor ([8a18af3](https://github.com/adobe/helix-run-query/commit/8a18af31af4cd989b897f32269fb5d95661e1dc5))
+* **domainkeys:** allow force-setting a domain key, assuming you have a valid key already ([77927ce](https://github.com/adobe/helix-run-query/commit/77927cede37d45405873ed8ae76a06d6c3c79f82))
+* **index:** domainkeys can be passed as url parameters for easy sharing, too ([3325ea3](https://github.com/adobe/helix-run-query/commit/3325ea38380f096a427bb91caca35cc70841444e))
+* **index:** pass domainkeys parameter from HTTP headers ([b1205c1](https://github.com/adobe/helix-run-query/commit/b1205c1c8bb21260674fa8ca3d5fdfd7a48ab6d4))
+* **index:** query results are now returned in Spreadsheet Object Notation ([97b3863](https://github.com/adobe/helix-run-query/commit/97b3863e9190d4612a2ae3b7468ec7e571b8dab4))
+* **queries:** add query to rotate domain keys for a given domain ([1be0d97](https://github.com/adobe/helix-run-query/commit/1be0d97b2cec45a141450b8798d752154abd678d))
+* **queries:** require domain key parameter full full data access ([d8114e6](https://github.com/adobe/helix-run-query/commit/d8114e6bfa121583279ab7d26053b5f39f469a2b))
+* **queries:** support `startdate` `enddate` and `timezone` parameters consistently across all queries ([13ae5e4](https://github.com/adobe/helix-run-query/commit/13ae5e4ff364db3ceb6cc89f53e4785b51d414b0))
+* **rum-checkpoints:** require domainkey, remove generation ([eb8cb29](https://github.com/adobe/helix-run-query/commit/eb8cb29d3e283242dc667f75bb289db572431ddb))
+* **rum-dashboard:** add domain keys, remove generation support ([da4b228](https://github.com/adobe/helix-run-query/commit/da4b2284f27bb309b2dd252f3bfee49c77393312))
+* **rum-sources-targets:** require domain key ([a38fc08](https://github.com/adobe/helix-run-query/commit/a38fc083a19198b994c523d4d2f0e509a7913cd1))
+* **sshon:** include `columns` in result metadata ([545d070](https://github.com/adobe/helix-run-query/commit/545d070fc665224e6eb74b1631d7bedf0422532a))
+* **utils:** add sshonify function to return query results in Spreadsheet Object Notation (SSHON) ([ca7300d](https://github.com/adobe/helix-run-query/commit/ca7300dda4a50ec5fdd6b5d74bc1c0e1826eb028))
+
+
+### BREAKING CHANGES
+
+* **readme:** `helix-run-query@v2` is deprecated and will be removed within a year, see https://github.com/adobe/helix-run-query#deprecation-notice for details
+* **index:** query results are returned in Spreadsheet Object Notation (SSHON), like other tabular data in Franklin
+* **sendquery:** the myrequests replacer is no longer supported, query statistics are no longer logged
+* **index:** the `x-token` and `x-service` request headers are no longer supported
+* **index:** Fastly authentication no longer supported
+* **common:** existing URL filters that used the suffixes `$` or `?` will now return additional results
+* **sendquery:** the `^alldatasets` replacer function is no longer used and has been removed
+* **rum-pageviews:** the `url` output column is now called `distinct_urls` to clarify the purpose
+* **rum-sources-targets:** full data access now requires a valid domain key
+* **rum-dashboard:** full data access now requires a domain key, comparing by generation is no longer supported
+* **rum-checkpoints:** full data access now requires a domain key, the generation filter is no longer supported
+* **queries:** only when the correct `domainkey` parameter or authentication is provided, will full data be visible for the selected domain
+* **pageviews:** the `daily-pageviews` query has been renamed to `rum-pageviews` for better alignment with other queries and to reflect that different granularities are supported
+* **daily-pageviews:** the `limit` parameter has been removed and replaced with the `interval` parameter, so that the URL parameters are more aligned with other queries
+* **queries:** this removes the `domain` parameter, use `url` instead
+* **queries:** this removes the blobs-served, content-power-curve, daily-rum, live-sites, most-visited-hlx3, next-resource, and recent-errors queries
+* this branch introduces a collection of breaking changes
+
 # [2.43.0](https://github.com/adobe/helix-run-query/compare/v2.42.16...v2.43.0) (2023-04-20)
 
 
