@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/adobe/helix-run-query/compare/v3.0.0...v3.0.1) (2023-04-25)
+
+
+### Bug Fixes
+
+* **rum-targets:** use correct table valued function for v3 compatibility ([0921229](https://github.com/adobe/helix-run-query/commit/0921229dd6827bf7c38607b52ffedff92983ff9d))
+
 # [3.0.0](https://github.com/adobe/helix-run-query/compare/v2.43.0...v3.0.0) (2023-04-25)
 
 
