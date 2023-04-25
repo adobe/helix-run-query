@@ -20,7 +20,7 @@ current_data AS (
     *,
     TIMESTAMP_TRUNC(time, DAY) AS date
   FROM
-    helix_rum.CLUSTER_CHECKPOINTS(
+    helix_rum.CHECKPOINTS_V3(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
