@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.2",
-    "@adobe/helix-deploy": "9.0.25",
+    "@adobe/helix-deploy": "9.0.26",
     "@adobe/helix-universal": "4.1.9",
     "@adobe/semantic-release-coralogix": "1.1.23",
     "@pollyjs/adapter-node-http": "6.0.5",
