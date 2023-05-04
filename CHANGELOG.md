@@ -1,3 +1,10 @@
+## [3.0.3](https://github.com/adobe/helix-run-query/compare/v3.0.2...v3.0.3) (2023-05-04)
+
+
+### Bug Fixes
+
+* **rum-checkpoints:** drop generation parameter ([f26e1b6](https://github.com/adobe/helix-run-query/commit/f26e1b634cdf04af48a20456bc59f532a1fc082b))
+
 ## [3.0.2](https://github.com/adobe/helix-run-query/compare/v3.0.1...v3.0.2) (2023-05-04)
 
 
