@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/adobe/helix-run-query/compare/v3.0.1...v3.0.2) (2023-05-04)
+
+
+### Bug Fixes
+
+* **index:** no longer claim to be deprecated ([c61e14c](https://github.com/adobe/helix-run-query/commit/c61e14c7165acaf39a044c6d6c1c04f3ca84020b))
+
 ## [3.0.1](https://github.com/adobe/helix-run-query/compare/v3.0.0...v3.0.1) (2023-04-25)
 
 
