@@ -16,7 +16,6 @@ weightdata AS (
     id,
     MAX(pageviews) AS weight,
     ANY_VALUE(url) AS url,
-    ANY_VALUE(generation) AS generation
   FROM
     helix_rum.CHECKPOINTS_V3(
       @url,
