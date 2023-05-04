@@ -19,11 +19,6 @@ import { execute, queryInfo } from './sendquery.js';
 import { cleanRequestParams, csvify, sshonify } from './util.js';
 
 async function runExec(params, pathname, log) {
-  const deprecationHeaders = {
-    Deprecation: 'Sat, 20 Apr 2024 00:00:00 GMT',
-    Link: '<https://github.com/adobe/helix-run-query#deprecation-notice>; rel="deprecation"; type="text/html"',
-  };
-
   try {
     if (pathname && pathname.endsWith('.txt')) {
       return queryInfo(pathname, params);
@@ -46,7 +41,6 @@ async function runExec(params, pathname, log) {
         headers: {
           'content-type': 'text/csv',
           ...headers,
-          ...deprecationHeaders,
         },
       });
     }
@@ -61,7 +55,6 @@ async function runExec(params, pathname, log) {
       headers: {
         'content-type': 'application/json',
         ...headers,
-        ...deprecationHeaders,
       },
     });
   } catch (e) {
@@ -69,7 +62,6 @@ async function runExec(params, pathname, log) {
       status: e.statusCode || 500,
       headers: {
         'x-error': cleanupHeaderValue(e.message),
-        ...deprecationHeaders,
       },
     });
   }
