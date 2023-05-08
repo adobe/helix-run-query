@@ -1,3 +1,10 @@
+## [3.0.4](https://github.com/adobe/helix-run-query/compare/v3.0.3...v3.0.4) (2023-05-08)
+
+
+### Bug Fixes
+
+* **checkpoint-urls:** use accurate views count ([aa0569f](https://github.com/adobe/helix-run-query/commit/aa0569f9b34d956616dbec4780a0edde8dfdea8e))
+
 ## [3.0.3](https://github.com/adobe/helix-run-query/compare/v3.0.2...v3.0.3) (2023-05-04)
 
 
