@@ -7,7 +7,7 @@
 --- startdate: 2022-01-01
 --- enddate: 2022-01-31
 --- timezone: UTC
---- url: 
+--- url: -
 --- checkpoint: -
 --- source: -
 --- domainkey: secret
@@ -36,7 +36,7 @@ checkpoint_urls AS (
     checkpoint,
     source,
     COUNT(id) AS ids,
-    MAX(pageviews) AS views,
+    COUNT(DISTINCT id) * MAX(pageviews) AS views,
     SUM(pageviews) AS actions
   FROM current_data
   WHERE
