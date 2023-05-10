@@ -96,6 +96,7 @@
       "src/queries/rum-dashboard.sql",
       "src/queries/rum-experiments.sql",
       "src/queries/rum-pageviews.sql",
+      "src/queries/rum-pageviews-bdf.sql",
       "src/queries/rum-sources-targets.sql",
       "src/queries/rum-sources.sql",
       "src/queries/rum-targets.sql"
