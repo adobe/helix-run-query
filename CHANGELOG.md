@@ -1,3 +1,10 @@
+# [3.1.0](https://github.com/adobe/helix-run-query/compare/v3.0.5...v3.1.0) (2023-05-11)
+
+
+### Features
+
+* **rum:** add INP as default metric to rum dashboard and EE Score ([6ae01b5](https://github.com/adobe/helix-run-query/commit/6ae01b51af9a10700f8e1c2b18f44bfa162611f9))
+
 ## [3.0.5](https://github.com/adobe/helix-run-query/compare/v3.0.4...v3.0.5) (2023-05-09)
 
 
