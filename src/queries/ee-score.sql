@@ -73,6 +73,7 @@ WITH visits AS (
     MAX(lcp) AS lcp,
     MAX(cls) AS cls,
     MAX(fid) AS fid,
+    MAX(inp) AS inp,
     MAX(IF(checkpoint = "top", 1, 0)) AS top,
     MAX(IF(checkpoint = "load", 1, 0)) AS load,
     MAX(IF(checkpoint = "click", 1, 0)) AS click
@@ -100,6 +101,7 @@ urldays AS (
     AVG(lcp) AS lcp,
     AVG(cls) AS cls,
     AVG(fid) AS fid,
+    AVG(inp) AS inp,
     LEAST(IF(SUM(top) > 0, SUM(load) / SUM(top), 0), 1) AS load,
     LEAST(IF(SUM(top) > 0, SUM(click) / SUM(top), 0), 1) AS click
   FROM visits # FULL JOIN days ON (days.visittime = visits.visittime)
@@ -116,6 +118,7 @@ steps AS (
     lcp,
     cls,
     fid,
+    inp,
     load,
     click,
     TIMESTAMP_DIFF(
@@ -134,6 +137,7 @@ chains AS (
     lcp,
     cls,
     fid,
+    inp,
     load,
     click,
     step,
@@ -184,6 +188,7 @@ cwvquintiles AS (
     APPROX_QUANTILES(DISTINCT lcp, 3) AS lcp,
     APPROX_QUANTILES(DISTINCT cls, 3) AS cls,
     APPROX_QUANTILES(DISTINCT fid, 3) AS fid,
+    APPROX_QUANTILES(DISTINCT inp, 3) AS inp,
     APPROX_QUANTILES(DISTINCT load, 3) AS load,
     APPROX_QUANTILES(DISTINCT click, 3) AS click
   FROM chains
@@ -195,6 +200,7 @@ cwvquintiletable AS (
     lcp[OFFSET(num)] AS lcp,
     cls[OFFSET(num)] AS cls,
     fid[OFFSET(num)] AS fid,
+    inp[OFFSET(num)] AS inp,
     load[OFFSET(3 - num)] AS load,
     click[OFFSET(3 - num)] AS click
   FROM cwvquintiles INNER JOIN UNNEST(GENERATE_ARRAY(0, 3)) AS num
@@ -214,6 +220,7 @@ quintiletable AS (
     cwvquintiletable.cls AS cls,
     cwvquintiletable.lcp AS lcp,
     cwvquintiletable.fid AS fid,
+    cwvquintiletable.inp AS inp,
     cwvquintiletable.load AS load,
     cwvquintiletable.click AS click,
     powercurvequintiletable.reach AS reach,
@@ -231,10 +238,12 @@ lookmeup AS (
     LABELSCORE(
       (
         (
+          # todo: replace FID with INP in April 2024
           (clsscore + lcpscore + fidscore) / 3
         ) + ((reachscore + persistencescore + loadscore) / 3) + (clickscore)
       ) / 3
     ) AS experiencescore,
+    # todo: replace FID with INP in April 2024
     LABELSCORE((clsscore + lcpscore + fidscore) / 3) AS perfscore,
     LABELSCORE(
       (reachscore + persistencescore + loadscore) / 3
@@ -247,6 +256,7 @@ lookmeup AS (
       # (SELECT num FROM quintiletable WHERE quintiletable.CLS <= chained.CLS) AS clsscore,
       chained.lcp AS lcp,
       chained.fid AS fid,
+      chained.inp AS inp,
       chained.load AS load,
       chained.click AS click,
       chained.reach AS reach,
@@ -266,6 +276,11 @@ lookmeup AS (
         FROM
           (SELECT num FROM quintiletable WHERE quintiletable.fid <= chained.fid)
       ) AS fidscore,
+      (
+        SELECT MAX(num)
+        FROM
+          (SELECT num FROM quintiletable WHERE quintiletable.inp <= chained.inp)
+      ) AS inpscore,
       (
         SELECT MIN(num)
         FROM
@@ -306,6 +321,7 @@ lookmeup AS (
         AVG(cls) AS cls,
         AVG(lcp) AS lcp,
         AVG(fid) AS fid,
+        AVG(inp) AS inp,
         AVG(load) AS load,
         AVG(click) AS click,
         COUNTIF(chainlength = 1) AS reach,
@@ -325,6 +341,7 @@ lookmeup AS (
       @domain = "-"
       AND clsscore IS NOT NULL
       AND fidscore IS NOT NULL
+      # AND inpscore IS NOT NULL
       AND lcpscore IS NOT NULL
       AND clickscore IS NOT NULL
       AND loadscore IS NOT NULL
