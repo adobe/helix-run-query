@@ -12,7 +12,7 @@
 WITH rum AS (
   SELECT
     weight,
-    REGEXP_REPLACE(hostname, r'$www.', '') AS hostname,
+    REGEXP_REPLACE(hostname, r'www.', '') AS hostname,
     COUNT(DISTINCT id) AS ids,
     FORMAT_DATE('%F', time) AS date
   FROM
