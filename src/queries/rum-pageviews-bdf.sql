@@ -11,29 +11,33 @@
 
 WITH rum AS (
   SELECT
+    weight,
     REGEXP_REPLACE(hostname, r'$www.', '') AS hostname,
     COUNT(DISTINCT id) AS ids,
-    weight,
     FORMAT_DATE('%F', time) AS date
-  FROM helix_rum.EVENTS_V3(
-    @url,
-    CAST(@offset AS INT64),
-    CAST(@interval AS INT64),
-    @startdate,
-    @enddate,
-    @timezone,
-    @device,
-    @domainkey
-  )
+  FROM
+    helix_rum.EVENTS_V3(
+      @url,
+      CAST(@offset AS INT64),
+      CAST(@interval AS INT64),
+      @startdate,
+      @enddate,
+      @timezone,
+      @device,
+      @domainkey
+    )
   GROUP BY date, weight, hostname
 )
+
 SELECT
   rum_data.hostname,
-  SUM(rum_data.ids * rum_data.weight) AS estimated_pv,
   rum_data.date,
-  di.ims_org_id
+  di.ims_org_id,
+  SUM(rum_data.ids * rum_data.weight) AS estimated_pv
 FROM rum AS rum_data
-INNER JOIN `helix_reporting.domain_info` AS di ON rum_data.hostname = di.domain
-AND di.ims_org_id != ''
+INNER JOIN `helix_reporting.domain_info` AS di
+  ON
+    rum_data.hostname = di.domain
+    AND di.ims_org_id != ''
 GROUP BY rum_data.hostname, rum_data.date, di.ims_org_id
 ORDER BY rum_data.hostname, rum_data.date
