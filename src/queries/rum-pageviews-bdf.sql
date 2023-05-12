@@ -28,12 +28,12 @@ WITH rum AS (
   GROUP BY date, weight, hostname
 )
 SELECT
-  a.hostname,
-  SUM(a.rum_count * a.weight) AS estimated_pv,
-  a.date,
-  b.ims_org_id
+  rum_data.hostname,
+  SUM(rum_data.ids * rum_data.weight) AS estimated_pv,
+  rum_data.date,
+  di.ims_org_id
 FROM rum AS rum_data
-INNER JOIN `helix_reporting.domain_info` b ON a.hostname = b.domain
-AND b.ims_org_id != ''
-GROUP BY a.hostname, a.date, b.ims_org_id
-ORDER BY a.hostname, a.date
+INNER JOIN `helix_reporting.domain_info` AS di ON rum_data.hostname = di.domain
+AND di.ims_org_id != ''
+GROUP BY rum_data.hostname, rum_data.date, di.ims_org_id
+ORDER BY rum_data.hostname, rum_data.date
