@@ -50,8 +50,8 @@ previous_data AS (
       # offset in days from today
       CAST(@interval AS INT64) + CAST(@offset AS INT64),
       CAST(@interval AS INT64), # interval in days to consider
-      @enddate, # not used, start date
-      FORMAT_DATE("%F", DATE_ADD(@enddate, INTERVAL ABS(DATE_DIFF(DATE(@enddate, @timezone), DATE(@startdate, @timezone), DAY)) DAY)), # not used, end date
+      FORMAT_DATE("%F", DATE_SUB(@startdate, INTERVAL ABS(DATE_DIFF(DATE(@enddate, @timezone), DATE(@startdate, @timezone), DAY)) DAY)), # not used, start date
+      @startdate, # not used, end date
       @timezone, # timezone
       @device, # device class
       @domainkey
