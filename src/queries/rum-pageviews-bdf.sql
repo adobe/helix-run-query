@@ -14,7 +14,7 @@ WITH rum AS (
     REGEXP_REPLACE(hostname, r'$www.', '') AS hostname,
     COUNT(DISTINCT id) AS rum_count,
     weight,
-    FORMAT_DATE('%Y-%m-%d', time) AS date
+    FORMAT_DATE('%F', time) AS date
   FROM helix_rum.EVENTS_V3(
     @url,
     CAST(@offset AS INT64),
