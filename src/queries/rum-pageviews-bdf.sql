@@ -12,7 +12,7 @@
 WITH rum AS (
   SELECT
     REGEXP_REPLACE(hostname, r'$www.', '') AS hostname,
-    COUNT(DISTINCT id) AS rum_count,
+    COUNT(DISTINCT id) AS ids,
     weight,
     FORMAT_DATE('%F', time) AS date
   FROM helix_rum.EVENTS_V3(
