@@ -33,7 +33,8 @@ SELECT
   rum_data.hostname,
   rum_data.date,
   di.ims_org_id,
-  SUM(rum_data.ids * rum_data.weight) AS estimated_pv
+  SUM(rum_data.ids * rum_data.weight) AS estimated_pv,
+  MAX(rum_data.weight) AS max_weight
 FROM rum AS rum_data
 INNER JOIN `helix_reporting.domain_info` AS di
   ON
