@@ -32,7 +32,7 @@ SELECT
   SUM(a.rum_count * a.weight) AS estimated_pv,
   a.date,
   b.ims_org_id
-FROM rum a
+FROM rum AS rum_data
 INNER JOIN `helix_reporting.domain_info` b ON a.hostname = b.domain
 AND b.ims_org_id != ''
 GROUP BY a.hostname, a.date, b.ims_org_id
