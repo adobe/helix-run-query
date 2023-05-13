@@ -63,7 +63,7 @@
     "chai": "4.3.7",
     "chai-http": "4.3.0",
     "eslint": "8.40.0",
-    "esmock": "2.2.1",
+    "esmock": "2.2.2",
     "husky": "8.0.3",
     "jsdoc-to-markdown": "8.0.0",
     "junit-report-builder": "3.0.1",
