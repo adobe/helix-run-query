@@ -33,12 +33,13 @@ SELECT
   rum_data.hostname,
   rum_data.date,
   di.ims_org_id,
-  rum_data.ids * rum_data.weight AS estimated_pv,
-  rum_data.weight
+  rum_data.weight,
+  rum_data.ids * rum_data.weight AS estimated_pv
 FROM rum AS rum_data
 INNER JOIN `helix_reporting.domain_info` AS di
   ON
     rum_data.hostname = di.domain
     AND di.ims_org_id != ''
-GROUP BY rum_data.hostname, rum_data.date, di.ims_org_id, rum_data.ids, rum_data.weight
+GROUP BY
+  rum_data.hostname, rum_data.date, di.ims_org_id, rum_data.ids, rum_data.weight
 ORDER BY rum_data.hostname, rum_data.date
