@@ -7,6 +7,15 @@
 --- granularity: 1
 --- timezone: UTC
 --- domainkey: secret
-SELECT *
+SELECT
+  pr_url,
+  repository,
+  title,
+  user,
+  pr_id,
+  pr_number,
+  created_at,
+  merged_at,
+  owner_repo
 FROM `helix-225321.mrosier_test.cashub_franklin_prs`
-order by owner_repo
+ORDER BY owner_repo
