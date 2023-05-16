@@ -8,12 +8,30 @@
 --- timezone: UTC
 --- domainkey: secret
 WITH validkeys AS (
-    SELECT *
-    FROM `helix-225321.helix_reporting.domain_keys`
-    WHERE key_bytes = SHA512(@domainkey)
+  SELECT hostname_prefix
+  FROM `helix-225321.helix_reporting.domain_keys`
+  WHERE
+    key_bytes = SHA512(@domainkey)
     AND (revoke_date IS NULL OR revoke_date > CURRENT_DATE('UTC'))
 )
-SELECT *
-FROM `helix-225321.mrosier_test.daily_rum_data`
-JOIN validkeys ON REGEXP_REPLACE(host, 'www.', '') = hostname_prefix OR hostname_prefix = ''
-order by host, month, day, year
+
+SELECT
+  drd.host,
+  drd.repo,
+  drd.avglcp,
+  drd.avgfid,
+  drd.avgcls,
+  drd.month,
+  drd.day,
+  drd.year
+FROM `helix-225321.mrosier_test.daily_rum_data` AS drd
+INNER JOIN
+  validkeys
+  ON
+    REGEXP_REPLACE(drd.host, 'www.', '') = validkeys.hostname_prefix
+    OR validkeys.hostname_prefix = ''
+ORDER BY
+  drd.host,
+  drd.month,
+  drd.day,
+  drd.year
