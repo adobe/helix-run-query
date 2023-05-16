@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/adobe/helix-run-query/compare/v3.1.0...v3.1.1) (2023-05-16)
+
+
+### Bug Fixes
+
+* **ee-score:** do not use deprecated URL parameter domain ([fec2d3f](https://github.com/adobe/helix-run-query/commit/fec2d3f1bab8bd2881ad68b76b458f1a88302c1b))
+
 # [3.1.0](https://github.com/adobe/helix-run-query/compare/v3.0.5...v3.1.0) (2023-05-11)
 
 
