@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/adobe/helix-run-query/compare/v3.1.1...v3.1.2) (2023-05-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fetch to v4.0.13 ([023f7f9](https://github.com/adobe/helix-run-query/commit/023f7f9a04793b476e635628f6a2feb929744025))
+
 ## [3.1.1](https://github.com/adobe/helix-run-query/compare/v3.1.0...v3.1.1) (2023-05-16)
 
 
