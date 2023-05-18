@@ -32,6 +32,6 @@ INNER JOIN
     OR validkeys.hostname_prefix = ''
 ORDER BY
   drd.host,
+  drd.year,
   drd.month,
-  drd.day,
-  drd.year
+  drd.day
