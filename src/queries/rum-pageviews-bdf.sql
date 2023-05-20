@@ -1,5 +1,6 @@
 --- description: Show page views for specified domains for specified dates based on extrapolation from RUM data
 --- Authorization: none
+--- Access-Control-Allow-Origin: *
 --- interval: 30
 --- offset: 0
 --- startdate: 2023-05-01
