@@ -1,6 +1,7 @@
 --- description: Get daily average RUM statistics
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
+--- Cache-Control: max-age=300
 --- interval: 30
 --- offset: 0
 --- url: 
