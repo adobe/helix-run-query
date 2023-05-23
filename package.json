@@ -99,6 +99,7 @@
       "src/queries/rum-sources-targets.sql",
       "src/queries/rum-sources.sql",
       "src/queries/rum-targets.sql",
+      "src/queries/rum-pageviews-bdf.sql",
       "src/queries/daily-rum.sql",
       "src/queries/github-prs.sql",
       "src/queries/site4s.sql"
