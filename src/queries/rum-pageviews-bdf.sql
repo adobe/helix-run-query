@@ -4,7 +4,7 @@
 --- interval: 30
 --- offset: 0
 --- startdate: 2023-05-01
---- enddate: 2023-06-01
+--- enddate: 2023-05-30
 --- timezone: UTC
 --- url: -
 --- device: all
