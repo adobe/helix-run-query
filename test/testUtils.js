@@ -18,6 +18,7 @@ import {
   getHeaderParams,
   loadQuery, resolveParameterDiff,
   sshonify,
+  validParamCheck,
 } from '../src/util.js';
 
 describe('testing util functions', () => {
@@ -201,6 +202,47 @@ SELECT @something1, @something2 WHERE @tablename`;
     const result = csvify([]);
     const expected = '';
     assert.equal(result, expected);
+  });
+
+  it('validParamCheck returns false if there is array in param', () => {
+    const badParams = {
+      one: 'okay',
+      two: 'okay',
+      three: [1, 2, 3, 4, 5],
+      four: 'okay',
+    };
+
+    const EXPECTED_STATUS = '400';
+    const EXPECTED_MESSAGE = `An Array was found in the request 
+    parameters that were sent to this server. Please check your http request`;
+
+    try {
+      validParamCheck(badParams);
+    } catch (e) {
+      assert.deepEqual(EXPECTED_STATUS, e.statusCode);
+      console.log('HAPPENS');
+      assert.deepEqual(EXPECTED_MESSAGE, e.message);
+    }
+  });
+
+  it('resolveParameterDiff will throw error with 400 if array detected', () => {
+    const badParams = {
+      one: 'okay',
+      two: 'okay',
+      three: [1, 2, 3, 4, 5],
+      four: 'okay',
+    };
+
+    const EXPECTED_STATUS = 400;
+    const EXPECTED_MESSAGE = `An Array was found in the request 
+    parameters that were sent to this server. Please check your http request`;
+
+    try {
+      resolveParameterDiff(badParams, {});
+    } catch (e) {
+      assert.deepEqual(EXPECTED_STATUS, e.statusCode);
+      assert.deepEqual(EXPECTED_MESSAGE, e.message);
+    }
   });
 });
 
