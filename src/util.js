@@ -123,8 +123,7 @@ export function resolveParameterDiff(params, defaults) {
   if (validParamCheck(resolvedParams)) {
     return resolvedParams;
   } else {
-    const err = new Error(`An Array was found in the request 
-    parameters that were sent to this server. Please check your http request`);
+    const err = new Error('Duplicate URL parameters found');
     err.statusCode = 400;
     throw err;
   }
