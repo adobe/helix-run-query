@@ -98,7 +98,8 @@
       "src/queries/rum-pageviews.sql",
       "src/queries/rum-sources-targets.sql",
       "src/queries/rum-sources.sql",
-      "src/queries/rum-targets.sql"
+      "src/queries/rum-targets.sql",
+      "src/queries/dash-cwv.sql"
     ]
   }
 }
