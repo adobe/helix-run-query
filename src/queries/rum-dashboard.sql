@@ -1,6 +1,7 @@
 --- description: Get Helix RUM data for a given domain or owner/repo combination
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
+--- Cache-control: max-age=300
 --- limit: 10
 --- interval: 30
 --- offset: 0
