@@ -1,7 +1,7 @@
 --- description: Get daily reported 404s for a site.
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
---- Cache-control: max-age=300
+--- Cache-control: max-age=86400
 --- interval: 30
 --- offset: 0
 --- url: 
