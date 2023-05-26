@@ -10,12 +10,10 @@
 --- device: all
 --- domainkey: secret
 
--- TODO: consider whether to retain www prefix and remove IMS org from this query
-
 WITH rum AS (
   SELECT
+    hostname,
     weight,
-    REGEXP_REPLACE(hostname, r'www.', '') AS hostname,
     COUNT(DISTINCT id) AS ids,
     FORMAT_DATE('%F', time) AS date
   FROM
@@ -33,15 +31,9 @@ WITH rum AS (
 )
 
 SELECT
-  rum_data.hostname,
-  rum_data.date,
-  di.ims_org_id,
-  rum_data.ids * rum_data.weight AS estimated_pv
-FROM rum AS rum_data
-INNER JOIN `helix_reporting.domain_info` AS di
-  ON
-    rum_data.hostname = di.domain
-    AND di.ims_org_id != ''
-GROUP BY
-  rum_data.hostname, rum_data.date, di.ims_org_id, rum_data.ids
-ORDER BY rum_data.hostname, rum_data.date
+  hostname,
+  date,
+  SUM(ids * weight) AS estimated_pv
+FROM rum
+GROUP BY hostname, date
+ORDER BY hostname, date
