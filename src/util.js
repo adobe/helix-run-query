@@ -19,7 +19,8 @@ import { MissingQueryError } from './missing-query-error.js';
  * @param {string} query name of the query file
  */
 export async function loadQuery(query) {
-  const pathName = path.resolve(__rootdir, 'src', 'queries', `${query.replace(/^\//, '')}.sql`);
+  // remove any leading slash and convert @ char to / to allow for subfolders under the queries folder
+  const pathName = path.resolve(__rootdir, 'src', 'queries', `${query.replace(/^\//, '').replaceAll('@', '/')}.sql`);
   return new Promise(((resolve, reject) => {
     fs.readFile(pathName, (err, data) => {
       if (err) {
