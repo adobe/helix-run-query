@@ -24,8 +24,7 @@ export async function loadQuery(query) {
     __rootdir,
     'src',
     'queries',
-    `${query.replace(/^\//, '').replaceAll('@', '/')}.sql`
-  );
+    `${query.replace(/^\//, '').replaceAll('@', '/')}.sql`);
   return new Promise(((resolve, reject) => {
     fs.readFile(pathName, (err, data) => {
       if (err) {
