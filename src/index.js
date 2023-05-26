@@ -77,7 +77,8 @@ async function run(request, context) {
   params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
   params.GOOGLE_PROJECT_ID = context.env.GOOGLE_PROJECT_ID;
 
-  return runExec(params, pathname.split('/').pop(), context.log);
+  // take final URL path segment and then substitute @ with / to allow for /queries subfolders
+  return runExec(params, pathname.split('/').pop().replaceAll('@', '/'), context.log);
 }
 
 /**
