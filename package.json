@@ -99,9 +99,9 @@
       "src/queries/rum-sources-targets.sql",
       "src/queries/rum-sources.sql",
       "src/queries/rum-targets.sql",
-      "src/queries/dash-cwv.sql",
-      "src/queries/dash-conversion.sql",
-      "src/queries/dash/pageviews.sql"
+      "src/queries/dash/pageviews.sql",
+      "src/queries/dash/cwv.sql",
+      "src/queries/dash/conversion.sql"
     ]
   }
 }
