@@ -100,7 +100,9 @@
       "src/queries/rum-sources.sql",
       "src/queries/rum-targets.sql",
       "src/queries/dash/pageviews.sql",
-      "src/queries/dash/cwv.sql",
+      "src/queries/dash/top-pages.sql",
+      "src/queries/dash/cwv-domain.sql",
+      "src/queries/dash/cwv-page.sql",
       "src/queries/dash/conversion.sql"
     ]
   }
