@@ -17,14 +17,12 @@ WITH validkeys AS (
 )
 
 SELECT
-  drd.host,
+  REGEXP_REPLACE(drd.host, 'www.', '') as host,
   drd.repo,
   drd.avglcp,
   drd.avgfid,
   drd.avgcls,
-  drd.month,
-  drd.day,
-  drd.year
+  drd.date
 FROM `helix-225321.mrosier_test.daily_rum_data` AS drd
 INNER JOIN
   validkeys
@@ -33,6 +31,4 @@ INNER JOIN
     OR validkeys.hostname_prefix = ''
 ORDER BY
   drd.host,
-  drd.year,
-  drd.month,
-  drd.day
+  drd.date

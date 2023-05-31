@@ -102,7 +102,10 @@
       "src/queries/rum-pageviews-bdf.sql",
       "src/queries/daily-rum.sql",
       "src/queries/github-prs.sql",
-      "src/queries/site4s.sql"
+      "src/queries/site4s.sql",
+      "src/queries/sk-actions-by-repo.sql",
+      "src/queries/sk-daily-users.sql",
+      "src/queries/sk-interactions.sql"
     ]
   }
 }

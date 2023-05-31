@@ -1,7 +1,7 @@
 --- description: Get Github Development Data for a Site
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
---- Cache-control: max-age=42300
+--- Cache-Control: max-age=42300
 --- interval: 30
 --- offset: 0
 --- url: 

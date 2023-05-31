@@ -1,6 +1,7 @@
 --- description: Get popularity data for RUM source attribute values, filtered by checkpoint
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
+--- Cache-Control: max-age=86400
 --- limit: 30
 --- interval: 30
 --- offset: 0

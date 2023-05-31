@@ -1,7 +1,7 @@
 --- description: Get daily reported 404s for a site.
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
---- Cache-control: max-age=86400
+--- Cache-Control: max-age=86400
 --- interval: 30
 --- offset: 0
 --- url: 
@@ -21,7 +21,8 @@ SELECT
   c404.owner_repo,
   c404.live,
   c404.url,
-  c404.req_count
+  c404.req_count,
+  c404.date
 FROM `helix-225321.mrosier_test.cashub_404` AS c404
 INNER JOIN
   validkeys
