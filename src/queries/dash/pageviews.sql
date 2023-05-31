@@ -1,7 +1,7 @@
 --- description: Show page views for specified domains for specified dates based on extrapolation from RUM data
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
---- Cache-Control: max-age=86400
+--- Cache-Control: max-age=43200
 --- interval: 30
 --- offset: 0
 --- startdate: 2023-05-01
