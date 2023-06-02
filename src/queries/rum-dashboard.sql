@@ -491,4 +491,4 @@ FROM (
     current_truncated_rum_by_url.pageviews DESC,
     previous_truncated_rum_by_url.pageviews DESC
 ) WHERE
-  rank <= @limit OR url = "Other" OR @rising
+  (avglcp is not null and avgfid is not null and avgcls is not null) and (rank <= @limit OR url != "Other" OR @rising)
