@@ -1,6 +1,7 @@
 --- description: Get Helix RUM data for a given domain or owner/repo combination
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
+--- Cache-Control: max-age=21500
 --- limit: 10
 --- interval: 30
 --- offset: 0
@@ -490,4 +491,4 @@ FROM (
     current_truncated_rum_by_url.pageviews DESC,
     previous_truncated_rum_by_url.pageviews DESC
 ) WHERE
-  rank <= @limit OR url = "Other" OR @rising
+  (avglcp is not null and avgfid is not null and avgcls is not null) and (rank <= @limit OR url != "Other" OR @rising)

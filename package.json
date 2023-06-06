@@ -106,7 +106,10 @@
       "src/queries/dash/conversion.sql",
       "src/queries/dash/daily-rum.sql",
       "src/queries/dash/github-prs.sql",
-      "src/queries/dash/site4s.sql"
+      "src/queries/dash/site4s.sql",
+      "src/queries/dash/sk-actions-by-repo.sql",
+      "src/queries/dash/sk-daily-users.sql",
+      "src/queries/dash/sk-interactions.sql"
     ]
   }
 }

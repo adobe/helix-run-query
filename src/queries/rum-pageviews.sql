@@ -1,5 +1,6 @@
 --- description: Get daily page views for a site according to Helix RUM data
 --- Authorization: none
+--- Cache-Control: max-age=43200
 --- Access-Control-Allow-Origin: *
 --- interval: 30
 --- offset: 0
