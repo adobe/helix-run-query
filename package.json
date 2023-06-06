@@ -103,7 +103,10 @@
       "src/queries/dash/top-pages.sql",
       "src/queries/dash/cwv-domain.sql",
       "src/queries/dash/cwv-page.sql",
-      "src/queries/dash/conversion.sql"
+      "src/queries/dash/conversion.sql",
+      "src/queries/dash/daily-rum.sql",
+      "src/queries/dash/github-prs.sql",
+      "src/queries/dash/site4s.sql"
     ]
   }
 }
