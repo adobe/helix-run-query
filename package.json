@@ -72,7 +72,7 @@
     "mocha": "10.2.0",
     "mocha-multi-reporters": "1.5.1",
     "semantic-release": "21.0.5",
-    "sinon": "15.1.2"
+    "sinon": "15.2.0"
   },
   "lint-staged": {
     "*.js": "eslint",
