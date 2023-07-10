@@ -11,7 +11,8 @@ SELECT
   req_url,
   COUNT(time_start_usec) AS requests
 FROM `helix-225321.helix_logging_7TvULgs0Xnls4q3R8tawdg.requests*`
-WHERE req_http_x_owner = @owner
+WHERE
+  req_http_x_owner = @owner
   AND req_http_x_repo = @repo
   AND req_http_x_ref = @branch
   AND resp_http_content_type = "text/html; charset=utf-8"
