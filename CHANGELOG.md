@@ -1,3 +1,10 @@
+## [3.1.4](https://github.com/adobe/helix-run-query/compare/v3.1.3...v3.1.4) (2023-07-10)
+
+
+### Bug Fixes
+
+* **dev-urls:** guard aginst non-string owner, repo, ref names ([7096bb2](https://github.com/adobe/helix-run-query/commit/7096bb2d0366392e73846284b5034eb62f36203b))
+
 ## [3.1.3](https://github.com/adobe/helix-run-query/compare/v3.1.2...v3.1.3) (2023-07-05)
 
 
