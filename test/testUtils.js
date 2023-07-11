@@ -219,7 +219,6 @@ SELECT @something1, @something2 WHERE @tablename`;
       validParamCheck(badParams);
     } catch (e) {
       assert.deepEqual(EXPECTED_STATUS, e.statusCode);
-      console.log('HAPPENS');
       assert.deepEqual(EXPECTED_MESSAGE, e.message);
     }
   });
@@ -233,8 +232,7 @@ SELECT @something1, @something2 WHERE @tablename`;
     };
 
     const EXPECTED_STATUS = 400;
-    const EXPECTED_MESSAGE = `An Array was found in the request 
-    parameters that were sent to this server. Please check your http request`;
+    const EXPECTED_MESSAGE = 'Duplicate URL parameters found';
 
     try {
       resolveParameterDiff(badParams, {});
