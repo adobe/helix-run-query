@@ -7,6 +7,31 @@
 --- targets: https://, http://
 --- intervals: 2023-06-22,#target,2023-05-01,#mayday
 --- domainkey: secret
+
+CREATE TEMPORARY FUNCTION
+CDF(nto FLOAT64)
+RETURNS FLOAT64
+LANGUAGE js AS """
+{
+    var mean = 0.0;
+    var sigma = 1.0;
+    var z = (nto-mean)/Math.sqrt(2*sigma*sigma);
+    var t = 1/(1+0.3275911*Math.abs(z));
+    var a1 =  0.254829592;
+    var a2 = -0.284496736;
+    var a3 =  1.421413741;
+    var a4 = -1.453152027;
+    var a5 =  1.061405429;
+    var erf = 1-(((((a5*t + a4)*t) + a3)*t + a2)*t + a1)*t*Math.exp(-z*z);
+    var sign = 1;
+    if(z < 0)
+    {
+        sign = -1;
+    }
+    return (1/2)*(1+sign*erf);
+}
+""";
+
 WITH prefixes AS (
   SELECT CONCAT(TRIM(prefix), "%") AS prefix
   FROM
@@ -59,9 +84,10 @@ alldata AS (
     checkpoint,
     source,
     target,
-    lcp
+    lcp,
+    time
   FROM
-    `HELIX-225321.HELIX_RUM.EVENTS_V3`(
+    `helix-225321.helix_rum.EVENTS_V3`(
       @url,
       -1, # not used
       -1, # not used
@@ -95,7 +121,9 @@ alllcps AS (
 allids AS (
   SELECT
     alldata.id,
-    ANY_VALUE(named_intervals.interval_name) AS interval_name
+    ANY_VALUE(named_intervals.interval_name) AS interval_name,
+    ANY_VALUE(named_intervals.interval_start) AS interval_start,
+    ANY_VALUE(named_intervals.interval_end) AS interval_end
   FROM alldata INNER JOIN named_intervals
     ON (
       named_intervals.interval_start <= alldata.time
@@ -107,7 +135,9 @@ allids AS (
 events AS (
   SELECT
     allids.id,
-    allids.interval_name,
+    ANY_VALUE(allids.interval_name) AS interval_name,
+    ANY_VALUE(allids.interval_start) AS interval_start,
+    ANY_VALUE(allids.interval_end) AS interval_end,
     ANY_VALUE(alllcps.lcp) AS lcp,
     COUNT(DISTINCT linkclickevents.target) AS linkclicks
   FROM linkclickevents FULL JOIN allids ON linkclickevents.id = allids.id
@@ -116,6 +146,21 @@ events AS (
   ORDER BY lcp DESC
 ),
 
-SELECT * FROM named_intervals
+intervals AS (
+  SELECT
+    interval_name,
+    ANY_VALUE(interval_start) AS interval_start,
+    ANY_VALUE(interval_end) AS interval_end,
+    COUNT(DISTINCT id) AS events,
+    SUM(linkclicks) AS conversions,
+    AVG(lcp) AS lcp,
+    STDDEV(lcp) AS lcp_stddev,
+    COUNT(DISTINCT id) / SUM(linkclicks) AS conversion_rate,
+    STDDEV(lcp) / SQRT(COUNT(DISTINCT id)) AS lcp_standard_error
+  FROM events
+  GROUP BY interval_name
+)
+
+SELECT * FROM intervals
 
 # Work in progress, steal from rum-checkpoint-cwv-correlation
