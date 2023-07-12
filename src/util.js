@@ -105,12 +105,28 @@ export function cleanRequestParams(params) {
 }
 
 /**
+ * function checks that all parameters are not arrays.
+ * @param {*} params
+ * @returns
+ */
+export function validParamCheck(params) {
+  return Object.values(params).every((param) => !(Array.isArray(param)));
+}
+
+/**
  * fills in missing query parameters (if any) with defaults from query file
  * @param {object} params provided parameters
  * @param {object} defaults default parameters in query file
  */
 export function resolveParameterDiff(params, defaults) {
-  return Object.assign(defaults, params);
+  const resolvedParams = Object.assign(defaults, params);
+  if (validParamCheck(resolvedParams)) {
+    return resolvedParams;
+  } else {
+    const err = new Error('Duplicate URL parameters found');
+    err.statusCode = 400;
+    throw err;
+  }
 }
 
 function format(entry) {
