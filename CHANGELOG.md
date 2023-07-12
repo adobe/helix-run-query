@@ -1,3 +1,10 @@
+## [3.1.5](https://github.com/adobe/helix-run-query/compare/v3.1.4...v3.1.5) (2023-07-12)
+
+
+### Bug Fixes
+
+* **utils.js:** fix bug that enables arrays to pass ([#886](https://github.com/adobe/helix-run-query/issues/886)) ([9a829d0](https://github.com/adobe/helix-run-query/commit/9a829d08a932f90fc832be325dabb1eee43a0d3a))
+
 ## [3.1.4](https://github.com/adobe/helix-run-query/compare/v3.1.3...v3.1.4) (2023-07-10)
 
 
