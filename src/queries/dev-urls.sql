@@ -11,9 +11,10 @@ SELECT
   req_url,
   COUNT(time_start_usec) AS requests
 FROM `helix-225321.helix_logging_7TvULgs0Xnls4q3R8tawdg.requests*`
-WHERE req_http_x_owner = @owner
-  AND req_http_x_repo = @repo
-  AND req_http_x_ref = @branch
+WHERE
+  req_http_x_owner = CAST(@owner AS STRING)
+  AND req_http_x_repo = CAST(@repo AS STRING)
+  AND req_http_x_ref = CAST(@branch AS STRING)
   AND resp_http_content_type = "text/html; charset=utf-8"
   AND status_code = "200"
   # AND req_http_Referer LIKE "http://localhost:%"
