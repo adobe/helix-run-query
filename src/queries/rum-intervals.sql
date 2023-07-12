@@ -95,8 +95,9 @@ alldata AS (
       @enddate,
       @timezone,
       "all",
-      "-"
+      @domainkey
     )
+  WHERE weight > 0
 ),
 
 linkclickevents AS (
@@ -155,12 +156,46 @@ intervals AS (
     SUM(linkclicks) AS conversions,
     AVG(lcp) AS lcp,
     STDDEV(lcp) AS lcp_stddev,
-    COUNT(DISTINCT id) / SUM(linkclicks) AS conversion_rate,
+    SUM(linkclicks) / COUNT(DISTINCT id) AS conversion_rate,
     STDDEV(lcp) / SQRT(COUNT(DISTINCT id)) AS lcp_standard_error
   FROM events
   GROUP BY interval_name
+),
+
+last_interval AS (
+  SELECT
+    interval_name,
+    interval_start,
+    interval_end,
+    events,
+    conversions,
+    lcp,
+    lcp_stddev,
+    conversion_rate,
+    lcp_standard_error
+  FROM intervals
+  ORDER BY interval_start DESC
+  LIMIT 1
+),
+
+all_results AS (
+  SELECT
+    l.interval_name,
+    l.interval_start,
+    l.interval_end,
+    l.events,
+    l.conversions,
+    l.lcp,
+    l.lcp_stddev,
+    l.conversion_rate,
+    l.lcp_standard_error,
+    # lcp_p_value is the probability that the difference in LCP between the
+    # current interval and the last interval is due to chance
+
+  FROM intervals AS l INNER JOIN last_interval AS r
+    ON (l.interval_name IS NOT NULL)
 )
 
-SELECT * FROM intervals
+SELECT * FROM all_results
 
 # Work in progress, steal from rum-checkpoint-cwv-correlation
