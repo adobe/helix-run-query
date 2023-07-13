@@ -141,10 +141,10 @@ events AS (
     ANY_VALUE(allids.interval_end) AS interval_end,
     ANY_VALUE(alllcps.lcp) AS lcp,
     COUNT(DISTINCT linkclickevents.target) AS linkclicks
-  FROM linkclickevents FULL JOIN allids ON linkclickevents.id = allids.id
-  INNER JOIN alllcps ON (alllcps.id = allids.id)
+  FROM linkclickevents
+  FULL JOIN allids ON linkclickevents.id = allids.id
+  FULL JOIN alllcps ON alllcps.id = allids.id
   GROUP BY allids.id
-  ORDER BY lcp DESC
 ),
 
 intervals AS (
@@ -154,10 +154,12 @@ intervals AS (
     ANY_VALUE(interval_end) AS interval_end,
     COUNT(DISTINCT id) AS events,
     SUM(linkclicks) AS conversions,
-    AVG(lcp) AS lcp,
-    STDDEV(lcp) AS lcp_stddev,
     SUM(linkclicks) / COUNT(DISTINCT id) AS conversion_rate,
-    STDDEV(lcp) / SQRT(COUNT(DISTINCT id)) AS lcp_standard_error
+    AVG(lcp) AS lcp_mean,
+    # number of LCPs values in the interval
+    COUNT(lcp) AS lcp_count,
+    STDDEV(lcp) AS lcp_stddev,
+    STDDEV(lcp) / SQRT(COUNT(lcp)) AS lcp_stderr
   FROM events
   GROUP BY interval_name
 ),
@@ -169,10 +171,11 @@ last_interval AS (
     interval_end,
     events,
     conversions,
-    lcp,
-    lcp_stddev,
     conversion_rate,
-    lcp_standard_error
+    lcp_mean,
+    lcp_count,
+    lcp_stddev,
+    lcp_stderr
   FROM intervals
   ORDER BY interval_start DESC
   LIMIT 1
@@ -185,12 +188,22 @@ all_results AS (
     l.interval_end,
     l.events,
     l.conversions,
-    l.lcp,
-    l.lcp_stddev,
     l.conversion_rate,
-    l.lcp_standard_error,
-    # lcp_p_value is the probability that the difference in LCP between the
-    # current interval and the last interval is due to chance
+    l.lcp_mean,
+    l.lcp_count,
+    l.lcp_stddev,
+    IF(
+      l.interval_name != r.interval_name,
+      1 - CDF(
+        ABS(l.lcp_mean - r.lcp_mean) / (
+          SQRT(
+            (l.lcp_count - 1) * POWER(l.lcp_stderr, 2)
+            + (r.lcp_count - 1) * POWER(r.lcp_stderr, 2)
+          ) / SQRT(l.lcp_count + r.lcp_count - 2)
+        )
+      ), NULL
+    ) AS lcp_p_value
+
 
   FROM intervals AS l INNER JOIN last_interval AS r
     ON (l.interval_name IS NOT NULL)
