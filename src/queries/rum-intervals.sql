@@ -195,6 +195,24 @@ all_results AS (
     IF(
       l.interval_name != r.interval_name,
       1 - CDF(
+        ABS(l.conversion_rate - r.conversion_rate) / SQRT(
+          (
+            (
+              l.conversions + r.conversions
+            ) / (l.events + r.events)
+          ) * (
+            1 - (
+              (
+                l.conversions + r.conversions
+              ) / (l.events + r.events)
+            ) * (1 / l.events + 1 / r.events)
+          )
+        )
+      ), NULL
+    ) AS conversion_p_value,
+    IF(
+      l.interval_name != r.interval_name,
+      1 - CDF(
         ABS(l.lcp_mean - r.lcp_mean) / (
           SQRT(
             (l.lcp_count - 1) * POWER(l.lcp_stderr, 2)
@@ -207,6 +225,7 @@ all_results AS (
 
   FROM intervals AS l INNER JOIN last_interval AS r
     ON (l.interval_name IS NOT NULL)
+  ORDER BY l.interval_start DESC
 )
 
 SELECT * FROM all_results
