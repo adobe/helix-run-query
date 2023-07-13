@@ -1,7 +1,5 @@
 --- description: For each of the specified intervals, report conversion rate, average LCP, FID, CLS, INP, standard error, and if there is a statistically significant difference between the latest interval and the current interval
 --- url: -
---- startdate: 2021-06-22
---- enddate: 2021-06-22
 --- timezone: UTC
 --- conversioncheckpoint: click
 --- targets: https://, http://
@@ -71,7 +69,7 @@ named_intervals AS (
   FROM (
     SELECT
       next_val AS interval_name,
-      TIMESTAMP(current_val) AS interval_start
+      TIMESTAMP(current_val, @timezone) AS interval_start
     FROM numbered_intervals
     WHERE MOD(row_num, 2) = 1
   )
@@ -91,8 +89,11 @@ alldata AS (
       @url,
       -1, # not used
       -1, # not used
-      @startdate,
-      @enddate,
+      (
+        SELECT FORMAT_TIMESTAMP("%F", interval_start, @timezone)
+        FROM named_intervals ORDER BY interval_start ASC LIMIT 1
+      ),
+      FORMAT_TIMESTAMP("%F", CURRENT_TIMESTAMP(), @timezone),
       @timezone,
       "all",
       @domainkey
