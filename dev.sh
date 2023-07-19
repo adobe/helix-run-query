@@ -4,8 +4,8 @@ PARAMS=$(cat src/queries/$QUERY.sql \
   | grep -e "--- [a-z]" \
   | sed 's/---//g' \
   | sed 's/^/  --parameter /' \
-  | sed -E 's/: ([0-9.]+)/:FLOAT:\1/' \
-  | sed -E 's/: ([0-9]+)/:INT64:\1/' \
+  | sed -E 's/: ([0-9]+)$/:INT64:\1/' \
+  | sed -E 's/: ([0-9.]+)$/:FLOAT:\1/' \
   | sed -E 's/: (.*)/::"\1"/' \
   | tr -d '\n')
 
