@@ -133,6 +133,56 @@ conversion_rates AS (
       AND experimentations_summary.target = conversions_summary.target
 ),
 
+# in case there are no observed conversions for the control, we
+# add a row with nulls, because we know that a control exists
+controls AS (
+  SELECT
+    experiment,
+    'control' AS variant,
+    COALESCE(
+      (
+        SELECT experimentation_events
+        FROM conversion_rates AS i
+        WHERE i.variant = 'control' AND i.experiment = o.experiment
+      ),
+      0
+    ) AS experimentation_events,
+    COALESCE(
+      (
+        SELECT conversion_events
+        FROM conversion_rates AS i
+        WHERE i.variant = 'control' AND i.experiment = o.experiment
+      ),
+      0
+    ) AS conversion_events,
+    COALESCE(
+      (
+        SELECT experimentations
+        FROM conversion_rates AS i
+        WHERE i.variant = 'control' AND i.experiment = o.experiment
+      ),
+      0
+    ) AS experimentations,
+    COALESCE(
+      (
+        SELECT conversions
+        FROM conversion_rates AS i
+        WHERE i.variant = 'control' AND i.experiment = o.experiment
+      ),
+      0
+    ) AS conversions,
+    COALESCE(
+      (
+        SELECT conversion_rate
+        FROM conversion_rates AS i
+        WHERE i.variant = 'control' AND i.experiment = o.experiment
+      ),
+      0
+    ) AS conversion_rate
+  FROM conversion_rates AS o
+  GROUP BY experiment
+),
+
 all_results AS (
   SELECT
     l.experiment,
@@ -152,76 +202,100 @@ all_results AS (
     CAST(l.t95 AS STRING) AS time95,
     CAST(l.t5 AS STRING) AS time5,
     # Math!
-    (
-      l.conversion_events + r.conversion_events
-    ) / (
+    SAFE_DIVIDE(
+      l.conversion_events + r.conversion_events,
       l.experimentation_events + r.experimentation_events
     ) AS pooled_sample_proportion,
     SQRT(
       (
-        (
-          l.conversion_events + r.conversion_events
-        ) / (l.experimentation_events + r.experimentation_events)
+        SAFE_DIVIDE(
+          l.conversion_events + r.conversion_events,
+          l.experimentation_events + r.experimentation_events
+        )
       ) * (
         1 - (
-          (
-            l.conversion_events + r.conversion_events
-          ) / (l.experimentation_events + r.experimentation_events)
-        ) * (1 / l.experimentations + 1 / r.experimentations)
+          SAFE_DIVIDE(
+            l.conversion_events + r.conversion_events,
+            l.experimentation_events + r.experimentation_events
+          )
+        )
+        * (
+          SAFE_DIVIDE(1, l.experimentations)
+          + SAFE_DIVIDE(1, r.experimentations)
+        )
       )
     ) AS pooled_standard_error,
-    (
-      l.conversion_rate - r.conversion_rate
-    ) / SQRT(
-      (
+    SAFE_DIVIDE(
+      l.conversion_rate - r.conversion_rate,
+      SQRT(
         (
-          l.conversion_events + r.conversion_events
-        ) / (l.experimentation_events + r.experimentation_events)
-      ) * (
-        1 - (
-          (
-            l.conversion_events + r.conversion_events
-          ) / (l.experimentation_events + r.experimentation_events)
-        ) * (1 / l.experimentations + 1 / r.experimentations)
+          SAFE_DIVIDE(
+            l.conversion_events + r.conversion_events,
+            l.experimentation_events + r.experimentation_events
+          )
+        ) * (
+          1 - (
+            SAFE_DIVIDE(
+              l.conversion_events + r.conversion_events,
+              l.experimentation_events + r.experimentation_events
+            )
+          )
+          * (
+            SAFE_DIVIDE(1, l.experimentations)
+            + SAFE_DIVIDE(1, r.experimentations)
+          )
+        )
       )
     ) AS test,
     CDF(
       (
         -1
       ) * ABS(
-        (
-          l.conversion_rate - r.conversion_rate
-        ) / SQRT(
-          (
+        SAFE_DIVIDE(
+          l.conversion_rate - r.conversion_rate,
+          SQRT(
             (
-              l.conversion_events + r.conversion_events
-            ) / (l.experimentation_events + r.experimentation_events)
-          ) * (
-            1 - (
-              (
-                l.conversion_events + r.conversion_events
-              ) / (l.experimentation_events + r.experimentation_events)
-            ) * (1 / l.experimentations + 1 / r.experimentations)
+              SAFE_DIVIDE(
+                l.conversion_events + r.conversion_events,
+                l.experimentation_events + r.experimentation_events
+              )
+            ) * (
+              1 - (
+                SAFE_DIVIDE(
+                  l.conversion_events + r.conversion_events,
+                  l.experimentation_events + r.experimentation_events
+                )
+              )
+              * (
+                SAFE_DIVIDE(1, l.experimentations)
+                + SAFE_DIVIDE(1, r.experimentations)
+              )
+            )
           )
         )
       )
     ) AS p_value
   FROM conversion_rates AS l INNER JOIN
-    conversion_rates AS r ON
+    controls AS r ON
     l.experiment = r.experiment
     AND l.variant != r.variant
   WHERE r.variant = 'control' AND l.variant != 'control'
+),
+
+pretty_results AS (
+  SELECT
+    *,
+    CAST(
+      (MAX(tdiff) OVER (PARTITION BY experiment) * CAST(@threshold AS INT64))
+      / (
+        control_conversion_events
+        + (SUM(variant_conversion_events) OVER (PARTITION BY experiment))
+      )
+      - MAX(tdiff) OVER (PARTITION BY experiment) AS INT64
+    ) AS remaining_runtime
+  FROM all_results
+
 )
 
-SELECT
-  *,
-  CAST(
-    (MAX(tdiff) OVER (PARTITION BY experiment) * CAST(@threshold AS INT64))
-    / (
-      control_conversion_events
-      + (SUM(variant_conversion_events) OVER (PARTITION BY experiment))
-    )
-    - MAX(tdiff) OVER (PARTITION BY experiment) AS INT64
-  ) AS remaining_runtime
-FROM all_results
+SELECT * FROM pretty_results
 LIMIT 100
