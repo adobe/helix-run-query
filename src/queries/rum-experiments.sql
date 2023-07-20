@@ -126,7 +126,7 @@ conversion_rates AS (
     experimentations_summary.t5 AS t5,
     experimentations_summary.tdiff AS tdiff,
     conversions_summary.conversions / experimentations_summary.experimentations
-    AS conversion_rate
+      AS conversion_rate
   FROM experimentations_summary FULL JOIN conversions_summary
     ON
       experimentations_summary.source = conversions_summary.source
@@ -276,9 +276,10 @@ all_results AS (
       )
     ) AS p_value
   FROM conversion_rates AS l INNER JOIN
-    controls AS r ON
-    l.experiment = r.experiment
-    AND l.variant != r.variant
+    controls AS r
+    ON
+      l.experiment = r.experiment
+      AND l.variant != r.variant
   WHERE r.variant = 'control' AND l.variant != 'control'
 ),
 
