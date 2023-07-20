@@ -1,3 +1,10 @@
+## [3.1.8](https://github.com/adobe/helix-run-query/compare/v3.1.7...v3.1.8) (2023-07-20)
+
+
+### Bug Fixes
+
+* **dev:** cast command line parameters in correct type ([a3b06d6](https://github.com/adobe/helix-run-query/commit/a3b06d6d7128e02dafeb266d02c98539ae631e46))
+
 ## [3.1.7](https://github.com/adobe/helix-run-query/compare/v3.1.6...v3.1.7) (2023-07-18)
 
 
