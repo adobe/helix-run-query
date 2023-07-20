@@ -191,7 +191,7 @@ all_results AS (
     l.lcp_mean,
     l.lcp_count,
     l.lcp_stddev,
-    STRING(l.interval_start) AS intervagit l_start,
+    STRING(l.interval_start) AS interval_start,
     STRING(l.interval_end) AS interval_end,
     IF(
       l.interval_name != r.interval_name,
