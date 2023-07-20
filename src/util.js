@@ -90,15 +90,8 @@ function splitQuery(query) {
   };
 }
 
-/**
- * Processes additional parameters relating to query properties, like -- Authorization
- * and other properties that will be passed into request/response headers: for example;
- * --- Cache-Control: max-age: 300.
- *
- * @param {string} query the content read from a query file
- */
-export function getHeaderParams(query) {
-  return splitQuery(query).leading.split('\n')
+function getParams(query, part) {
+  return splitQuery(query)[part].split('\n')
     .filter((e) => e.indexOf(':') > 0)
     .map((e) => e.substring(4).split(': '))
     .reduce((acc, val) => {
@@ -109,15 +102,27 @@ export function getHeaderParams(query) {
 }
 
 /**
+ * Processes additional parameters relating to query properties, like -- Authorization
+ * and other properties that will be passed into request/response headers: for example;
+ * --- Cache-Control: max-age: 300.
+ *
+ * @param {string} query the content read from a query file
+ */
+export function getHeaderParams(query) {
+  return getParams(query, 'leading');
+}
+
+export function getTrailingParams(query) {
+  return getParams(query, 'trailing');
+}
+
+/**
  * cleans out extra parameters from query and leaves only query
  *
  * @param {string} query the content read from a query file
  */
 export function cleanQuery(query) {
-  return query.split('\n')
-    .filter((e) => !e.startsWith('---'))
-    .filter((e) => !e.startsWith('#'))
-    .join('\n');
+  return splitQuery(query).query;
 }
 
 /**
@@ -187,7 +192,7 @@ export function csvify(arr) {
  * @param {boolean} truncated whether the result set was truncated
  * @returns {string} the SSHON string
  */
-export function sshonify(results, description, requestParams, truncated) {
+export function sshonify(results, description, requestParams, responseDetails, truncated) {
   const sson = {
     ':names': ['results', 'meta'],
     ':type': 'multi-sheet',
@@ -214,6 +219,11 @@ export function sshonify(results, description, requestParams, truncated) {
           name: key,
           value,
           type: 'request parameter',
+        })),
+        ...Object.entries(responseDetails).map(([key, value]) => ({
+          name: key,
+          value,
+          type: 'response detail',
         })),
       ],
     },

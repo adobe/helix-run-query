@@ -24,7 +24,7 @@ async function runExec(params, pathname, log) {
       return queryInfo(pathname, params);
     }
     const {
-      results, truncated, headers, description, requestParams,
+      results, truncated, headers, description, requestParams, responseDetails,
     } = await execute(
       params.GOOGLE_CLIENT_EMAIL,
       params.GOOGLE_PRIVATE_KEY,
@@ -49,6 +49,7 @@ async function runExec(params, pathname, log) {
       results,
       description,
       requestParams,
+      responseDetails,
       truncated,
     ), {
       status: 200,

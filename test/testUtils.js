@@ -311,9 +311,25 @@ describe('Test SSHONify', () => {
       requestParams: {
         limit: 30, interval: 1, offset: '0', url: 'blog.adobe.com', checkpoint: 'viewblock', source: '-',
       },
+      responseDetails: {
+        checkpoint: 'name of the checkpoint, i.e. the event in the page load or interaction sequence that was observed.',
+        source: 'CSS id or class name of the element that triggered the checkpoint.',
+        ids: 'number of unique RUM ids that triggered the checkpoint.',
+        pages: 'number of unique pages that triggered the checkpoint.',
+        topurl: 'most frequently observed URL that triggered the checkpoint.',
+        views: 'interpolated number of pageviews that triggered the checkpoint.',
+        actions: 'number of times the checkpoint was triggered. This may be greater than the number of unique ids if the same id triggered the checkpoint multiple times.',
+        actions_per_view: 'average number of times the checkpoint was triggered per pageview.',
+      },
       truncated: false,
     };
-    const sshon = sshonify(input.results, input.description, input.requestParams, input.truncated);
+    const sshon = sshonify(
+      input.results,
+      input.description,
+      input.requestParams,
+      input.responseDetails,
+      input.truncated,
+    );
     assert.deepStrictEqual(
       JSON.parse(sshon),
       {
@@ -359,6 +375,46 @@ describe('Test SSHONify', () => {
               name: 'source',
               type: 'request parameter',
               value: '-',
+            },
+            {
+              name: 'checkpoint',
+              type: 'response detail',
+              value: 'name of the checkpoint, i.e. the event in the page load or interaction sequence that was observed.',
+            },
+            {
+              name: 'source',
+              type: 'response detail',
+              value: 'CSS id or class name of the element that triggered the checkpoint.',
+            },
+            {
+              name: 'ids',
+              type: 'response detail',
+              value: 'number of unique RUM ids that triggered the checkpoint.',
+            },
+            {
+              name: 'pages',
+              type: 'response detail',
+              value: 'number of unique pages that triggered the checkpoint.',
+            },
+            {
+              name: 'topurl',
+              type: 'response detail',
+              value: 'most frequently observed URL that triggered the checkpoint.',
+            },
+            {
+              name: 'views',
+              type: 'response detail',
+              value: 'interpolated number of pageviews that triggered the checkpoint.',
+            },
+            {
+              name: 'actions',
+              type: 'response detail',
+              value: 'number of times the checkpoint was triggered. This may be greater than the number of unique ids if the same id triggered the checkpoint multiple times.',
+            },
+            {
+              name: 'actions_per_view',
+              type: 'response detail',
+              value: 'average number of times the checkpoint was triggered per pageview.',
             },
           ],
           columns: [
@@ -461,7 +517,13 @@ describe('Test SSHONify', () => {
       },
       truncated: false,
     };
-    const sshon = sshonify(input.results, input.description, input.requestParams, input.truncated);
+    const sshon = sshonify(
+      input.results,
+      input.description,
+      input.requestParams,
+      {},
+      input.truncated,
+    );
     assert.deepStrictEqual(
       JSON.parse(sshon),
       {
