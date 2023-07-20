@@ -58,6 +58,39 @@ function coerce(value) {
 }
 
 /**
+ * Splits the query into three parts: leading comments, query, trailing comments
+ * @param {string} query a SQL query
+ * @returns {object} an object with three properties: leading, query, trailing
+ */
+function splitQuery(query) {
+  const lines = query.split('\n');
+  // find the first non-comment line
+  const first = lines.findIndex((line) => !line.startsWith('---'));
+  // find the first SELECT statement
+  const queryStart = lines.findIndex((line) => line.match(/^SELECT/i));
+  // find the first non-comment line after the query
+  const queryEnd = (lines.slice(queryStart).findIndex((line) => !line.startsWith('---')) || lines.length) + queryStart;
+
+  const leading = lines
+    .filter((_, i) => i < first)
+    .filter((line) => line.startsWith('---'))
+    .join('\n');
+  const trailing = lines
+    .filter((_, i) => i > queryEnd)
+    .filter((line) => line.startsWith('---'))
+    .join('\n');
+  const queryPart = lines
+    .filter((_, i) => i >= queryStart && i < queryEnd)
+    .join('\n');
+
+  return {
+    leading,
+    query: queryPart,
+    trailing,
+  };
+}
+
+/**
  * Processes additional parameters relating to query properties, like -- Authorization
  * and other properties that will be passed into request/response headers: for example;
  * --- Cache-Control: max-age: 300.
@@ -65,8 +98,7 @@ function coerce(value) {
  * @param {string} query the content read from a query file
  */
 export function getHeaderParams(query) {
-  return query.split('\n')
-    .filter((e) => e.startsWith('---'))
+  return splitQuery(query).leading.split('\n')
     .filter((e) => e.indexOf(':') > 0)
     .map((e) => e.substring(4).split(': '))
     .reduce((acc, val) => {
