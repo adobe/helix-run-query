@@ -1,3 +1,23 @@
+# [3.2.0](https://github.com/adobe/helix-run-query/compare/v3.1.8...v3.2.0) (2023-07-20)
+
+
+### Bug Fixes
+
+* **rum-experiments:** list experiments even if control has no observed experimentations ([313fcf7](https://github.com/adobe/helix-run-query/commit/313fcf7dd2632bc0a8a519566e605820298119a8))
+* **rum-intervals:** fix typo ([1fd5322](https://github.com/adobe/helix-run-query/commit/1fd53228bf2e6b2cd3a1b5a5c25d195411a93c9b))
+* **rum-intervals:** make query runnable ([4ad02d5](https://github.com/adobe/helix-run-query/commit/4ad02d588be74e65961e79d77958522439448000))
+* **rum-intervals:** report timestamps as strings ([adab4af](https://github.com/adobe/helix-run-query/commit/adab4aff34857f67d5dc5389099dbe379f3ac9d3))
+* **rum-intervals:** use only date parameters from intervals list ([a46b5cf](https://github.com/adobe/helix-run-query/commit/a46b5cf4fd5c563a82fddb17ca010ddf586f2249))
+
+
+### Features
+
+* **queries:** add wip query to report performance and conversion in named time intervals ([84c2b43](https://github.com/adobe/helix-run-query/commit/84c2b43c4a8b560a84e7589f0f66e70f27f5fab4))
+* **rum-intervals:** calculate p value for conversions, too ([5b19435](https://github.com/adobe/helix-run-query/commit/5b19435ba64460a2d787f443b538fe7ef31c91f3))
+* **rum-intervals:** calculate p-value of lcp differences ([3a06d0a](https://github.com/adobe/helix-run-query/commit/3a06d0ae41c20f0528e462e9dbf659c96118d3cc))
+* **rum-intervals:** get intervals, and click rates for each interval ([ce46bdd](https://github.com/adobe/helix-run-query/commit/ce46bdd14d2caa8dc8d13b753c7a49e42996391b))
+* **rum-intervals:** report standard error and averages ([578ea39](https://github.com/adobe/helix-run-query/commit/578ea394d25e5ee4a0053e99c3de7f7eeaf74539))
+
 ## [3.1.8](https://github.com/adobe/helix-run-query/compare/v3.1.7...v3.1.8) (2023-07-20)
 
 
