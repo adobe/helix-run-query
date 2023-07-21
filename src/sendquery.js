@@ -94,8 +94,38 @@ export async function execute(email, key, project, query, _, params = {}) {
         return true;
       };
 
+      let stream;
       const q = loadedQuery;
-      const stream = await bq.createQueryStream({
+
+      const responseMetadata = {};
+      if (loadedQuery.indexOf('# hlx:metadata') > -1) {
+        try {
+          const jobs = await bq.createQueryJob({
+            query: q,
+            params: requestParams,
+          });
+          stream = await jobs[0].getQueryResultsStream();
+
+          // we have multiple jobs, so we need to inspect the first job
+          // to get the list of all jobs.
+          const [metadataJob] = jobs;
+
+          // use the job ID to list all jobs with the same ID in the same project
+          const [allJobs] = await bq.getJobs({
+            parentJobId: metadataJob.metadata.jobReference.jobId,
+          });
+          const [firstJob] = allJobs;
+          // get results from first job
+          const [firstJobResults] = await firstJob.getQueryResults();
+          // push results into responseMetadata
+          responseMetadata.totalRows = firstJobResults[0].total_rows;
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error('error while retrieving query metadata', e);
+        }
+      }
+
+      stream = await bq.createQueryStream({
         query: q,
         maxResults: params.limit,
         params: requestParams,
@@ -108,6 +138,7 @@ export async function execute(email, key, project, query, _, params = {}) {
           description,
           requestParams,
           responseDetails,
+          responseMetadata,
         })))
         .on(
           'error',
@@ -124,6 +155,7 @@ export async function execute(email, key, project, query, _, params = {}) {
             description,
             requestParams,
             responseDetails,
+            responseMetadata,
           });
         });
     });

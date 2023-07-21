@@ -300,6 +300,7 @@ describe('Test SSHONify', () => {
       input.description,
       input.requestParams,
       input.responseDetails,
+      {},
       input.truncated,
     );
     assert.deepStrictEqual(
@@ -493,6 +494,7 @@ describe('Test SSHONify', () => {
       input.results,
       input.description,
       input.requestParams,
+      {},
       {},
       input.truncated,
     );
