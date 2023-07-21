@@ -109,13 +109,13 @@ export async function execute(email, key, project, query, _, params = {}) {
         // we have multiple jobs, so we need to inspect the first job
         // to get the list of all jobs.
         [rootJob] = jobs;
+      } else {
+        stream = await bq.createQueryStream({
+          query: q,
+          maxResults: params.limit,
+          params: requestParams,
+        });
       }
-
-      stream = await bq.createQueryStream({
-        query: q,
-        maxResults: params.limit,
-        params: requestParams,
-      });
       stream
         .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
           headers,
