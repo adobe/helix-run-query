@@ -117,15 +117,6 @@ export function getTrailingParams(query) {
 }
 
 /**
- * cleans out extra parameters from query and leaves only query
- *
- * @param {string} query the content read from a query file
- */
-export function cleanQuery(query) {
-  return splitQuery(query).query;
-}
-
-/**
  * removes used up parameters from request
  *
  * @param {object} params all parameters contained in a request

@@ -16,7 +16,6 @@ import { auth } from './auth.js';
 
 import {
   cleanHeaderParams,
-  cleanQuery,
   getHeaderParams,
   getTrailingParams,
   loadQuery,
@@ -33,7 +32,7 @@ async function processParams(query, params) {
   const rawQuery = await loadQuery(query);
   const headerParams = getHeaderParams(rawQuery);
   const description = headerParams.description || '';
-  const loadedQuery = cleanQuery(rawQuery);
+  const loadedQuery = rawQuery;
   const requestParams = resolveParameterDiff(
     cleanHeaderParams(loadedQuery, params),
     cleanHeaderParams(loadedQuery, headerParams),
