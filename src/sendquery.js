@@ -95,34 +95,20 @@ export async function execute(email, key, project, query, _, params = {}) {
       };
 
       let stream;
+      let rootJob;
       const q = loadedQuery;
 
       const responseMetadata = {};
       if (loadedQuery.indexOf('# hlx:metadata') > -1) {
-        try {
-          const jobs = await bq.createQueryJob({
-            query: q,
-            params: requestParams,
-          });
-          stream = await jobs[0].getQueryResultsStream();
+        const jobs = await bq.createQueryJob({
+          query: q,
+          params: requestParams,
+        });
+        stream = await jobs[0].getQueryResultsStream();
 
-          // we have multiple jobs, so we need to inspect the first job
-          // to get the list of all jobs.
-          const [metadataJob] = jobs;
-
-          // use the job ID to list all jobs with the same ID in the same project
-          const [allJobs] = await bq.getJobs({
-            parentJobId: metadataJob.metadata.jobReference.jobId,
-          });
-          const [firstJob] = allJobs;
-          // get results from first job
-          const [firstJobResults] = await firstJob.getQueryResults();
-          // push results into responseMetadata
-          responseMetadata.totalRows = firstJobResults[0].total_rows;
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error('error while retrieving query metadata', e);
-        }
+        // we have multiple jobs, so we need to inspect the first job
+        // to get the list of all jobs.
+        [rootJob] = jobs;
       }
 
       stream = await bq.createQueryStream({
@@ -148,6 +134,19 @@ export async function execute(email, key, project, query, _, params = {}) {
           },
         )
         .on('end', async () => {
+          if (rootJob) {
+            // try to get the list of child jobs. We need to wait until the
+            // root job has finished, otherwise the list of child jobs is not
+            // complete.
+            const [childJobs] = await bq.getJobs({
+              parentJobId: rootJob.metadata.jobReference.jobId,
+            });
+            const metadata = childJobs[1]; // jobs are ordered in descending order by execution time
+            if (metadata) {
+              const [metaddataResults] = await metadata.getQueryResults();
+              responseMetadata.totalRows = metaddataResults[0]?.total_rows;
+            }
+          }
           resolve({
             headers,
             truncated: false,
