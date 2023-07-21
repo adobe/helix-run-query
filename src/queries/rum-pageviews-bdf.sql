@@ -1,4 +1,4 @@
---- description: Show page views for specified domains for specified dates based on extrapolation from RUM data
+--- description: Show page views for given domains/dates using RUM data extrapolation, used by BDF (Business Data Framework) ETL
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
 --- interval: 30
