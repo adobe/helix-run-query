@@ -44,7 +44,7 @@ describe('Test Queries', () => {
     assert.equal(json.results.total, 100);
   }).timeout(100000);
 
-  it.only('rum-dashboard', async () => {
+  it('rum-dashboard', async () => {
     const res = await main(new Request('https://helix-run-query.com/rum-dashboard?url=www.hlx.live&domain=www.hlx.live', {
       headers: {
         Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
