@@ -35,7 +35,7 @@ INNER JOIN
     REGEXP_REPLACE(c404.public_site, 'www.', '') = validkeys.hostname_prefix
     OR validkeys.hostname_prefix = ''
 where 
-TIMESTAMP(@startdate, helix_rum.CLEAN_TIMEZONE(@timezone)) <= TIMESTAMP(day, helix_rum.CLEAN_TIMEZONE(@timezone)) AND
-TIMESTAMP(@enddate, helix_rum.CLEAN_TIMEZONE(@timezone)) >= TIMESTAMP(day, helix_rum.CLEAN_TIMEZONE(@timezone)) AND
+TIMESTAMP(@startdate, helix_rum.CLEAN_TIMEZONE(@timezone)) <= TIMESTAMP(c404.date, helix_rum.CLEAN_TIMEZONE(@timezone)) AND
+TIMESTAMP(@enddate, helix_rum.CLEAN_TIMEZONE(@timezone)) >= TIMESTAMP(c404.date, helix_rum.CLEAN_TIMEZONE(@timezone)) AND
 (c404.public_site = @url or c404.owner_repo = @ownerrepo)
 ORDER BY c404.owner_repo
