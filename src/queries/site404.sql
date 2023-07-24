@@ -6,6 +6,8 @@
 --- offset: 0
 --- url: ''
 --- ownerrepo: '' 
+--- startdate: 2023-05-01
+--- enddate: 2023-05-30
 --- granularity: 1
 --- timezone: UTC
 --- domainkey: secret
