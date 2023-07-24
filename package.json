@@ -99,17 +99,18 @@
       "src/queries/rum-sources-targets.sql",
       "src/queries/rum-sources.sql",
       "src/queries/rum-targets.sql",
-      "src/queries/dash/pageviews.sql",
-      "src/queries/dash/top-pages.sql",
-      "src/queries/dash/cwv-domain.sql",
-      "src/queries/dash/cwv-page.sql",
-      "src/queries/dash/conversion.sql",
-      "src/queries/dash/daily-rum.sql",
-      "src/queries/dash/github-prs.sql",
-      "src/queries/dash/site4s.sql",
-      "src/queries/dash/sk-actions-by-repo.sql",
-      "src/queries/dash/sk-daily-users.sql",
-      "src/queries/dash/sk-interactions.sql"
+      "src/queries/pageviews.sql",
+      "src/queries/top-pages.sql",
+      "src/queries/cwv-domain.sql",
+      "src/queries/cwv-page.sql",
+      "src/queries/conversion.sql",
+      "src/queries/daily-rum.sql",
+      "src/queries/github-prs.sql",
+      "src/queries/site404.sql",
+      "src/queries/site404trendline.sql",
+      "src/queries/sk-actions-by-repo.sql",
+      "src/queries/sk-daily-users.sql",
+      "src/queries/sk-interactions.sql"
     ]
   }
 }

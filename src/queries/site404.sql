@@ -4,7 +4,8 @@
 --- Cache-Control: max-age=86400
 --- interval: 30
 --- offset: 0
---- url: 
+--- url: ''
+--- ownerrepo: '' 
 --- granularity: 1
 --- timezone: UTC
 --- domainkey: secret
@@ -21,6 +22,8 @@ SELECT
   c404.owner_repo,
   c404.live,
   c404.url,
+  c404.ref,
+  c404.group_id,
   c404.req_count,
   c404.date
 FROM `helix-225321.mrosier_test.cashub_404` AS c404
@@ -29,4 +32,5 @@ INNER JOIN
   ON
     REGEXP_REPLACE(c404.public_site, 'www.', '') = validkeys.hostname_prefix
     OR validkeys.hostname_prefix = ''
+where c404.public_site = @url or c404.owner_repo = @ownerrepo 
 ORDER BY c404.owner_repo
