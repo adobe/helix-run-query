@@ -20,7 +20,7 @@ WITH validkeys AS (
 SELECT
   c404.public_site,
   c404.owner_repo,
-  sum(c404.req_count),
+  sum(c404.req_count) as count,
   c404.date
 FROM `helix-225321.mrosier_test.cashub_404` AS c404
 INNER JOIN
@@ -28,6 +28,9 @@ INNER JOIN
   ON
     REGEXP_REPLACE(c404.public_site, 'www.', '') = validkeys.hostname_prefix
     OR validkeys.hostname_prefix = ''
-where c404.public_site = @url or c404.owner_repo = @ownerrepo
+where 
+TIMESTAMP(@startdate, helix_rum.CLEAN_TIMEZONE(@timezone)) <= TIMESTAMP(day, helix_rum.CLEAN_TIMEZONE(@timezone)) AND
+TIMESTAMP(@enddate, helix_rum.CLEAN_TIMEZONE(@timezone)) >= TIMESTAMP(day, helix_rum.CLEAN_TIMEZONE(@timezone)) AND
+(c404.public_site = @url or c404.owner_repo = @ownerrepo)
 group by c404.public_site, c404.owner_repo, c404.date 
-ORDER BY c404.owner_repo
+ORDER BY c404.owner_repo, c404.date desc
