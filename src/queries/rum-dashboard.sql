@@ -491,3 +491,35 @@ FROM (
     previous_truncated_rum_by_url.pageviews DESC
 ) WHERE
   rank <= @limit OR url = "Other" OR @rising
+--- avgcls: 75th percentile value of the Cumulative Layout Shift metric in the current period
+--- avgcls_1: 75th percentile value of the CLS metric in the previous period
+--- avgfid: 75th percentile value of the First Input Delay metric in milliseconds in the current period
+--- avgfid_1: 75th percentile value of FID in the previous period
+--- avginp: 75th percentile value of the Interaction to Next Paint metric in milliseconds in the current period
+--- avginp_1: 75th percentile of INP in the previous period
+--- avglcp: 75th percentile of the Largest Contentful Paint metric in milliseconds in the current period
+--- avglcp_1: 75th percentile of LCP in the previous period
+--- clsbad: percentage of all page views where Cumulative Layout Shift is in the “needs improvement” range in the current period
+--- clsbad_1: percentage of of all page views with bad CLS in the previous period
+--- clsgood: percentage of all page views where the CLS metric is in the “good” range in the current period
+--- clsgood_1: percentage of pageviews with good CLS the the previous period
+--- fidbad: percentage of pageviews with bad FID in the current period
+--- fidbad_1: percentage of pageviews with bad FID in the previous period
+--- fidgood: percentage of pageviews with good FID in the current period
+--- fidgood_1: percentage of pageviews with good FID in the previous period
+--- inpbad: percentage of pageviews with bad INP in the current period
+--- inpbad_1: percentage of pageviews with bad INP in the previous period
+--- inpgood: percentage of pageviews with good INP in the current period
+--- inpgood_1: percentage of pageviews with bad INP in the previous period
+--- lcpbad: percentage of pageviews with bad LCP in the current period
+--- lcpbad_1: percentage of pageviews with bad LCP in the previous period
+--- lcpgood: percentage of pageviews with good LCP in the current period
+--- lcpgood_1: percentage of pageviews with good LCP in the current period
+--- pageviews: estimated number of pageviews in the current period
+--- pageviews_1: estimated number of pageviews in the previous period
+--- pageviews_diff: difference in pageviews between the current and previous period. If the parameter rising is true, then pages will be ranked according to this value
+--- rumshare: percentage of all traffic for the given domain that is going to this url in the current period
+--- rumshare_1: percentage of of all traffic in the previous domain that is going to this url in the previous period
+--- url: the URL of the page that is getting traffic
+--- url_1: the URL of the page that is getting traffic in the previous period (these last two values are always the same)
+
