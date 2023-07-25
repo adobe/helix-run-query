@@ -100,6 +100,7 @@
       "src/queries/rum-sources.sql",
       "src/queries/rum-targets.sql",
       "src/queries/pageviews.sql",
+      "src/queries/rum-pageviews-bdf.sql",
       "src/queries/top-pages.sql",
       "src/queries/cwv-domain.sql",
       "src/queries/cwv-page.sql",
