@@ -522,4 +522,3 @@ FROM (
 --- rumshare_1: percentage of of all traffic in the previous domain that is going to this url in the previous period
 --- url: the URL of the page that is getting traffic
 --- url_1: the URL of the page that is getting traffic in the previous period (these last two values are always the same)
-
