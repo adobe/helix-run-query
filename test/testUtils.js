@@ -373,7 +373,7 @@ describe('Test SSHONify', () => {
         results: {
           limit: 30,
           offset: 0,
-          total: 0,
+          total: 30,
           columns: [
             'checkpoint',
             'source',
