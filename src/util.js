@@ -68,8 +68,8 @@ function splitQuery(query) {
   const first = lines.findIndex((line) => !line.startsWith('---'));
   // find the first SELECT statement
   const queryStart = lines.findIndex((line) => line.match(/^SELECT/i));
-  // find the first non-comment line after the query
-  const queryEnd = (lines.slice(queryStart).findIndex((line) => !line.startsWith('---')) || lines.length) + queryStart;
+  // find the first comment after the query
+  const queryEnd = lines.findIndex((_, i) => i > queryStart && !lines[i].startsWith('---'));
 
   const leading = lines
     .filter((_, i) => i < first)
