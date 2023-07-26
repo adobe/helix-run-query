@@ -76,7 +76,7 @@ function splitQuery(query) {
     .filter((line) => line.startsWith('---'))
     .join('\n');
   const trailing = lines
-    .filter((_, i) => i > queryEnd)
+    .filter((_, i) => i > queryEnd && i > queryStart)
     .filter((line) => line.startsWith('---'))
     .join('\n');
   const queryPart = lines
