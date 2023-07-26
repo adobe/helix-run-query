@@ -162,7 +162,7 @@ export function sshonify(results, description, requestParams, truncated) {
     ':version': 3,
     results: {
       limit: Math.max(requestParams.limit || 1, results.length),
-      offset: parseInt(requestParams.offset) || 0,
+      offset: parseInt(requestParams.offset, 10) || 0,
       total: results.length + (truncated ? 1 : 0),
       data: results,
       columns: Object.keys(results[0] || {}),
