@@ -77,7 +77,17 @@ async function run(request, context) {
   params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
   params.GOOGLE_PROJECT_ID = context.env.GOOGLE_PROJECT_ID;
 
-  return runExec(params, pathname.split('/').pop(), context.log);
+  // nested folder support
+  // the following pathname patterns all work correctly with the regular expression
+  // /helix-services/run-query/file
+  // /helix-services/run-query@v1/file
+  // /helix-services/run-query@v2/folder/file
+  // /helix-services/run-query@ci123/file
+  // /helix-services/run-query@ci456/folder/file
+  // /helix-services/run-query/ci789/file
+  // /helix-services/run-query/ci123/folder/file
+  // /helix-services/run-query@v3/folder/folder/file
+  return runExec(params, pathname.replace(/^\/helix-services\/run-query((\@|\/)(ci|v)\d+)*\//g, ''), context.log);
 }
 
 /**
