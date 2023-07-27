@@ -87,7 +87,7 @@ async function run(request, context) {
   // /helix-services/run-query/ci789/file
   // /helix-services/run-query/ci123/folder/file
   // /helix-services/run-query@v3/folder/folder/file
-  return runExec(params, pathname.replace(/^\/helix-services\/run-query((\@|\/)(ci|v)\d+)*\//g, ''), context.log);
+  return runExec(params, pathname.replace(/^\/helix-services\/run-query((@|\/)(ci|v)\d+)*\//g, ''), context.log);
 }
 
 /**
