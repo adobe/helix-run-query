@@ -221,3 +221,46 @@ export function sshonify(results, description, requestParams, responseDetails, t
   };
   return JSON.stringify(sson);
 }
+/**
+ * Turn the result set into a custom chart.js object that can be used with
+ * quickchart.io
+ * @param {object[]} results the SQL result set
+ * @param {string} description the description of the query
+ * @param {object} requestParams the request parameters
+ * @param {boolean} truncated whether the result set was truncated
+ * @returns {object} the chartjs object
+ */
+export function chartify(results, description, requestParams) {
+  function descend(obj) {
+    if (Array.isArray(obj)) {
+      return obj.map((entry) => descend(entry));
+    }
+    if (typeof obj === 'object') {
+      return Object.keys(obj).reduce((acc, key) => {
+        // eslint-disable-next-line no-param-reassign
+        acc[key] = descend(obj[key]);
+        return acc;
+      }, {});
+    }
+    if (typeof obj === 'string' && obj.startsWith('@')) {
+      const column = obj.substring(1);
+      return results.map((entry) => entry[column]);
+    }
+    return obj;
+  }
+
+  try {
+    const chartjson = JSON.parse(requestParams.chart);
+    return JSON.stringify(descend(chartjson));
+  } catch (e) {
+    // chart is not JSON, so we try a brute force string replacement
+    const chartstr = requestParams.chart;
+    return chartstr.replace(/@([a-zA-Z0-9_]+)/g, (match, column) => {
+      const data = results
+        .map((entry) => entry[column])
+        // if the column can be cast into a number, then use that
+        .map((entry) => (Number.isNaN(Number(entry)) ? entry : Number(entry)));
+      return JSON.stringify(data);
+    });
+  }
+}

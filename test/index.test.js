@@ -269,4 +269,58 @@ describe('Index Tests', async () => {
     assert.equal(text.split('\n')[0], 'client_geo_city,client_as_name,client_geo_conn_speed,client_geo_continent_code,client_geo_country_code,client_geo_gmt_offset,client_geo_latitude,client_geo_longitude,client_geo_metro_code,client_geo_postal_code,client_geo_region,client_ip_hashed,client_ip_masked,fastly_info_state,req_http_X_Ref,req_http_X_Repo,req_http_X_Static,req_http_X_Strain,req_http_X_Owner,server_datacenter,server_region,req_http_host,req_http_X_Host,req_url,req_http_X_URL,req_http_X_CDN_Request_ID,vcl_sub,time_start_usec,time_end_usec,time_elapsed_usec,resp_http_x_openwhisk_activation_id,resp_http_X_Version,req_http_Referer,req_http_User_Agent,resp_http_Content_Type,service_config,status_code');
     assert.equal(response.headers.get('content-type'), 'text/csv');
   }).timeout(10000);
+
+  it('index returns a redirect if path ends with .chart', async () => {
+    // req_http_X_URL and time_elapsed_usec on a chart
+    // /chart?c=
+    const u = new URL('https://helix-run-query.com/list-everything.chart');
+    u.searchParams.set('limit', 3);
+    u.searchParams.set('height', 1024);
+    u.searchParams.set('width', 1024);
+    u.searchParams.set('chart', `
+{
+  "type": "horizontalBar",
+  "data": {
+    "labels": @hostname,
+    "datasets": [
+      {
+        "label": "Weight",
+        "backgroundColor": "rgba(255, 99, 132, 0.5)",
+        "data": @weight
+      },
+    ]
+  },
+  "options": {
+    "elements": {
+      "rectangle": {
+        "borderWidth": 2
+      }
+    },
+    "responsive": true,
+    "legend": {
+      "position": "right"
+    },
+    "title": {
+      "display": true,
+      "text": "Request times per URL"
+    }
+  }
+}
+    `);
+    const response = await index(new Request(u.toString(), {
+      headers: {
+        'x-service': service,
+      },
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: env.email,
+        GOOGLE_PRIVATE_KEY: env.key,
+        GOOGLE_PROJECT_ID: env.projectid,
+      },
+    });
+
+    const text = await response.text();
+    assert.equal(response.status, 307, text);
+    assert.equal(response.headers.get('location'), 'https://quickchart.io/chart?width=1024&height=1024&chart=%0A%7B%0A++%22type%22%3A+%22horizontalBar%22%2C%0A++%22data%22%3A+%7B%0A++++%22labels%22%3A+%5B%22www.adobe.com%22%2C%22www.adobe.com%22%2C%22www.adobe.com%22%5D%2C%0A++++%22datasets%22%3A+%5B%0A++++++%7B%0A++++++++%22label%22%3A+%22Weight%22%2C%0A++++++++%22backgroundColor%22%3A+%22rgba%28255%2C+99%2C+132%2C+0.5%29%22%2C%0A++++++++%22data%22%3A+%5B100%2C100%2C100%5D%0A++++++%7D%2C%0A++++%5D%0A++%7D%2C%0A++%22options%22%3A+%7B%0A++++%22elements%22%3A+%7B%0A++++++%22rectangle%22%3A+%7B%0A++++++++%22borderWidth%22%3A+2%0A++++++%7D%0A++++%7D%2C%0A++++%22responsive%22%3A+true%2C%0A++++%22legend%22%3A+%7B%0A++++++%22position%22%3A+%22right%22%0A++++%7D%2C%0A++++%22title%22%3A+%7B%0A++++++%22display%22%3A+true%2C%0A++++++%22text%22%3A+%22Request+times+per+URL%22%0A++++%7D%0A++%7D%0A%7D%0A++++');
+  }).timeout(10000);
 });
