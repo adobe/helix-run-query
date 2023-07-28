@@ -32,6 +32,7 @@ describe('testing util functions', () => {
     assert.equal(extractQueryPath('/helix-services/run-query/ci789/file'), 'file');
     assert.equal(extractQueryPath('/helix-services/run-query/ci123/folder/file'), 'folder/file');
     assert.equal(extractQueryPath('/helix-services/run-query@v3/folder/folder/file'), 'folder/folder/file');
+    assert.equal(extractQueryPath('/helix-services/run-query/3.3.0/folder/folder/file'), 'folder/folder/file');
   });
 
   it('loadQuery loads a query', async () => {
