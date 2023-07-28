@@ -16,7 +16,9 @@ import { logger } from '@adobe/helix-universal-logger';
 import { Response } from '@adobe/fetch';
 import bodyData from '@adobe/helix-shared-body-data';
 import { execute, queryInfo } from './sendquery.js';
-import { cleanRequestParams, csvify, sshonify, extractQueryPath } from './util.js';
+import {
+  cleanRequestParams, csvify, sshonify, extractQueryPath,
+} from './util.js';
 
 async function runExec(params, pathname, log) {
   try {

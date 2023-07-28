@@ -115,7 +115,7 @@ export function validParamCheck(params) {
 
 /**
  * pulls the query path from the URL which allows for organization by folder
- * @param {string} pathname 
+ * @param {string} pathname path which needs to be parsed
  * @returns path under /src/queries where query is found
  */
 export function extractQueryPath(pathname) {
