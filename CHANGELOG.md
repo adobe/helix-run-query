@@ -1,3 +1,16 @@
+# [3.3.0](https://github.com/adobe/helix-run-query/compare/v3.2.0...v3.3.0) (2023-07-28)
+
+
+### Bug Fixes
+
+* **utils:** do not extract leading as trailing if no trailing comments exist ([a98a0ef](https://github.com/adobe/helix-run-query/commit/a98a0efea894c16225592819dc22705a61785f11))
+* **utils:** split query at comment boundary ([bf6dc2f](https://github.com/adobe/helix-run-query/commit/bf6dc2f4e5dbbaa53e50a906b6919d07fc46cc58))
+
+
+### Features
+
+* **index:** include parameter descriptions into response ([ad17e0c](https://github.com/adobe/helix-run-query/commit/ad17e0c84bd9a5157530b8cd6280e845fe0a3c22))
+
 # [3.2.0](https://github.com/adobe/helix-run-query/compare/v3.1.8...v3.2.0) (2023-07-20)
 
 
