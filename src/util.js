@@ -119,15 +119,6 @@ export function validParamCheck(params) {
  * @returns path under /src/queries where query is found
  */
 export function extractQueryPath(pathname) {
-  // TODO add automated tests for the regular expression to validate at least the below patterns
-  // /helix-services/run-query/file
-  // /helix-services/run-query@v1/file
-  // /helix-services/run-query@v2/folder/file
-  // /helix-services/run-query@ci123/file
-  // /helix-services/run-query@ci456/folder/file
-  // /helix-services/run-query/ci789/file
-  // /helix-services/run-query/ci123/folder/file
-  // /helix-services/run-query@v3/folder/folder/file
   return pathname.replace(/^\/helix-services\/run-query((@|\/)(ci|v)\d+)*\//g, '');
 }
 
