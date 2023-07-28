@@ -147,7 +147,13 @@ export function validParamCheck(params) {
  * @returns path under /src/queries where query is found
  */
 export function extractQueryPath(pathname) {
-  return pathname.replace(/^\/helix-services\/run-query((@|\/)(ci|v)\d+)*\//g, '');
+  // remove /helix-services/run-query
+  // optionally followed by @ or /
+  // then optionally ci or v
+  // then any combination of digits and . char
+  // and finally another / slash
+  // everything after that should be kept
+  return pathname.replace(/^\/helix-services\/run-query((@|\/)(ci|v)*[0-9.]+)*\//, '');
 }
 
 /**
