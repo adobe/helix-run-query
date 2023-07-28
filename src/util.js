@@ -68,15 +68,15 @@ function splitQuery(query) {
   const first = lines.findIndex((line) => !line.startsWith('---'));
   // find the first SELECT statement
   const queryStart = lines.findIndex((line) => line.match(/^SELECT/i));
-  // find the first non-comment line after the query
-  const queryEnd = (lines.slice(queryStart).findIndex((line) => !line.startsWith('---')) || lines.length) + queryStart;
+  // find the first comment after the query
+  const queryEnd = lines.findIndex((_, i) => i > queryStart && !lines[i].startsWith('---'));
 
   const leading = lines
     .filter((_, i) => i < first)
     .filter((line) => line.startsWith('---'))
     .join('\n');
   const trailing = lines
-    .filter((_, i) => i > queryEnd)
+    .filter((_, i) => i > queryEnd && i > queryStart)
     .filter((line) => line.startsWith('---'))
     .join('\n');
   const queryPart = lines
@@ -197,9 +197,9 @@ export function sshonify(
     ':version': 3,
     results: {
       limit: Math.max(requestParams.limit || 1, results.length),
-      offset: requestParams.offset || 0,
+      offset: parseInt(requestParams.offset, 10) || 0,
       total: responseMetadata.totalRows
-        || requestParams.offset || 0 + results.length + (truncated ? 1 : 0),
+        || results.length + Number(truncated),
       data: results,
       columns: Object.keys(results[0] || {}),
     },

@@ -16,6 +16,7 @@ import {
   cleanHeaderParams,
   cleanRequestParams, csvify,
   getHeaderParams,
+  getTrailingParams,
   loadQuery, resolveParameterDiff,
   sshonify,
   validParamCheck,
@@ -25,6 +26,11 @@ describe('testing util functions', () => {
   it('loadQuery loads a query', async () => {
     const result = await loadQuery('rum-dashboard');
     assert.ok(result.match(/select/i));
+  });
+
+  it('loadQuery works with trailing parameters', async () => {
+    const result = await loadQuery('rum-dashboard');
+    assert.equal(Object.keys(getTrailingParams(result)).length, 31);
   });
 
   it('loadQuery throws with bad query file', async () => {
@@ -401,8 +407,8 @@ describe('Test SSHONify', () => {
         },
         results: {
           limit: 30,
-          offset: '0',
-          total: '0',
+          offset: 0,
+          total: 30,
           columns: [
             'checkpoint',
             'source',
@@ -556,8 +562,8 @@ describe('Test SSHONify', () => {
         },
         results: {
           limit: 30,
-          offset: '0',
-          total: '0',
+          offset: 0,
+          total: 0,
           columns: [],
           data: [],
         },
