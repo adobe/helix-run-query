@@ -16,7 +16,7 @@ import { logger } from '@adobe/helix-universal-logger';
 import { Response } from '@adobe/fetch';
 import bodyData from '@adobe/helix-shared-body-data';
 import { execute, queryInfo } from './sendquery.js';
-import { cleanRequestParams, csvify, sshonify } from './util.js';
+import { cleanRequestParams, csvify, sshonify, extractQueryPath } from './util.js';
 
 async function runExec(params, pathname, log) {
   try {
@@ -78,16 +78,7 @@ async function run(request, context) {
   params.GOOGLE_PROJECT_ID = context.env.GOOGLE_PROJECT_ID;
 
   // nested folder support
-  // the following pathname patterns all work correctly with the regular expression
-  // /helix-services/run-query/file
-  // /helix-services/run-query@v1/file
-  // /helix-services/run-query@v2/folder/file
-  // /helix-services/run-query@ci123/file
-  // /helix-services/run-query@ci456/folder/file
-  // /helix-services/run-query/ci789/file
-  // /helix-services/run-query/ci123/folder/file
-  // /helix-services/run-query@v3/folder/folder/file
-  return runExec(params, pathname.replace(/^\/helix-services\/run-query((@|\/)(ci|v)\d+)*\//g, ''), context.log);
+  return runExec(params, extractQueryPath(pathname), context.log);
 }
 
 /**
