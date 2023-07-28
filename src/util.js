@@ -58,15 +58,40 @@ function coerce(value) {
 }
 
 /**
- * Processes additional parameters relating to query properties, like -- Authorization
- * and other properties that will be passed into request/response headers: for example;
- * --- Cache-Control: max-age: 300.
- *
- * @param {string} query the content read from a query file
+ * Splits the query into three parts: leading comments, query, trailing comments
+ * @param {string} query a SQL query
+ * @returns {object} an object with three properties: leading, query, trailing
  */
-export function getHeaderParams(query) {
-  return query.split('\n')
-    .filter((e) => e.startsWith('---'))
+function splitQuery(query) {
+  const lines = query.split('\n');
+  // find the first non-comment line
+  const first = lines.findIndex((line) => !line.startsWith('---'));
+  // find the first SELECT statement
+  const queryStart = lines.findIndex((line) => line.match(/^SELECT/i));
+  // find the first comment after the query
+  const queryEnd = lines.findIndex((_, i) => i > queryStart && !lines[i].startsWith('---'));
+
+  const leading = lines
+    .filter((_, i) => i < first)
+    .filter((line) => line.startsWith('---'))
+    .join('\n');
+  const trailing = lines
+    .filter((_, i) => i > queryEnd && i > queryStart)
+    .filter((line) => line.startsWith('---'))
+    .join('\n');
+  const queryPart = lines
+    .filter((_, i) => i >= queryStart && i < queryEnd)
+    .join('\n');
+
+  return {
+    leading,
+    query: queryPart,
+    trailing,
+  };
+}
+
+function getParams(query, part) {
+  return splitQuery(query)[part].split('\n')
     .filter((e) => e.indexOf(':') > 0)
     .map((e) => e.substring(4).split(': '))
     .reduce((acc, val) => {
@@ -77,15 +102,18 @@ export function getHeaderParams(query) {
 }
 
 /**
- * cleans out extra parameters from query and leaves only query
+ * Processes additional parameters relating to query properties, like -- Authorization
+ * and other properties that will be passed into request/response headers: for example;
+ * --- Cache-Control: max-age: 300.
  *
  * @param {string} query the content read from a query file
  */
-export function cleanQuery(query) {
-  return query.split('\n')
-    .filter((e) => !e.startsWith('---'))
-    .filter((e) => !e.startsWith('#'))
-    .join('\n');
+export function getHeaderParams(query) {
+  return getParams(query, 'leading');
+}
+
+export function getTrailingParams(query) {
+  return getParams(query, 'trailing');
 }
 
 /**
@@ -155,7 +183,7 @@ export function csvify(arr) {
  * @param {boolean} truncated whether the result set was truncated
  * @returns {string} the SSHON string
  */
-export function sshonify(results, description, requestParams, truncated) {
+export function sshonify(results, description, requestParams, responseDetails, truncated) {
   const sson = {
     ':names': ['results', 'meta'],
     ':type': 'multi-sheet',
@@ -182,6 +210,11 @@ export function sshonify(results, description, requestParams, truncated) {
           name: key,
           value,
           type: 'request parameter',
+        })),
+        ...Object.entries(responseDetails).map(([key, value]) => ({
+          name: key,
+          value,
+          type: 'response detail',
         })),
       ],
     },
