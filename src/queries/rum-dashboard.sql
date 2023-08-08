@@ -87,6 +87,8 @@ current_rum_by_id AS (
     url LIKE CONCAT(
       "https://", @url, "%"
     ) OR url LIKE CONCAT(
+      "https://www.", @url, "%"
+    ) OR url LIKE CONCAT(
       "https://%", @repo, "--", @owner, ".hlx%/"
     ) OR (@url = "-" AND @repo = "-" AND @owner = "-")
   GROUP BY id
@@ -120,6 +122,8 @@ previous_rum_by_id AS (
   WHERE
     url LIKE CONCAT(
       "https://", @url, "%"
+    ) OR url LIKE CONCAT(
+      "https://www.", @url, "%"
     ) OR url LIKE CONCAT(
       "https://%", @repo, "--", @owner, ".hlx%/"
     ) OR (@url = "-" AND @repo = "-" AND @owner = "-")
