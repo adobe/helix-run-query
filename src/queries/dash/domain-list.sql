@@ -30,10 +30,11 @@ WITH pvs AS (
     AND hostname NOT LIKE 'localhost%'
     AND hostname NOT LIKE '%.hlx.page'
     AND hostname NOT LIKE '%.hlx3.page'
-    AND (hostname NOT LIKE '%.hlx.live' AND hostname != 'www.hlx.live')
+    AND hostname NOT LIKE '%.hlx.live'
     AND hostname NOT LIKE '%.helix3.dev'
     AND hostname NOT LIKE '%.sharepoint.com'
     AND hostname NOT LIKE '%.google.com'
+    OR hostname = 'www.hlx.live'
   GROUP BY month, weight, hostname
 ),
 
