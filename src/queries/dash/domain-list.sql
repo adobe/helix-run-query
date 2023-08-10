@@ -26,7 +26,7 @@ WITH pvs AS (
     )
   WHERE
     hostname != ''
-    AND hostname != '127.0.0.1'
+    AND NOT REGEXP_CONTAINS(hostname, r'^\d+\.\d+\.\d+\.\d+$')
     AND hostname NOT LIKE 'localhost%'
     AND hostname NOT LIKE '%.hlx.page'
     AND hostname NOT LIKE '%.hlx3.page'
@@ -84,5 +84,5 @@ SELECT
 FROM domains
 WHERE
   total_visits >= 1000
-  AND DATE(last_visit) > (CURRENT_DATE() - 90)
+  AND DATE(last_visit) > (CURRENT_DATE() - 60)
 ORDER BY total_visits DESC, current_month_visits DESC, first_visit DESC
