@@ -4,17 +4,7 @@
 --- timezone: UTC
 --- domainkey: secret
 
-SELECT COALESCE(
-  (
-    SELECT IF(hostname_prefix = '', true, false)
-    FROM
-      `helix-225321.helix_reporting.domain_keys`
-    WHERE
-      key_bytes = SHA512(@domainkey)
-      AND (
-        revoke_date IS NULL
-        OR revoke_date > CURRENT_DATE(@timezone)
-      )
-  ),
-  false
-) AS auth
+SELECT
+  read,
+  write
+FROM helix_reporting.DOMAINKEY_PRIVS_ALL(@domainkey, @timezone)
