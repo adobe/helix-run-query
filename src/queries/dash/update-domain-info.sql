@@ -5,4 +5,12 @@
 --- timezone: UTC
 --- domainkey: secret
 
-CALL `helix_reporting.UPDATE_DOMAIN_INFO` (@domainkey, @timezone, @url, @ims);
+DECLARE result STRING;
+CALL `helix_reporting.UPDATE_DOMAIN_INFO` (
+  @domainkey,
+  @timezone,
+  @url,
+  @ims,
+  result
+);
+SELECT result;
