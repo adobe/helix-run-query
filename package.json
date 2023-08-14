@@ -101,7 +101,8 @@
       "src/queries/rum-sources.sql",
       "src/queries/rum-targets.sql",
       "src/queries/dash/auth-all-domains.sql",
-      "src/queries/dash/domain-list.sql"
+      "src/queries/dash/domain-list.sql",
+      "src/queries/dash/update-domain-info.sql"
     ]
   }
 }

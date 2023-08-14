@@ -76,13 +76,18 @@ domains AS (
 )
 
 SELECT
-  hostname,
-  first_visit,
-  last_visit,
-  current_month_visits,
-  total_visits
-FROM domains
+  a.hostname,
+  b.ims_org_id,
+  a.first_visit,
+  a.last_visit,
+  a.current_month_visits,
+  a.total_visits
+FROM domains AS a
+LEFT JOIN
+  helix_reporting.domain_info AS b
+  ON
+    a.hostname = b.domain
 WHERE
-  total_visits >= 1000
-  AND DATE(last_visit) > (CURRENT_DATE() - 60)
-ORDER BY total_visits DESC, current_month_visits DESC, first_visit DESC
+  a.total_visits >= 1000
+  AND DATE(a.last_visit) > (CURRENT_DATE() - 60)
+ORDER BY a.total_visits DESC, a.current_month_visits DESC
