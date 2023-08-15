@@ -8,7 +8,7 @@
 WITH pvs AS (
   SELECT
     weight,
-    REGEXP_REPLACE(hostname, r'www.', '') AS hostname,
+    REGEXP_REPLACE(hostname, r'^www.', '') AS hostname,
     COUNT(DISTINCT id) AS ids,
     FORMAT_DATE('%Y-%b', time) AS month,
     MIN(time) AS first_visit,
