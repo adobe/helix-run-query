@@ -259,6 +259,58 @@ VALUES
     inreadonly);
 END
 
+CREATE OR REPLACE PROCEDURE helix_reporting.UPDATE_DOMAIN_INFO(
+  IN domainkey STRING, IN timezone STRING, IN url STRING, IN ims STRING, OUT result STRING
+)
+BEGIN
+IF (
+  -- permissions check
+  SELECT write FROM helix_reporting.DOMAINKEY_PRIVS_ALL(domainkey, timezone)
+) THEN
+  -- conditionally update or insert IMS org id into domain_info table
+  IF EXISTS (SELECT 1 FROM helix_reporting.domain_info WHERE domain = url) THEN
+    UPDATE helix_reporting.domain_info
+    SET ims_org_id = ims
+    WHERE domain = url;
+    SET result = '1 row updated';
+  ELSE
+    INSERT INTO helix_reporting.domain_info (domain, ims_org_id) VALUES (url, ims);
+    SET result = '1 row inserted';
+  END IF;
+ELSE
+  SET result = 'domainkey not valid';
+END IF;
+END
+
+CREATE OR REPLACE TABLE FUNCTION helix_reporting.DOMAINKEY_PRIVS_ALL(domainkey STRING, timezone STRING)
+AS (
+  WITH key AS (
+    SELECT hostname_prefix, readonly
+    FROM `helix-225321.helix_reporting.domain_keys`
+    WHERE
+      key_bytes = SHA512(domainkey)
+      AND (
+        revoke_date IS NULL
+        OR revoke_date > CURRENT_DATE(timezone)
+      )
+  )
+  SELECT COALESCE(
+    (
+      SELECT IF(hostname_prefix = '', true, false)
+      FROM key
+    ),
+    false
+  ) AS read,
+  COALESCE(
+    (
+      SELECT IF(hostname_prefix = '' AND readonly = false, true, false)
+      FROM key
+    ),
+    false
+  ) AS write
+)
+
+
 # SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
 # ORDER BY time DESC
 # LIMIT 10;
