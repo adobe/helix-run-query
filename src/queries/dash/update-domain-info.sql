@@ -5,24 +5,26 @@
 --- timezone: UTC
 --- domainkey: secret
 
-DECLARE result STRING;
-
-IF (
-  -- permissions check
-  SELECT write FROM helix_reporting.DOMAINKEY_PRIVS_ALL(@domainkey, @timezone)
-) THEN
-  -- conditionally update or insert IMS org id into domain_info table
-  IF EXISTS (SELECT 1 FROM helix_reporting.domain_info WHERE domain = @url) THEN
-    UPDATE helix_reporting.domain_info
-    SET ims_org_id = @ims
-    WHERE domain = @url;
-    SET result = '1 row updated';
-  ELSE
-    INSERT INTO helix_reporting.domain_info (domain, ims_org_id) VALUES (@url, @ims);
-    SET result = '1 row inserted';
-  END IF;
-ELSE
-  SET result = 'domainkey not valid';
-END IF;
-
-SELECT result;
+MERGE INTO `helix-225321.helix_reporting.domain_info` AS info
+USING (
+  SELECT
+    @url AS url,
+    hostname_prefix,
+    readonly
+  FROM
+    `helix-225321.helix_reporting.domain_keys`
+  WHERE
+    key_bytes = SHA512(@domainkey)
+    AND (
+      revoke_date IS NULL
+      OR revoke_date > CURRENT_DATE(@timezone)
+    )
+    AND readonly = FALSE -- key must be read-write to update domain_info
+    AND hostname_prefix = ""
+) AS validkeys
+  ON info.domain = validkeys.url
+WHEN MATCHED THEN
+  UPDATE SET ims_org_id = @ims
+WHEN NOT MATCHED BY TARGET THEN
+  INSERT (domain, ims_org_id)
+  VALUES (validkeys.url, @ims)
