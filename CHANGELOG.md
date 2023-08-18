@@ -1,3 +1,16 @@
+# [3.4.0](https://github.com/adobe/helix-run-query/compare/v3.3.2...v3.4.0) (2023-08-18)
+
+
+### Bug Fixes
+
+* **sendquery:** don't run the same query twice ([cca4063](https://github.com/adobe/helix-run-query/commit/cca40637f6aeb4a471750232f1360c853e41feec))
+* **sendquery:** wait for the main query to have completed before fetching metadata results ([97897b9](https://github.com/adobe/helix-run-query/commit/97897b98de0ca0bf8f31b4a22be12373c46d3b8b))
+
+
+### Features
+
+* **index:** add ability to report accurate totals for query results ([57b5c61](https://github.com/adobe/helix-run-query/commit/57b5c61d543c33b5d00c659a1505c2b2cdc887e7))
+
 ## [3.3.2](https://github.com/adobe/helix-run-query/compare/v3.3.1...v3.3.2) (2023-08-18)
 
 
