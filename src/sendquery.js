@@ -94,12 +94,28 @@ export async function execute(email, key, project, query, _, params = {}) {
         return true;
       };
 
+      let stream;
+      let rootJob;
       const q = loadedQuery;
-      const stream = await bq.createQueryStream({
-        query: q,
-        maxResults: params.limit,
-        params: requestParams,
-      });
+
+      const responseMetadata = {};
+      if (loadedQuery.indexOf('# hlx:metadata') > -1) {
+        const jobs = await bq.createQueryJob({
+          query: q,
+          params: requestParams,
+        });
+        stream = await jobs[0].getQueryResultsStream();
+
+        // we have multiple jobs, so we need to inspect the first job
+        // to get the list of all jobs.
+        [rootJob] = jobs;
+      } else {
+        stream = await bq.createQueryStream({
+          query: q,
+          maxResults: params.limit,
+          params: requestParams,
+        });
+      }
       stream
         .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
           headers,
@@ -108,6 +124,7 @@ export async function execute(email, key, project, query, _, params = {}) {
           description,
           requestParams,
           responseDetails,
+          responseMetadata,
         })))
         .on(
           'error',
@@ -117,6 +134,19 @@ export async function execute(email, key, project, query, _, params = {}) {
           },
         )
         .on('end', async () => {
+          if (rootJob) {
+            // try to get the list of child jobs. We need to wait until the
+            // root job has finished, otherwise the list of child jobs is not
+            // complete.
+            const [childJobs] = await bq.getJobs({
+              parentJobId: rootJob.metadata.jobReference.jobId,
+            });
+            const metadata = childJobs[1]; // jobs are ordered in descending order by execution time
+            if (metadata) {
+              const [metadataResults] = await metadata.getQueryResults();
+              responseMetadata.totalRows = metadataResults[0]?.total_rows;
+            }
+          }
           resolve({
             headers,
             truncated: false,
@@ -124,6 +154,7 @@ export async function execute(email, key, project, query, _, params = {}) {
             description,
             requestParams,
             responseDetails,
+            responseMetadata,
           });
         });
     });

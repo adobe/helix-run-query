@@ -198,7 +198,14 @@ export function csvify(arr) {
  * @param {boolean} truncated whether the result set was truncated
  * @returns {string} the SSHON string
  */
-export function sshonify(results, description, requestParams, responseDetails, truncated) {
+export function sshonify(
+  results,
+  description,
+  requestParams,
+  responseDetails,
+  responseMetadata,
+  truncated,
+) {
   const sson = {
     ':names': ['results', 'meta'],
     ':type': 'multi-sheet',
@@ -206,7 +213,8 @@ export function sshonify(results, description, requestParams, responseDetails, t
     results: {
       limit: Math.max(requestParams.limit || 1, results.length),
       offset: parseInt(requestParams.offset, 10) || 0,
-      total: results.length + Number(truncated),
+      total: responseMetadata.totalRows
+        || results.length + Number(truncated),
       data: results,
       columns: Object.keys(results[0] || {}),
     },
