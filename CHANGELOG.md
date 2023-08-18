@@ -1,3 +1,11 @@
+# [3.5.0](https://github.com/adobe/helix-run-query/compare/v3.4.0...v3.5.0) (2023-08-18)
+
+
+### Features
+
+* **index:** add support for `.chart` extension ([e4fd949](https://github.com/adobe/helix-run-query/commit/e4fd949cc46def12105a9ae9cd9a6b6a45c11e34))
+* **tools:** add CLI for domain key rotation ([03286de](https://github.com/adobe/helix-run-query/commit/03286de749a43f1c3baa6b1dee72e6c6929979cc))
+
 # [3.4.0](https://github.com/adobe/helix-run-query/compare/v3.3.2...v3.4.0) (2023-08-18)
 
 
