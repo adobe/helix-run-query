@@ -1,4 +1,5 @@
 --- description: Rotate domain keys
+--- Access-Control-Allow-Origin: *
 --- timezone: UTC
 --- url: -
 --- device: all
