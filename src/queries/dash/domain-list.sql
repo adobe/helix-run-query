@@ -4,22 +4,26 @@
 --- timezone: UTC
 --- device: all
 --- domainkey: secret
+--- interval: 365
+--- offset: 0
+--- startdate: 2022-02-01
+--- enddate: 2022-05-28
+--- url: -
 
 WITH pvs AS (
   SELECT
-    weight,
+    SUM(pageviews) AS pageviews,
     REGEXP_REPLACE(hostname, r'^www.', '') AS hostname,
-    COUNT(DISTINCT id) AS ids,
     FORMAT_DATE('%Y-%b', time) AS month,
     MIN(time) AS first_visit,
     MAX(time) AS last_visit
   FROM
-    helix_rum.EVENTS_V3(
-      '-',
-      -1,
-      -1,
-      '2020-01-01',
-      '2099-12-31',
+    helix_rum.PAGEVIEWS_V3(
+      @url,
+      CAST(@offset AS INT64),
+      CAST(@interval AS INT64),
+      @startdate,
+      @enddate,
       @timezone,
       @device,
       @domainkey
@@ -35,18 +39,7 @@ WITH pvs AS (
     AND hostname NOT LIKE '%.sharepoint.com'
     AND hostname NOT LIKE '%.google.com'
     OR hostname = 'www.hlx.live'
-  GROUP BY month, weight, hostname
-),
-
-month_pvs AS (
-  SELECT
-    hostname,
-    month,
-    SUM(weight * ids) AS estimated_pvs,
-    FORMAT_DATE('%F', MIN(first_visit)) AS first_visit,
-    FORMAT_DATE('%F', MAX(last_visit)) AS last_visit
-  FROM pvs
-  GROUP BY hostname, month
+  GROUP BY month, hostname
 ),
 
 total_pvs AS (
@@ -54,7 +47,7 @@ total_pvs AS (
     hostname,
     FORMAT_DATE('%F', MIN(first_visit)) AS first_visit,
     FORMAT_DATE('%F', MAX(last_visit)) AS last_visit,
-    SUM(weight * ids) AS estimated_pvs
+    SUM(pageviews) AS estimated_pvs
   FROM pvs
   GROUP BY hostname
 ),
@@ -64,15 +57,15 @@ domains AS (
     a.hostname,
     a.first_visit,
     a.last_visit,
-    b.estimated_pvs AS current_month_visits,
+    b.pageviews AS current_month_visits,
     a.estimated_pvs AS total_visits
   FROM total_pvs AS a
   LEFT JOIN
-    month_pvs AS b
+    pvs AS b
     ON
       a.hostname = b.hostname AND b.month = FORMAT_DATE('%Y-%b', CURRENT_DATE())
   GROUP BY
-    a.hostname, a.first_visit, a.last_visit, a.estimated_pvs, b.estimated_pvs
+    a.hostname, a.first_visit, a.last_visit, a.estimated_pvs, b.pageviews
 )
 
 SELECT
