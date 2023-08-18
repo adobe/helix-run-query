@@ -20,10 +20,22 @@ import {
   getTrailingParams,
   loadQuery, resolveParameterDiff,
   sshonify,
-  validParamCheck,
+  validParamCheck, extractQueryPath,
 } from '../src/util.js';
 
 describe('testing util functions', () => {
+  it('extractQueryPath parses a run-query path to find the folder/file for a query', async () => {
+    assert.equal(extractQueryPath('/helix-services/run-query/file'), 'file');
+    assert.equal(extractQueryPath('/helix-services/run-query@v1/file'), 'file');
+    assert.equal(extractQueryPath('/helix-services/run-query@v2/folder/file'), 'folder/file');
+    assert.equal(extractQueryPath('/helix-services/run-query@ci123/file'), 'file');
+    assert.equal(extractQueryPath('/helix-services/run-query@ci456/folder/file'), 'folder/file');
+    assert.equal(extractQueryPath('/helix-services/run-query/ci789/file'), 'file');
+    assert.equal(extractQueryPath('/helix-services/run-query/ci123/folder/file'), 'folder/file');
+    assert.equal(extractQueryPath('/helix-services/run-query@v3/folder/folder/file'), 'folder/folder/file');
+    assert.equal(extractQueryPath('/helix-services/run-query/3.3.0/folder/folder/file'), 'folder/folder/file');
+  });
+
   it('loadQuery loads a query', async () => {
     const result = await loadQuery('rum-dashboard');
     assert.ok(result.match(/select/i));

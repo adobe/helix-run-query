@@ -142,6 +142,21 @@ export function validParamCheck(params) {
 }
 
 /**
+ * pulls the query path from the URL which allows for organization by folder
+ * @param {string} pathname path which needs to be parsed
+ * @returns path under /src/queries where query is found
+ */
+export function extractQueryPath(pathname) {
+  // remove /helix-services/run-query
+  // optionally followed by @ or /
+  // then optionally ci or v
+  // then any combination of digits and . char
+  // and finally another / slash
+  // everything after that should be kept
+  return pathname.replace(/^\/helix-services\/run-query((@|\/)(ci|v)*[0-9.]+)*\//, '');
+}
+
+/**
  * fills in missing query parameters (if any) with defaults from query file
  * @param {object} params provided parameters
  * @param {object} defaults default parameters in query file
