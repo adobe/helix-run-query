@@ -26,7 +26,7 @@ WITH pvs AS (
     )
   WHERE
     hostname != ''
-    AND NOT REGEXP_CONTAINS(hostname, r'^\d+\.\d+\.\d+\.\d+$')
+    AND NOT REGEXP_CONTAINS(hostname, r'^\d+\.\d+\.\d+\.\d+$') -- IP addresses
     AND hostname NOT LIKE 'localhost%'
     AND hostname NOT LIKE '%.hlx.page'
     AND hostname NOT LIKE '%.hlx3.page'
