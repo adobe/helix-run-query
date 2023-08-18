@@ -1,3 +1,10 @@
+## [3.3.1](https://github.com/adobe/helix-run-query/compare/v3.3.0...v3.3.1) (2023-08-14)
+
+
+### Bug Fixes
+
+* **deps:** update external major ([#935](https://github.com/adobe/helix-run-query/issues/935)) ([ade15a2](https://github.com/adobe/helix-run-query/commit/ade15a239af3f1f2e17d1e19afab134e26ab984f))
+
 # [3.3.0](https://github.com/adobe/helix-run-query/compare/v3.2.0...v3.3.0) (2023-07-28)
 
 

@@ -16,7 +16,9 @@ import { logger } from '@adobe/helix-universal-logger';
 import { Response } from '@adobe/fetch';
 import bodyData from '@adobe/helix-shared-body-data';
 import { execute, queryInfo } from './sendquery.js';
-import { cleanRequestParams, csvify, sshonify } from './util.js';
+import {
+  cleanRequestParams, csvify, sshonify, extractQueryPath,
+} from './util.js';
 
 async function runExec(params, pathname, log) {
   try {
@@ -85,7 +87,8 @@ async function run(request, context) {
   params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
   params.GOOGLE_PROJECT_ID = context.env.GOOGLE_PROJECT_ID;
 
-  return runExec(params, pathname.split('/').pop(), context.log);
+  // nested folder support
+  return runExec(params, extractQueryPath(pathname), context.log);
 }
 
 /**
