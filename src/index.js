@@ -17,7 +17,7 @@ import { Response } from '@adobe/fetch';
 import bodyData from '@adobe/helix-shared-body-data';
 import { execute, queryInfo } from './sendquery.js';
 import {
-  cleanRequestParams, csvify, sshonify, extractQueryPath,
+  cleanRequestParams, csvify, sshonify, extractQueryPath, chartify,
 } from './util.js';
 
 async function runExec(params, pathname, log) {
@@ -49,6 +49,26 @@ async function runExec(params, pathname, log) {
         headers: {
           'content-type': 'text/csv',
           ...headers,
+        },
+      });
+    }
+    if (pathname && pathname.endsWith('.chart')) {
+      const chartjson = chartify(results, description, params);
+      const urlparams = ['width', 'height', 'devicePixelRatio', 'backgroundColor', 'format', 'version']
+        .filter((param) => params[param])
+        .reduce((acc, param) => {
+          acc.set(param, params[param]);
+          return acc;
+        }, new URLSearchParams());
+      urlparams.set('chart', chartjson);
+      const charturl = new URL('https://quickchart.io/chart');
+      charturl.search = urlparams.toString();
+      return new Response(chartjson, {
+        status: 307,
+        headers: {
+          'content-type': 'text/plain',
+          ...headers,
+          location: charturl.toString(),
         },
       });
     }
