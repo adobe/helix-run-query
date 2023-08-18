@@ -143,8 +143,8 @@ export async function execute(email, key, project, query, _, params = {}) {
             });
             const metadata = childJobs[1]; // jobs are ordered in descending order by execution time
             if (metadata) {
-              const [metaddataResults] = await metadata.getQueryResults();
-              responseMetadata.totalRows = metaddataResults[0]?.total_rows;
+              const [metadataResults] = await metadata.getQueryResults();
+              responseMetadata.totalRows = metadataResults[0]?.total_rows;
             }
           }
           resolve({
