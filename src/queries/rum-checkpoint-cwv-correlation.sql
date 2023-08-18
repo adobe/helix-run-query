@@ -28,7 +28,7 @@ WITH alldata AS (
       @enddate,
       "UTC",
       "all",
-      "-"
+      @domainkey
     )
 ),
 
@@ -69,7 +69,7 @@ events AS (
     allids.id,
     ANY_VALUE(alllcps.lcp) AS lcp,
     NTILE(CAST(@ntiles AS INT64))
-    OVER (ORDER BY ANY_VALUE(lcp)) AS lcp_percentile,
+      OVER (ORDER BY ANY_VALUE(lcp)) AS lcp_percentile,
     COUNT(DISTINCT linkclickevents.target) AS linkclicks
   FROM linkclickevents FULL JOIN allids ON linkclickevents.id = allids.id
   INNER JOIN alllcps ON (alllcps.id = allids.id)
@@ -141,10 +141,3 @@ FULL JOIN correlation ON (true)
 FULL JOIN good_correlation ON (true)
 FULL JOIN boost_potential ON (true)
 ORDER BY clickrates.lcp_percentile
-
-# SELECT
-#   target,
-#   COUNT(DISTINCT id) AS ids
-# FROM linkclickevents
-# GROUP BY target
-# ORDER BY ids DESC
