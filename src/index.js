@@ -47,7 +47,7 @@ async function runExec(params, pathname, log) {
       });
     }
     if (pathname && pathname.endsWith('.chart')) {
-      const chartjson = chartify(results, description, params, responseDetails, truncated);
+      const chartjson = chartify(results, description, params);
       const urlparams = ['width', 'height', 'devicePixelRatio', 'backgroundColor', 'format', 'version']
         .filter((param) => params[param])
         .reduce((acc, param) => {

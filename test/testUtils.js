@@ -704,8 +704,6 @@ describe('Test chartify', () => {
       input.results,
       input.description,
       input.requestParams,
-      input.responseDetails,
-      input.truncated,
     );
     assert(chart);
     assert.equal(chart, '{"type":"horizontalBar","data":{"labels":[".article-header",".images",".banner",".tags",".recommended-articles",".embed",".animation",".featured-article",".video",".article-feed",".tag-header",".marquee",".table-of-contents",".error-attr",".error-text",".pull-quote",".author-header",".toolkit",".newsletter-modal",".image","#tabs-0",".infographic",".columns",".infograph",".art-culos-recomendados",".social-links",".carousel",".namecard",".image-50",".full-width-banner"],"datasets":[{"label":"Views","backgroundColor":"rgba(255, 99, 132, 0.5)","borderColor":"rgb(255, 99, 132)","borderWidth":1,"data":["32580","21000","13500","13110","11170","7690","4730","4440","4200","3590","2220","1790","1530","650","650","470","380","270","260","200","150","140","140","100","50","50","30","30","20","20"]}]},"options":{"elements":{"rectangle":{"borderWidth":2}},"responsive":true,"legend":{"position":"right"},"title":{"display":true,"text":"Most popular Blocks by Views"}}}');
@@ -829,8 +827,6 @@ describe('Test chartify', () => {
       input.results,
       input.description,
       input.requestParams,
-      input.responseDetails,
-      input.truncated,
     );
     assert(chart);
     const expected = `{
