@@ -19,7 +19,7 @@ if [ -z "$DOMAINS" ]; then
   exit 1
 fi
 
-echo 'domain, key'
+echo "domain, key"
 # loop over the domains
 for DOMAIN in $DOMAINS; do
   KEY=$(curl -s -X "POST" "https://helix-pages.anywhere.run/helix-services/run-query@v3/rotate-domainkeys?url=$DOMAIN&graceperiod=-1&readonly=false" \
