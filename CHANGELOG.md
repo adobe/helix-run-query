@@ -1,3 +1,10 @@
+## [3.3.2](https://github.com/adobe/helix-run-query/compare/v3.3.1...v3.3.2) (2023-08-18)
+
+
+### Bug Fixes
+
+* **cwv-correlations:** use domain keys ([ef68fae](https://github.com/adobe/helix-run-query/commit/ef68faed4d3e8688d7c6b04577aab8119ac8342e))
+
 ## [3.3.1](https://github.com/adobe/helix-run-query/compare/v3.3.0...v3.3.1) (2023-08-14)
 
 
