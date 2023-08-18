@@ -141,3 +141,10 @@ FULL JOIN correlation ON (true)
 FULL JOIN good_correlation ON (true)
 FULL JOIN boost_potential ON (true)
 ORDER BY clickrates.lcp_percentile
+--- lcp_percentile: the nth ntiles of LCP values (number of values is based on the ntile parameter)
+--- lcp: the mean LCP value for the nth ntile
+--- click_rate: the click rate for the nth ntile
+--- correlation: the correlation coefficient between LCP and click rate (negative means that a higher LCP is correlated with a lower click rate)
+--- good_correlation: the correlation coefficient between LCP and click rate, but only for LCP values that are less than 2500ms (this is where the correlation is strongest)
+--- click_rate_boost: the percentage increase in click rate if the LCP was by one second (1000ms) faster
+--- lcp_diff: the difference between the LCP and the best LCP (the LCP that has the highest click rate)
