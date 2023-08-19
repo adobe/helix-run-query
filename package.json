@@ -47,8 +47,8 @@
     "json-size": "1.0.0"
   },
   "devDependencies": {
-    "@adobe/eslint-config-helix": "2.0.2",
-    "@adobe/helix-deploy": "9.2.0",
+    "@adobe/eslint-config-helix": "2.0.3",
+    "@adobe/helix-deploy": "9.2.1",
     "@adobe/helix-universal": "4.3.0",
     "@adobe/semantic-release-coralogix": "1.1.25",
     "@pollyjs/adapter-node-http": "6.0.6",
