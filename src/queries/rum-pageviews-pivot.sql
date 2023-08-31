@@ -51,8 +51,8 @@ WITH pvs AS (
   FROM
     helix_rum.PAGEVIEWS_V3(
       '%s',
-      %d,
-      %d,
+      %s,
+      %s,
       '',
       '',
       '%s',
