@@ -45,56 +45,60 @@ SET months3 = (
     ) AS alldays
 );
 
--- workaround to put dynamic list of specific values into PIVOT command
--- otherwise month/year would need to be hardcoded
-EXECUTE IMMEDIATE format( -- noqa: PRS
-"""
+CREATE TEMP TABLE temp_total_pvs (
+  hostname STRING,
+  month STRING,
+  estimated_pvs NUMERIC
+) AS
+
 WITH pvs AS (
   SELECT
     SUM(pageviews) AS pageviews,
     REGEXP_REPLACE(hostname, r'^www.', '') AS hostname,
-    FORMAT_DATE('%%Y-%%b', time) AS month
+    FORMAT_DATE('%Y-%b', time) AS month
   FROM
     helix_rum.PAGEVIEWS_V3(
-      '%s',
-      %s,
-      %s,
+      @url,
+      @offset,
+      @interval,
       '',
       '',
-      '%s',
-      '%s',
-      '%s'
+      @timezone,
+      @device,
+      @domainkey
     )
   WHERE
     hostname != ''
-    AND NOT REGEXP_CONTAINS(hostname, r'^\\d+\\.\\d+\\.\\d+\\.\\d+$') -- IP addresses
-    AND hostname NOT LIKE 'localhost%%'
-    AND hostname NOT LIKE '%%.hlx.page'
-    AND hostname NOT LIKE '%%.hlx3.page'
-    AND hostname NOT LIKE '%%.hlx.live'
-    AND hostname NOT LIKE '%%.helix3.dev'
-    AND hostname NOT LIKE '%%.sharepoint.com'
-    AND hostname NOT LIKE '%%.google.com'
-    AND hostname NOT LIKE '%%.edison.pfizer' -- not live
-    AND hostname NOT LIKE '%%.web.pfizer'
+    AND NOT REGEXP_CONTAINS(hostname, r'^\d+\.\d+\.\d+\.\d+$') -- IP addresses
+    AND hostname NOT LIKE 'localhost%'
+    AND hostname NOT LIKE '%.hlx.page'
+    AND hostname NOT LIKE '%.hlx3.page'
+    AND hostname NOT LIKE '%.hlx.live'
+    AND hostname NOT LIKE '%.helix3.dev'
+    AND hostname NOT LIKE '%.sharepoint.com'
+    AND hostname NOT LIKE '%.google.com'
+    AND hostname NOT LIKE '%.edison.pfizer' -- not live
+    AND hostname NOT LIKE '%.web.pfizer'
     OR hostname = 'www.hlx.live'
   GROUP BY month, hostname
-),
+)
 
-total_pvs AS (
-  SELECT
-    hostname,
-    month,
-    SUM(pageviews) AS estimated_pvs
-  FROM pvs
-  GROUP BY hostname, month
-),
+SELECT
+  hostname,
+  month,
+  SUM(pageviews) AS estimated_pvs
+FROM pvs
+GROUP BY hostname, month;
 
-grid AS (
+-- workaround to put dynamic list of specific values into PIVOT command
+-- otherwise month/year would need to be hardcoded
+EXECUTE IMMEDIATE format( -- noqa: PRS
+"""
+WITH grid AS (
   SELECT * FROM
   (
     SELECT hostname, month, estimated_pvs
-    FROM total_pvs
+    FROM temp_total_pvs
   )
   PIVOT
   (
@@ -105,6 +109,6 @@ grid AS (
 
 SELECT *
 FROM grid
-WHERE hostname IN (SELECT DISTINCT hostname FROM total_pvs WHERE month IN %s AND estimated_pvs >= 1000)
-ORDER BY hostname
-""", @url, @offset, @interval, @timezone, @device, @domainkey, months12, months3);
+WHERE hostname IN (SELECT DISTINCT hostname FROM temp_total_pvs WHERE month IN %s AND estimated_pvs >= 1000)
+ORDER BY hostname;
+""", months12, months3);
