@@ -50,14 +50,14 @@ WITH pvs AS (
     FORMAT_DATE('%%Y-%%b', time) AS month
   FROM
     helix_rum.PAGEVIEWS_V3(
-      @url,
-      @offset,
-      @interval,
+      '%s',
+      %d,
+      %d,
       '',
       '',
-      @timezone,
-      @device,
-      @domainkey
+      '%s',
+      '%s',
+      '%s'
     )
   WHERE
     hostname != ''
@@ -101,4 +101,4 @@ SELECT *
 FROM grid
 WHERE hostname IN (SELECT DISTINCT hostname FROM total_pvs WHERE month IN %s AND estimated_pvs >= 1000)
 ORDER BY hostname
-""", months12, months3);
+""", @url, @offset, @interval, @timezone, @device, @domainkey, months12, months3);
