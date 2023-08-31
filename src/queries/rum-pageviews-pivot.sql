@@ -59,8 +59,8 @@ WITH pvs AS (
   FROM
     helix_rum.PAGEVIEWS_V3(
       @url,
-      @offset,
-      @interval,
+      CAST(@offset AS INT64),
+      CAST(@interval AS INT64),
       '',
       '',
       @timezone,
