@@ -22,7 +22,7 @@ SET months12 = (
     )
   FROM
     UNNEST(
-      GENERATE_DATE_ARRAY(CURRENT_DATE('UTC') - 365, CURRENT_DATE('UTC') - 1)
+      GENERATE_DATE_ARRAY(CURRENT_DATE(@timezone) - 365, CURRENT_DATE(@timezone) - 1)
     ) AS alldays
   WHERE FORMAT_DATE('%d', alldays) = '01'
 );
@@ -35,7 +35,7 @@ SET months3 = (
     )
   FROM
     UNNEST(
-      GENERATE_DATE_ARRAY(CURRENT_DATE('UTC') - 90, CURRENT_DATE('UTC') - 1)
+      GENERATE_DATE_ARRAY(CURRENT_DATE(@timezone) - 90, CURRENT_DATE(@timezone) - 1)
     ) AS alldays
 );
 
