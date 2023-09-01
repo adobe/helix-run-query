@@ -58,15 +58,40 @@ function coerce(value) {
 }
 
 /**
- * Processes additional parameters relating to query properties, like -- Authorization
- * and other properties that will be passed into request/response headers: for example;
- * --- Cache-Control: max-age: 300.
- *
- * @param {string} query the content read from a query file
+ * Splits the query into three parts: leading comments, query, trailing comments
+ * @param {string} query a SQL query
+ * @returns {object} an object with three properties: leading, query, trailing
  */
-export function getHeaderParams(query) {
-  return query.split('\n')
-    .filter((e) => e.startsWith('---'))
+function splitQuery(query) {
+  const lines = query.split('\n');
+  // find the first non-comment line
+  const first = lines.findIndex((line) => !line.startsWith('---'));
+  // find the first SELECT statement
+  const queryStart = lines.findIndex((line) => line.match(/^SELECT/i));
+  // find the first comment after the query
+  const queryEnd = lines.findIndex((_, i) => i > queryStart && !lines[i].startsWith('---'));
+
+  const leading = lines
+    .filter((_, i) => i < first)
+    .filter((line) => line.startsWith('---'))
+    .join('\n');
+  const trailing = lines
+    .filter((_, i) => i > queryEnd && i > queryStart)
+    .filter((line) => line.startsWith('---'))
+    .join('\n');
+  const queryPart = lines
+    .filter((_, i) => i >= queryStart && i < queryEnd)
+    .join('\n');
+
+  return {
+    leading,
+    query: queryPart,
+    trailing,
+  };
+}
+
+function getParams(query, part) {
+  return splitQuery(query)[part].split('\n')
     .filter((e) => e.indexOf(':') > 0)
     .map((e) => e.substring(4).split(': '))
     .reduce((acc, val) => {
@@ -77,15 +102,18 @@ export function getHeaderParams(query) {
 }
 
 /**
- * cleans out extra parameters from query and leaves only query
+ * Processes additional parameters relating to query properties, like -- Authorization
+ * and other properties that will be passed into request/response headers: for example;
+ * --- Cache-Control: max-age: 300.
  *
  * @param {string} query the content read from a query file
  */
-export function cleanQuery(query) {
-  return query.split('\n')
-    .filter((e) => !e.startsWith('---'))
-    .filter((e) => !e.startsWith('#'))
-    .join('\n');
+export function getHeaderParams(query) {
+  return getParams(query, 'leading');
+}
+
+export function getTrailingParams(query) {
+  return getParams(query, 'trailing');
 }
 
 /**
@@ -105,12 +133,43 @@ export function cleanRequestParams(params) {
 }
 
 /**
+ * function checks that all parameters are not arrays.
+ * @param {*} params
+ * @returns
+ */
+export function validParamCheck(params) {
+  return Object.values(params).every((param) => !(Array.isArray(param)));
+}
+
+/**
+ * pulls the query path from the URL which allows for organization by folder
+ * @param {string} pathname path which needs to be parsed
+ * @returns path under /src/queries where query is found
+ */
+export function extractQueryPath(pathname) {
+  // remove /helix-services/run-query
+  // optionally followed by @ or /
+  // then optionally ci or v
+  // then any combination of digits and . char
+  // and finally another / slash
+  // everything after that should be kept
+  return pathname.replace(/^\/helix-services\/run-query((@|\/)(ci|v)*[0-9.]+)*\//, '');
+}
+
+/**
  * fills in missing query parameters (if any) with defaults from query file
  * @param {object} params provided parameters
  * @param {object} defaults default parameters in query file
  */
 export function resolveParameterDiff(params, defaults) {
-  return Object.assign(defaults, params);
+  const resolvedParams = Object.assign(defaults, params);
+  if (validParamCheck(resolvedParams)) {
+    return resolvedParams;
+  } else {
+    const err = new Error('Duplicate URL parameters found');
+    err.statusCode = 400;
+    throw err;
+  }
 }
 
 function format(entry) {
@@ -139,15 +198,23 @@ export function csvify(arr) {
  * @param {boolean} truncated whether the result set was truncated
  * @returns {string} the SSHON string
  */
-export function sshonify(results, description, requestParams, truncated) {
+export function sshonify(
+  results,
+  description,
+  requestParams,
+  responseDetails,
+  responseMetadata,
+  truncated,
+) {
   const sson = {
     ':names': ['results', 'meta'],
     ':type': 'multi-sheet',
     ':version': 3,
     results: {
       limit: Math.max(requestParams.limit || 1, results.length),
-      offset: requestParams.offset || 0,
-      total: requestParams.offset || 0 + results.length + (truncated ? 1 : 0),
+      offset: parseInt(requestParams.offset, 10) || 0,
+      total: responseMetadata.totalRows
+        || results.length + Number(truncated),
       data: results,
       columns: Object.keys(results[0] || {}),
     },
@@ -167,8 +234,56 @@ export function sshonify(results, description, requestParams, truncated) {
           value,
           type: 'request parameter',
         })),
+        ...Object.entries(responseDetails).map(([key, value]) => ({
+          name: key,
+          value,
+          type: 'response detail',
+        })),
       ],
     },
   };
   return JSON.stringify(sson);
+}
+/**
+ * Turn the result set into a custom chart.js object that can be used with
+ * quickchart.io
+ * @param {object[]} results the SQL result set
+ * @param {string} description the description of the query
+ * @param {object} requestParams the request parameters
+ * @param {boolean} truncated whether the result set was truncated
+ * @returns {object} the chartjs object
+ */
+export function chartify(results, description, requestParams) {
+  function descend(obj) {
+    if (Array.isArray(obj)) {
+      return obj.map((entry) => descend(entry));
+    }
+    if (typeof obj === 'object') {
+      return Object.keys(obj).reduce((acc, key) => {
+        // eslint-disable-next-line no-param-reassign
+        acc[key] = descend(obj[key]);
+        return acc;
+      }, {});
+    }
+    if (typeof obj === 'string' && obj.startsWith('@')) {
+      const column = obj.substring(1);
+      return results.map((entry) => entry[column]);
+    }
+    return obj;
+  }
+
+  try {
+    const chartjson = JSON.parse(requestParams.chart);
+    return JSON.stringify(descend(chartjson));
+  } catch (e) {
+    // chart is not JSON, so we try a brute force string replacement
+    const chartstr = requestParams.chart;
+    return chartstr.replace(/@([a-zA-Z0-9_]+)/g, (match, column) => {
+      const data = results
+        .map((entry) => entry[column])
+        // if the column can be cast into a number, then use that
+        .map((entry) => (Number.isNaN(Number(entry)) ? entry : Number(entry)));
+      return JSON.stringify(data);
+    });
+  }
 }

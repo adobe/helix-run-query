@@ -9,7 +9,7 @@ capitalisation_policy = upper
 
 [sqlfluff:rules:capitalisation.functions]
 extended_capitalisation_policy = upper
-ignore_words_regex = ^`helix-225321.helix_rum.[A-Z_]+`$
+ignore_words_regex = ^`(helix-225321\.(helix_rum|fn)\.[^`]+)`$
 
 [sqlfluff:rules:layout.long_lines]
 ignore_comment_lines = true

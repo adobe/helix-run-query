@@ -18,6 +18,32 @@ import { Request } from '@adobe/fetch';
 import { main } from '../src/index.js';
 
 describe('Test Queries', () => {
+  it('multi-results', async () => {
+    const res = await main(new Request('https://helix-run-query.com/multi-results?url=www.hlx.live&domain=www.hlx.live', {
+      headers: {
+        Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
+      },
+    }), {
+      env: {
+        GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
+        GOOGLE_PRIVATE_KEY: process.env.GOOGLE_PRIVATE_KEY,
+        GOOGLE_PROJECT_ID: process.env.GOOGLE_PROJECT_ID,
+      },
+    });
+    assert.ok(res);
+    const results = await res.text();
+    assert.ok(results);
+    let json;
+    try {
+      json = JSON.parse(results);
+    } catch (e) {
+      assert.fail(`${results} is not valid JSON`);
+    }
+    assert.ok(json.results.data);
+    assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
+    assert.equal(json.results.total, 100);
+  }).timeout(100000);
+
   it('rum-dashboard', async () => {
     const res = await main(new Request('https://helix-run-query.com/rum-dashboard?url=www.hlx.live&domain=www.hlx.live', {
       headers: {
@@ -41,6 +67,7 @@ describe('Test Queries', () => {
     }
     assert.ok(json.results.data);
     assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
+    assert.equal(json.meta.data.length, 44);
   }).timeout(100000);
 
   it('rum-dashboard (url auth)', async () => {

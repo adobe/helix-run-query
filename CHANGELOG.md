@@ -1,3 +1,141 @@
+## [3.5.2](https://github.com/adobe/helix-run-query/compare/v3.5.1...v3.5.2) (2023-08-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v126 ([#952](https://github.com/adobe/helix-run-query/issues/952)) ([7894a2d](https://github.com/adobe/helix-run-query/commit/7894a2d694b570e04fca2c1e7a6030239c11a375))
+
+## [3.5.1](https://github.com/adobe/helix-run-query/compare/v3.5.0...v3.5.1) (2023-08-19)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([f169b6c](https://github.com/adobe/helix-run-query/commit/f169b6c39e05fd4e6f9fd196fba5dd76da1d7d46))
+
+# [3.5.0](https://github.com/adobe/helix-run-query/compare/v3.4.0...v3.5.0) (2023-08-18)
+
+
+### Features
+
+* **index:** add support for `.chart` extension ([e4fd949](https://github.com/adobe/helix-run-query/commit/e4fd949cc46def12105a9ae9cd9a6b6a45c11e34))
+* **tools:** add CLI for domain key rotation ([03286de](https://github.com/adobe/helix-run-query/commit/03286de749a43f1c3baa6b1dee72e6c6929979cc))
+
+# [3.4.0](https://github.com/adobe/helix-run-query/compare/v3.3.2...v3.4.0) (2023-08-18)
+
+
+### Bug Fixes
+
+* **sendquery:** don't run the same query twice ([cca4063](https://github.com/adobe/helix-run-query/commit/cca40637f6aeb4a471750232f1360c853e41feec))
+* **sendquery:** wait for the main query to have completed before fetching metadata results ([97897b9](https://github.com/adobe/helix-run-query/commit/97897b98de0ca0bf8f31b4a22be12373c46d3b8b))
+
+
+### Features
+
+* **index:** add ability to report accurate totals for query results ([57b5c61](https://github.com/adobe/helix-run-query/commit/57b5c61d543c33b5d00c659a1505c2b2cdc887e7))
+
+## [3.3.2](https://github.com/adobe/helix-run-query/compare/v3.3.1...v3.3.2) (2023-08-18)
+
+
+### Bug Fixes
+
+* **cwv-correlations:** use domain keys ([ef68fae](https://github.com/adobe/helix-run-query/commit/ef68faed4d3e8688d7c6b04577aab8119ac8342e))
+
+## [3.3.1](https://github.com/adobe/helix-run-query/compare/v3.3.0...v3.3.1) (2023-08-14)
+
+
+### Bug Fixes
+
+* **deps:** update external major ([#935](https://github.com/adobe/helix-run-query/issues/935)) ([ade15a2](https://github.com/adobe/helix-run-query/commit/ade15a239af3f1f2e17d1e19afab134e26ab984f))
+
+# [3.3.0](https://github.com/adobe/helix-run-query/compare/v3.2.0...v3.3.0) (2023-07-28)
+
+
+### Bug Fixes
+
+* **utils:** do not extract leading as trailing if no trailing comments exist ([a98a0ef](https://github.com/adobe/helix-run-query/commit/a98a0efea894c16225592819dc22705a61785f11))
+* **utils:** split query at comment boundary ([bf6dc2f](https://github.com/adobe/helix-run-query/commit/bf6dc2f4e5dbbaa53e50a906b6919d07fc46cc58))
+
+
+### Features
+
+* **index:** include parameter descriptions into response ([ad17e0c](https://github.com/adobe/helix-run-query/commit/ad17e0c84bd9a5157530b8cd6280e845fe0a3c22))
+
+# [3.2.0](https://github.com/adobe/helix-run-query/compare/v3.1.8...v3.2.0) (2023-07-20)
+
+
+### Bug Fixes
+
+* **rum-experiments:** list experiments even if control has no observed experimentations ([313fcf7](https://github.com/adobe/helix-run-query/commit/313fcf7dd2632bc0a8a519566e605820298119a8))
+* **rum-intervals:** fix typo ([1fd5322](https://github.com/adobe/helix-run-query/commit/1fd53228bf2e6b2cd3a1b5a5c25d195411a93c9b))
+* **rum-intervals:** make query runnable ([4ad02d5](https://github.com/adobe/helix-run-query/commit/4ad02d588be74e65961e79d77958522439448000))
+* **rum-intervals:** report timestamps as strings ([adab4af](https://github.com/adobe/helix-run-query/commit/adab4aff34857f67d5dc5389099dbe379f3ac9d3))
+* **rum-intervals:** use only date parameters from intervals list ([a46b5cf](https://github.com/adobe/helix-run-query/commit/a46b5cf4fd5c563a82fddb17ca010ddf586f2249))
+
+
+### Features
+
+* **queries:** add wip query to report performance and conversion in named time intervals ([84c2b43](https://github.com/adobe/helix-run-query/commit/84c2b43c4a8b560a84e7589f0f66e70f27f5fab4))
+* **rum-intervals:** calculate p value for conversions, too ([5b19435](https://github.com/adobe/helix-run-query/commit/5b19435ba64460a2d787f443b538fe7ef31c91f3))
+* **rum-intervals:** calculate p-value of lcp differences ([3a06d0a](https://github.com/adobe/helix-run-query/commit/3a06d0ae41c20f0528e462e9dbf659c96118d3cc))
+* **rum-intervals:** get intervals, and click rates for each interval ([ce46bdd](https://github.com/adobe/helix-run-query/commit/ce46bdd14d2caa8dc8d13b753c7a49e42996391b))
+* **rum-intervals:** report standard error and averages ([578ea39](https://github.com/adobe/helix-run-query/commit/578ea394d25e5ee4a0053e99c3de7f7eeaf74539))
+
+## [3.1.8](https://github.com/adobe/helix-run-query/compare/v3.1.7...v3.1.8) (2023-07-20)
+
+
+### Bug Fixes
+
+* **dev:** cast command line parameters in correct type ([a3b06d6](https://github.com/adobe/helix-run-query/commit/a3b06d6d7128e02dafeb266d02c98539ae631e46))
+
+## [3.1.7](https://github.com/adobe/helix-run-query/compare/v3.1.6...v3.1.7) (2023-07-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v122 ([249265f](https://github.com/adobe/helix-run-query/commit/249265f926e481b2ca982ccb7acddad32f7169e7))
+
+## [3.1.6](https://github.com/adobe/helix-run-query/compare/v3.1.5...v3.1.6) (2023-07-15)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([5138419](https://github.com/adobe/helix-run-query/commit/5138419af5c2b37fc580871ba917825149a26ecb))
+
+## [3.1.5](https://github.com/adobe/helix-run-query/compare/v3.1.4...v3.1.5) (2023-07-12)
+
+
+### Bug Fixes
+
+* **utils.js:** fix bug that enables arrays to pass ([#886](https://github.com/adobe/helix-run-query/issues/886)) ([9a829d0](https://github.com/adobe/helix-run-query/commit/9a829d08a932f90fc832be325dabb1eee43a0d3a))
+
+## [3.1.4](https://github.com/adobe/helix-run-query/compare/v3.1.3...v3.1.4) (2023-07-10)
+
+
+### Bug Fixes
+
+* **dev-urls:** guard aginst non-string owner, repo, ref names ([7096bb2](https://github.com/adobe/helix-run-query/commit/7096bb2d0366392e73846284b5034eb62f36203b))
+
+## [3.1.3](https://github.com/adobe/helix-run-query/compare/v3.1.2...v3.1.3) (2023-07-05)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v120 ([#906](https://github.com/adobe/helix-run-query/issues/906)) ([30f4316](https://github.com/adobe/helix-run-query/commit/30f43165d00ebc98f12a97789a00545c38bbbece))
+
+## [3.1.2](https://github.com/adobe/helix-run-query/compare/v3.1.1...v3.1.2) (2023-05-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fetch to v4.0.13 ([023f7f9](https://github.com/adobe/helix-run-query/commit/023f7f9a04793b476e635628f6a2feb929744025))
+
+## [3.1.1](https://github.com/adobe/helix-run-query/compare/v3.1.0...v3.1.1) (2023-05-16)
+
+
+### Bug Fixes
+
+* **ee-score:** do not use deprecated URL parameter domain ([fec2d3f](https://github.com/adobe/helix-run-query/commit/fec2d3f1bab8bd2881ad68b76b458f1a88302c1b))
+
 # [3.1.0](https://github.com/adobe/helix-run-query/compare/v3.0.5...v3.1.0) (2023-05-11)
 
 

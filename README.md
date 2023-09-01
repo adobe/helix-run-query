@@ -77,12 +77,27 @@ For a full list of changes, please see the [CHANGELOG](CHANGELOG.md#300-2023-04-
 
 # Development
 
+## `dev.sh` script
+
+Running queries in development using the `bq` tool can be cumbersome, as all parameters
+in the query are required. The `dev.sh` script can be used to run queries in development
+mode and will fill out important parameters with defaut values.
+
+Start setting it up by exporting your domain key to `DOMAINKEY`, then run `dev.sh <query>`.
+
+```bash
+$ export DOMAINKEY=…
+$ sh dev.sh rum-dashboard url www.adobe.com
+```
+
+You can pass additional parameters to the query as seen above. The second (optional) parameter allows you to specify the output format, with values `pretty`, `csv`, `json`
+being supported.
+
 ## Required Environment Variables
 
 This service depends on three external services to operate:
 
 - Fastly
-- Adobe I/O Runtime (only for deployments)
 - Google Cloud Platform
 
 It is configured using a number of environment variables that are required for testing (tests that miss required variables will be skipped) and deployment (deployment will fail or be non-functional). These variables are required and this is how to set them up:

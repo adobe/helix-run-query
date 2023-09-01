@@ -16,7 +16,9 @@ import { logger } from '@adobe/helix-universal-logger';
 import { Response } from '@adobe/fetch';
 import bodyData from '@adobe/helix-shared-body-data';
 import { execute, queryInfo } from './sendquery.js';
-import { cleanRequestParams, csvify, sshonify } from './util.js';
+import {
+  cleanRequestParams, csvify, sshonify, extractQueryPath, chartify,
+} from './util.js';
 
 async function runExec(params, pathname, log) {
   try {
@@ -24,7 +26,13 @@ async function runExec(params, pathname, log) {
       return queryInfo(pathname, params);
     }
     const {
-      results, truncated, headers, description, requestParams,
+      results,
+      truncated,
+      headers,
+      description,
+      requestParams,
+      responseDetails,
+      responseMetadata,
     } = await execute(
       params.GOOGLE_CLIENT_EMAIL,
       params.GOOGLE_PRIVATE_KEY,
@@ -44,11 +52,33 @@ async function runExec(params, pathname, log) {
         },
       });
     }
+    if (pathname && pathname.endsWith('.chart')) {
+      const chartjson = chartify(results, description, params);
+      const urlparams = ['width', 'height', 'devicePixelRatio', 'backgroundColor', 'format', 'version']
+        .filter((param) => params[param])
+        .reduce((acc, param) => {
+          acc.set(param, params[param]);
+          return acc;
+        }, new URLSearchParams());
+      urlparams.set('chart', chartjson);
+      const charturl = new URL('https://quickchart.io/chart');
+      charturl.search = urlparams.toString();
+      return new Response(chartjson, {
+        status: 307,
+        headers: {
+          'content-type': 'text/plain',
+          ...headers,
+          location: charturl.toString(),
+        },
+      });
+    }
     delete requestParams.domainkey; // don't leak the domainkey
     return new Response(sshonify(
       results,
       description,
       requestParams,
+      responseDetails,
+      responseMetadata,
       truncated,
     ), {
       status: 200,
@@ -77,7 +107,8 @@ async function run(request, context) {
   params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
   params.GOOGLE_PROJECT_ID = context.env.GOOGLE_PROJECT_ID;
 
-  return runExec(params, pathname.split('/').pop(), context.log);
+  // nested folder support
+  return runExec(params, extractQueryPath(pathname), context.log);
 }
 
 /**

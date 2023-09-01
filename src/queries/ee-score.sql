@@ -328,7 +328,7 @@ lookmeup AS (
         COUNTIF(chainlength = 7) AS persistence
       FROM chains
       WHERE
-        (host = @domain OR @domain = "-")
+        (host = @url OR @url = "-")
         AND host IS NOT NULL
         AND host NOT LIKE "%.hlx.%"
         AND host != "localhost"
@@ -337,8 +337,8 @@ lookmeup AS (
     ) AS chained
   )
   WHERE
-    host = @domain OR (
-      @domain = "-"
+    host = @url OR (
+      @url = "-"
       AND clsscore IS NOT NULL
       AND fidscore IS NOT NULL
       # AND inpscore IS NOT NULL

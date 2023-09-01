@@ -85,7 +85,7 @@ describe('bigquery tests', async () => {
     assert.deepEqual(requestParams, { limit: 3 });
     assert.equal(description, 'good comment practices for helix queries is encouraged');
     assert.ok(results.length, 3);
-  });
+  }).timeout(20000);
 
   it('runs a query with params', async () => {
     const { results, description, requestParams } = await goodExec.execute(env.email, env.key, env.projectid, 'list-everything', service, {
@@ -95,7 +95,7 @@ describe('bigquery tests', async () => {
     assert.equal(description, 'good comment practices for helix queries is encouraged');
     assert.deepEqual(requestParams, { limit: 3 });
     assert.equal(results.length, 3);
-  });
+  }).timeout(20000);
 
   it('throws without projectid', async () => {
     try {

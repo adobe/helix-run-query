@@ -1,4 +1,5 @@
 --- description: Rotate domain keys
+--- Access-Control-Allow-Origin: *
 --- timezone: UTC
 --- url: -
 --- device: all
@@ -22,7 +23,7 @@ IF EXISTS (
     AND readonly = FALSE
 ) THEN
   SET newkey = IF(@newkey = "-", GENERATE_UUID(), @newkey);
-  CALL helix_rum . ROTATE_DOMAIN_KEYS(
+  CALL helix_rum . ROTATE_DOMAIN_KEYS( -- noqa: PRS
     @domainkey,
     IF(@url = "-", "", @url),
     @timezone,
