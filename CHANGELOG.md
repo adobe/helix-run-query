@@ -1,3 +1,10 @@
+# [3.6.0](https://github.com/adobe/helix-run-query/compare/v3.5.2...v3.6.0) (2023-09-01)
+
+
+### Features
+
+* **queries:** new query for rum pageviews by month and hostname ([5ad822e](https://github.com/adobe/helix-run-query/commit/5ad822e33718d1bf37cd4a816a81680ce6ca7c24))
+
 ## [3.5.2](https://github.com/adobe/helix-run-query/compare/v3.5.1...v3.5.2) (2023-08-22)
 
 
