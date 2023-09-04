@@ -1,3 +1,10 @@
+# [3.7.0](https://github.com/adobe/helix-run-query/compare/v3.6.0...v3.7.0) (2023-09-04)
+
+
+### Features
+
+* **chart:** enable creation of scatterplots by using `[@xcolumn](https://github.com/xcolumn),[@ycolumn](https://github.com/ycolumn)` syntax ([3c6390b](https://github.com/adobe/helix-run-query/commit/3c6390bdee663ccf07c922ce9d7f62d0bd87643e))
+
 # [3.6.0](https://github.com/adobe/helix-run-query/compare/v3.5.2...v3.6.0) (2023-09-01)
 
 
