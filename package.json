@@ -115,7 +115,10 @@
       "src/queries/dash/auth-all-domains.sql",
       "src/queries/dash/domain-list.sql",
       "src/queries/dash/update-domain-info.sql",
-      "src/queries/rum-dashboard/daily-rum.sql"
+      "src/queries/rum-dashboard/daily-rum.sql",
+      "src/queries/rum-dashboard/daily-rum.sql",
+      "src/queries/rum-dashboard/sidekick-data.sql",
+      "src/queries/rum-dashboard/github-commits.sql"
     ]
   },
   "nodemonConfig": {

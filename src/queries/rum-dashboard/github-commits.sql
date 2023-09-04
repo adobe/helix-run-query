@@ -8,7 +8,7 @@
 --- enddate: 2023-05-28
 --- timezone: UTC
 --- timeunit: day
---- exactmatch: true
+--- exactmatch: false
 --- url: -
 --- device: all
 --- domainkey: secret
@@ -16,7 +16,7 @@ with current_data as (
 SELECT 
   * 
 FROM 
-  helix_external_data.DAILY_COMMITS(
+  `helix-225321.helix_external_data.DAILY_COMMITS`(
     @url, 
     @offset, 
     @interval, 
@@ -26,7 +26,8 @@ FROM
   )
 ) 
 select * from current_data where 
-not user = 'GitHub Action' 
+not user = 'GitHub' 
+and not user = 'GitHub Action' 
 and not user = 'GitHub Enterprise' 
 and not user = 'CircleCi Build' 
 and not user = 'Helix Bot' 
@@ -37,4 +38,3 @@ and not user = 'helix-bot[bot]'
 and not user = 'renovate[bot]' 
 and not user = 'semantic-release-bot'
 order by owner_repo, commit_date asc
-
