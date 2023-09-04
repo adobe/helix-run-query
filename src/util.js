@@ -282,7 +282,8 @@ export function chartify(results, description, requestParams) {
             return acc;
           }, {}))
         // if it is a single value, then just return that value
-        .map((entry) => (Object.keys(entry).length === 1 && entry.hasOwnProperty('x') ? entry.x : entry));
+        .map((entry) => (Object.keys(entry).length === 1
+          && Object.prototype.hasOwnProperty.call(entry, 'x') ? entry.x : entry));
     }
     return obj;
   }
