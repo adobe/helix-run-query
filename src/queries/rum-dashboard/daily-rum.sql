@@ -22,7 +22,7 @@ WITH daily_rum AS
        IF(@timeunit = 'day', format_timestamp("%Y-%m-%d", time),
        IF(@timeunit = 'hour', format_timestamp("%Y-%m-%d-%T", time), 
        format_timestamp("%Y-%m-%d", time))) AS date 
-       FROM helix_rum.events_v4( 
+       FROM helix_rum.EVENTS_V4( 
        regexp_replace(@url, 'https://', ''), # domain OR url 
        cast(@offset AS int64), # NOT used, offset IN days FROM today 
        cast(@interval AS int64), # interval IN days TO consider 
