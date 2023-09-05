@@ -18,7 +18,7 @@ WITH sidekick_events AS
               hostname,
               source,
               user_agent LIKE "%Sidekick%" AS extension
-       FROM   `helix-225321.helix_rum`.CHECKPOINTS_V3( regexp_replace(@url, 'https://', ''), @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
+       FROM   helix_rum.CHECKPOINTS_V3( regexp_replace(@url, 'https://', ''), @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
        WHERE  CHECKPOINT LIKE "sidekick:%")
 SELECT   day,
          count(*)                   AS actions,

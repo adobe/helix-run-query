@@ -16,7 +16,7 @@ with current_data as (
 SELECT 
   * 
 FROM 
-  `helix-225321.helix_external_data.DAILY_COMMITS`(
+  helix_external_data.DAILY_COMMITS(
     @url, 
     @offset, 
     @interval, 
