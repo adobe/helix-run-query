@@ -22,7 +22,7 @@ WITH sidekick_events AS
        WHERE  CHECKPOINT LIKE "sidekick:%")
 SELECT   day,
          count(*)                   AS actions,
-         count(DISTINCTCHECKPOINT) AS checkpoints,
+         count(DISTINCT CHECKPOINT) AS checkpoints,
 FROM     sidekick_events
 GROUP BY sidekick_events.day,
          hostname
