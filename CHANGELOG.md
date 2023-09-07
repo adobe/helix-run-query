@@ -1,3 +1,10 @@
+# [3.8.0](https://github.com/adobe/helix-run-query/compare/v3.7.0...v3.8.0) (2023-09-07)
+
+
+### Features
+
+* **queries:** new queries for to support global domainkeys and reporting ([f56bd98](https://github.com/adobe/helix-run-query/commit/f56bd98158143bb9787f2ba6bd3b324d60c15b44))
+
 # [3.7.0](https://github.com/adobe/helix-run-query/compare/v3.6.0...v3.7.0) (2023-09-04)
 
 
