@@ -22,7 +22,7 @@ WITH daily_rum AS
        IF(@timeunit = 'day', format_timestamp("%Y-%m-%d", time),
        IF(@timeunit = 'hour', format_timestamp("%Y-%m-%d-%T", time), 
        format_timestamp("%Y-%m-%d", time))) AS date 
-       FROM helix_rum.EVENTS_V3(
+       FROM helix_rum.EVENTS_V4(
               @url, # domain or URL
               CAST(@offset AS INT64), # not used, offset in days from today
               CAST(@interval AS INT64), # interval in days to consider
@@ -40,8 +40,14 @@ WHERE    avglcp IS NOT NULL
 AND      avgfid IS NOT NULL
 AND      avgcls IS NOT NULL
 AND      (
-                  @exactmatch = true
-         AND      url = concat('https://', regexp_replace(@url, 'https://', ''))
+              (@exactmatch = true
+         AND (
+              url = concat('https://', REGEXP_REPLACE(@url, 'https://', '')) 
+              or
+              url = concat('https://www.', REGEXP_REPLACE(@url, 'https://', '')) 
+              or
+              url = concat('https://www.', REGEXP_REPLACE(@url, 'www.', ''))
+              ))
          OR       @exactmatch = false )
 AND      NOT starts_with(url, 'http://localhost')
 AND      NOT starts_with(url, 'https://localhost')
