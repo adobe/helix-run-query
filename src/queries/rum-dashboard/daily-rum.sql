@@ -22,15 +22,16 @@ WITH daily_rum AS
        IF(@timeunit = 'day', format_timestamp("%Y-%m-%d", time),
        IF(@timeunit = 'hour', format_timestamp("%Y-%m-%d-%T", time), 
        format_timestamp("%Y-%m-%d", time))) AS date 
-       FROM helix_rum.EVENTS_V4( 
-       regexp_replace(@url, 'https://', ''), # domain OR url 
-       cast(@offset AS int64), # NOT used, offset IN days FROM today 
-       cast(@interval AS int64), # interval IN days TO consider 
-       @startdate, # NOT used, start date 
-       @enddate, # NOT used, END date 
-       @timezone, # timezone 
-       @device, # device class 
-       @domainkey ) 
+       FROM helix_rum.EVENTS_V4(
+              @url, # domain or URL
+              CAST(@offset AS INT64), # not used, offset in days from today
+              CAST(@interval AS INT64), # interval in days to consider
+              @startdate, # not used, start date
+              @enddate, # not used, end date
+              @timezone, # timezone
+              @device, # device class
+              @domainkey
+        ) 
        GROUP BY url,
        date ORDER BY date ASC )
 SELECT   *
