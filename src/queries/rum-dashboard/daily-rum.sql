@@ -39,7 +39,6 @@ FROM     daily_rum
 WHERE    avglcp IS NOT NULL
 AND      avgfid IS NOT NULL
 AND      avgcls IS NOT NULL
-AND      avginp IS NOT NULL
 AND      (
                   @exactmatch = true
          AND      url = concat('https://', regexp_replace(@url, 'https://', ''))
