@@ -26,8 +26,7 @@ FROM
   )
 ) 
 select * from current_data where 
-not user = 'GitHub' 
-and not user = 'GitHub Action' 
+not user = 'GitHub Action' 
 and not user = 'GitHub Enterprise' 
 and not user = 'CircleCi Build' 
 and not user = 'Helix Bot' 
