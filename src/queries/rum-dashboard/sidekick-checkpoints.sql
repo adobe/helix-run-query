@@ -12,12 +12,8 @@
 --- domainkey: secret
 with sidekick_events AS (
 SELECT
-  FORMAT_DATE("%Y-%m-%d", DATE_TRUNC(time, DAY)) AS day,
-  id,
   checkpoint,
-  hostname,
-  source,
-  user_agent LIKE "%Sidekick%" AS extension
+  hostname
 FROM   helix_rum.CHECKPOINTS_V4(@url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
 WHERE  CHECKPOINT LIKE "sidekick:%")
 SELECT 
