@@ -21,10 +21,10 @@ WITH sidekick_events AS
        FROM   helix_rum.CHECKPOINTS_V4(@url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
        WHERE  CHECKPOINT LIKE "sidekick:%")
 SELECT   day,
-         count(*)                   AS actions,
-         count(DISTINCT CHECKPOINT) AS checkpoints,
+         count(*)                   AS invocations,
+         checkpoint,
 FROM     sidekick_events
 GROUP BY sidekick_events.day,
-         hostname
+         hostname, checkpoint
 ORDER BY hostname,
          day DESC
