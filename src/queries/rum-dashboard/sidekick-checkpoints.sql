@@ -1,3 +1,36 @@
+--- description: Get Detailed Daily Sidekick Data From RUM for a given domain
+--- Authorization: none
+--- Access-Control-Allow-Origin: *
+--- limit: 30
+--- interval: 30
+--- offset: 0
+--- startdate: 2023-02-01
+--- enddate: 2023-05-28
+--- timezone: UTC
+--- url: -
+--- device: all
+--- domainkey: secret
+with sidekick_events AS (
+SELECT
+  FORMAT_DATE("%Y-%m-%d", DATE_TRUNC(time, DAY)) AS day,
+  id,
+  checkpoint,
+  hostname,
+  source,
+  user_agent LIKE "%Sidekick%" AS extension
+FROM `helix-225321.helix_rum`.CHECKPOINTS_V4(@url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey)
+WHERE 
+  checkpoint LIKE "sidekick:%"
+)
+SELECT
+  hostname,
+  day,
+  COUNT(*) AS actions,
+  checkpoint, 
+FROM sidekick_events
+GROUP BY hostname, sidekick_events.day, checkpoint
+ORDER BY day asc
+
 --- description: Get Daily Sidekick Data From RUM for a given domain
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
@@ -18,11 +51,11 @@ WITH sidekick_events AS
               hostname,
               source,
               user_agent LIKE "%Sidekick%" AS extension
-       FROM   helix_rum.CHECKPOINTS_V4( @url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
+       FROM   helix_rum.CHECKPOINTS_V4(@url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
        WHERE  CHECKPOINT LIKE "sidekick:%")
 SELECT   day,
          count(*)                   AS actions,
-         count(DISTINCT CHECKPOINT) AS checkpoints,
+         checkpoint,
 FROM     sidekick_events
 WHERE
 (
@@ -38,7 +71,7 @@ WHERE
               url = concat('https://', REGEXP_REPLACE(@url, 'https://www.', ''))
               )
        ) OR       @exactmatch = false )
-GROUP BY sidekick_events.day,
+GROUP BY sidekick_events.day, checkpoint,
          hostname
 ORDER BY hostname,
-         day DESC
+         day asc

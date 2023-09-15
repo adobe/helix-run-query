@@ -47,6 +47,8 @@ AND      (
               url = concat('https://www.', REGEXP_REPLACE(@url, 'https://', '')) 
               or
               url = concat('https://www.', REGEXP_REPLACE(@url, 'www.', ''))
+              or
+              url = concat('https://', REGEXP_REPLACE(@url, 'https://www.', ''))
               ))
          OR       @exactmatch = false )
 AND      NOT starts_with(url, 'http://localhost')
