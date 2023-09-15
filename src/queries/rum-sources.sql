@@ -51,11 +51,11 @@ SELECT
   source,
   COUNT(id) AS ids,
   COUNT(DISTINCT url) AS pages,
-  APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
+  url as topurl,
   SUM(views) AS views,
   SUM(actions) AS actions,
   SUM(actions) / SUM(views) AS actions_per_view
 FROM sources
-GROUP BY source, checkpoint
+GROUP BY source, checkpoint, url
 ORDER BY views DESC
 LIMIT @limit
