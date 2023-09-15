@@ -101,8 +101,11 @@
       "src/queries/rum-sources.sql",
       "src/queries/rum-targets.sql",
       "src/queries/rum-dashboard/daily-rum.sql",
-      "src/queries/rum-dashboard/sidekick-data.sql",
-      "src/queries/rum-dashboard/github-commits.sql"
+      "src/queries/rum-dashboard/github-commits.sql",
+      "src/queries/rum-dashboard/sidekick-aggregate.sql",
+      "src/queries/rum-dashboard/sidekick-by-hostname.sql",
+      "src/queries/rum-dashboard/sidekick-by-url.sql"
+
     ]
   }
 }
