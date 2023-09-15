@@ -1,4 +1,4 @@
---- description: Get Daily Sidekick Data From RUM for a given domain
+--- description: Get URL Specific Daily Sidekick Data From RUM for a given domain
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
 --- limit: 30
@@ -10,19 +10,23 @@
 --- url: -
 --- device: all
 --- domainkey: secret
-WITH sidekick_events AS
-(
-       SELECT Format_date("%Y-%m-%d", Date_trunc(time, day)) AS day,
-              id,
-              checkpoint,
-              hostname,
-              source,
-              user_agent LIKE "%Sidekick%" AS extension
+with sidekick_events AS (
+SELECT
+  FORMAT_DATE("%Y-%m-%d", DATE_TRUNC(time, DAY)) AS day,
+  id,
+  checkpoint,
+  hostname,
+  url,
+  source,
+  user_agent LIKE "%Sidekick%" AS extension
        FROM   helix_rum.CHECKPOINTS_V4( @url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
-       WHERE  CHECKPOINT LIKE "sidekick:%")
-SELECT   day,
-         count(*)                   AS actions,
-         count(DISTINCT CHECKPOINT) AS checkpoints,
+WHERE 
+  checkpoint LIKE "sidekick:%"
+)
+SELECT   url,
+         day,
+         checkpoint,
+         count(*) AS invocations,
 FROM     sidekick_events
 WHERE
 (
@@ -38,7 +42,7 @@ WHERE
               url = concat('https://', REGEXP_REPLACE(@url, 'https://www.', ''))
               )
        ) OR       @exactmatch = false )
-GROUP BY sidekick_events.day,
-         hostname
-ORDER BY hostname,
-         day DESC
+GROUP BY sidekick_events.day, checkpoint,
+         url
+ORDER BY url,
+         day asc
