@@ -12,12 +12,12 @@
 --- domainkey: secret
 with sidekick_events AS (
 SELECT
-  checkpoint as checkpoint,
+  checkpoint,
   hostname
 FROM   helix_rum.CHECKPOINTS_V4(@url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
 WHERE  CHECKPOINT LIKE "sidekick:%")
 SELECT 
-     CHECKPOINT,
+     checkpoint,
 FROM     sidekick_events
 GROUP BY checkpoint
 ORDER BY checkpoint desc
