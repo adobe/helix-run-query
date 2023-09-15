@@ -7,6 +7,7 @@
 --- startdate: 2023-02-01
 --- enddate: 2023-05-28
 --- timezone: UTC
+--- exactmatch: true
 --- url: -
 --- device: all
 --- domainkey: secret

@@ -8,7 +8,7 @@
 --- enddate: 2023-05-28
 --- timezone: UTC
 --- timeunit: day
---- exactmatch: false
+--- exactmatch: true
 --- url: -
 --- device: all
 --- domainkey: secret
