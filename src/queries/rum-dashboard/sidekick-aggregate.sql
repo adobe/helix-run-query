@@ -17,11 +17,12 @@ WITH sidekick_events AS
               checkpoint,
               hostname,
               source,
+              pageviews,
               user_agent LIKE "%Sidekick%" AS extension
        FROM   helix_rum.CHECKPOINTS_V4(@url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
        WHERE  CHECKPOINT LIKE "sidekick:%")
 SELECT   day,
-         count(*)                   AS actions,
+         sum(pageviews)                   AS actions,
          count(DISTINCT CHECKPOINT) AS checkpoints,
 FROM     sidekick_events
 GROUP BY sidekick_events.day,

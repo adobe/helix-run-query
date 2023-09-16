@@ -18,6 +18,7 @@ SELECT
   checkpoint,
   hostname,
   url,
+  pageviews,
   source,
   user_agent LIKE "%Sidekick%" AS extension
        FROM   helix_rum.CHECKPOINTS_V4( @url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
@@ -27,7 +28,7 @@ WHERE
 SELECT   url,
          day,
          checkpoint,
-         count(*) AS invocations,
+         sum(pageviews) AS invocations,
 FROM     sidekick_events
 WHERE
 (
