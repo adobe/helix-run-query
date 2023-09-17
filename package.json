@@ -106,7 +106,8 @@
       "src/queries/rum-dashboard/sidekick-by-hostname.sql",
       "src/queries/rum-dashboard/sidekick-by-url.sql",
       "src/queries/rum-dashboard/sidekick-checkpoints.sql",
-      "src/queries/rum-dashboard/multiline-sidekick.sql"
+      "src/queries/rum-dashboard/multiline-sidekick.sql",
+      "src/queries/rum-dashboard/multiline-sidekick-incomplete.sql"
     ]
   }
 }
