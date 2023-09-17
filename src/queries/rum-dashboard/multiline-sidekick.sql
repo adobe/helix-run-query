@@ -14,11 +14,12 @@ with sidekick_events AS (
   SELECT
     FORMAT_DATE("%Y-%m-%d", DATE_TRUNC(time, DAY)) AS day,
     id,
+    hostname,
     checkpoint,
     source,
     pageviews,
     user_agent LIKE "%Sidekick%" AS extension
-  FROM   helix_rum.CHECKPOINTS_V4(@url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey ) WHERE  CHECKPOINT LIKE "sidekick:%" and hostname is not null and not hostname = ''
+  FROM   helix_rum.CHECKPOINTS_V4('-', @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey ) WHERE  CHECKPOINT LIKE "sidekick:%" and hostname is not null and not hostname = '' and hostname LIKE "%--%--%.hlx.%"
   ), 
 chosen_features as (
   select checkpoint, sum(pageviews) as pageviews from sidekick_events group by checkpoint order by pageviews desc limit 10
