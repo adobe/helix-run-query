@@ -21,7 +21,7 @@ with sidekick_events AS (
   FROM   helix_rum.CHECKPOINTS_V4(@url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey ) WHERE  CHECKPOINT LIKE "sidekick:%" and hostname is not null and not hostname = ''
   ), 
 chosen_features as (
-  select checkpoint, sum(pageviews) as pageviews from sidekick_events group by checkpoint order by pageviews desc
+  select checkpoint, sum(pageviews) as pageviews from sidekick_events group by checkpoint order by pageviews desc limit 10
 )
 SELECT   day,
          sum(pageviews) AS invocations,
