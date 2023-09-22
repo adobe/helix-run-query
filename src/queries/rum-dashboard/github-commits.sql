@@ -8,7 +8,7 @@
 --- enddate: 2023-05-28
 --- timezone: UTC
 --- timeunit: day
---- exactmatch: false
+--- exactmatch: true
 --- url: -
 --- device: all
 --- domainkey: secret
@@ -37,3 +37,4 @@ and not user = 'helix-bot[bot]'
 and not user = 'renovate[bot]' 
 and not user = 'semantic-release-bot'
 order by owner_repo, commit_date asc
+
