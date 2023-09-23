@@ -62,7 +62,7 @@
     "c8": "8.0.1",
     "chai": "4.3.8",
     "chai-http": "4.4.0",
-    "eslint": "8.49.0",
+    "eslint": "8.50.0",
     "esmock": "2.5.1",
     "husky": "8.0.3",
     "jsdoc-to-markdown": "8.0.0",
@@ -71,7 +71,7 @@
     "lodash": "4.17.21",
     "mocha": "10.2.0",
     "mocha-multi-reporters": "1.5.1",
-    "semantic-release": "22.0.0",
+    "semantic-release": "22.0.4",
     "sinon": "16.0.0"
   },
   "lint-staged": {
