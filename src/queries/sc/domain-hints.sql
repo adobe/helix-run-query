@@ -3,7 +3,7 @@
 --- Cache-Control: max-age=3600
 --- timezone: UTC
 --- device: all
---- domainkey: secret
+--- domain key: secret
 --- interval: 365
 --- offset: 0
 --- startdate: 2022-02-01
