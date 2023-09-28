@@ -179,7 +179,7 @@ Contributions are highly welcome.
 ### Queries
 
 Query files live in the `src/queries` directory, although they can also live in subdirectories of `src/queries`.
-They are static resources; that are loaded into `run-query` and then sent to BigQuery for actual execution.
+They are static resources; that are loaded into `run-query` and then sent to BigQuery for actual execution. In order to be bundled into the lambda function, they have to be listed in `package.json`
 It is up to the developer to ensure their query is correct; this can be done by using the BigQuery console.
 
 The build process includes a `sqlfluff` check.  The recommendation is to install `sqlfluff` locally so that you
