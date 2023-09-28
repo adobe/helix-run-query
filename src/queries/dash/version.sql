@@ -10,5 +10,6 @@
 --- enddate: 2022-05-28
 --- url: -
 --- version: -
+--- GOOGLE_PROJECT_ID: -
 
-SELECT @version
+SELECT @GOOGLE_PROJECT_ID
