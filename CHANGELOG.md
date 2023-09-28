@@ -1,3 +1,10 @@
+## [3.9.1](https://github.com/adobe/helix-run-query/compare/v3.9.0...v3.9.1) (2023-09-28)
+
+
+### Bug Fixes
+
+* **rotate:** don't allow accidental revocation ([28700fd](https://github.com/adobe/helix-run-query/commit/28700fdda3922f28f542f8b61d7eee95297f8340))
+
 # [3.9.0](https://github.com/adobe/helix-run-query/compare/v3.8.1...v3.9.0) (2023-09-28)
 
 
