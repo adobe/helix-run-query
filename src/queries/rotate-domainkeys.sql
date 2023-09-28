@@ -5,7 +5,7 @@
 --- device: all
 --- domainkey: secret
 --- newkey: -
---- graceperiod: 1
+--- graceperiod: -1
 --- expiry: -
 --- readonly: true
 DECLARE newkey STRING;
