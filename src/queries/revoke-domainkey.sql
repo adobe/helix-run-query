@@ -20,7 +20,7 @@ IF EXISTS (
     AND readonly = FALSE
 ) THEN
   SET revokekey = IF(@revokekey = "-", "", @revokekey);
-  CALL helix_reporting . REVOKE_DOMAIN_KEY( -- noqa: PRS
+  CALL helix_reporting.REVOKE_DOMAIN_KEY( -- noqa: PRS, LT01
     @revokekey,
     IF(@url = "-", "", @url),
     @timezone,

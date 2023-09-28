@@ -23,7 +23,7 @@ IF EXISTS (
     AND readonly = FALSE
 ) THEN
   SET newkey = IF(@newkey = "-", GENERATE_UUID(), @newkey);
-  CALL helix_reporting . ROTATE_DOMAIN_KEYS( -- noqa: PRS
+  CALL helix_reporting.ROTATE_DOMAIN_KEYS( -- noqa: PRS, LT01
     @domainkey,
     IF(@url = "-", "", @url),
     @timezone,
