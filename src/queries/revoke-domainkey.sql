@@ -3,12 +3,9 @@
 --- timezone: UTC
 --- url: -
 --- domainkey: secret
---- newkey: -
+--- revokekey: -
 --- graceperiod: 1
---- expiry: -
---- readonly: true
---- note: -
-DECLARE newkey STRING;
+DECLARE revokekey STRING;
 
 IF EXISTS (
   SELECT
@@ -22,27 +19,22 @@ IF EXISTS (
     AND (hostname_prefix = "" OR hostname_prefix = @url)
     AND readonly = FALSE
 ) THEN
-  SET newkey = IF(@newkey = "-", GENERATE_UUID(), @newkey);
-  CALL helix_reporting . ROTATE_DOMAIN_KEYS( -- noqa: PRS
-    @domainkey,
+  SET revokekey = IF(@revokekey = "-", "", @revokekey);
+  CALL helix_reporting . REVOKE_DOMAIN_KEY( -- noqa: PRS
+    @revokekey,
     IF(@url = "-", "", @url),
     @timezone,
-    CAST(@graceperiod AS INT64),
-    @expiry,
-    newkey,
-    CAST(@readonly AS BOOL),
-    IF(@note = "-", "", @note)
+    CAST(@graceperiod AS INT64)
   );
 END IF;
 
 SELECT
-  newkey AS key,
+  revokekey AS key,
   IF(@url = "-", "", @url) AS hostname_prefix,
   IF(EXISTS (
     SELECT * FROM `helix-225321.helix_reporting.domain_keys`
     WHERE
-      key_bytes = SHA512(@domainkey)
-      AND (revoke_date IS NULL OR revoke_date > CURRENT_DATE(@timezone))
+      key_bytes = SHA512(revokekey)
+      AND revoke_date IS NOT NULL
       AND (hostname_prefix = "" OR hostname_prefix = @url)
-  ), "success", "failure") AS status,
-  IF(@expiry = "-", NULL, @expiry) AS revoke_date
+  ), "success", "failure") AS status
