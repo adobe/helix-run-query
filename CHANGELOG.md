@@ -1,3 +1,10 @@
+# [3.9.0](https://github.com/adobe/helix-run-query/compare/v3.8.1...v3.9.0) (2023-09-28)
+
+
+### Features
+
+* **domainkey:** add metadata, revoke w/o create ([3fa363e](https://github.com/adobe/helix-run-query/commit/3fa363ec18a3730c33023ec6b3fd00c9b1deb609))
+
 ## [3.8.1](https://github.com/adobe/helix-run-query/compare/v3.8.0...v3.8.1) (2023-09-13)
 
 
