@@ -9,7 +9,6 @@
 --- startdate: 2022-02-01
 --- enddate: 2022-05-28
 --- url: -
---- version: -
---- context: -
+--- funcversion: -
 
-SELECT @context
+SELECT @funcversion
