@@ -103,7 +103,7 @@ async function run(request, context) {
   /* c8 ignore next */
   params.domainkey = request.headers.has('authorization') ? request.headers.get('authorization').split(' ').pop() : params.domainkey || 'secret';
 
-  params.funcversion = context.func.version;
+  // params.funcversion = context.func.version;
   params.GOOGLE_CLIENT_EMAIL = context.env.GOOGLE_CLIENT_EMAIL;
   params.GOOGLE_PRIVATE_KEY = context.env.GOOGLE_PRIVATE_KEY;
   params.GOOGLE_PROJECT_ID = context.env.GOOGLE_PROJECT_ID;
