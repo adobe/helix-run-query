@@ -89,6 +89,17 @@ current_rum_by_id AS (
     ) OR url LIKE CONCAT(
       "https://%", @repo, "--", @owner, ".hlx%/"
     ) OR (@url = "-" AND @repo = "-" AND @owner = "-")
+    OR CONCAT("www.", @url) LIKE CONCAT("%", regexp_replace(url, 'https://', '')) # append www prefix - new in V4
+    OR CONCAT("www.", @url) LIKE CONCAT("%",  regexp_replace(url, 'https://', ''), "/%") # append www prefix - new in V4
+    OR CONCAT("www.", @url) LIKE CONCAT( regexp_replace(url, 'https://', '')) # append www prefix - new in V4
+    OR CONCAT("www.", @url) LIKE CONCAT( regexp_replace(url, 'https://', ''), "/%") # append www prefix - new in V4
+    OR @url LIKE CONCAT("%.", url)
+    OR @url LIKE CONCAT("%.", url, "/%")
+    OR @url LIKE CONCAT(url)
+    OR @url LIKE CONCAT(url, "/%")
+    OR STARTS_WITH(regexp_replace(url, 'https://', ''), concat("www.", @url))
+    OR STARTS_WITH(regexp_replace(url, 'https://', ''), @url)
+    OR STARTS_WITH(regexp_replace(url, 'https://', ''), concat("www.", regexp_replace(@url, "https://", '')))
   GROUP BY id
 ),
 
