@@ -31,7 +31,7 @@ AS (
 WITH
 current_data AS (
   SELECT * FROM
-    helix_rum.EVENTS_V3(
+    helix_rum.EVENTS_V4(
       @url, # domain or URL
       CAST(@offset AS INT64), # not used, offset in days from today
       CAST(@interval AS INT64), # interval in days to consider
@@ -45,7 +45,7 @@ current_data AS (
 
 previous_data AS (
   SELECT * FROM
-    helix_rum.EVENTS_V3(
+    helix_rum.EVENTS_V4(
       @url, # domain or URL
       # offset in days from today
       CAST(@interval AS INT64) + CAST(@offset AS INT64),
@@ -123,6 +123,17 @@ previous_rum_by_id AS (
     ) OR url LIKE CONCAT(
       "https://%", @repo, "--", @owner, ".hlx%/"
     ) OR (@url = "-" AND @repo = "-" AND @owner = "-")
+    OR CONCAT("www.", @url) LIKE CONCAT("%", regexp_replace(url, 'https://', '')) # append www prefix - new in V4
+    OR CONCAT("www.", @url) LIKE CONCAT("%",  regexp_replace(url, 'https://', ''), "/%") # append www prefix - new in V4
+    OR CONCAT("www.", @url) LIKE CONCAT( regexp_replace(url, 'https://', '')) # append www prefix - new in V4
+    OR CONCAT("www.", @url) LIKE CONCAT( regexp_replace(url, 'https://', ''), "/%") # append www prefix - new in V4
+    OR @url LIKE CONCAT("%.", url)
+    OR @url LIKE CONCAT("%.", url, "/%")
+    OR @url LIKE CONCAT(url)
+    OR @url LIKE CONCAT(url, "/%")
+    OR STARTS_WITH(regexp_replace(url, 'https://', ''), concat("www.", @url))
+    OR STARTS_WITH(regexp_replace(url, 'https://', ''), @url)
+    OR STARTS_WITH(regexp_replace(url, 'https://', ''), concat("www.", regexp_replace(@url, "https://", '')))
   GROUP BY id
 ),
 
