@@ -19,7 +19,7 @@ with sidekick_events AS (
     source,
     pageviews,
     user_agent LIKE "%Sidekick%" AS extension
-  FROM   helix_rum.CHECKPOINTS_V4('-', @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey ) WHERE  CHECKPOINT LIKE "sidekick:%" and hostname is not null and not hostname = ''
+  FROM   helix_rum.CHECKPOINTS_V4('-', @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey ) WHERE  CHECKPOINT LIKE "sidekick:%" and hostname is not null and not hostname = '' and not regexp_contains(CHECKPOINT, 'custom:')
   ), 
 chosen_features as (
   select checkpoint, sum(pageviews) as pageviews from sidekick_events group by checkpoint order by pageviews desc limit 10

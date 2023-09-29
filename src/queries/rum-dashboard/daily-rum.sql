@@ -15,10 +15,10 @@
 WITH daily_rum AS
 (
        SELECT Regexp_replace(url, '\\?.+', '') AS url,
-              Avg(lcp)                            avglcp,
-              Avg(fid)                            avgfid,
-              Avg(inp)                         AS avginp,
-              Avg(cls)                            avgcls,
+       CAST(APPROX_QUANTILES(lcp, 100)[OFFSET(75)] AS INT64) AS avglcp,
+       CAST(APPROX_QUANTILES(fid, 100)[OFFSET(75)] AS INT64) AS avgfid,
+       CAST(APPROX_QUANTILES(inp, 100)[OFFSET(75)] AS INT64) AS avginp,
+       ROUND(APPROX_QUANTILES(cls, 100)[OFFSET(75)], 3) AS avgcls,
        IF(@timeunit = 'day', format_timestamp("%Y-%m-%d", time),
        IF(@timeunit = 'hour', format_timestamp("%Y-%m-%d-%T", time), 
        format_timestamp("%Y-%m-%d", time))) AS date 
