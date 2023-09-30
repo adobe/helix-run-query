@@ -40,7 +40,7 @@
     "@adobe/helix-shared-wrap": "2.0.0",
     "@adobe/helix-status": "10.0.10",
     "@adobe/helix-universal-logger": "3.0.11",
-    "@google-cloud/bigquery": "7.2.0",
+    "@google-cloud/bigquery": "7.3.0",
     "dotenv": "16.3.1",
     "fs-extra": "11.1.1",
     "googleapis": "126.0.1",
@@ -60,7 +60,7 @@
     "@semantic-release/git": "10.0.1",
     "ajv": "8.12.0",
     "c8": "8.0.1",
-    "chai": "4.3.8",
+    "chai": "4.3.10",
     "chai-http": "4.4.0",
     "eslint": "8.50.0",
     "esmock": "2.5.1",
@@ -71,7 +71,7 @@
     "lodash": "4.17.21",
     "mocha": "10.2.0",
     "mocha-multi-reporters": "1.5.1",
-    "semantic-release": "22.0.4",
+    "semantic-release": "22.0.5",
     "sinon": "16.0.0"
   },
   "lint-staged": {
