@@ -35,11 +35,13 @@ WITH pvs AS (
     AND hostname NOT LIKE '%.hlx.page'
     AND hostname NOT LIKE '%.hlx3.page'
     AND hostname NOT LIKE '%.hlx.live'
+    AND hostname NOT LIKE '%.hlx%.live'
     AND hostname NOT LIKE '%.helix3.dev'
     AND hostname NOT LIKE '%.sharepoint.com'
     AND hostname NOT LIKE '%.google.com'
     AND hostname NOT LIKE '%.edison.pfizer' -- not live
     AND hostname NOT LIKE '%.web.pfizer'
+    AND hostname NOT LIKE 'author-p%-e%'
     OR hostname = 'www.hlx.live'
   GROUP BY month, hostname
 ),
@@ -96,7 +98,7 @@ SELECT
     'active',
     'inactive'
   ) AS domain_status,
-  ARRAY (
+  ARRAY(
     SELECT DISTINCT owner_repo FROM repos WHERE a.hostname = url
   ) AS git_repo
 FROM domains AS a
