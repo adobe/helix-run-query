@@ -1,3 +1,24 @@
+## [3.9.2](https://github.com/adobe/helix-run-query/compare/v3.9.1...v3.9.2) (2023-09-30)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([eaf4ebc](https://github.com/adobe/helix-run-query/commit/eaf4ebce14c9cf7f4eac83149ef090b31c055d05))
+
+## [3.9.1](https://github.com/adobe/helix-run-query/compare/v3.9.0...v3.9.1) (2023-09-28)
+
+
+### Bug Fixes
+
+* **rotate:** don't allow accidental revocation ([28700fd](https://github.com/adobe/helix-run-query/commit/28700fdda3922f28f542f8b61d7eee95297f8340))
+
+# [3.9.0](https://github.com/adobe/helix-run-query/compare/v3.8.1...v3.9.0) (2023-09-28)
+
+
+### Features
+
+* **domainkey:** add metadata, revoke w/o create ([3fa363e](https://github.com/adobe/helix-run-query/commit/3fa363ec18a3730c33023ec6b3fd00c9b1deb609))
+
 ## [3.8.1](https://github.com/adobe/helix-run-query/compare/v3.8.0...v3.8.1) (2023-09-13)
 
 
