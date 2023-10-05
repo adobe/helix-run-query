@@ -1,3 +1,52 @@
+## [3.9.2](https://github.com/adobe/helix-run-query/compare/v3.9.1...v3.9.2) (2023-09-30)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([eaf4ebc](https://github.com/adobe/helix-run-query/commit/eaf4ebce14c9cf7f4eac83149ef090b31c055d05))
+
+## [3.9.1](https://github.com/adobe/helix-run-query/compare/v3.9.0...v3.9.1) (2023-09-28)
+
+
+### Bug Fixes
+
+* **rotate:** don't allow accidental revocation ([28700fd](https://github.com/adobe/helix-run-query/commit/28700fdda3922f28f542f8b61d7eee95297f8340))
+
+# [3.9.0](https://github.com/adobe/helix-run-query/compare/v3.8.1...v3.9.0) (2023-09-28)
+
+
+### Features
+
+* **domainkey:** add metadata, revoke w/o create ([3fa363e](https://github.com/adobe/helix-run-query/commit/3fa363ec18a3730c33023ec6b3fd00c9b1deb609))
+
+## [3.8.1](https://github.com/adobe/helix-run-query/compare/v3.8.0...v3.8.1) (2023-09-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fetch to v4.1.0 ([#962](https://github.com/adobe/helix-run-query/issues/962)) ([e978776](https://github.com/adobe/helix-run-query/commit/e978776ed3040f67862fe2777fd0a3079f784a75))
+
+# [3.8.0](https://github.com/adobe/helix-run-query/compare/v3.7.0...v3.8.0) (2023-09-07)
+
+
+### Features
+
+* **queries:** new queries for to support global domainkeys and reporting ([f56bd98](https://github.com/adobe/helix-run-query/commit/f56bd98158143bb9787f2ba6bd3b324d60c15b44))
+
+# [3.7.0](https://github.com/adobe/helix-run-query/compare/v3.6.0...v3.7.0) (2023-09-04)
+
+
+### Features
+
+* **chart:** enable creation of scatterplots by using `[@xcolumn](https://github.com/xcolumn),[@ycolumn](https://github.com/ycolumn)` syntax ([3c6390b](https://github.com/adobe/helix-run-query/commit/3c6390bdee663ccf07c922ce9d7f62d0bd87643e))
+
+# [3.6.0](https://github.com/adobe/helix-run-query/compare/v3.5.2...v3.6.0) (2023-09-01)
+
+
+### Features
+
+* **queries:** new query for rum pageviews by month and hostname ([5ad822e](https://github.com/adobe/helix-run-query/commit/5ad822e33718d1bf37cd4a816a81680ce6ca7c24))
+
 ## [3.5.2](https://github.com/adobe/helix-run-query/compare/v3.5.1...v3.5.2) (2023-08-22)
 
 

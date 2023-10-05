@@ -178,9 +178,12 @@ Contributions are highly welcome.
 
 ### Queries
 
-Query files live in the `src/queries` directory. They are static resources; that are loaded into `run-query` and
-then sent to BigQuery for actual execution. It is up to the developer to ensure their query is correct; this 
-can be done by using the BigQuery console.
+Query files live in the `src/queries` directory, although they can also live in subdirectories of `src/queries`.
+They are static resources; that are loaded into `run-query` and then sent to BigQuery for actual execution. In order to be bundled into the lambda function, they have to be listed in `package.json`
+It is up to the developer to ensure their query is correct; this can be done by using the BigQuery console.
+
+The build process includes a `sqlfluff` check.  The recommendation is to install `sqlfluff` locally so that you
+can fix any syntax issues prior to commit. See https://docs.sqlfluff.com/en/stable/gettingstarted.html.
 
 Once a query file is complete and correct, you may add it as a static resource; so that it won't be excluded during OpenWhisk deployment.
 In the root of the repository; find the package.json and add your query file (file with `.sql` extension) under `static`: 
@@ -211,4 +214,8 @@ table name or limit. Anything else; can make your query susceptible to SQL injec
 
 Deploying Helix Run Query requires the `wsk` command line client, authenticated to a namespace of your choice. For Project Helix, we use the `helix` namespace.
 
-All commits to main that pass the testing will be deployed automatically. All commits to branches that will pass the testing will get commited as `/helix-services/run-query@ci<num>` and tagged with the CI build number.
+All commits to main that pass the testing will be deployed automatically.
+All commits to branches that will pass the testing will get commited as `/helix-services/run-query@ci<num>` and tagged with the CI build number.
+The CI build number can be found next to the `branch-deploy` job for the pipeline execution related to a commit at https://app.circleci.com/pipelines/github/adobe/helix-run-query.
+
+For a query to be available at `helix-services/run-query@v3` (semantic versioning), a commit in the pull request must follow the message convention standards defined at https://www.conventionalcommits.org/en/v1.0.0/.

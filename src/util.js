@@ -265,9 +265,25 @@ export function chartify(results, description, requestParams) {
         return acc;
       }, {});
     }
+
     if (typeof obj === 'string' && obj.startsWith('@')) {
-      const column = obj.substring(1);
-      return results.map((entry) => entry[column]);
+      // @columnX,@columnY to be replaced with an array of {x, y} objects
+      return results
+        .map((entry) => obj
+          // take each segment
+          .split(',')
+          .map((e, i) => ({
+            key: String.fromCharCode(120 + i),
+            column: e.substring(1),
+          }))
+          .reduce((acc, { key, column }) => {
+            // eslint-disable-next-line no-param-reassign
+            acc[key] = entry[column];
+            return acc;
+          }, {}))
+        // if it is a single value, then just return that value
+        .map((entry) => (Object.keys(entry).length === 1
+          && Object.prototype.hasOwnProperty.call(entry, 'x') ? entry.x : entry));
     }
     return obj;
   }

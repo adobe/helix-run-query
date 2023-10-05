@@ -259,6 +259,35 @@ VALUES
     inreadonly);
 END
 
+CREATE OR REPLACE TABLE FUNCTION helix_reporting.DOMAINKEY_PRIVS_ALL(domainkey STRING, timezone STRING)
+AS (
+  WITH key AS (
+    SELECT hostname_prefix, readonly
+    FROM `helix-225321.helix_reporting.domain_keys`
+    WHERE
+      key_bytes = SHA512(domainkey)
+      AND (
+        revoke_date IS NULL
+        OR revoke_date > CURRENT_DATE(timezone)
+      )
+  )
+  SELECT COALESCE(
+    (
+      SELECT IF(hostname_prefix = '', true, false)
+      FROM key
+    ),
+    false
+  ) AS read,
+  COALESCE(
+    (
+      SELECT IF(hostname_prefix = '' AND readonly = false, true, false)
+      FROM key
+    ),
+    false
+  ) AS write
+)
+
+
 # SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
 # ORDER BY time DESC
 # LIMIT 10;
