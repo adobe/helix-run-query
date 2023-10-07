@@ -93,7 +93,7 @@ describe('Test Queries', () => {
   }).timeout(100000);
 
   it('rotate-domainkeys (success)', async () => {
-    const res = await main(new Request('https://helix-run-query.com/rotate-domainkeys?url=test.adobe.com', {
+    const res = await main(new Request('https://helix-run-query.com/rotate-domainkeys?url=test.adobe.com&note=helix-run-query%20tests', {
       headers: {
         Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
       },
