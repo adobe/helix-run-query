@@ -15,7 +15,7 @@ with current_data as (
 SELECT 
   * 
 FROM 
-  helix_external_data.LIGHTHOUSE_SCORES(
+  helix_external_data.LIGHTHOUSE_SCORES_OPT(
     @url, 
     @offset, 
     @interval, 
