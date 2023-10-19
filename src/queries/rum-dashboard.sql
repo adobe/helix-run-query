@@ -524,7 +524,7 @@ FROM (
               url = concat('https://www.', REGEXP_REPLACE(@url, 'www.', ''))
               or
               url = concat('https://', REGEXP_REPLACE(@url, 'https://www.', ''))
-              ) AND (rank <= @limit OR @rising)
+              )
        ) OR       @exactmatch = false  AND (rank <= @limit OR url = "Other" OR @rising))
 --- avgcls: 75th percentile value of the Cumulative Layout Shift metric in the current period
 --- avgcls_1: 75th percentile value of the CLS metric in the previous period
