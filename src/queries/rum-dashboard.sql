@@ -13,7 +13,7 @@
 --- device: all
 --- rising: false
 --- domainkey: secret
---- exactmatch: true
+--- exactmatch: false
 
 CREATE TEMP FUNCTION FILTERCLASS(user_agent STRING, device STRING)
 RETURNS BOOLEAN
