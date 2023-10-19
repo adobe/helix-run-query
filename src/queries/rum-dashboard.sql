@@ -13,6 +13,7 @@
 --- device: all
 --- rising: false
 --- domainkey: secret
+--- exactmatch: true
 
 CREATE TEMP FUNCTION FILTERCLASS(user_agent STRING, device STRING)
 RETURNS BOOLEAN
@@ -512,7 +513,20 @@ FROM (
     current_truncated_rum_by_url.pageviews DESC,
     previous_truncated_rum_by_url.pageviews DESC
 ) WHERE
-  not url = "Other" AND (rank <= @limit OR @rising)
+(
+       (
+       @exactmatch = true
+       AND (
+              url = concat('https://', REGEXP_REPLACE(@url, 'https://', '')) 
+              or
+              url = concat('https://www.', REGEXP_REPLACE(@url, 'https://', '')) 
+              or
+              url = concat('https://www.', REGEXP_REPLACE(@url, 'www.', ''))
+              or
+              url = concat('https://', REGEXP_REPLACE(@url, 'https://www.', ''))
+              )
+       ) OR       @exactmatch = false ) AND
+  rank <= @limit OR @rising
 --- avgcls: 75th percentile value of the Cumulative Layout Shift metric in the current period
 --- avgcls_1: 75th percentile value of the CLS metric in the previous period
 --- avgfid: 75th percentile value of the First Input Delay metric in milliseconds in the current period
