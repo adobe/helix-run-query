@@ -135,7 +135,8 @@
       "src/queries/rum-dashboard/sidekick-by-url.sql",
       "src/queries/rum-dashboard/sidekick-checkpoints.sql",
       "src/queries/rum-dashboard/multiline-sidekick.sql",
-      "src/queries/rum-dashboard/lighthouse.sql"
+      "src/queries/rum-dashboard/lighthouse.sql",
+      "src/queries/rum-dashboard/conversions-by-url.sql"
     ]
   },
   "nodemonConfig": {
