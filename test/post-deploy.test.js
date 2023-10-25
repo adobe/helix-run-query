@@ -38,7 +38,7 @@ createTargets().forEach((target) => {
           expect(response).to.have.status(200);
           expect(response).to.have.header('Content-Type', /^application\/json/);
           // validate the response body
-          expect(response.body.meta.data).to.have.lengthOf(43);
+          expect(response.body.meta.data).to.have.lengthOf(44);
         })
         .catch((e) => {
           throw e;
