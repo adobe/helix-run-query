@@ -22,7 +22,7 @@ SELECT
   pageviews,
   source,
   target
-  FROM   helix_rum.CHECKPOINTS_V4( @url, @offset, @interval, '-', '-', 'UTC', 'all', @domainkey )
+  FROM   helix_rum.CHECKPOINTS_V4( @url, @offset, @interval, @startdate, @enddate, 'UTC', 'all', @domainkey )
 WHERE 
   checkpoint LIKE @ckpt
 
