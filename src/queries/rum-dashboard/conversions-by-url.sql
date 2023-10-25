@@ -48,4 +48,4 @@ WHERE
        ) OR       @exactmatch = false )
 GROUP BY checkpoint,
          url, target
-ORDER BY invocations desc;
+ORDER BY invocations asc;
