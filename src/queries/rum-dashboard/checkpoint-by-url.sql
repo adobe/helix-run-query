@@ -35,7 +35,7 @@ FROM     sidekick_events
 WHERE
 (
        (
-       true = true
+       @exactmatch = true
        AND (
               url = concat('https://', REGEXP_REPLACE(@url, 'https://', '')) 
               or
@@ -45,7 +45,7 @@ WHERE
               or
               url = concat('https://', REGEXP_REPLACE(@url, 'https://www.', ''))
               )
-       ) OR       true = false )
+       ) OR       @exactmatch = false )
 GROUP BY checkpoint,
          url, target
 ORDER BY invocations desc;
