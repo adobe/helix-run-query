@@ -11,6 +11,7 @@
 --- url: -
 --- device: all
 --- domainkey: secret
+--- ckpt: search
 with sidekick_events AS (
 SELECT
   FORMAT_DATE("%Y-%m-%d", DATE_TRUNC(time, DAY)) AS day,
@@ -19,21 +20,22 @@ SELECT
   hostname,
   url,
   pageviews,
-  source
-  FROM   helix_rum.CHECKPOINTS_V4( @url, @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
+  source,
+  target
+  FROM   helix_rum.CHECKPOINTS_V4( @url, @offset, @interval, '-', '-', 'UTC', 'all', @domainkey )
 WHERE 
-  checkpoint LIKE "%convert%" OR checkpoint = "%search%"
+  checkpoint LIKE @ckpt
 
 )
 SELECT   url,
-         day,
          checkpoint,
+         target,
          sum(pageviews) AS invocations,
 FROM     sidekick_events
 WHERE
 (
        (
-       @exactmatch = true
+       true = true
        AND (
               url = concat('https://', REGEXP_REPLACE(@url, 'https://', '')) 
               or
@@ -43,8 +45,7 @@ WHERE
               or
               url = concat('https://', REGEXP_REPLACE(@url, 'https://www.', ''))
               )
-       ) OR       @exactmatch = false )
-GROUP BY sidekick_events.day, checkpoint,
-         url
-ORDER BY url,
-         day asc
+       ) OR       true = false )
+GROUP BY checkpoint,
+         url, target
+ORDER BY invocations desc;

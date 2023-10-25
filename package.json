@@ -110,7 +110,7 @@
       "src/queries/rum-dashboard/sidekick-checkpoints.sql",
       "src/queries/rum-dashboard/multiline-sidekick.sql",
       "src/queries/rum-dashboard/lighthouse.sql",
-      "src/queries/rum-dashboard/conversions-by-url.sql",
+      "src/queries/rum-dashboard/checkpoint-by-url.sql",
       "src/queries/dash/auth-all-domains.sql",
       "src/queries/dash/domain-list.sql",
       "src/queries/dash/update-domain-info.sql"
