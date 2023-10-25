@@ -1,4 +1,4 @@
---- description: Get URL Specific Daily Conversion Data From RUM for a given domain
+--- description: Get URL Specific Daily Request For Quotes Data From RUM for a given domain
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
 --- limit: 30
@@ -24,7 +24,7 @@ SELECT
   target
   FROM   helix_rum.CHECKPOINTS_V4( @url, @offset, @interval, @startdate, @enddate, 'UTC', 'all', @domainkey )
 WHERE 
-  checkpoint LIKE @ckpt
+  checkpoint LIKE '%rfq%'
 
 )
 SELECT   url,
