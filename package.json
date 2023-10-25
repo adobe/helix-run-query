@@ -126,6 +126,9 @@
       "src/queries/rum-dashboard/lighthouse.sql",
       "src/queries/rum-dashboard/conversions-by-url.sql",
       "src/queries/rum-dashboard/checkpoint-by-url.sql",
+      "src/queries/rum-dashboard/searches-by-url.sql",
+      "src/queries/rum-dashboard/conversions-by-url.sql",
+      "src/queries/rum-dashboard/rfq-by-url.sql",
       "src/queries/dash/auth-all-domains.sql",
       "src/queries/dash/domain-list.sql",
       "src/queries/dash/update-domain-info.sql"
