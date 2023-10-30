@@ -17,7 +17,7 @@ WHERE
   checkpoint LIKE "%search%" AND 
   (
        (
-       false = true
+       @exactmatch = true
        AND (
               url = concat('https://', REGEXP_REPLACE(@url, 'https://', '')) 
               or
@@ -27,9 +27,9 @@ WHERE
               or
               url = concat('https://', REGEXP_REPLACE(@url, 'https://www.', ''))
               )
-       ) OR       false = false )
+       ) OR       @exactmatch = false )
 ), 
 unique_targets as (
-  select (case when not false then hostname end) as hostname,(case when false then url end) as url, lower(target) as target, sum(pageviews) traffic from searches group by (case when not false then hostname end), lower(target), (case when false then url end)
+  select (case when not @exactmatch then hostname end) as hostname,(case when @exactmatch then url end) as url, lower(target) as target, sum(pageviews) traffic from searches group by (case when not @exactmatch then hostname end), lower(target), (case when @exactmatch then url end)
 )
 select hostname, url, target, sum(traffic) as traffic from unique_targets group by hostname, url, target order by traffic desc
