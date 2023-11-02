@@ -37,4 +37,4 @@ unique_sources as (
 total_traffic as (
   select sum(traffic) as total from unique_sources
 )
-select *, (traffic/total)*100 as percentage from unique_sources join total_traffic on true where traffic >= (@threshold * total_traffic.total) order by traffic desc
+select *, (traffic/total)*100 as percentage from unique_sources join total_traffic on true where traffic >= (cast (@threshold as int64) * total_traffic.total) order by traffic desc
