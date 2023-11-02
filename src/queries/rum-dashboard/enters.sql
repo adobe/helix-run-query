@@ -9,6 +9,7 @@
 --- url: -
 --- device: all
 --- domainkey: secret
+--- threshold: 0
 with enters AS (
 SELECT
 *
