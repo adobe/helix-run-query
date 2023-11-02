@@ -32,4 +32,4 @@ WHERE
 unique_targets as (
   select (case when not @exactmatch then hostname end) as hostname,(case when @exactmatch then url end) as url, lower(target) as target, sum(pageviews) traffic from rfqs group by (case when not @exactmatch then hostname end), lower(target), (case when @exactmatch then url end)
 )
-select hostname, url, target, sum(traffic) as traffic from unique_targets group by hostname, url, target order by traffic desc
+select hostname, url, target, sum(traffic) as traffic from unique_targets where target is not null group by hostname, url, target order by traffic desc
