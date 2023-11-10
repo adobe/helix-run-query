@@ -58,7 +58,7 @@ jobs:
           name: Link Sequences
           command: npm run deploy-routes
       - helix-post-deploy/monitoring:
-          targets: universal, aws
+          targets: universal
   branch-deploy:
     executor: node18
     steps:
