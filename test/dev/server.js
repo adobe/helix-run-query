@@ -17,7 +17,16 @@ import { main } from '../../src/index.js';
 
 dotenv.config();
 
+function warnInvalidEnv() {
+  const required = ['GOOGLE_CLIENT_EMAIL', 'GOOGLE_PRIVATE_KEY', 'GOOGLE_PROJECT_ID'];
+  const missing = required.filter((req) => !process.env[req]);
+  if (missing.length) {
+    console.warn(`\n*WARNING* missing required env vars: ${missing.join(', ')}\n`);
+  }
+}
+
 async function run() {
+  warnInvalidEnv();
   const devServer = await new DevelopmentServer(main).init();
   await devServer.start();
 }
