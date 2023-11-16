@@ -13,4 +13,4 @@
 with pageviews_by_id as (
   SELECT hostname, id, max(weight) as pageviews FROM `helix-225321.helix_rum.EVENTS_V4`(net.host(@url), @offset, @interval, '-', '-', 'UTC', 'all', @domainkey) group by id, hostname
 )
-select hostname, sum(pageviews) as pageviews from pageviews_by_id group by hostname
+select hostname, sum(pageviews) as pageviews from pageviews_by_id group by hostname order by pageviews desc
