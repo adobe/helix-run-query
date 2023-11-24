@@ -65,7 +65,7 @@ supported almost universally:
 
 # Deprecation Notice
 
-`helix-run-query@v2` is deprecated and will be removed in the future. Please use `helix-run-query@v3` instead.
+`helix-run-query@v2` is no longer available. Please use `helix-run-query@v3` instead.
 
 ## Changes from v2 to v3
 
