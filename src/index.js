@@ -19,12 +19,60 @@ import { execute, queryInfo } from './sendquery.js';
 import {
   cleanRequestParams, csvify, sshonify, extractQueryPath, chartify,
 } from './util.js';
+import { HelixStorage } from './storage.js';
 
-async function runExec(params, pathname, log) {
+/**
+ * @typedef {import('@adobe/helix-universal').Helix.UniversalContext} UniversalContext
+ */
+
+const STORED_QUERIES = ['rum-pageviews'];
+
+/**
+ * @param {string} query
+ * @param {string} result
+ * @param {UniversalContext} context
+ * @returns {Promise<boolean>}
+ */
+async function storeResult(query, result, context) {
+  const { log } = context;
+  const now = Date.now();
+
+  /**
+   * placeholder, `context.invocation.invoker` is never defined
+   */
+  if (!STORED_QUERIES.includes(query) || context.invocation.invoker !== 'helix3/admin') {
+    return false;
+  }
+
+  const bucket = HelixStorage.fromContext(context).configBus();
+
+  /**
+   * another placeholder, unsure what the path will look like
+   */
+  const { site, org } = context.rso || { repo: 'tmp', site: 'tmp', org: 'tmp' };
+  const path = `${org}/rum/${site}/${query}/${now}.json`;
+  try {
+    await bucket.put(path, result, 'application/json');
+  } catch (e) {
+    log.error(`failed to store result: ${e}`);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * @param {Record<string, string|number|boolean>} params
+ * @param {string} pathname
+ * @param {UniversalContext} context
+ * @returns {Promise<Response>}
+ */
+async function runExec(params, pathname, context) {
+  const { log } = context;
   try {
     if (pathname && pathname.endsWith('.txt')) {
       return queryInfo(pathname, params);
     }
+    const query = pathname.replace(/\..*$/, '');
     const {
       results,
       truncated,
@@ -37,7 +85,7 @@ async function runExec(params, pathname, log) {
       params.GOOGLE_CLIENT_EMAIL,
       params.GOOGLE_PRIVATE_KEY,
       params.GOOGLE_PROJECT_ID,
-      pathname.replace(/\..*$/, ''),
+      query,
       undefined, // service parameter is no longer used
       cleanRequestParams(params),
       log,
@@ -73,14 +121,16 @@ async function runExec(params, pathname, log) {
       });
     }
     delete requestParams.domainkey; // don't leak the domainkey
-    return new Response(sshonify(
+    const result = sshonify(
       results,
       description,
       requestParams,
       responseDetails,
       responseMetadata,
       truncated,
-    ), {
+    );
+    await storeResult(query, result, context);
+    return new Response(result, {
       status: 200,
       headers: {
         'content-type': 'application/json',
@@ -108,7 +158,7 @@ async function run(request, context) {
   params.GOOGLE_PROJECT_ID = context.env.GOOGLE_PROJECT_ID;
 
   // nested folder support
-  return runExec(params, extractQueryPath(pathname), context.log);
+  return runExec(params, extractQueryPath(pathname), context);
 }
 
 /**

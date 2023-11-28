@@ -83,7 +83,7 @@ function sanitizeKey(keyOrPath) {
 /**
  * Bucket class
  */
-class Bucket {
+export class Bucket {
   constructor(opts) {
     Object.assign(this, {
       _s3: opts.s3,
@@ -547,7 +547,7 @@ export class HelixStorage {
     } = opts;
 
     if (region && accessKeyId && secretAccessKey) {
-      log.debug('Creating S3Client with credentials', region, accessKeyId, secretAccessKey);
+      log.debug('Creating S3Client with credentials');
       this._s3 = new S3Client({
         region,
         credentials: {
@@ -576,7 +576,7 @@ export class HelixStorage {
     }
 
     // initializing the R2 client which is used for mirroring all S3 writes to R2
-    log.debug('Creating R2 S3Client', r2AccountId, r2AccessKeyId, r2SecretAccessKey);
+    log.debug('Creating R2 S3Client');
     this._r2 = new S3Client({
       endpoint: `https://${r2AccountId}.r2.cloudflarestorage.com`,
       region: 'us-east-1', // https://github.com/aws/aws-sdk-js-v3/issues/1845#issuecomment-754832210
