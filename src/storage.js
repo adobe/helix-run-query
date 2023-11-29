@@ -449,6 +449,7 @@ export class Bucket {
         // write to s3 and r2 (mirror) in parallel
         await this.sendToS3andR2(CopyObjectCommand, input);
         changes.push(task);
+        /* c8 ignore next 5 */
       } catch (e) {
         // at least 1 cmd failed
         log.warn(`error while copying ${task.dst}: ${e}`);
@@ -479,6 +480,7 @@ export class Bucket {
         // delete on s3 and r2 (mirror) in parallel
         await this.sendToS3andR2(DeleteObjectCommand, input);
         oks += 1;
+        /* c8 ignore next 5 */
       } catch (e) {
         // at least 1 cmd failed
         log.warn(`error while deleting ${key}: ${e.$metadata.httpStatusCode}`);

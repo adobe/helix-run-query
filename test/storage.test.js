@@ -18,7 +18,9 @@ import path from 'path';
 import { promisify } from 'util';
 import zlib from 'zlib';
 import * as sinon from 'sinon';
-import { HelixStorage } from '../src/storage.js';
+import { S3Client } from '@aws-sdk/client-s3';
+import { Response } from '@adobe/fetch';
+import { Bucket, HelixStorage } from '../src/storage.js';
 
 /**
  * @typedef {import('../src/storage.js').Bucket} Bucket
@@ -103,7 +105,7 @@ async function stubBucketSend(bucket, resp, cb = () => {}, onlyS3 = false) {
   await Promise.all([p1, p2]);
 }
 
-describe.only('Storage test', () => {
+describe('Storage test', () => {
   // let nock;
   /** @type {HelixStorage} */
   let storage;
@@ -130,6 +132,18 @@ describe.only('Storage test', () => {
   it('contentBus() fails on closed storage', () => {
     storage.close();
     assert.throws(() => storage.contentBus(), Error('storage already closed.'));
+  });
+
+  it('mediaBus() returns Bucket', () => {
+    assert.ok(storage.mediaBus() instanceof Bucket);
+  });
+
+  it('configBus() returns Bucket', () => {
+    assert.ok(storage.configBus() instanceof Bucket);
+  });
+
+  it('s3() returns S3Client', () => {
+    assert.ok(storage.s3() instanceof S3Client);
   });
 
   it('can put object', async () => {
@@ -322,5 +336,150 @@ describe.only('Storage test', () => {
     await p;
 
     assert.deepStrictEqual(folders, []);
+  });
+
+  it('can get metadata of object', async () => {
+    const headResp = {
+      Metadata: { foo: true },
+    };
+
+    const bus = storage.codeBus();
+    const p = stubBucketSend(bus, headResp, undefined, true);
+    const meta = await bus.metadata('/foo');
+    await p;
+
+    assert.deepStrictEqual(meta, { foo: true });
+  });
+
+  it('head() 404 returns null', async () => {
+    const err = new Error('bad');
+    err.$metadata = { httpStatusCode: 404 };
+
+    const bus = storage.codeBus();
+    const p = stubBucketSend(bus, err, undefined, true);
+    const data = await bus.head('foo');
+    await p;
+
+    assert.deepStrictEqual(data, null);
+  });
+
+  it('get() 404 returns null', async () => {
+    const err = new Error('bad');
+    err.$metadata = { httpStatusCode: 404 };
+
+    const bus = storage.codeBus();
+    const p = stubBucketSend(bus, err, undefined, true);
+    const data = await bus.get('/foo');
+    await p;
+
+    assert.deepStrictEqual(data, null);
+  });
+
+  it('get() uncompressed object', async () => {
+    const getResp = {
+      Body: 'foo',
+      ContentType: 'text/plain',
+    };
+
+    const bus = storage.codeBus();
+    const p = stubBucketSend(bus, getResp, undefined, true);
+    const data = await bus.get('/foo');
+    await p;
+
+    assert.deepStrictEqual(data, Buffer.from('foo', 'utf-8'));
+  });
+
+  it('get() gzipped object', async () => {
+    const getResp = {
+      Body: await gzip(Buffer.from('foo', 'utf-8')),
+      ContentType: 'text/plain',
+      ContentEncoding: 'gzip',
+    };
+
+    const bus = storage.codeBus();
+    const p = stubBucketSend(bus, getResp, undefined, true);
+    const data = await bus.get('/foo');
+    await p;
+
+    assert.deepStrictEqual(data, Buffer.from('foo', 'utf-8'));
+  });
+
+  it('can store response', async () => {
+    const resp = new Response('foo', {
+      headers: {
+        'content-type': 'text/plain',
+        'last-modified': 0,
+        'x-other-header': 'bar',
+      },
+    });
+
+    const bus = storage.codeBus();
+    const p = stubBucketSend(bus, resp, async (command) => {
+      assert.equal(command.input.Key, 'foo');
+      assert.equal(command.input.Bucket, 'helix-code-bus');
+      assert.equal(command.input.ContentEncoding, 'gzip');
+      assert.deepEqual(command.input.Body, await gzip(Buffer.from('foo', 'utf-8')));
+      assert.deepEqual(command.input.Metadata, {
+        'x-source-last-modified': 0,
+        'x-other-header': 'bar',
+      });
+    });
+    await bus.store('/foo', resp);
+    await p;
+  });
+
+  it('can put metadata', async () => {
+    const bus = storage.codeBus();
+    const p = stubBucketSend(bus, {}, async (command) => {
+      assert.equal(command.input.Key, 'foo');
+      assert.equal(command.input.Bucket, 'helix-code-bus');
+      assert.equal(command.input.CopySource, 'helix-code-bus/foo');
+      assert.equal(command.input.MetadataDirective, 'REPLACE');
+      assert.deepEqual(command.input.Metadata, { bar: true, baz: 123 });
+    });
+    await bus.putMeta('/foo', { bar: true, baz: 123 });
+    await p;
+  });
+
+  it('can copy', async () => {
+    const bus = storage.codeBus();
+    const p = stubBucketSend(bus, {}, async (command) => {
+      assert.equal(command.input.Key, 'bar');
+      assert.equal(command.input.Bucket, 'helix-code-bus');
+      assert.equal(command.input.CopySource, 'helix-code-bus/foo');
+    });
+    await bus.copy('/foo', '/bar');
+    await p;
+  });
+
+  it('copy() 404 rejects', async () => {
+    const err = new Error();
+    err.Code = 'NoSuchKey';
+    const bus = storage.codeBus();
+
+    stubBucketSend(bus, err);
+    await assert.rejects(bus.copy('/foo', '/bar'), 'source does not exist');
+  });
+
+  it('remove() 404 rejects promise', async () => {
+    const err = new Error('bad');
+    err.$metadata = { httpStatusCode: 404 };
+    const bus = storage.codeBus();
+
+    stubBucketSend(bus, err);
+    await assert.rejects(bus.remove(['/foo']));
+  });
+
+  it('HelixStorage~fromContext()', async () => {
+    const ctx = {
+      attributes: {},
+      env: {},
+    };
+
+    const storage1 = HelixStorage.fromContext(ctx);
+    assert.ok(storage1 instanceof HelixStorage);
+
+    const storage2 = HelixStorage.fromContext(ctx);
+    assert.equal(storage1, storage2);
   });
 });
