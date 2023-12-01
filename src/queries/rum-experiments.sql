@@ -9,6 +9,8 @@
 --- timezone: UTC
 --- experiment: -
 --- conversioncheckpoint: click
+--- sources: -
+--- targets: -
 --- threshold: 500
 --- domainkey: secret
 
@@ -71,7 +73,23 @@ experiment_checkpoints AS (
     id
 ),
 
-converted_checkpoints AS (
+target_prefixes AS (
+  SELECT CONCAT(TRIM(prefix), '%') AS prefix
+  FROM
+    UNNEST(
+      SPLIT(IF(@targets = '-', '', @targets), ',')
+    ) AS prefix
+),
+
+source_prefixes AS (
+  SELECT CONCAT(TRIM(prefix), '%') AS prefix
+  FROM
+    UNNEST(
+      SPLIT(IF(@sources = '-', '', @sources), ',')
+    ) AS prefix
+),
+
+source_target_converted_checkpoints AS (
   SELECT
     all_checkpoints.id AS id,
     ANY_VALUE(experiment_checkpoints.source) AS source,
@@ -79,9 +97,68 @@ converted_checkpoints AS (
     ANY_VALUE(all_checkpoints.pageviews) AS pageviews
   FROM experiment_checkpoints INNER JOIN all_checkpoints
     ON experiment_checkpoints.id = all_checkpoints.id
-  # note: at some point we may need further filters here
+  INNER JOIN source_prefixes
+    ON all_checkpoints.source LIKE source_prefixes.prefix
+  INNER JOIN target_prefixes
+    ON all_checkpoints.target LIKE target_prefixes.prefix
   WHERE all_checkpoints.checkpoint = @conversioncheckpoint
   GROUP BY all_checkpoints.id
+),
+
+source_converted_checkpoints AS (
+  SELECT
+    all_checkpoints.id AS id,
+    ANY_VALUE(experiment_checkpoints.source) AS source,
+    ANY_VALUE(experiment_checkpoints.target) AS target,
+    ANY_VALUE(all_checkpoints.pageviews) AS pageviews
+  FROM experiment_checkpoints INNER JOIN all_checkpoints
+    ON experiment_checkpoints.id = all_checkpoints.id
+  INNER JOIN source_prefixes
+    ON all_checkpoints.source LIKE source_prefixes.prefix
+  WHERE all_checkpoints.checkpoint = @conversioncheckpoint
+  GROUP BY all_checkpoints.id
+),
+
+target_converted_checkpoints AS (
+  SELECT
+    all_checkpoints.id AS id,
+    ANY_VALUE(experiment_checkpoints.source) AS source,
+    ANY_VALUE(experiment_checkpoints.target) AS target,
+    ANY_VALUE(all_checkpoints.pageviews) AS pageviews
+  FROM experiment_checkpoints INNER JOIN all_checkpoints
+    ON experiment_checkpoints.id = all_checkpoints.id
+  INNER JOIN source_prefixes
+    ON all_checkpoints.source LIKE source_prefixes.prefix
+  INNER JOIN target_prefixes
+    ON all_checkpoints.target LIKE target_prefixes.prefix
+  WHERE all_checkpoints.checkpoint = @conversioncheckpoint
+  GROUP BY all_checkpoints.id
+),
+
+loose_converted_checkpoints AS (
+  SELECT
+    all_checkpoints.id AS id,
+    ANY_VALUE(experiment_checkpoints.source) AS source,
+    ANY_VALUE(experiment_checkpoints.target) AS target,
+    ANY_VALUE(all_checkpoints.pageviews) AS pageviews
+  FROM experiment_checkpoints INNER JOIN all_checkpoints
+    ON experiment_checkpoints.id = all_checkpoints.id
+  WHERE all_checkpoints.checkpoint = @conversioncheckpoint
+  GROUP BY all_checkpoints.id
+),
+
+converted_checkpoints AS (
+  SELECT * FROM loose_converted_checkpoints
+  WHERE @sources = '-' AND @targets = '-'
+  UNION ALL
+  SELECT * FROM source_target_converted_checkpoints
+  WHERE @sources != '-' AND @targets != '-'
+  UNION ALL
+  SELECT * FROM source_converted_checkpoints
+  WHERE @sources != '-' AND @targets = '-'
+  UNION ALL
+  SELECT * FROM target_converted_checkpoints
+  WHERE @sources = '-' AND @targets != '-'
 ),
 
 conversions_summary AS (
