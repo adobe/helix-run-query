@@ -69,13 +69,13 @@ current_rum_by_url_and_weight AS (
 url_above_cwv_count_threshold AS (
   SELECT
     filtered_data.url,
-    cwv_count,
+    filtered_data.cwv_count,
     cru.avg_core_web_vital AS avg_cwv,
     (ce.events * cru.weight) AS pageviews
   FROM (
     SELECT
       cr.url,
-      @cwv_type,
+      @cwv_type as cwv_type,
       COUNT(*) AS cwv_count
     FROM current_rum_by_id AS cr
     WHERE core_web_vital IS NOT NULL
