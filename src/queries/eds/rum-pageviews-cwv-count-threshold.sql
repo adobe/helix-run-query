@@ -34,7 +34,7 @@ current_rum_by_id AS (
     id,
     ANY_VALUE(host) AS host,
     ANY_VALUE(user_agent) AS user_agent,
-    MAX(url) AS url,
+    ANY_VALUE(url) AS url,
     MAX(CASE
       WHEN @cwv_type = "lcp" THEN lcp
       WHEN @cwv_type = "cls" THEN cls
