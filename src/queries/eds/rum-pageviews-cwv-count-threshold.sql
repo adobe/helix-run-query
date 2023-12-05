@@ -13,6 +13,8 @@
 --- cwv_count_threshold: 100
 --- sampling_noise_factor: 1000
 --- domainkey: secret
+
+
 WITH current_data AS (
   SELECT * FROM
     helix_rum.EVENTS_V3(
@@ -25,28 +27,31 @@ WITH current_data AS (
       @device, -- device class
       @domainkey
     )
-) 
+),
+
 current_rum_by_id AS (
   SELECT
     id,
     MAX(host) AS host,
     MAX(user_agent) AS user_agent,
-    MAX(url) as url,
-    MAX(CASE WHEN @cwv_type = "lcp" THEN lcp
-        WHEN @cwv_type = "cls" THEN cls
-        WHEN @cwv_type = "fid" THEN fid
-        WHEN @cwv_type = "inp" THEN inp
-    ELSE NULL END) AS core_web_vital,
+    MAX(url) AS url,
+    MAX(CASE
+      WHEN @cwv_type = "lcp" THEN lcp
+      WHEN @cwv_type = "cls" THEN cls
+      WHEN @cwv_type = "fid" THEN fid
+      WHEN @cwv_type = "inp" THEN inp
+    END) AS core_web_vital,
     MAX(referer) AS referer,
     MAX(weight) AS weight
   FROM current_data
   WHERE
     url LIKE CONCAT("https://", @url, "%")
-     OR url LIKE CONCAT(
+    OR url LIKE CONCAT(
       "https://%", @repo, "--", @owner, ".hlx%/"
     ) OR (@url = "-" AND @repo = "-" AND @owner = "-")
   GROUP BY id
 ),
+
 current_events_by_url AS (
   SELECT
     url,
@@ -55,37 +60,44 @@ current_events_by_url AS (
   GROUP BY url
   ORDER BY events DESC
 ),
+
 current_rum_by_url_and_weight AS (
   SELECT
-    MAX(weight) AS weight,
     url,
-    CAST(APPROX_QUANTILES(core_web_vital, 100)[OFFSET(75)] AS INT64) AS avg_core_web_vital
+    MAX(weight) AS weight,
+    CAST(APPROX_QUANTILES(core_web_vital, 100)[OFFSET(75)] AS INT64)
+      AS avg_core_web_vital
   FROM current_rum_by_id
   GROUP BY url
 ),
+
 url_above_cwv_count_threshold AS (
-SELECT
-  filtered_data.url,
-  cwv_count,
-  (ce.events * cru.weight) as pageviews,
-  cru.avg_core_web_vital as avg_cwv
-FROM (
   SELECT
-    cr.url,
-    @cwv_type,
-    count(*) as cwv_count
-    from current_rum_by_id cr
-  WHERE core_web_vital is not null
-  GROUP BY url
-) filtered_data
-LEFT JOIN
-  current_events_by_url ce ON ce.url = filtered_data.url
-LEFT JOIN
-  current_rum_by_url_and_weight cru ON cru.url = filtered_data.url
-WHERE cwv_count > @cwv_count_threshold
- AND (ce.events * cru.weight) > @interval * @sampling_noise_factor
+    filtered_data.url,
+    cwv_count,
+    cru.avg_core_web_vital AS avg_cwv,
+    (ce.events * cru.weight) AS pageviews
+  FROM (
+    SELECT
+      cr.url,
+      @cwv_type,
+      COUNT(*) AS cwv_count
+    FROM current_rum_by_id AS cr
+    WHERE core_web_vital IS NOT NULL
+    GROUP BY url
+  ) AS filtered_data
+  LEFT JOIN
+    current_events_by_url AS ce
+    ON filtered_data.url = ce.url
+  LEFT JOIN
+    current_rum_by_url_and_weight AS cru
+    ON filtered_data.url = cru.url
+  WHERE
+    cwv_count > @cwv_count_threshold
+    AND (ce.events * cru.weight) > @interval * @sampling_noise_factor
 )
-SELECT 
+
+SELECT
   url,
   cw_type,
   cwv_count,
