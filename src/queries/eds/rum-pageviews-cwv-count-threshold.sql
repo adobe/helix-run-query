@@ -41,7 +41,7 @@ current_rum_by_id AS (
       WHEN @cwv_type = "fid" THEN fid
       WHEN @cwv_type = "inp" THEN inp
     END) AS core_web_vital,
-    MAX(referer) AS referer,
+    ANY_VALUE(referer) AS referer,
     MAX(weight) AS weight
   FROM current_data
   WHERE
