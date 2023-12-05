@@ -9,7 +9,7 @@
 --- url: -
 --- cwv_type: lcp
 --- cwv_count_threshold: 100
---- sampling_noise_factor: 1000
+--- avg_daily_pageviews_factor: 1000
 --- domainkey: secret
 
 
@@ -89,7 +89,7 @@ url_above_cwv_count_threshold AS (
     ON filtered_data.url = cru.url
   WHERE
     cwv_count > @cwv_count_threshold
-    AND (ce.events * cru.weight) > @interval * @sampling_noise_factor
+    AND (ce.events * cru.weight) > @interval * @avg_daily_pageviews_factor
 )
 
 SELECT
