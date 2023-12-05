@@ -75,7 +75,7 @@ url_above_cwv_count_threshold AS (
   FROM (
     SELECT
       cr.url,
-      @cwv_type as cwv_type,
+      @cwv_type AS cwv_type,
       COUNT(*) AS cwv_count
     FROM current_rum_by_id AS cr
     WHERE core_web_vital IS NOT NULL
@@ -88,7 +88,7 @@ url_above_cwv_count_threshold AS (
     current_rum_by_url_and_weight AS cru
     ON filtered_data.url = cru.url
   WHERE
-    cwv_count > @cwv_count_threshold
+    filtered_data.cwv_count > @cwv_count_threshold
     AND (ce.events * cru.weight) > @interval * @avg_daily_pageviews_factor
 )
 
