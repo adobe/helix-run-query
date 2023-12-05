@@ -32,7 +32,7 @@ WITH current_data AS (
 current_rum_by_id AS (
   SELECT
     id,
-    MAX(host) AS host,
+    ANY_VALUE(host) AS host,
     MAX(user_agent) AS user_agent,
     MAX(url) AS url,
     MAX(CASE
