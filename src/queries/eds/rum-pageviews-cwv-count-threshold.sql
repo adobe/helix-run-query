@@ -7,8 +7,6 @@
 --- timezone: UTC
 --- device: all
 --- url: -
---- owner: -
---- repo: -
 --- cwv_type: lcp
 --- cwv_count_threshold: 100
 --- sampling_noise_factor: 1000
@@ -46,9 +44,6 @@ current_rum_by_id AS (
   FROM current_data
   WHERE
     url LIKE CONCAT("https://", @url, "%")
-    OR url LIKE CONCAT(
-      "https://%", @repo, "--", @owner, ".hlx%/"
-    ) OR (@url = "-" AND @repo = "-" AND @owner = "-")
   GROUP BY id
 ),
 
