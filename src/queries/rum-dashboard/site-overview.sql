@@ -129,7 +129,7 @@ previous_rum_by_id AS (
 current_rum_by_url_and_weight AS (
   SELECT
     weight,
-    net.host(url),
+    net.host(url) as url,
     CAST(
       100 * IF(
         COUNTIF(lcpgood IS NOT NULL) != 0,
