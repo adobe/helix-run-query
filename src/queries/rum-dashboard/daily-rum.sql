@@ -19,6 +19,7 @@ WITH daily_rum AS
               Avg(fid)                            avgfid,
               Avg(inp)                         AS avginp,
               Avg(cls)                            avgcls,
+<<<<<<< HEAD
        IF(@timeunit = 'day', format_timestamp("%Y-%m-%d", time),
        IF(@timeunit = 'hour', format_timestamp("%Y-%m-%d-%T", time), 
        format_timestamp("%Y-%m-%d", time))) AS date 
@@ -32,6 +33,14 @@ WITH daily_rum AS
        @device, # device class 
        @domainkey ) 
        GROUP BY url,
+=======
+       if(@timeunit = 'day', format_timestamp("%Y-%m-%d", time),
+       IF(@timeunit = 'hour', format_timestamp("%Y-%m-%d-%T", time), format_timestamp("%Y-%m-%d", time))) AS date FROM helix_rum.events_v4( regexp_replace(@url, 'https://', ''), # domain
+       OR
+       url cast(@offset AS int64), # NOT used, offset IN days FROM today cast(@interval AS int64), # interval IN days TO consider @startdate, # NOT used, start date @enddate, # NOT used,
+     END
+     date @timezone, # timezone @device, # device class @domainkey ) GROUP BY url,
+>>>>>>> 977daff (feat(add queries):)
        date ORDER BY date ASC )
 SELECT   *
 FROM     daily_rum

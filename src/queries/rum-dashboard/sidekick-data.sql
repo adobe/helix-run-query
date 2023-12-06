@@ -18,11 +18,21 @@ WITH sidekick_events AS
               hostname,
               source,
               user_agent LIKE "%Sidekick%" AS extension
+<<<<<<< HEAD
        FROM   helix_rum.CHECKPOINTS_V3( regexp_replace(@url, 'https://', ''), @offset, @interval, @startdate, @enddate, @timezone, 'all', @domainkey )
        WHERE  CHECKPOINT LIKE "sidekick:%")
 SELECT   day,
          count(*)                   AS actions,
          count(DISTINCT CHECKPOINT) AS checkpoints,
+=======
+       FROM   `helix-225321.helix_rum`.cluster_checkpoints( regexp_replace(@url, 'https://', ''), @offset, @interval, @startdate, @enddate, @timezone, 'all', '-' )
+       WHERE  CHECKPOINT LIKE "sidekick:%"
+       AND    (
+                     starts_with(hostname, @url)))
+SELECT   day,
+         count(*)                   AS actions,
+         count(DISTINCTCHECKPOINT) AS checkpoints,
+>>>>>>> 977daff (feat(add queries):)
 FROM     sidekick_events
 GROUP BY sidekick_events.day,
          hostname
