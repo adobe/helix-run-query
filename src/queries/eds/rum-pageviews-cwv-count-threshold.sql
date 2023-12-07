@@ -12,7 +12,6 @@
 --- avg_daily_pageviews_factor: 1000
 --- domainkey: secret
 
-
 WITH current_data AS (
   SELECT * FROM
     helix_rum.EVENTS_V3(
