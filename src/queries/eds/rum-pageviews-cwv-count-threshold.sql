@@ -87,8 +87,9 @@ url_above_cwv_count_threshold AS (
     current_rum_by_url_and_weight AS cru
     ON filtered_data.url = cru.url
   WHERE
-    filtered_data.cwv_count > @cwv_count_threshold
-    AND (ce.events * cru.weight) > @interval * @avg_daily_pageviews_factor
+    CAST(filtered_data.cwv_count AS INT64) > CAST(@cwv_count_threshold AS INT64)
+    AND CAST((ce.events * cru.weight) AS INT64)
+    > CAST(@interval * @avg_daily_pageviews_factor AS INT64)
 )
 
 SELECT
