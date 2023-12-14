@@ -15,7 +15,7 @@
 WITH daily_rum AS
 (
        SELECT Regexp_replace(url, '\\?.+', '') AS url,
-       CAST(APPROX_QUANTILES(lcp, 100)[OFFSET(75)] AS INT64) AS avglcp,
+       CAST(APPROX_QUANTILES(lcp, 100)[OFFSET(75)] AS INT64)/1000 AS avglcp,
        CAST(APPROX_QUANTILES(fid, 100)[OFFSET(75)] AS INT64) AS avgfid,
        CAST(APPROX_QUANTILES(inp, 100)[OFFSET(75)] AS INT64) AS avginp,
        ROUND(APPROX_QUANTILES(cls, 100)[OFFSET(75)], 3) AS avgcls,
