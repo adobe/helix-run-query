@@ -97,7 +97,7 @@ BEGIN
 
   finaldata AS (
     SELECT
-      format_timestamp("%Y-%m-%d", dates.alldates) as date
+      format_timestamp("%Y-%m-%d", dates.alldates) as date,
       STRING(dates.alldates) AS time,
       COALESCE(dailydata.urls, 0) AS distinct_urls,
       COALESCE(dailydata.pageviews, 0) AS pageviews
