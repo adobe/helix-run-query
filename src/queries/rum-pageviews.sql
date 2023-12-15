@@ -97,9 +97,7 @@ BEGIN
 
   finaldata AS (
     SELECT
-      EXTRACT(YEAR FROM dates.alldates) AS year,
-      EXTRACT(MONTH FROM dates.alldates) AS month,
-      EXTRACT(DAY FROM dates.alldates) AS day,
+      format_timestamp("%Y-%m-%d", dates.alldates) as date
       STRING(dates.alldates) AS time,
       COALESCE(dailydata.urls, 0) AS distinct_urls,
       COALESCE(dailydata.pageviews, 0) AS pageviews
