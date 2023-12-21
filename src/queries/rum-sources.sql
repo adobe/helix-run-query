@@ -47,7 +47,6 @@ sources AS (
 )
 
 SELECT
-  checkpoint,
   source,
   COUNT(id) AS ids,
   COUNT(DISTINCT url) AS pages,
@@ -56,6 +55,6 @@ SELECT
   SUM(actions) AS actions,
   SUM(actions) / SUM(views) AS actions_per_view
 FROM sources
-GROUP BY source, checkpoint
+GROUP BY source, topurl
 ORDER BY views DESC
 LIMIT @limit
