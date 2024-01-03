@@ -114,7 +114,9 @@
       "src/queries/dash/pageviews.sql",
       "src/queries/dash/rfqs.sql",
       "src/queries/dash/rum-sources-aggregated.sql",
-      "src/queries/dash/searches.sql"
+      "src/queries/dash/searches.sql",
+      "src/queries/dash/github-commits.sql"
+
     ]
   },
   "nodemonConfig": {
