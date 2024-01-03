@@ -55,6 +55,6 @@ SELECT
   SUM(actions) AS actions,
   SUM(actions) / SUM(views) AS actions_per_view
 FROM sources
-GROUP BY source, topurl
+GROUP BY source
 ORDER BY views DESC
 LIMIT @limit
