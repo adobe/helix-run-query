@@ -106,7 +106,15 @@
       "src/queries/rum-targets.sql",
       "src/queries/dash/auth-all-domains.sql",
       "src/queries/dash/domain-list.sql",
-      "src/queries/dash/update-domain-info.sql"
+      "src/queries/dash/update-domain-info.sql",
+      "src/queries/dash/checkpoint-by-url.sql",
+      "src/queries/dash/conversions.sql",
+      "src/queries/dash/daily-rum.sql",
+      "src/queries/dash/enters.sql",
+      "src/queries/dash/pageviews.sql",
+      "src/queries/dash/rfqs.sql",
+      "src/queries/dash/rum-sources-aggregated.sql",
+      "src/queries/dash/searches.sql"
     ]
   },
   "nodemonConfig": {
