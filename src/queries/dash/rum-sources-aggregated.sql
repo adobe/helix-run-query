@@ -44,8 +44,8 @@ sources AS (
       ) = '-' OR CAST(@checkpoint AS STRING) = checkpoint
     ) AND (source = @source OR @source = '-')
   GROUP BY source, id, checkpoint
-)
-
+), 
+with filtered as (
 SELECT
   source,
   COUNT(id) AS ids,
@@ -56,5 +56,14 @@ SELECT
   SUM(actions) / SUM(views) AS actions_per_view
 FROM sources
 GROUP BY source, url
+ORDER BY views DESC
+)
+
+SELECT
+  source,
+  topurl,
+  SUM(views) AS views,
+FROM filtered
+GROUP BY source, topurl
 ORDER BY views DESC
 LIMIT @limit
