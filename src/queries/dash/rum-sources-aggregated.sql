@@ -45,7 +45,7 @@ sources AS (
     ) AND (source = @source OR @source = '-')
   GROUP BY source, id, checkpoint
 ), 
-with filtered as (
+filtered AS (
 SELECT
   source,
   COUNT(id) AS ids,
