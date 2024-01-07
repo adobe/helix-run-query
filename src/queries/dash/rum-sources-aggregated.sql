@@ -44,25 +44,26 @@ sources AS (
       ) = '-' OR CAST(@checkpoint AS STRING) = checkpoint
     ) AND (source = @source OR @source = '-')
   GROUP BY source, id, checkpoint
-), 
+),
+
 filtered AS (
-SELECT
-  source,
-  COUNT(id) AS ids,
-  COUNT(DISTINCT url) AS pages,
-  APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
-  SUM(views) AS views,
-  SUM(actions) AS actions,
-  SUM(actions) / SUM(views) AS actions_per_view
-FROM sources
-GROUP BY source, url
-ORDER BY views DESC
+  SELECT
+    source,
+    COUNT(id) AS ids,
+    COUNT(DISTINCT url) AS pages,
+    APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
+    SUM(views) AS views,
+    SUM(actions) AS actions,
+    SUM(actions) / SUM(views) AS actions_per_view
+  FROM sources
+  GROUP BY source, url
+  ORDER BY views DESC
 )
 
 SELECT
   source,
   topurl,
-  SUM(views) AS views,
+  SUM(views) AS views
 FROM filtered
 GROUP BY source, topurl
 ORDER BY views DESC

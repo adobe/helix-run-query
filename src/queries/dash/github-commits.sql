@@ -12,29 +12,29 @@
 --- url: -
 --- device: all
 --- domainkey: secret
-with current_data as (
-SELECT 
-  * 
-FROM 
-  `helix-225321.helix_external_data.DAILY_COMMITS`(
-    @url, 
-    @offset, 
-    @interval, 
-    @startdate,
-    @enddate, 
-    @domainkey
-  )
-) 
-select * from current_data where 
-not user = 'GitHub' 
-and not user = 'GitHub Action' 
-and not user = 'GitHub Enterprise' 
-and not user = 'CircleCi Build' 
-and not user = 'Helix Bot' 
-and not user = 'adobe-alloy-bot' 
-and not user = 'github-actions' 
-and not user = 'github-actions[bot]' 
-and not user = 'helix-bot[bot]' 
-and not user = 'renovate[bot]' 
-and not user = 'semantic-release-bot'
-order by owner_repo, commit_date asc
+WITH current_data AS (
+  SELECT *
+  FROM
+    `HELIX-225321.HELIX_EXTERNAL_DATA.DAILY_COMMITS`(
+      @url,
+      @offset,
+      @interval,
+      @startdate,
+      @enddate,
+      @domainkey
+    )
+)
+
+SELECT * FROM current_data WHERE
+  NOT user = 'GitHub'
+  AND NOT user = 'GitHub Action'
+  AND NOT user = 'GitHub Enterprise'
+  AND NOT user = 'CircleCi Build'
+  AND NOT user = 'Helix Bot'
+  AND NOT user = 'adobe-alloy-bot'
+  AND NOT user = 'github-actions'
+  AND NOT user = 'github-actions[bot]'
+  AND NOT user = 'helix-bot[bot]'
+  AND NOT user = 'renovate[bot]'
+  AND NOT user = 'semantic-release-bot'
+ORDER BY owner_repo ASC, commit_date ASC
