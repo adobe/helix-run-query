@@ -108,7 +108,6 @@
       "src/queries/dash/domain-list.sql",
       "src/queries/dash/update-domain-info.sql",
       "src/queries/dash/pageviews.sql",
-      "src/queries/dash/rum-sources-aggregated.sql",
       "src/queries/dash/github-commits.sql"
 
     ]
