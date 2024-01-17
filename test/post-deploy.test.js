@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-env mocha */
-import chai from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import { createTargets } from './post-deploy-utils.js';
 
-chai.use(chaiHttp);
-const { expect } = chai;
+const { expect, request } = chai.use(chaiHttp);
 
 createTargets().forEach((target) => {
   describe(`Post-Deploy Tests (${target.title()}) ${target.host()}${target.urlPath()}`, () => {
@@ -29,8 +28,7 @@ createTargets().forEach((target) => {
       const path = `${target.urlPath()}/rum-dashboard`;
       // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
-      await chai
-        .request(target.host())
+      await request(target.host())
         .get(path)
         // set Authorization header to the universal token
         .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
@@ -49,8 +47,7 @@ createTargets().forEach((target) => {
       const path = `${target.urlPath()}/rum-pageviews?url=www.theplayers.com&offset=1`;
       // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
-      await chai
-        .request(target.host())
+      await request(target.host())
         .get(path)
         .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .then((response) => {
@@ -66,8 +63,7 @@ createTargets().forEach((target) => {
       const path = `${target.urlPath()}/_status_check/healthcheck.json`;
       // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
-      await chai
-        .request(target.host())
+      await request(target.host())
         .get(path)
         .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
         .then((response) => {
