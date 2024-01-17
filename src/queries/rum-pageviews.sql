@@ -37,7 +37,7 @@ BEGIN
         WHEN 365 THEN TIMESTAMP_TRUNC(time, YEAR)
         ELSE TIMESTAMP_TRUNC(time, DAY)
       END AS date
-    FROM helix_rum.PAGEVIEWS_V3(
+    FROM helix_rum.PAGEVIEWS_V4(
       inurl, # url
       (inoffset * ingranularity) - 1, # offset
       inlimit * ingranularity, # days to fetch
