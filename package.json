@@ -42,7 +42,7 @@
     "@adobe/helix-status": "10.0.11",
     "@adobe/helix-universal-logger": "3.0.13",
     "@google-cloud/bigquery": "7.3.0",
-    "dotenv": "16.3.1",
+    "dotenv": "16.3.2",
     "fs-extra": "11.2.0",
     "googleapis": "131.0.0",
     "json-size": "1.0.0"
@@ -64,7 +64,7 @@
     "chai": "5.0.0",
     "chai-http": "4.4.0",
     "eslint": "8.56.0",
-    "esmock": "2.6.0",
+    "esmock": "2.6.2",
     "husky": "8.0.3",
     "jsdoc-to-markdown": "8.0.0",
     "junit-report-builder": "3.1.0",
@@ -72,7 +72,7 @@
     "lodash": "4.17.21",
     "mocha": "10.2.0",
     "mocha-multi-reporters": "1.5.1",
-    "nodemon": "3.0.2",
+    "nodemon": "3.0.3",
     "semantic-release": "22.0.12",
     "sinon": "17.0.1"
   },
