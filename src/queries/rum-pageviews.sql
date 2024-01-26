@@ -39,7 +39,7 @@ BEGIN
       END AS date
     FROM helix_rum.PAGEVIEWS_V3(
       inurl, # url
-      (inoffset * ingranularity) - 1, # offset
+      GREATEST((inoffset * ingranularity) - 1, 0), # offset
       inlimit * ingranularity, # days to fetch
       '2022-05-01', # not used, start date
       '2022-05-28', # not used, end date
