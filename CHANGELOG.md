@@ -1,3 +1,11 @@
+## [3.9.9](https://github.com/adobe/helix-run-query/compare/v3.9.8...v3.9.9) (2024-01-29)
+
+
+### Bug Fixes
+
+* prevent negative offset for pageviews query ([370fc7f](https://github.com/adobe/helix-run-query/commit/370fc7fc4eb246f644c09d7e0be2d6e7b42496d3))
+* sqlfluff ([4f68ecd](https://github.com/adobe/helix-run-query/commit/4f68ecd631fb589e3533e1491896c6e5e21bfda2))
+
 ## [3.9.8](https://github.com/adobe/helix-run-query/compare/v3.9.7...v3.9.8) (2024-01-20)
 
 
