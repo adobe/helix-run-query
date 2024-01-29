@@ -8,7 +8,7 @@
 --- timezone: UTC
 --- domainkey: secret
 DECLARE results NUMERIC;
-CREATE OR REPLACE PROCEDURE helix_rum.UPDATE_PAGEVIEWS(
+CREATE OR REPLACE PROCEDURE helix_rum.UPDATE_PAGEVIEWS (
   ingranularity INT64,
   inlimit INT64,
   inoffset INT64,
@@ -18,11 +18,11 @@ CREATE OR REPLACE PROCEDURE helix_rum.UPDATE_PAGEVIEWS(
   OUT results NUMERIC
 )
 BEGIN
-  CREATE TEMP TABLE temp_pageviews(
+  CREATE TEMP TABLE temp_pageviews (
     year INT64,
     month INT64,
     day INT64,
-    time STRING,
+    time STRING, --noqa: RF04
     url INT64,
     pageviews NUMERIC
   )
@@ -39,7 +39,7 @@ BEGIN
       END AS date
     FROM helix_rum.PAGEVIEWS_V3(
       inurl, # url
-      (inoffset * ingranularity) - 1, # offset
+      GREATEST((inoffset * ingranularity) - 1, 0), # offset
       inlimit * ingranularity, # days to fetch
       '2022-05-01', # not used, start date
       '2022-05-28', # not used, end date
@@ -64,7 +64,7 @@ BEGIN
       EXTRACT(YEAR FROM date) AS year,
       EXTRACT(MONTH FROM date) AS month,
       EXTRACT(DAY FROM date) AS day,
-      STRING(date) AS time,
+      STRING(date) AS time, -- noqa: RF04
       COUNT(url) AS urls,
       SUM(weight) AS pageviews
     FROM pageviews_by_id
@@ -91,7 +91,7 @@ BEGIN
       WHEN 90 THEN TIMESTAMP_TRUNC(alldates, QUARTER)
       WHEN 365 THEN TIMESTAMP_TRUNC(alldates, YEAR)
       ELSE TIMESTAMP_TRUNC(alldates, DAY)
-      END AS alldates FROM basicdates
+    END AS alldates FROM basicdates
     GROUP BY alldates
   ),
 
@@ -100,7 +100,7 @@ BEGIN
       EXTRACT(YEAR FROM dates.alldates) AS year,
       EXTRACT(MONTH FROM dates.alldates) AS month,
       EXTRACT(DAY FROM dates.alldates) AS day,
-      STRING(dates.alldates) AS time,
+      STRING(dates.alldates) AS time, -- noqa: RF04
       COALESCE(dailydata.urls, 0) AS distinct_urls,
       COALESCE(dailydata.pageviews, 0) AS pageviews
     FROM dates
@@ -112,12 +112,12 @@ BEGIN
   SELECT * FROM finaldata ORDER BY time DESC;
   SET results = (SELECT SUM(pageviews) FROM (SELECT * FROM temp_pageviews));
 END;
-IF (CAST(@granularity AS STRING) = "auto") THEN
+IF (CAST(@granularity AS STRING) = "auto") THEN -- noqa: PRS
     CALL helix_rum.UPDATE_PAGEVIEWS(1, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, @domainkey, results);
-    IF (results > (CAST(@interval AS INT64) * 200)) THEN
+    IF (results > (CAST(@interval AS INT64) * 200)) THEN -- noqa: PRS
         # we have enough results, use the daily granularity
         SELECT * FROM temp_pageviews;
-    ELSE
+    ELSE -- noqa: PRS
         # we don't have enough results, zoom out
         DROP TABLE temp_pageviews;
         CALL helix_rum.UPDATE_PAGEVIEWS(7, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, @domainkey, results);
@@ -130,8 +130,8 @@ IF (CAST(@granularity AS STRING) = "auto") THEN
             CALL helix_rum.UPDATE_PAGEVIEWS(30, CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, @domainkey, results);
             SELECT * FROM temp_pageviews;
         END IF;
-    END IF;
-ELSE
+    END IF; -- noqa: PRS
+ELSE -- noqa: PRS
     CALL helix_rum.UPDATE_PAGEVIEWS(CAST(@granularity AS INT64), CAST(@interval AS INT64), CAST(@offset AS INT64), @url, @timezone, @domainkey, results);
     SELECT * FROM temp_pageviews;
-END IF;
+END IF; -- noqa: PRS
