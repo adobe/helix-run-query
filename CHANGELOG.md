@@ -1,3 +1,10 @@
+# [3.10.0](https://github.com/adobe/helix-run-query/compare/v3.9.9...v3.10.0) (2024-01-31)
+
+
+### Features
+
+* **experiments:** add ability to filter conversions by target and source ([1dd87c9](https://github.com/adobe/helix-run-query/commit/1dd87c91b30aab72d3dc5c25e0c8e26cd4bab7c9))
+
 ## [3.9.9](https://github.com/adobe/helix-run-query/compare/v3.9.8...v3.9.9) (2024-01-29)
 
 
