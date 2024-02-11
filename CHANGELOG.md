@@ -1,3 +1,10 @@
+## [3.10.3](https://github.com/adobe/helix-run-query/compare/v3.10.2...v3.10.3) (2024-02-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency dotenv to v16.4.2 ([654fa77](https://github.com/adobe/helix-run-query/commit/654fa7775f5275945dd6d925d1567653a70610a3))
+
 ## [3.10.2](https://github.com/adobe/helix-run-query/compare/v3.10.1...v3.10.2) (2024-02-10)
 
 
