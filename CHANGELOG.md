@@ -1,3 +1,31 @@
+## [3.10.3](https://github.com/adobe/helix-run-query/compare/v3.10.2...v3.10.3) (2024-02-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency dotenv to v16.4.2 ([654fa77](https://github.com/adobe/helix-run-query/commit/654fa7775f5275945dd6d925d1567653a70610a3))
+
+## [3.10.2](https://github.com/adobe/helix-run-query/compare/v3.10.1...v3.10.2) (2024-02-10)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([a45652a](https://github.com/adobe/helix-run-query/commit/a45652a8ac374f40d4b8822edc745702d160acac))
+
+## [3.10.1](https://github.com/adobe/helix-run-query/compare/v3.10.0...v3.10.1) (2024-02-06)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v132 ([#1048](https://github.com/adobe/helix-run-query/issues/1048)) ([988792f](https://github.com/adobe/helix-run-query/commit/988792f8656c0e0245070c6908b85ab89528ce62))
+
+# [3.10.0](https://github.com/adobe/helix-run-query/compare/v3.9.9...v3.10.0) (2024-01-31)
+
+
+### Features
+
+* **experiments:** add ability to filter conversions by target and source ([1dd87c9](https://github.com/adobe/helix-run-query/commit/1dd87c91b30aab72d3dc5c25e0c8e26cd4bab7c9))
+
 ## [3.9.9](https://github.com/adobe/helix-run-query/compare/v3.9.8...v3.9.9) (2024-01-29)
 
 
