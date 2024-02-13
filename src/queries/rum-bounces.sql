@@ -12,7 +12,7 @@ WITH current_data AS (
     hostname,
     checkpoint,
     source,
-    weight
+    MAX(pageviews) AS pageviews
   FROM
     helix_rum.CHECKPOINTS_V3(
       @url,
@@ -31,7 +31,7 @@ pageviews AS (
   SELECT
     hostname,
     CAST(source AS INT64) AS pagesseen,
-    ANY_VALUE(weight) AS pageviews
+    ANY_VALUE(pageviews) AS pageviews
   FROM current_data
   WHERE checkpoint = 'pagesviewed'
   GROUP BY
