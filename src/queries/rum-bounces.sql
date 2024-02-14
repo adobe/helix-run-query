@@ -105,7 +105,7 @@ SELECT
   MAX(visits) AS visits,
   MAX(pagespervisit) AS pagespervisit,
   MAX(all_enter_click_sessions) / MAX(all_enter_sessions) AS bounce_rate
-FROM aggegate
+FROM aggregate
 --- pageviews: number of page views in the time period
 --- visits: number of visits in the time period, based on estimated session length
 --- pagespervisit: estimated session length in pages per visit
