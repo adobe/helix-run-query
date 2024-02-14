@@ -81,14 +81,14 @@ enter_click_sessions AS (
 ),
 
 bounce_rate AS (
-SELECT
-  0 AS all_enter_click_sessions,
-  COUNT(*) AS all_enter_sessions
+  SELECT
+    0 AS all_enter_click_sessions,
+    COUNT(*) AS all_enter_sessions
   FROM enter_sessions
   UNION ALL
-SELECT
-  0 AS all_enter_sessions,
-  COUNT(*) AS all_enter_click_sessions
+  SELECT
+    0 AS all_enter_sessions,
+    COUNT(*) AS all_enter_click_sessions
   FROM enter_click_sessions
 ),
 
