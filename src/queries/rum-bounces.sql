@@ -87,7 +87,7 @@ bounce_rate AS (
   FROM enter_click_sessions
 ),
 
-aggegate AS (
+aggregate AS (
   SELECT
     SUM(pageviews) AS pageviews,
     SUM(visits) AS visits,
