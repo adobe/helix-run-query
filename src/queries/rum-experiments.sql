@@ -11,6 +11,7 @@
 --- conversioncheckpoint: click
 --- sources: -
 --- targets: -
+--- pseudotargets: https://www.aem.live/developer/tutorial,https://www.adobe.com
 --- threshold: 500
 --- domainkey: secret
 
@@ -72,23 +73,6 @@ experiment_checkpoints AS (
     target,
     id
 ),
-
-target_prefixes AS (
-  SELECT CONCAT(TRIM(prefix), '%') AS prefix
-  FROM
-    UNNEST(
-      SPLIT(IF(@targets = '-', '', @targets), ',')
-    ) AS prefix
-),
-
-source_prefixes AS (
-  SELECT CONCAT(TRIM(prefix), '%') AS prefix
-  FROM
-    UNNEST(
-      SPLIT(IF(@sources = '-', '', @sources), ',')
-    ) AS prefix
-),
-
 source_target_converted_checkpoints AS (
   SELECT
     all_checkpoints.id AS id,
@@ -97,11 +81,20 @@ source_target_converted_checkpoints AS (
     ANY_VALUE(all_checkpoints.pageviews) AS pageviews
   FROM experiment_checkpoints INNER JOIN all_checkpoints
     ON experiment_checkpoints.id = all_checkpoints.id
-  INNER JOIN source_prefixes
-    ON all_checkpoints.source LIKE source_prefixes.prefix
-  INNER JOIN target_prefixes
-    ON all_checkpoints.target LIKE target_prefixes.prefix
-  WHERE all_checkpoints.checkpoint = @conversioncheckpoint
+  WHERE
+    all_checkpoints.checkpoint = @conversioncheckpoint
+    AND EXISTS (
+      SELECT 1
+      FROM
+        UNNEST(SPLIT(@sources, ',')) AS prefix
+      WHERE all_checkpoints.source LIKE CONCAT(TRIM(prefix), '%')
+    )
+    AND EXISTS (
+      SELECT 1
+      FROM
+        UNNEST(SPLIT(@targets, ',')) AS prefix
+      WHERE all_checkpoints.target LIKE CONCAT(TRIM(prefix), '%')
+    )
   GROUP BY all_checkpoints.id
 ),
 
@@ -113,9 +106,14 @@ source_converted_checkpoints AS (
     ANY_VALUE(all_checkpoints.pageviews) AS pageviews
   FROM experiment_checkpoints INNER JOIN all_checkpoints
     ON experiment_checkpoints.id = all_checkpoints.id
-  INNER JOIN source_prefixes
-    ON all_checkpoints.source LIKE source_prefixes.prefix
-  WHERE all_checkpoints.checkpoint = @conversioncheckpoint
+  WHERE
+    all_checkpoints.checkpoint = @conversioncheckpoint
+    AND EXISTS (
+      SELECT 1
+      FROM
+        UNNEST(SPLIT(@sources, ',')) AS prefix
+      WHERE all_checkpoints.source LIKE CONCAT(TRIM(prefix), '%')
+    )
   GROUP BY all_checkpoints.id
 ),
 
@@ -127,11 +125,14 @@ target_converted_checkpoints AS (
     ANY_VALUE(all_checkpoints.pageviews) AS pageviews
   FROM experiment_checkpoints INNER JOIN all_checkpoints
     ON experiment_checkpoints.id = all_checkpoints.id
-  INNER JOIN source_prefixes
-    ON all_checkpoints.source LIKE source_prefixes.prefix
-  INNER JOIN target_prefixes
-    ON all_checkpoints.target LIKE target_prefixes.prefix
-  WHERE all_checkpoints.checkpoint = @conversioncheckpoint
+  WHERE
+    all_checkpoints.checkpoint = @conversioncheckpoint
+    AND EXISTS (
+      SELECT 1
+      FROM
+        UNNEST(SPLIT(@targets, ',')) AS prefix
+      WHERE all_checkpoints.target LIKE CONCAT(TRIM(prefix), '%')
+    )
   GROUP BY all_checkpoints.id
 ),
 
