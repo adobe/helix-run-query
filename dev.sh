@@ -29,7 +29,6 @@ shift
 while [ $# -gt 0 ]; do
   # escape forward slashes
   ESCAPED=$(echo $2 | sed 's/\//\\\//g')
-  echo "Setting parameter $1 to $ESCAPED"
   PARAMS=$(echo $PARAMS | sed -E "s/$1::\"[^\"]*\"/$1::\"$ESCAPED\"/")
   shift
   shift
