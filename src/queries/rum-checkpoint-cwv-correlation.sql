@@ -9,7 +9,8 @@
 --- timezone: UTC
 --- conversioncheckpoint: click
 --- ntiles: 10
---- targets: https://, http://
+--- sources: -
+--- targets: -
 --- domainkey: secret
 
 WITH alldata AS (
@@ -26,28 +27,109 @@ WITH alldata AS (
       CAST(@interval AS INT64),
       @startdate,
       @enddate,
-      "UTC",
+      @timezone,
       "all",
       @domainkey
     )
 ),
 
-prefixes AS (
-  SELECT CONCAT(TRIM(prefix), "%") AS prefix
-  FROM
-    UNNEST(
-      SPLIT(@targets, ",")
-    ) AS prefix
+all_checkpoints AS (
+  SELECT * FROM
+    helix_rum.CHECKPOINTS_V3(
+      @url, # domain or URL
+      CAST(@offset AS INT64), # offset in days from today
+      CAST(@interval AS INT64), # interval in days to consider
+      @startdate, # not used, start date
+      @enddate, # not used, end date
+      @timezone, # timezone
+      "all", # device class
+      @domainkey
+    )
 ),
 
-linkclickevents AS (
+source_target_converted_checkpoints AS (
   SELECT
-    alldata.id,
-    alldata.checkpoint,
-    alldata.target
-  FROM alldata INNER JOIN prefixes
-    ON (alldata.target LIKE prefixes.prefix)
-  WHERE alldata.checkpoint = @conversioncheckpoint
+    all_checkpoints.id AS id,
+    ANY_VALUE(source) AS source,
+    ANY_VALUE(target) AS target,
+    ANY_VALUE(all_checkpoints.pageviews) AS pageviews
+  FROM all_checkpoints
+  WHERE
+    all_checkpoints.checkpoint = @conversioncheckpoint
+    AND EXISTS (
+      SELECT 1
+      FROM
+        UNNEST(SPLIT(@sources, ",")) AS prefix
+      WHERE all_checkpoints.source LIKE CONCAT(TRIM(prefix), "%")
+    )
+    AND EXISTS (
+      SELECT 1
+      FROM
+        UNNEST(SPLIT(@targets, ",")) AS prefix
+      WHERE all_checkpoints.target LIKE CONCAT(TRIM(prefix), "%")
+    )
+  GROUP BY all_checkpoints.id
+),
+
+source_converted_checkpoints AS (
+  SELECT
+    all_checkpoints.id AS id,
+    ANY_VALUE(source) AS source,
+    ANY_VALUE(target) AS target,
+    ANY_VALUE(pageviews) AS pageviews
+  FROM all_checkpoints
+  WHERE
+    all_checkpoints.checkpoint = @conversioncheckpoint
+    AND EXISTS (
+      SELECT 1
+      FROM
+        UNNEST(SPLIT(@sources, ",")) AS prefix
+      WHERE all_checkpoints.source LIKE CONCAT(TRIM(prefix), "%")
+    )
+  GROUP BY all_checkpoints.id
+),
+
+target_converted_checkpoints AS (
+  SELECT
+    all_checkpoints.id AS id,
+    ANY_VALUE(source) AS source,
+    ANY_VALUE(target) AS target,
+    ANY_VALUE(pageviews) AS pageviews
+  FROM all_checkpoints
+  WHERE
+    all_checkpoints.checkpoint = @conversioncheckpoint
+    AND EXISTS (
+      SELECT 1
+      FROM
+        UNNEST(SPLIT(@targets, ",")) AS prefix
+      WHERE all_checkpoints.target LIKE CONCAT(TRIM(prefix), "%")
+    )
+  GROUP BY all_checkpoints.id
+),
+
+loose_converted_checkpoints AS (
+  SELECT
+    all_checkpoints.id AS id,
+    ANY_VALUE(source) AS source,
+    ANY_VALUE(target) AS target,
+    ANY_VALUE(pageviews) AS pageviews
+  FROM all_checkpoints
+  WHERE all_checkpoints.checkpoint = @conversioncheckpoint
+  GROUP BY all_checkpoints.id
+),
+
+converted_checkpoints AS (
+  SELECT * FROM loose_converted_checkpoints
+  WHERE @sources = "-" AND @targets = "-"
+  UNION ALL
+  SELECT * FROM source_target_converted_checkpoints
+  WHERE @sources != "-" AND @targets != "-"
+  UNION ALL
+  SELECT * FROM source_converted_checkpoints
+  WHERE @sources != "-" AND @targets = "-"
+  UNION ALL
+  SELECT * FROM target_converted_checkpoints
+  WHERE @sources = "-" AND @targets != "-"
 ),
 
 alllcps AS (
@@ -70,8 +152,9 @@ events AS (
     ANY_VALUE(alllcps.lcp) AS lcp,
     NTILE(CAST(@ntiles AS INT64))
       OVER (ORDER BY ANY_VALUE(lcp)) AS lcp_percentile,
-    COUNT(DISTINCT linkclickevents.target) AS linkclicks
-  FROM linkclickevents FULL JOIN allids ON linkclickevents.id = allids.id
+    COUNT(DISTINCT converted_checkpoints.target) AS linkclicks
+  FROM converted_checkpoints FULL JOIN allids
+    ON converted_checkpoints.id = allids.id
   INNER JOIN alllcps ON (allids.id = alllcps.id)
   GROUP BY allids.id
   ORDER BY lcp DESC
@@ -122,7 +205,7 @@ boost_potential AS (
     (best_rates.max_rate - clickrates.click_rate)
     / clickrates.click_rate AS click_rate_boost
   FROM clickrates
-  FULL JOIN best_rates ON (true)
+  FULL JOIN best_rates ON (TRUE)
   WHERE clickrates.lcp - best_rates.best_lcp < 1000
   ORDER BY clickrates.lcp DESC
   LIMIT 1
@@ -137,9 +220,9 @@ SELECT
   boost_potential.click_rate_boost,
   boost_potential.lcp_diff
 FROM clickrates
-FULL JOIN correlation ON (true)
-FULL JOIN good_correlation ON (true)
-FULL JOIN boost_potential ON (true)
+FULL JOIN correlation ON (TRUE)
+FULL JOIN good_correlation ON (TRUE)
+FULL JOIN boost_potential ON (TRUE)
 ORDER BY clickrates.lcp_percentile
 --- lcp_percentile: the nth ntiles of LCP values (number of values is based on the ntile parameter)
 --- lcp: the mean LCP value for the nth ntile
