@@ -12,6 +12,7 @@ WITH current_data AS (
     hostname,
     checkpoint,
     source,
+    target,
     pageviews
   FROM
     helix_rum.CHECKPOINTS_V3(
@@ -27,7 +28,7 @@ WITH current_data AS (
 ),
 
 # Get the number of pages viewed per session
-pageviews AS (
+pageviews_per_session AS (
   SELECT
     hostname,
     CAST(source AS INT64) AS pagesseen,
@@ -50,7 +51,7 @@ sessions AS (
     SUM(pageviews) AS pageviews,
     2 * (AVG(pagesseen) - 1) AS pagespervisit,
     SUM(pageviews) / (2 * (AVG(pagesseen) - 1)) AS visits
-  FROM pageviews
+  FROM pageviews_per_session
   GROUP BY
     hostname
 ),
@@ -80,10 +81,14 @@ enter_click_sessions AS (
 ),
 
 bounce_rate AS (
-  SELECT COUNT(*) AS all_enter_sessions
+SELECT
+  0 AS all_enter_click_sessions,
+  COUNT(*) AS all_enter_sessions
   FROM enter_sessions
   UNION ALL
-  SELECT COUNT(*) AS all_enter_click_sessions
+SELECT
+  0 AS all_enter_sessions,
+  COUNT(*) AS all_enter_click_sessions
   FROM enter_click_sessions
 ),
 
@@ -91,10 +96,15 @@ aggregate AS (
   SELECT
     SUM(pageviews) AS pageviews,
     SUM(visits) AS visits,
-    AVG(pagespervisit) AS pagespervisit
+    AVG(pagespervisit) AS pagespervisit,
+    0 AS all_enter_sessions,
+    0 AS all_enter_click_sessions
   FROM sessions
   UNION ALL
   SELECT
+    0 AS pageviews,
+    0 AS visits,
+    0 AS pagespervisit,
     all_enter_sessions,
     all_enter_click_sessions
   FROM bounce_rate
