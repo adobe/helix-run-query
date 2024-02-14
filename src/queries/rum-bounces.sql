@@ -12,7 +12,7 @@ WITH current_data AS (
     hostname,
     checkpoint,
     source,
-    MAX(pageviews) AS pageviews
+    pageviews
   FROM
     helix_rum.CHECKPOINTS_V3(
       @url,
