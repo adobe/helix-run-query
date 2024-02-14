@@ -11,7 +11,6 @@
 --- conversioncheckpoint: click
 --- sources: -
 --- targets: -
---- pseudotargets: https://www.aem.live/developer/tutorial,https://www.adobe.com
 --- threshold: 500
 --- domainkey: secret
 
