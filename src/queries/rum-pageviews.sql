@@ -23,7 +23,7 @@ WITH dailydata AS (
   FROM helix_rum.EVENTS_V3(
     @url, # url
     CAST(@offset AS INT64), # offset
-    @interval, # days to fetch
+    CAST(@interval AS INT64), # days to fetch
     @startdate, # start date
     @enddate, # end date
     @timezone, # timezone
