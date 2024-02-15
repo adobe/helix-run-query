@@ -42,7 +42,7 @@ weeklydata AS (
     TIMESTAMP_TRUNC(time, ISOWEEK) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
-    @offset * 7, # offset in weeks
+    CAST(@offset AS INT64) * 7, # offset in weeks
     @interval * 7, # weeks to fetch
     @startdate, # start date
     @enddate, # end date
