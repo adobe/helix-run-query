@@ -1,3 +1,33 @@
+# [3.12.0](https://github.com/adobe/helix-run-query/compare/v3.11.0...v3.12.0) (2024-02-15)
+
+
+### Bug Fixes
+
+* **bounce:** don't aggergate pageviews ([65093e0](https://github.com/adobe/helix-run-query/commit/65093e065661dbb45620094133229f307881bd5f))
+* **bounce:** fix variable spelling ([02ea3e0](https://github.com/adobe/helix-run-query/commit/02ea3e0ac4eff5e734e8118f594c19afbad12281))
+* **bounce:** fix variable spelling ([068d797](https://github.com/adobe/helix-run-query/commit/068d797f7a0247c111964929226a2a25f9c5dc58))
+* **bounces:** align column names ([48dad68](https://github.com/adobe/helix-run-query/commit/48dad68380d7e3eb13f28d3e1b44d8175d65782a))
+* **bounce:** use correct weight column ([b5f1937](https://github.com/adobe/helix-run-query/commit/b5f19377cd16b66a4fa7b9edd9ad89f4bfc6362c))
+
+
+### Features
+
+* **bounce:** add bounce rate and session length estimation ([f14a2ed](https://github.com/adobe/helix-run-query/commit/f14a2eda7addd24e2c64036b43a8e34c1f74b87b))
+* **bounce:** estimate average page view duration and duration of a visit ([2d5d6b4](https://github.com/adobe/helix-run-query/commit/2d5d6b446f2951f5a42eff0688b0916684bb7f57))
+
+# [3.11.0](https://github.com/adobe/helix-run-query/compare/v3.10.4...v3.11.0) (2024-02-15)
+
+
+### Bug Fixes
+
+* **rum-experiments:** allow filtering by source and target without creating a correlated subquery ([ed9e1af](https://github.com/adobe/helix-run-query/commit/ed9e1afb002aafc44709881d1586192e0dd99f0d))
+* **rum-experiments:** remove pseudotargets parameter ([4c468fa](https://github.com/adobe/helix-run-query/commit/4c468fa7a36ee32fc429862fbada2efa745b3805))
+
+
+### Features
+
+* **rum-cwv-correlation:** support arbitrary conversion checkpoint, source, and target filters ([c1713d3](https://github.com/adobe/helix-run-query/commit/c1713d3716e337e0673be9d7ffb843d24a9c7a27))
+
 ## [3.10.4](https://github.com/adobe/helix-run-query/compare/v3.10.3...v3.10.4) (2024-02-13)
 
 

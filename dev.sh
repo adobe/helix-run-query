@@ -13,7 +13,8 @@ PARAMS=$(cat src/queries/$QUERY.sql \
 # otherwise use the default format
 FORMAT="--format=sparse"
 if [[ $2 == --* ]]; then
-  FORMAT="--format" $(echo $2 | sed 's/--//')
+  # replace the -- with --format= in $2
+  FORMAT="--format=${2:2}"
   shift
 fi
 
@@ -26,7 +27,9 @@ fi
 shift
 # override all other parameters with contents of command line args in the format parameter::value
 while [ $# -gt 0 ]; do
-  PARAMS=$(echo $PARAMS | sed -E "s/$1::\"[^\"]*\"/$1::\"$2\"/")
+  # escape forward slashes
+  ESCAPED=$(echo $2 | sed 's/\//\\\//g')
+  PARAMS=$(echo $PARAMS | sed -E "s/$1::\"[^\"]*\"/$1::\"$ESCAPED\"/")
   shift
   shift
 done
