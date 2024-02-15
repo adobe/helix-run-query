@@ -18,7 +18,8 @@ WITH dailydata AS (
     checkpoint,
     source,
     target,
-    pageviews,
+    weight AS pageviews,
+    url,
     TIMESTAMP_TRUNC(time, DAY) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
@@ -38,7 +39,8 @@ weeklydata AS (
     checkpoint,
     source,
     target,
-    pageviews,
+    weight AS pageviews,
+    url,
     TIMESTAMP_TRUNC(time, ISOWEEK) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
@@ -58,7 +60,8 @@ monthlydata AS (
     checkpoint,
     source,
     target,
-    pageviews,
+    weight AS pageviews,
+    url,
     TIMESTAMP_TRUNC(time, MONTH) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
@@ -78,7 +81,8 @@ quarterlydata AS (
     checkpoint,
     source,
     target,
-    pageviews,
+    weight AS pageviews,
+    url,
     TIMESTAMP_TRUNC(time, QUARTER) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
@@ -98,7 +102,8 @@ yearlydata AS (
     checkpoint,
     source,
     target,
-    pageviews,
+    weight AS pageviews,
+    url,
     TIMESTAMP_TRUNC(time, YEAR) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
@@ -131,6 +136,7 @@ source_target_picked_checkpoints AS (
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
     ANY_VALUE(all_checkpoints.pageviews) AS pageviews,
+    ANY_VALUE(url) AS url,
     ANY_VALUE(trunc_date) AS trunc_date
   FROM all_checkpoints
   WHERE
@@ -156,6 +162,7 @@ source_picked_checkpoints AS (
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
     ANY_VALUE(pageviews) AS pageviews,
+    ANY_VALUE(url) AS url,
     ANY_VALUE(trunc_date) AS trunc_date
   FROM all_checkpoints
   WHERE
@@ -175,6 +182,7 @@ target_picked_checkpoints AS (
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
     ANY_VALUE(pageviews) AS pageviews,
+    ANY_VALUE(url) AS url,
     ANY_VALUE(trunc_date) AS trunc_date
   FROM all_checkpoints
   WHERE
@@ -194,6 +202,7 @@ loose_picked_checkpoints AS (
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
     ANY_VALUE(pageviews) AS pageviews,
+    ANY_VALUE(url) AS url,
     ANY_VALUE(trunc_date) AS trunc_date
   FROM all_checkpoints
   WHERE all_checkpoints.checkpoint = @checkpoint
@@ -218,6 +227,7 @@ picked_checkpoints AS (
     source,
     target,
     pageviews,
+    url,
     trunc_date
   FROM all_checkpoints WHERE @checkpoint = '-'
 ),
