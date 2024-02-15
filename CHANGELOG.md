@@ -1,3 +1,16 @@
+# [3.11.0](https://github.com/adobe/helix-run-query/compare/v3.10.4...v3.11.0) (2024-02-15)
+
+
+### Bug Fixes
+
+* **rum-experiments:** allow filtering by source and target without creating a correlated subquery ([ed9e1af](https://github.com/adobe/helix-run-query/commit/ed9e1afb002aafc44709881d1586192e0dd99f0d))
+* **rum-experiments:** remove pseudotargets parameter ([4c468fa](https://github.com/adobe/helix-run-query/commit/4c468fa7a36ee32fc429862fbada2efa745b3805))
+
+
+### Features
+
+* **rum-cwv-correlation:** support arbitrary conversion checkpoint, source, and target filters ([c1713d3](https://github.com/adobe/helix-run-query/commit/c1713d3716e337e0673be9d7ffb843d24a9c7a27))
+
 ## [3.10.4](https://github.com/adobe/helix-run-query/compare/v3.10.3...v3.10.4) (2024-02-13)
 
 
