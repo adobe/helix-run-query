@@ -103,7 +103,7 @@ yearlydata AS (
   FROM helix_rum.EVENTS_V3(
     @url, # url
     CAST(@offset AS INT64) * 365, # offset in years
-    @interval * 365, # years to fetch
+    CAST(@interval AS INT64) * 365, # years to fetch
     @startdate, # start date
     @enddate, # end date
     @timezone, # timezone
