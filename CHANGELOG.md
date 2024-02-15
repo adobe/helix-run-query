@@ -1,3 +1,10 @@
+## [3.10.4](https://github.com/adobe/helix-run-query/compare/v3.10.3...v3.10.4) (2024-02-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v133 ([4b035b8](https://github.com/adobe/helix-run-query/commit/4b035b8bcb699f24f10b9c66bcd4b8fec526ff2e))
+
 ## [3.10.3](https://github.com/adobe/helix-run-query/compare/v3.10.2...v3.10.3) (2024-02-11)
 
 
