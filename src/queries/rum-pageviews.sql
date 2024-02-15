@@ -22,7 +22,7 @@ WITH dailydata AS (
     TIMESTAMP_TRUNC(time, DAY) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
-    @offset, # offset
+    CAST(@offset AS INT64), # offset
     @interval, # days to fetch
     @startdate, # start date
     @enddate, # end date
