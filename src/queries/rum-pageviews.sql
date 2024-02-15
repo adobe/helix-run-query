@@ -102,7 +102,7 @@ yearlydata AS (
     TIMESTAMP_TRUNC(time, YEAR) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
-    @offset * 365, # offset in years
+    CAST(@offset AS INT64) * 365, # offset in years
     @interval * 365, # years to fetch
     @startdate, # start date
     @enddate, # end date
