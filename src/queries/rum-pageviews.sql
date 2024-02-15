@@ -62,7 +62,7 @@ monthlydata AS (
     TIMESTAMP_TRUNC(time, MONTH) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
-    @offset * 30, # offset in months
+    CAST(@offset AS INT64) * 30, # offset in months
     @interval * 30, # months to fetch
     @startdate, # start date
     @enddate, # end date
