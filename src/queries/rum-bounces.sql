@@ -146,8 +146,8 @@ SELECT
     NULL
   ) AS bounce_rate,
   IF(
-    MAX(pageview_duration) > 0, 
-    MAX(pageview_duration), 
+    MAX(pageview_duration) > 0,
+    MAX(pageview_duration),
     NULL
   ) AS pageview_duration,
   IF(
