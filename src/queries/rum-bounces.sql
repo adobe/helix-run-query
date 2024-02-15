@@ -13,6 +13,7 @@ WITH current_data AS (
     checkpoint,
     source,
     target,
+    time AS time_stamp,
     pageviews
   FROM
     helix_rum.CHECKPOINTS_V3(
@@ -25,6 +26,20 @@ WITH current_data AS (
       'all',
       @domainkey
     )
+),
+
+# page view duration is the time between the first and last timestamp of an ID
+# we use the first and last checkpoint to estimate the duration
+pageview_duration AS (
+  SELECT
+    id,
+    hostname,
+    ANY_VALUE(pageviews) AS pageviews,
+    TIMESTAMP_DIFF(MAX(time_stamp), MIN(time_stamp), SECOND) AS duration
+  FROM current_data
+  GROUP BY
+    id,
+    hostname
 ),
 
 # Get the number of pages viewed per session
@@ -95,10 +110,11 @@ bounce_rate AS (
 aggregate AS (
   SELECT
     SUM(pageviews) AS pageviews,
-    SUM(visits) AS visits,
+    CAST(SUM(visits) AS INT64) AS visits,
     AVG(pagespervisit) AS pagespervisit,
     0 AS all_enter_sessions,
-    0 AS all_enter_click_sessions
+    0 AS all_enter_click_sessions,
+    0 AS pageview_duration
   FROM sessions
   UNION ALL
   SELECT
@@ -106,17 +122,43 @@ aggregate AS (
     0 AS visits,
     0 AS pagespervisit,
     all_enter_sessions,
-    all_enter_click_sessions
+    all_enter_click_sessions,
+    0 AS pageview_duration
   FROM bounce_rate
+  UNION ALL
+  SELECT
+    SUM(pageviews) AS pageviews,
+    0 AS visits,
+    0 AS pagespervisit,
+    0 AS all_enter_sessions,
+    0 AS all_enter_click_sessions,
+    APPROX_QUANTILES(duration, 100)[OFFSET(50)] AS pageview_duration
+  FROM pageview_duration
 )
 
 SELECT
   MAX(pageviews) AS pageviews,
-  MAX(visits) AS visits,
-  MAX(pagespervisit) AS pagespervisit,
-  MAX(all_enter_click_sessions) / MAX(all_enter_sessions) AS bounce_rate
+  IF(MAX(visits) > 0, MAX(visits), NULL) AS visits,
+  IF(MAX(pagespervisit) > 0, MAX(pagespervisit), NULL) AS pagespervisit,
+  IF(
+    MAX(all_enter_click_sessions) / MAX(all_enter_sessions) > 0,
+    MAX(all_enter_click_sessions) / MAX(all_enter_sessions),
+    NULL
+  ) AS bounce_rate,
+  IF(
+    MAX(pageview_duration) > 0, 
+    MAX(pageview_duration), 
+    NULL
+  ) AS pageview_duration,
+  IF(
+    CAST(MAX(pagespervisit) * MAX(pageview_duration) AS INT64) > 0,
+    CAST(MAX(pagespervisit) * MAX(pageview_duration) AS INT64),
+    NULL
+  ) AS visit_duration
 FROM aggregate
 --- pageviews: number of page views in the time period
---- visits: number of visits in the time period, based on estimated session length
---- pagespervisit: estimated session length in pages per visit
---- bounce_rate: fraction of visitors who bounce, i.e. enter the page without clicking anywhere
+--- visits: number of visits in the time period, based on estimated session length. If the number of visits cannot be estimated, the value is null
+--- pagespervisit: estimated session length in pages per visit. If the session length cannot be estimated, the value is null
+--- bounce_rate: fraction of visitors who bounce, i.e. enter the page without clicking anywhere. If the bounce rate cannot be estimated, the value is null
+--- pageview_duration: median page view duration in seconds. If the page view duration cannot be estimated, the value is null
+--- visit_duration: estimated session length in seconds. If the session length cannot be estimated, the value is null
