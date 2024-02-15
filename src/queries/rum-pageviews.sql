@@ -119,15 +119,15 @@ yearlydata AS (
 
 all_checkpoints AS (
   # Combine all the data, so that we have it according to desired granularity
-  SELECT * FROM dailydata WHERE @granularity = 1
+  SELECT * FROM dailydata WHERE CAST(@granularity AS INT64) = 1
   UNION ALL
-  SELECT * FROM weeklydata WHERE @granularity = 7
+  SELECT * FROM weeklydata WHERE CAST(@granularity AS INT64) = 7
   UNION ALL
-  SELECT * FROM monthlydata WHERE @granularity = 30
+  SELECT * FROM monthlydata WHERE CAST(@granularity AS INT64) = 30
   UNION ALL
-  SELECT * FROM quarterlydata WHERE @granularity = 90
+  SELECT * FROM quarterlydata WHERE CAST(@granularity AS INT64) = 90
   UNION ALL
-  SELECT * FROM yearlydata WHERE @granularity = 365
+  SELECT * FROM yearlydata WHERE CAST(@granularity AS INT64) = 365
 ),
 
 source_target_picked_checkpoints AS (
