@@ -63,7 +63,7 @@ monthlydata AS (
   FROM helix_rum.EVENTS_V3(
     @url, # url
     CAST(@offset AS INT64) * 30, # offset in months
-    @interval * 30, # months to fetch
+    CAST(@interval AS INT64) * 30, # months to fetch
     @startdate, # start date
     @enddate, # end date
     @timezone, # timezone
