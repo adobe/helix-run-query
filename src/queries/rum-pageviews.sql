@@ -43,7 +43,7 @@ weeklydata AS (
   FROM helix_rum.EVENTS_V3(
     @url, # url
     CAST(@offset AS INT64) * 7, # offset in weeks
-    @interval * 7, # weeks to fetch
+    CAST(@interval AS INT64) * 7, # weeks to fetch
     @startdate, # start date
     @enddate, # end date
     @timezone, # timezone
