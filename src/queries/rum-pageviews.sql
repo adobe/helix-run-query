@@ -83,7 +83,7 @@ quarterlydata AS (
   FROM helix_rum.EVENTS_V3(
     @url, # url
     CAST(@offset AS INT64) * 90, # offset in quarters
-    @interval * 90, # quarters to fetch
+    CAST(@interval AS INT64) * 90, # quarters to fetch
     @startdate, # start date
     @enddate, # end date
     @timezone, # timezone
