@@ -1,3 +1,25 @@
+# [3.13.0](https://github.com/adobe/helix-run-query/compare/v3.12.0...v3.13.0) (2024-02-16)
+
+
+### Bug Fixes
+
+* **pageviews:** cast to int before multiplying ([4d9a417](https://github.com/adobe/helix-run-query/commit/4d9a41792b01a2faed9ae891fc849d81970c8b8e))
+* **pageviews:** cast to int before multiplying ([d408d4a](https://github.com/adobe/helix-run-query/commit/d408d4a8a357ebb26b7ec01fcdb6183a30004824))
+* **pageviews:** cast to int before multiplying ([4edcb33](https://github.com/adobe/helix-run-query/commit/4edcb33cc9c9fe53fe1e63fd9d342a0b21be1f0f))
+* **pageviews:** cast to int before multiplying ([2890e80](https://github.com/adobe/helix-run-query/commit/2890e80abfc03134778d7d8c84e9578cc64eabb1))
+* **pageviews:** cast to int before multiplying ([72a27dd](https://github.com/adobe/helix-run-query/commit/72a27dda120781cfe70d5cbea06211d2b4f8d47d))
+* **pageviews:** cast to int before multiplying ([bb6058c](https://github.com/adobe/helix-run-query/commit/bb6058c0a537366e8afd550dc604fdedf7af2a0b))
+* **pageviews:** cast to int before multiplying ([e630ab6](https://github.com/adobe/helix-run-query/commit/e630ab6b7aa823417cd1e26f7325590f2728912a))
+* **pageviews:** cast to int before multiplying ([ddff61d](https://github.com/adobe/helix-run-query/commit/ddff61d111241202fb7217dd7d6e14add2665b37))
+* **pageviews:** cast to int before multiplying ([860c8b9](https://github.com/adobe/helix-run-query/commit/860c8b99f1884e1fda9a3f107cede6e6e4732226))
+* **pageviews:** cast to int before multiplying ([e1004a2](https://github.com/adobe/helix-run-query/commit/e1004a2744f85373d349931738a8d8c135147eb9))
+* **pageviews:** pass url and weight through CTEs ([55463fd](https://github.com/adobe/helix-run-query/commit/55463fd79beb898af389e81dd6fff30be62c23be))
+
+
+### Features
+
+* **pageviews:** enable filters for checkpoint, source, and target ([f9a520b](https://github.com/adobe/helix-run-query/commit/f9a520b6dd8a79ddef0dce800102937c68ef109f))
+
 # [3.12.0](https://github.com/adobe/helix-run-query/compare/v3.11.0...v3.12.0) (2024-02-15)
 
 
