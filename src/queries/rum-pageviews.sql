@@ -8,7 +8,7 @@
 --- checkpoint: -
 --- sources: -
 --- targets: -
---- url: 
+--- url: -
 --- granularity: 1
 --- timezone: UTC
 --- domainkey: secret
@@ -240,17 +240,95 @@ grouped_checkpoints AS (
     ANY_VALUE(trunc_date) AS trunc_date
   FROM picked_checkpoints
   GROUP BY id
+),
+
+time_series AS (
+  SELECT
+    trunc_date,
+    EXTRACT(YEAR FROM trunc_date) AS year,
+    EXTRACT(MONTH FROM trunc_date) AS month,
+    EXTRACT(DAY FROM trunc_date) AS day,
+    STRING(trunc_date) AS time, -- noqa: RF04
+    COUNT(DISTINCT url) AS url,
+    SUM(pageviews) AS pageviews
+  FROM grouped_checkpoints
+  GROUP BY trunc_date
+  ORDER BY trunc_date DESC
 )
 
 SELECT
-  EXTRACT(YEAR FROM trunc_date) AS year,
-  EXTRACT(MONTH FROM trunc_date) AS month,
-  EXTRACT(DAY FROM trunc_date) AS day,
-  STRING(trunc_date) AS time, -- noqa: RF04
-  COUNT(DISTINCT url) AS url,
-  SUM(pageviews) AS pageviews
-FROM grouped_checkpoints
-GROUP BY trunc_date
+  year,
+  month,
+  day,
+  time, -- noqa: RF04
+  url,
+  pageviews,
+  IF(
+    # this is the first row
+    ROW_NUMBER() OVER (ORDER BY trunc_date DESC) = 1,
+    CAST((
+      # apply rule of three to calculate the progress of the current interval
+      # multiplied with the pageviews
+      (
+        pageviews
+        / (TIMESTAMP_DIFF(
+          CURRENT_TIMESTAMP(),
+          trunc_date,
+          HOUR
+        ) / (24 * CAST(@granularity AS INT64)))
+      )
+      * 0.5
+      # 50% weight for the progress of the current interval
+    )
+    +
+    (
+    # moving average of the last 7 items
+      AVG(pageviews)
+        OVER (
+          ORDER BY trunc_date ASC
+          ROWS BETWEEN 7 PRECEDING AND 1 PRECEDING
+        )
+      * 0.5
+      # 50% weight for the moving average
+    ) AS INT64)
+    ,
+    pageviews
+  ) AS pageviews_forecast,
+  IF(
+    # this is the first row
+    ROW_NUMBER() OVER (ORDER BY trunc_date DESC) = 1,
+    CAST((
+      # apply rule of three to calculate the progress of the current interval
+      # multiplied with the pageviews
+      (
+        url
+        / (TIMESTAMP_DIFF(
+          CURRENT_TIMESTAMP(),
+          trunc_date,
+          HOUR
+        ) / (24 * CAST(@granularity AS INT64)))
+      )
+      * 0.2
+      # 20% weight for the progress of the current interval
+    )
+    +
+    (
+    # moving average of the last 7 items
+      AVG(url)
+        OVER (
+          ORDER BY trunc_date ASC
+          ROWS BETWEEN 7 PRECEDING AND 1 PRECEDING
+        )
+      * 0.8
+      # 80% weight for the moving average
+      # Most of the time, the number of unique URLs is not changing that much
+      # over the course of a day/week, so we give historical data a higher weight
+    ) AS INT64)
+    ,
+    url
+  ) AS url_forecast
+
+FROM time_series
 ORDER BY trunc_date DESC
 --- year: the year of the beginning of the reporting interval
 --- month: the month of the beginning of the reporting interval
@@ -258,3 +336,5 @@ ORDER BY trunc_date DESC
 --- time: the timestamp of the beginning of the reporting interval
 --- url: the number of unique URLs in the reporting interval
 --- pageviews: the number of page views in the reporting interval that match the criteria
+--- pageviews_forecast: the forecasted number of page views in the reporting interval, based on the last 7 full data points
+--- url_forecast: the forecasted number of unique URLs in the reporting interval, based on the last 7 full data points
