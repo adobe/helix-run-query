@@ -50,7 +50,7 @@
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.6",
     "@adobe/helix-deploy": "11.0.5",
-    "@adobe/helix-universal": "4.4.1",
+    "@adobe/helix-universal": "4.5.0",
     "@adobe/semantic-release-coralogix": "1.1.27",
     "@pollyjs/adapter-node-http": "6.0.6",
     "@pollyjs/core": "6.0.6",
