@@ -268,7 +268,7 @@ SELECT
     ROW_NUMBER() OVER (ORDER BY trunc_date DESC) = 1,
     CAST((
       # apply rule of three to calculate the progress of the current interval
-      # multiplied with the pageviews
+      # multiplied by the pageviews
       (
         pageviews
         / (TIMESTAMP_DIFF(
