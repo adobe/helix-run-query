@@ -29,6 +29,8 @@ shift
 while [ $# -gt 0 ]; do
   # escape forward slashes
   ESCAPED=$(echo $2 | sed 's/\//\\\//g')
+  PARAMS=$(echo $PARAMS | sed -E "s/$1:INT64:[^ ]*/$1:INT64:$2/")
+  PARAMS=$(echo $PARAMS | sed -E "s/$1:FLOAT:[^ ]*/$1:FLOAT:$2/")
   PARAMS=$(echo $PARAMS | sed -E "s/$1::\"[^\"]*\"/$1::\"$ESCAPED\"/")
   shift
   shift
