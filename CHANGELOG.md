@@ -1,3 +1,10 @@
+# [3.14.0](https://github.com/adobe/helix-run-query/compare/v3.13.0...v3.14.0) (2024-02-23)
+
+
+### Features
+
+* **pageviews:** add a a pageview and url forecast for the current time period ([33cd20d](https://github.com/adobe/helix-run-query/commit/33cd20d2a19fbeb32355afb34d04a39375692485))
+
 # [3.13.0](https://github.com/adobe/helix-run-query/compare/v3.12.0...v3.13.0) (2024-02-16)
 
 
