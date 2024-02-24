@@ -18,7 +18,7 @@ WITH
 current_data AS (
   SELECT
     *,
-    TIMESTAMP_TRUNC(time, DAY) AS date
+    TIMESTAMP_TRUNC(time, DAY, @timezone) AS date
   FROM
     helix_rum.CHECKPOINTS_V3(
       @url,
