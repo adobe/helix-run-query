@@ -20,7 +20,7 @@ WITH dailydata AS (
     target,
     weight AS pageviews,
     url,
-    TIMESTAMP_TRUNC(time, DAY) AS trunc_date
+    TIMESTAMP_TRUNC(time, DAY, @timezone) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
     CAST(@offset AS INT64), # offset
@@ -41,7 +41,7 @@ weeklydata AS (
     target,
     weight AS pageviews,
     url,
-    TIMESTAMP_TRUNC(time, ISOWEEK) AS trunc_date
+    TIMESTAMP_TRUNC(time, ISOWEEK, @timezone) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
     CAST(@offset AS INT64) * 7, # offset in weeks
@@ -62,7 +62,7 @@ monthlydata AS (
     target,
     weight AS pageviews,
     url,
-    TIMESTAMP_TRUNC(time, MONTH) AS trunc_date
+    TIMESTAMP_TRUNC(time, MONTH, @timezone) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
     CAST(@offset AS INT64) * 30, # offset in months
@@ -83,7 +83,7 @@ quarterlydata AS (
     target,
     weight AS pageviews,
     url,
-    TIMESTAMP_TRUNC(time, QUARTER) AS trunc_date
+    TIMESTAMP_TRUNC(time, QUARTER, @timezone) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
     CAST(@offset AS INT64) * 90, # offset in quarters
@@ -104,7 +104,7 @@ yearlydata AS (
     target,
     weight AS pageviews,
     url,
-    TIMESTAMP_TRUNC(time, YEAR) AS trunc_date
+    TIMESTAMP_TRUNC(time, YEAR, @timezone) AS trunc_date
   FROM helix_rum.EVENTS_V3(
     @url, # url
     CAST(@offset AS INT64) * 365, # offset in years
@@ -245,10 +245,10 @@ grouped_checkpoints AS (
 time_series AS (
   SELECT
     trunc_date,
-    EXTRACT(YEAR FROM trunc_date) AS year,
-    EXTRACT(MONTH FROM trunc_date) AS month,
-    EXTRACT(DAY FROM trunc_date) AS day,
-    STRING(trunc_date) AS time, -- noqa: RF04
+    EXTRACT(YEAR FROM trunc_date AT TIME ZONE @timezone) AS year,
+    EXTRACT(MONTH FROM trunc_date AT TIME ZONE @timezone) AS month,
+    EXTRACT(DAY FROM trunc_date AT TIME ZONE @timezone) AS day,
+    STRING(trunc_date, @timezone) AS time, -- noqa: RF04
     COUNT(DISTINCT url) AS url,
     SUM(pageviews) AS pageviews
   FROM grouped_checkpoints

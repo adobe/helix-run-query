@@ -13,7 +13,7 @@ FROM (
   SELECT
     hostname,
     ROW_NUMBER() OVER (ORDER BY hostname) AS resrow,
-    FORMAT_TIMESTAMP('%F', TIMESTAMP_TRUNC(time, DAY)) AS day,
+    FORMAT_TIMESTAMP('%F', TIMESTAMP_TRUNC(time, DAY, @timezone)) AS day,
     SUM(pageviews) AS contentrequests
   FROM
     helix_rum.PAGEVIEWS_V3(
