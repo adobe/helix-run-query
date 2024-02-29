@@ -1,3 +1,10 @@
+## [3.14.2](https://github.com/adobe/helix-run-query/compare/v3.14.1...v3.14.2) (2024-02-29)
+
+
+### Bug Fixes
+
+* add timezone to date functions ([e719521](https://github.com/adobe/helix-run-query/commit/e719521b11266e99ca5629f05f68606c830040c8))
+
 ## [3.14.1](https://github.com/adobe/helix-run-query/compare/v3.14.0...v3.14.1) (2024-02-24)
 
 
