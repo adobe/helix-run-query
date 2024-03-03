@@ -141,21 +141,25 @@ all_attributable_checkpoints AS (
     source,
     target,
     IF(@attribute = "target", target, source) AS attributable
-    time,
+    time, -- noqa
   FROM alldata
   WHERE checkpoint = @checkpoint
 ),
 
 attributable_sessions AS (
   SELECT
-    id,
-    attributable,
+    all_attributable_checkpoints.id,
+    all_attributable_checkpoints.attributable,
     all_attributable_checkpoints.time AS time_of_action,
     converted_checkpoints.time AS time_of_conversion,
     IF(
       converted_checkpoints.id IS NULL,
       FALSE,
-      TIMESTAMP_DIFF(all_attributable_checkpoints.time, converted_checkpoints.time, SECOND) <= @within
+      TIMESTAMP_DIFF(
+        all_attributable_checkpoints.time,
+        converted_checkpoints.time,
+        SECOND
+      ) <= @within
     ) AS converted
   FROM all_attributable_checkpoints LEFT JOIN converted_checkpoints
     ON all_attributable_checkpoints.id = converted_checkpoints.id
@@ -175,7 +179,7 @@ attribution AS (
 )
 
 # hlx:metadata
-SELECT COUNT(*) AS total_rows 
+SELECT COUNT(*) AS total_rows
 FROM attribution;
 
 
@@ -187,7 +191,7 @@ SELECT
   mean_time_to_conversion
 FROM attribution
 ORDER BY conversions DESC
-WHERE 
+WHERE -- noqa
   result_position > CAST(@offset AS INT64) 
   AND result_position <= CAST(@offset AS INT64) + CAST(@limit AS INT64);
 --- attributable: the source or target to attribute the conversion to
