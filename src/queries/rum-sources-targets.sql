@@ -42,7 +42,11 @@ sources AS (
   WHERE
     source IS NOT NULL
     AND (@source = '-' OR source = @source)
-    AND (CAST(@checkpoint AS STRING) = '-' OR CAST(@checkpoint AS STRING) = checkpoint)
+    AND (
+      CAST(@checkpoint AS STRING) = '-'
+      OR
+      CAST(@checkpoint AS STRING) = checkpoint
+    )
   GROUP BY source, id, checkpoint, target
 )
 

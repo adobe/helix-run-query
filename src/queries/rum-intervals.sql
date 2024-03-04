@@ -128,7 +128,7 @@ allids AS (
     ANY_VALUE(named_intervals.interval_end) AS interval_end
   FROM alldata INNER JOIN named_intervals
     ON (
-      named_intervals.interval_start <= alldata.time
+      alldata.time >= named_intervals.interval_start
       AND alldata.time < named_intervals.interval_end
     )
   GROUP BY alldata.id

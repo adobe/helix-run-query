@@ -1,5 +1,6 @@
 CREATE OR REPLACE TABLE
-FUNCTION `helix-225321.helix_rum.EVENTS_V5`(filterurl STRING,
+FUNCTION `helix-225321.helix_rum.EVENTS_V5`( -- noqa: PRS
+    filterurl STRING,
     days_offset INT64,
     days_count INT64,
     day_min STRING,
