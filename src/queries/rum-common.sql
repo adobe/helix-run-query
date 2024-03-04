@@ -240,38 +240,35 @@ BEGIN
 DECLARE urls ARRAY<STRING>;
 SET urls =  SPLIT(inurl, ',');
 
-FOR url IN
-  (SELECT * from UNNEST(urls))
-DO
-  UPDATE
-    `helix-225321.helix_reporting.domain_keys`
-  SET
-    revoke_date = DATE_ADD(CURRENT_DATE(intimezone), INTERVAL ingraceperiod DAY)
-  WHERE
-    # hostname prefix matches, remove space and pull string from struct
-    hostname_prefix = TRIM(url.f0_) AND
-    # key is still valid
-    (revoke_date IS NULL
-      OR revoke_date > CURRENT_DATE(intimezone)) AND
-    ingraceperiod > 0;
-  INSERT INTO
-    `helix-225321.helix_reporting.domain_keys` (hostname_prefix,
-      key_bytes,
-      revoke_date,
-      readonly,
-      create_date,
-      parent_key_bytes,
-      note)
-  VALUES
-    # remove space and pull string from struct
-    (TRIM(url.f0_),
-    SHA512(innewkey),
-    IF(inexpirydate = "-", NULL, DATE(inexpirydate)),
-    inreadonly,
-    CURRENT_DATE(intimezone),
-    SHA512(indomainkey),
-    innote);
-END FOR;
+UPDATE `helix-225321.helix_reporting.domain_keys`
+SET revoke_date = DATE_ADD(CURRENT_DATE(intimezone), INTERVAL ingraceperiod DAY)
+WHERE
+  # hostname prefix matches
+  hostname_prefix IN (SELECT * from UNNEST(urls))
+  # key is still valid
+  AND (revoke_date IS NULL
+    OR revoke_date > CURRENT_DATE(intimezone))
+  AND ingraceperiod > 0;
+
+INSERT INTO `helix-225321.helix_reporting.domain_keys` (
+  hostname_prefix,
+  key_bytes,
+  revoke_date,
+  readonly,
+  create_date,
+  parent_key_bytes,
+  note
+)
+SELECT
+  *,
+  SHA512(innewkey),
+  IF(inexpirydate = "-", NULL, DATE(inexpirydate)),
+  inreadonly,
+  CURRENT_DATE(intimezone),
+  SHA512(indomainkey),
+  innote
+FROM UNNEST(urls);
+
 END
 
 CREATE OR REPLACE TABLE FUNCTION helix_reporting.DOMAINKEY_PRIVS_ALL(domainkey STRING, timezone STRING)
