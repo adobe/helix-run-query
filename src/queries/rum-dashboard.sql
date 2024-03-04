@@ -31,7 +31,7 @@ AS (
 WITH
 current_data AS (
   SELECT * FROM
-    helix_rum.EVENTS_V3(
+    helix_rum.EVENTS_V5(
       @url, # domain or URL
       CAST(@offset AS INT64), # not used, offset in days from today
       CAST(@interval AS INT64), # interval in days to consider
@@ -45,7 +45,7 @@ current_data AS (
 
 previous_data AS (
   SELECT * FROM
-    helix_rum.EVENTS_V3(
+    helix_rum.EVENTS_V5(
       @url, # domain or URL
       # offset in days from today
       CAST(@interval AS INT64) + CAST(@offset AS INT64),

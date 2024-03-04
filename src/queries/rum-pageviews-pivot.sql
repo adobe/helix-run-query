@@ -57,7 +57,7 @@ WITH pvs AS (
     REGEXP_REPLACE(hostname, r'^www.', '') AS hostname,
     FORMAT_DATE('%Y-%b', time) AS month
   FROM
-    helix_rum.PAGEVIEWS_V3(
+    helix_rum.PAGEVIEWS_V5(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),

@@ -85,7 +85,7 @@ alldata AS (
     lcp,
     time
   FROM
-    `helix-225321.helix_rum.EVENTS_V3`(
+    `helix-225321.helix_rum.EVENTS_V5`(
       @url,
       -1, # not used
       -1, # not used

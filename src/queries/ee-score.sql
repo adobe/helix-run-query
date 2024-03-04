@@ -78,7 +78,7 @@ WITH visits AS (
     MAX(IF(checkpoint = "load", 1, 0)) AS load,
     MAX(IF(checkpoint = "click", 1, 0)) AS click
   FROM
-    helix_rum.EVENTS_V3(
+    helix_rum.EVENTS_V5(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),

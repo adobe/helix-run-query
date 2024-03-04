@@ -21,7 +21,7 @@ WITH alldata AS (
     target,
     lcp
   FROM
-    `helix-225321.helix_rum.EVENTS_V3`(
+    `helix-225321.helix_rum.EVENTS_V5`(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
@@ -35,7 +35,7 @@ WITH alldata AS (
 
 all_checkpoints AS (
   SELECT * FROM
-    helix_rum.CHECKPOINTS_V3(
+    helix_rum.CHECKPOINTS_V5(
       @url, # domain or URL
       CAST(@offset AS INT64), # offset in days from today
       CAST(@interval AS INT64), # interval in days to consider

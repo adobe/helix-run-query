@@ -17,7 +17,7 @@ weightdata AS (
     MAX(pageviews) AS weight,
     ANY_VALUE(url) AS url,
   FROM
-    helix_rum.CHECKPOINTS_V3(
+    helix_rum.CHECKPOINTS_V5(
       @url,
       CAST(@offset AS INT64), # offset in days
       CAST(@interval AS INT64), # interval in days to consider

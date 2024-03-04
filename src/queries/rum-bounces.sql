@@ -16,7 +16,7 @@ WITH current_data AS (
     time AS time_stamp,
     pageviews
   FROM
-    helix_rum.CHECKPOINTS_V3(
+    helix_rum.CHECKPOINTS_V5(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),

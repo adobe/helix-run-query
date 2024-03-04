@@ -21,7 +21,7 @@ WITH dailydata AS (
     weight AS pageviews,
     url,
     TIMESTAMP_TRUNC(time, DAY, @timezone) AS trunc_date
-  FROM helix_rum.EVENTS_V3(
+  FROM helix_rum.EVENTS_V5(
     @url, # url
     CAST(@offset AS INT64), # offset
     CAST(@interval AS INT64), # days to fetch
@@ -42,7 +42,7 @@ weeklydata AS (
     weight AS pageviews,
     url,
     TIMESTAMP_TRUNC(time, ISOWEEK, @timezone) AS trunc_date
-  FROM helix_rum.EVENTS_V3(
+  FROM helix_rum.EVENTS_V5(
     @url, # url
     CAST(@offset AS INT64) * 7, # offset in weeks
     CAST(@interval AS INT64) * 7, # weeks to fetch
@@ -63,7 +63,7 @@ monthlydata AS (
     weight AS pageviews,
     url,
     TIMESTAMP_TRUNC(time, MONTH, @timezone) AS trunc_date
-  FROM helix_rum.EVENTS_V3(
+  FROM helix_rum.EVENTS_V5(
     @url, # url
     CAST(@offset AS INT64) * 30, # offset in months
     CAST(@interval AS INT64) * 30, # months to fetch
@@ -84,7 +84,7 @@ quarterlydata AS (
     weight AS pageviews,
     url,
     TIMESTAMP_TRUNC(time, QUARTER, @timezone) AS trunc_date
-  FROM helix_rum.EVENTS_V3(
+  FROM helix_rum.EVENTS_V5(
     @url, # url
     CAST(@offset AS INT64) * 90, # offset in quarters
     CAST(@interval AS INT64) * 90, # quarters to fetch
@@ -105,7 +105,7 @@ yearlydata AS (
     weight AS pageviews,
     url,
     TIMESTAMP_TRUNC(time, YEAR, @timezone) AS trunc_date
-  FROM helix_rum.EVENTS_V3(
+  FROM helix_rum.EVENTS_V5(
     @url, # url
     CAST(@offset AS INT64) * 365, # offset in years
     CAST(@interval AS INT64) * 365, # years to fetch
