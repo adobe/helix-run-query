@@ -144,7 +144,7 @@ events AS (
     COUNT(DISTINCT linkclickevents.target) AS linkclicks
   FROM linkclickevents
   FULL JOIN allids ON linkclickevents.id = allids.id
-  FULL JOIN alllcps ON alllcps.id = allids.id
+  FULL JOIN alllcps ON allids.id = alllcps.id
   GROUP BY allids.id
 ),
 

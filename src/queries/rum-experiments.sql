@@ -41,7 +41,7 @@ LANGUAGE js AS """
 WITH
 all_checkpoints AS (
   SELECT * FROM
-    helix_rum.CHECKPOINTS_V3(
+    helix_rum.CHECKPOINTS_V5(
       @url, # domain or URL
       CAST(@offset AS INT64), # offset in days from today
       CAST(@interval AS INT64), # interval in days to consider
