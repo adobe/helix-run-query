@@ -16,7 +16,7 @@ WITH
 current_data AS (
   SELECT *
   FROM
-    helix_rum.CHECKPOINTS_V3(
+    helix_rum.CHECKPOINTS_V5(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
@@ -42,7 +42,11 @@ sources AS (
   WHERE
     source IS NOT NULL
     AND (@source = '-' OR source = @source)
-    AND (CAST(@checkpoint AS STRING) = '-' OR CAST(@checkpoint AS STRING) = checkpoint)
+    AND (
+      CAST(@checkpoint AS STRING) = '-'
+      OR
+      CAST(@checkpoint AS STRING) = checkpoint
+    )
   GROUP BY source, id, checkpoint, target
 )
 

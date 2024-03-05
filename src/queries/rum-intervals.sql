@@ -85,7 +85,7 @@ alldata AS (
     lcp,
     time
   FROM
-    `helix-225321.helix_rum.EVENTS_V3`(
+    `helix-225321.helix_rum.EVENTS_V5`(
       @url,
       -1, # not used
       -1, # not used
@@ -128,7 +128,7 @@ allids AS (
     ANY_VALUE(named_intervals.interval_end) AS interval_end
   FROM alldata INNER JOIN named_intervals
     ON (
-      named_intervals.interval_start <= alldata.time
+      alldata.time >= named_intervals.interval_start
       AND alldata.time < named_intervals.interval_end
     )
   GROUP BY alldata.id
@@ -144,7 +144,7 @@ events AS (
     COUNT(DISTINCT linkclickevents.target) AS linkclicks
   FROM linkclickevents
   FULL JOIN allids ON linkclickevents.id = allids.id
-  FULL JOIN alllcps ON alllcps.id = allids.id
+  FULL JOIN alllcps ON allids.id = alllcps.id
   GROUP BY allids.id
 ),
 

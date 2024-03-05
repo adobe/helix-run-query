@@ -16,7 +16,7 @@ FROM (
     FORMAT_TIMESTAMP('%F', TIMESTAMP_TRUNC(time, DAY, @timezone)) AS day,
     SUM(pageviews) AS contentrequests
   FROM
-    helix_rum.PAGEVIEWS_V3(
+    helix_rum.PAGEVIEWS_V5(
       '-', # url
       CAST(@offset AS INT64), # offset
       -1, # days to fetch

@@ -18,7 +18,7 @@ WITH pvs AS (
     MIN(time) AS first_visit,
     MAX(time) AS last_visit
   FROM
-    helix_rum.PAGEVIEWS_V3(
+    helix_rum.PAGEVIEWS_V5(
       @url,
       CAST(@offset AS INT64),
       CAST(@interval AS INT64),
