@@ -12,7 +12,28 @@
 --- granularity: 1
 --- timezone: UTC
 --- domainkey: secret
-WITH dailydata AS (
+WITH hourlydata AS (
+  SELECT
+    id,
+    checkpoint,
+    source,
+    target,
+    weight AS pageviews,
+    url,
+    TIMESTAMP_TRUNC(time, HOUR, @timezone) AS trunc_date
+  FROM helix_rum.EVENTS_V5(
+    @url, # url
+    CAST(@offset AS INT64), # offset
+    CAST(@interval AS INT64), # days to fetch
+    @startdate, # start date
+    @enddate, # end date
+    @timezone, # timezone
+    'all', # deviceclass
+    @domainkey # domain key to prevent data sharing
+  )
+),
+
+dailydata AS (
   SELECT
     id,
     checkpoint,
@@ -119,6 +140,8 @@ yearlydata AS (
 
 all_checkpoints AS (
   # Combine all the data, so that we have it according to desired granularity
+  SELECT * FROM hourlydata WHERE CAST(@granularity AS INT64) = 24
+  UNION ALL
   SELECT * FROM dailydata WHERE CAST(@granularity AS INT64) = 1
   UNION ALL
   SELECT * FROM weeklydata WHERE CAST(@granularity AS INT64) = 7
@@ -248,6 +271,7 @@ time_series AS (
     EXTRACT(YEAR FROM trunc_date AT TIME ZONE @timezone) AS year,
     EXTRACT(MONTH FROM trunc_date AT TIME ZONE @timezone) AS month,
     EXTRACT(DAY FROM trunc_date AT TIME ZONE @timezone) AS day,
+    EXTRACT(HOUR FROM trunc_date AT TIME ZONE @timezone) AS hour,
     STRING(trunc_date, @timezone) AS time, -- noqa: RF04
     COUNT(DISTINCT url) AS url,
     SUM(pageviews) AS pageviews
@@ -260,6 +284,7 @@ SELECT
   year,
   month,
   day,
+  hour,
   time, -- noqa: RF04
   url,
   pageviews,
@@ -333,6 +358,7 @@ ORDER BY trunc_date DESC
 --- year: the year of the beginning of the reporting interval
 --- month: the month of the beginning of the reporting interval
 --- day: the day of the beginning of the reporting interval
+--- hour: the hour of the beginning of the reporting interval
 --- time: the timestamp of the beginning of the reporting interval
 --- url: the number of unique URLs in the reporting interval
 --- pageviews: the number of page views in the reporting interval that match the criteria
