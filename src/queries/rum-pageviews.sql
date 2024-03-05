@@ -271,7 +271,7 @@ time_series AS (
     EXTRACT(YEAR FROM trunc_date AT TIME ZONE @timezone) AS year,
     EXTRACT(MONTH FROM trunc_date AT TIME ZONE @timezone) AS month,
     EXTRACT(DAY FROM trunc_date AT TIME ZONE @timezone) AS day,
-    EXTRACT(HOUR FROM trunc_date AT TIME ZONE @timezone) AS hour,
+    EXTRACT(HOUR FROM trunc_date AT TIME ZONE @timezone) AS hour, -- noqa: RF04
     STRING(trunc_date, @timezone) AS time, -- noqa: RF04
     COUNT(DISTINCT url) AS url,
     SUM(pageviews) AS pageviews
@@ -296,11 +296,11 @@ SELECT
       # multiplied by the pageviews
       (
         pageviews
-        / (TIMESTAMP_DIFF(
+        / GREATEST(TIMESTAMP_DIFF(
           CURRENT_TIMESTAMP(),
           trunc_date,
           HOUR
-        ) / (24 * CAST(@granularity AS INT64)))
+        ) / (24 * CAST(@granularity AS INT64)), 1)
       )
       * 0.5
       # 50% weight for the progress of the current interval
@@ -327,11 +327,11 @@ SELECT
       # multiplied with the pageviews
       (
         url
-        / (TIMESTAMP_DIFF(
+        / GREATEST(TIMESTAMP_DIFF(
           CURRENT_TIMESTAMP(),
           trunc_date,
           HOUR
-        ) / (24 * CAST(@granularity AS INT64)))
+        ) / (24 * CAST(@granularity AS INT64)), 1)
       )
       * 0.2
       # 20% weight for the progress of the current interval
