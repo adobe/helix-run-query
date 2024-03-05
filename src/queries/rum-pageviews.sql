@@ -278,6 +278,122 @@ time_series AS (
   FROM grouped_checkpoints
   GROUP BY trunc_date
   ORDER BY trunc_date DESC
+),
+
+hourlyslots AS (
+  # create 24 slots per day for hourly granularity
+  SELECT *
+  FROM UNNEST(
+    GENERATE_TIMESTAMP_ARRAY(
+      TIMESTAMP(@startdate, @timezone),
+      TIMESTAMP_ADD(TIMESTAMP(@enddate, @timezone), INTERVAL 23 HOUR),
+      INTERVAL 1 HOUR
+    )
+  ) AS slot
+),
+
+hourlyplaceholders AS (
+  # placeholders in case some hours have no data
+  SELECT
+    0 AS url,
+    0 AS pageviews,
+    0 AS pageviews_forecast,
+    0 AS url_forecast,
+    24 AS granularity,
+    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
+    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
+    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
+    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
+    STRING(slot, @timezone) AS time -- noqa: RF04
+  FROM hourlyslots
+),
+
+allslots AS (
+  SELECT
+    year,
+    month,
+    day,
+    hour, -- noqa: RF04
+    time, -- noqa: RF04
+    url,
+    pageviews,
+    IF(
+      # this is the first row
+      ROW_NUMBER() OVER (ORDER BY trunc_date DESC) = 1,
+      CAST((
+        # apply rule of three to calculate the progress of the current interval
+        # multiplied by the pageviews
+        (
+          pageviews
+          / GREATEST(
+            TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), trunc_date, HOUR)
+            / (24 * CAST('24' AS INT64)), 1
+          )
+        )
+        * 0.5
+        # 50% weight for the progress of the current interval
+      )
+      +
+      (
+      # moving average of the last 7 items
+        AVG(pageviews)
+          OVER (
+            ORDER BY trunc_date ASC
+            ROWS BETWEEN 7 PRECEDING AND 1 PRECEDING
+          )
+        * 0.5
+        # 50% weight for the moving average
+      ) AS INT64)
+      ,
+      pageviews
+    ) AS pageviews_forecast,
+    IF(
+      # this is the first row
+      ROW_NUMBER() OVER (ORDER BY trunc_date DESC) = 1,
+      CAST((
+        # apply rule of three to calculate the progress of the current interval
+        # multiplied with the pageviews
+        (
+          url
+          / GREATEST(
+            TIMESTAMP_DIFF(CURRENT_TIMESTAMP(), trunc_date, HOUR)
+            / (24 * CAST('24' AS INT64)), 1
+          )
+        )
+        * 0.2
+        # 20% weight for the progress of the current interval
+      )
+      +
+      (
+      # moving average of the last 7 items
+        AVG(url)
+          OVER (
+            ORDER BY trunc_date ASC
+            ROWS BETWEEN 7 PRECEDING AND 1 PRECEDING
+          )
+        * 0.8
+        # 80% weight for the moving average
+        # Most of the time, the number of unique URLs is not changing that much
+        # over the course of a day/week, so we give historical data a higher weight
+      ) AS INT64)
+      ,
+      url
+    ) AS url_forecast
+  FROM time_series
+  # combine data results with placeholders
+  UNION DISTINCT
+  SELECT
+    year,
+    month,
+    day,
+    hour,
+    time,
+    url,
+    pageviews,
+    pageviews_forecast,
+    url_forecast
+  FROM hourlyplaceholders
+  WHERE CAST(@granularity AS INT64) = granularity
 )
 
 SELECT
@@ -285,76 +401,14 @@ SELECT
   month,
   day,
   hour,
-  time, -- noqa: RF04
-  url,
-  pageviews,
-  IF(
-    # this is the first row
-    ROW_NUMBER() OVER (ORDER BY trunc_date DESC) = 1,
-    CAST((
-      # apply rule of three to calculate the progress of the current interval
-      # multiplied by the pageviews
-      (
-        pageviews
-        / GREATEST(TIMESTAMP_DIFF(
-          CURRENT_TIMESTAMP(),
-          trunc_date,
-          HOUR
-        ) / (24 * CAST(@granularity AS INT64)), 1)
-      )
-      * 0.5
-      # 50% weight for the progress of the current interval
-    )
-    +
-    (
-    # moving average of the last 7 items
-      AVG(pageviews)
-        OVER (
-          ORDER BY trunc_date ASC
-          ROWS BETWEEN 7 PRECEDING AND 1 PRECEDING
-        )
-      * 0.5
-      # 50% weight for the moving average
-    ) AS INT64)
-    ,
-    pageviews
-  ) AS pageviews_forecast,
-  IF(
-    # this is the first row
-    ROW_NUMBER() OVER (ORDER BY trunc_date DESC) = 1,
-    CAST((
-      # apply rule of three to calculate the progress of the current interval
-      # multiplied with the pageviews
-      (
-        url
-        / GREATEST(TIMESTAMP_DIFF(
-          CURRENT_TIMESTAMP(),
-          trunc_date,
-          HOUR
-        ) / (24 * CAST(@granularity AS INT64)), 1)
-      )
-      * 0.2
-      # 20% weight for the progress of the current interval
-    )
-    +
-    (
-    # moving average of the last 7 items
-      AVG(url)
-        OVER (
-          ORDER BY trunc_date ASC
-          ROWS BETWEEN 7 PRECEDING AND 1 PRECEDING
-        )
-      * 0.8
-      # 80% weight for the moving average
-      # Most of the time, the number of unique URLs is not changing that much
-      # over the course of a day/week, so we give historical data a higher weight
-    ) AS INT64)
-    ,
-    url
-  ) AS url_forecast
-
-FROM time_series
-ORDER BY trunc_date DESC
+  time,
+  SUM(url) AS url,
+  SUM(pageviews) AS pageviews,
+  SUM(pageviews_forecast) AS pageviews_forecast,
+  SUM(url_forecast) AS url_forecast
+FROM allslots
+GROUP BY year, month, day, hour, time
+ORDER BY time DESC
 --- year: the year of the beginning of the reporting interval
 --- month: the month of the beginning of the reporting interval
 --- day: the day of the beginning of the reporting interval
