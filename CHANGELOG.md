@@ -1,3 +1,15 @@
+# [3.15.0](https://github.com/adobe/helix-run-query/compare/v3.14.2...v3.15.0) (2024-03-05)
+
+
+### Bug Fixes
+
+* sqlfluff ([d57eb6a](https://github.com/adobe/helix-run-query/commit/d57eb6aed6d6fad0679211a5ec24374533ccaef3))
+
+
+### Features
+
+* upgrade run-queries to use _V5 table functions ([e294619](https://github.com/adobe/helix-run-query/commit/e294619ca686d50eb06581984769e47c378780f9))
+
 ## [3.14.2](https://github.com/adobe/helix-run-query/compare/v3.14.1...v3.14.2) (2024-02-29)
 
 
