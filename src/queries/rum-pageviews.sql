@@ -292,8 +292,58 @@ hourlyslots AS (
   ) AS slot
 ),
 
-hourlyplaceholders AS (
-  # placeholders in case some hours have no data
+dailyslots as (
+  SELECT    
+    *
+  FROM UNNEST(GENERATE_TIMESTAMP_ARRAY(
+    TIMESTAMP('2024-03-03', @timezone),
+    TIMESTAMP_ADD(TIMESTAMP('2024-03-04', @timezone), INTERVAL 23 HOUR),
+    INTERVAL 1 DAY)
+  ) AS slot
+),
+
+weeklyslots as (
+  SELECT    
+    *
+  FROM UNNEST(GENERATE_DATE_ARRAY(
+    DATE(TIMESTAMP_TRUNC('2024-03-03', ISOWEEK, @timezone)),
+    DATE(TIMESTAMP_TRUNC(TIMESTAMP_ADD(TIMESTAMP('2024-03-04', @timezone), INTERVAL 23 HOUR), ISOWEEK, @timezone)),
+    INTERVAL 1 WEEK)
+  ) AS slot
+),
+
+monthlyslots as (
+  SELECT    
+    *
+  FROM UNNEST(GENERATE_DATE_ARRAY(
+    DATE(TIMESTAMP_TRUNC('2024-03-03', MONTH, @timezone)),
+    DATE(TIMESTAMP_TRUNC(TIMESTAMP_ADD(TIMESTAMP('2024-03-04', @timezone), INTERVAL 23 HOUR), MONTH, @timezone)),
+    INTERVAL 1 MONTH)
+  ) AS slot
+),
+
+quarterlyslots as (
+  SELECT    
+    *
+  FROM UNNEST(GENERATE_DATE_ARRAY(
+    DATE(TIMESTAMP_TRUNC('2024-03-03', QUARTER, @timezone)),
+    DATE(TIMESTAMP_TRUNC(TIMESTAMP_ADD(TIMESTAMP('2024-03-04', @timezone), INTERVAL 23 HOUR), QUARTER, @timezone)),
+    INTERVAL 1 QUARTER)
+  ) AS slot
+),
+
+yearlyslots as (
+  SELECT    
+    *
+  FROM UNNEST(GENERATE_DATE_ARRAY(
+    DATE(TIMESTAMP_TRUNC('2024-03-03', YEAR, @timezone)),
+    DATE(TIMESTAMP_TRUNC(TIMESTAMP_ADD(TIMESTAMP('2024-03-04', @timezone), INTERVAL 23 HOUR), YEAR, @timezone)),
+    INTERVAL 1 YEAR)
+  ) AS slot
+),
+
+placeholders AS (
+  # placeholders in case some slots have no data
   SELECT
     0 AS url,
     0 AS pageviews,
@@ -306,6 +356,71 @@ hourlyplaceholders AS (
     EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
     STRING(slot, @timezone) AS time -- noqa: RF04
   FROM hourlyslots
+  UNION ALL
+  SELECT
+    0 AS url,
+    0 AS pageviews,
+    0 AS pageviews_forecast,
+    0 AS url_forecast,
+    1 AS granularity,
+    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
+    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
+    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
+    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
+    STRING(slot, @timezone) AS time -- noqa: RF04
+  FROM dailyslots
+  UNION ALL
+  SELECT
+    0 AS url,
+    0 AS pageviews,
+    0 AS pageviews_forecast,
+    0 AS url_forecast,
+    7 AS granularity,
+    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
+    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
+    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
+    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
+    STRING(slot, @timezone) AS time -- noqa: RF04
+  FROM weeklyslots
+  UNION ALL
+  SELECT
+    0 AS url,
+    0 AS pageviews,
+    0 AS pageviews_forecast,
+    0 AS url_forecast,
+    30 AS granularity,
+    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
+    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
+    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
+    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
+    STRING(slot, @timezone) AS time -- noqa: RF04
+  FROM monthlyslots
+  UNION ALL
+  SELECT
+    0 AS url,
+    0 AS pageviews,
+    0 AS pageviews_forecast,
+    0 AS url_forecast,
+    90 AS granularity,
+    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
+    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
+    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
+    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
+    STRING(slot, @timezone) AS time -- noqa: RF04
+  FROM quarterlyslots
+  UNION ALL
+  SELECT
+    0 AS url,
+    0 AS pageviews,
+    0 AS pageviews_forecast,
+    0 AS url_forecast,
+    365 AS granularity,
+    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
+    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
+    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
+    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
+    STRING(slot, @timezone) AS time -- noqa: RF04
+  FROM yearlyslots
 ),
 
 allslots AS (
@@ -392,7 +507,7 @@ allslots AS (
     pageviews,
     pageviews_forecast,
     url_forecast
-  FROM hourlyplaceholders
+  FROM placeholders
   WHERE CAST(@granularity AS INT64) = granularity
 )
 
