@@ -292,53 +292,82 @@ hourlyslots AS (
   ) AS slot
 ),
 
-dailyslots as (
-  SELECT    
-    *
-  FROM UNNEST(GENERATE_TIMESTAMP_ARRAY(
-    TIMESTAMP('2024-03-03', @timezone),
-    TIMESTAMP_ADD(TIMESTAMP('2024-03-04', @timezone), INTERVAL 23 HOUR),
-    INTERVAL 1 DAY)
+dailyslots AS (
+  SELECT *
+  FROM UNNEST(
+    GENERATE_TIMESTAMP_ARRAY(
+      TIMESTAMP(@startdate, @timezone),
+      TIMESTAMP_ADD(TIMESTAMP(@enddate, @timezone), INTERVAL 23 HOUR),
+      INTERVAL 1 DAY
+    )
   ) AS slot
 ),
 
-weeklyslots as (
-  SELECT    
-    *
-  FROM UNNEST(GENERATE_DATE_ARRAY(
-    DATE(TIMESTAMP_TRUNC('2024-03-03', ISOWEEK, @timezone)),
-    DATE(TIMESTAMP_TRUNC(TIMESTAMP_ADD(TIMESTAMP('2024-03-04', @timezone), INTERVAL 23 HOUR), ISOWEEK, @timezone)),
-    INTERVAL 1 WEEK)
+weeklyslots AS (
+  SELECT *
+  FROM UNNEST(
+    GENERATE_DATE_ARRAY(
+      DATE(TIMESTAMP_TRUNC(@startdate, ISOWEEK, @timezone)),
+      DATE(
+        TIMESTAMP_TRUNC(
+          TIMESTAMP_ADD(TIMESTAMP(@enddate, @timezone), INTERVAL 23 HOUR),
+          ISOWEEK,
+          @timezone
+        )
+      ),
+      INTERVAL 1 WEEK
+    )
   ) AS slot
 ),
 
-monthlyslots as (
-  SELECT    
-    *
-  FROM UNNEST(GENERATE_DATE_ARRAY(
-    DATE(TIMESTAMP_TRUNC('2024-03-03', MONTH, @timezone)),
-    DATE(TIMESTAMP_TRUNC(TIMESTAMP_ADD(TIMESTAMP('2024-03-04', @timezone), INTERVAL 23 HOUR), MONTH, @timezone)),
-    INTERVAL 1 MONTH)
+monthlyslots AS (
+  SELECT *
+  FROM UNNEST(
+    GENERATE_DATE_ARRAY(
+      DATE(TIMESTAMP_TRUNC(@startdate, MONTH, @timezone)),
+      DATE(
+        TIMESTAMP_TRUNC(
+          TIMESTAMP_ADD(TIMESTAMP(@enddate, @timezone), INTERVAL 23 HOUR),
+          MONTH,
+          @timezone
+        )
+      ),
+      INTERVAL 1 MONTH
+    )
   ) AS slot
 ),
 
-quarterlyslots as (
-  SELECT    
-    *
-  FROM UNNEST(GENERATE_DATE_ARRAY(
-    DATE(TIMESTAMP_TRUNC('2024-03-03', QUARTER, @timezone)),
-    DATE(TIMESTAMP_TRUNC(TIMESTAMP_ADD(TIMESTAMP('2024-03-04', @timezone), INTERVAL 23 HOUR), QUARTER, @timezone)),
-    INTERVAL 1 QUARTER)
+quarterlyslots AS (
+  SELECT *
+  FROM UNNEST(
+    GENERATE_DATE_ARRAY(
+      DATE(TIMESTAMP_TRUNC(@startdate, QUARTER, @timezone)),
+      DATE(
+        TIMESTAMP_TRUNC(
+          TIMESTAMP_ADD(TIMESTAMP(@enddate, @timezone), INTERVAL 23 HOUR),
+          QUARTER,
+          @timezone
+        )
+      ),
+      INTERVAL 1 QUARTER
+    )
   ) AS slot
 ),
 
-yearlyslots as (
-  SELECT    
-    *
-  FROM UNNEST(GENERATE_DATE_ARRAY(
-    DATE(TIMESTAMP_TRUNC('2024-03-03', YEAR, @timezone)),
-    DATE(TIMESTAMP_TRUNC(TIMESTAMP_ADD(TIMESTAMP('2024-03-04', @timezone), INTERVAL 23 HOUR), YEAR, @timezone)),
-    INTERVAL 1 YEAR)
+yearlyslots AS (
+  SELECT *
+  FROM UNNEST(
+    GENERATE_DATE_ARRAY(
+      DATE(TIMESTAMP_TRUNC(@startdate, YEAR, @timezone)),
+      DATE(
+        TIMESTAMP_TRUNC(
+          TIMESTAMP_ADD(TIMESTAMP(@enddate, @timezone), INTERVAL 23 HOUR),
+          YEAR,
+          @timezone
+        )
+      ),
+      INTERVAL 1 YEAR
+    )
   ) AS slot
 ),
 
@@ -376,11 +405,11 @@ placeholders AS (
     0 AS pageviews_forecast,
     0 AS url_forecast,
     7 AS granularity,
-    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
-    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
-    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
-    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
-    STRING(slot, @timezone) AS time -- noqa: RF04
+    EXTRACT(YEAR FROM slot) AS year,
+    EXTRACT(MONTH FROM slot) AS month,
+    EXTRACT(DAY FROM slot) AS day,
+    EXTRACT(HOUR FROM slot) AS hour, -- noqa: RF04
+    STRING(TIMESTAMP(slot, @timezone)) AS time -- noqa: RF04
   FROM weeklyslots
   UNION ALL
   SELECT
@@ -389,11 +418,11 @@ placeholders AS (
     0 AS pageviews_forecast,
     0 AS url_forecast,
     30 AS granularity,
-    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
-    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
-    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
-    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
-    STRING(slot, @timezone) AS time -- noqa: RF04
+    EXTRACT(YEAR FROM slot) AS year,
+    EXTRACT(MONTH FROM slot) AS month,
+    EXTRACT(DAY FROM slot) AS day,
+    EXTRACT(HOUR FROM slot) AS hour, -- noqa: RF04
+    STRING(TIMESTAMP(slot, @timezone)) AS time -- noqa: RF04
   FROM monthlyslots
   UNION ALL
   SELECT
@@ -402,11 +431,11 @@ placeholders AS (
     0 AS pageviews_forecast,
     0 AS url_forecast,
     90 AS granularity,
-    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
-    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
-    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
-    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
-    STRING(slot, @timezone) AS time -- noqa: RF04
+    EXTRACT(YEAR FROM slot) AS year,
+    EXTRACT(MONTH FROM slot) AS month,
+    EXTRACT(DAY FROM slot) AS day,
+    EXTRACT(HOUR FROM slot) AS hour, -- noqa: RF04
+    STRING(TIMESTAMP(slot, @timezone)) AS time -- noqa: RF04
   FROM quarterlyslots
   UNION ALL
   SELECT
@@ -415,11 +444,11 @@ placeholders AS (
     0 AS pageviews_forecast,
     0 AS url_forecast,
     365 AS granularity,
-    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
-    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
-    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
-    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
-    STRING(slot, @timezone) AS time -- noqa: RF04
+    EXTRACT(YEAR FROM slot) AS year,
+    EXTRACT(MONTH FROM slot) AS month,
+    EXTRACT(DAY FROM slot) AS day,
+    EXTRACT(HOUR FROM slot) AS hour, -- noqa: RF04
+    STRING(TIMESTAMP(slot, @timezone)) AS time -- noqa: RF04
   FROM yearlyslots
 ),
 
