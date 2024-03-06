@@ -234,7 +234,8 @@ CREATE OR REPLACE PROCEDURE
     IN ingraceperiod INT64,
     IN inexpirydate STRING,
     IN innewkey STRING,
-    IN inreadonly BOOL)
+    IN inreadonly BOOL,
+    IN innote STRING)
 BEGIN
 -- allow multiple domains to be passed in as comma-separated value
 DECLARE urls ARRAY<STRING>;
