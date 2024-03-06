@@ -408,7 +408,7 @@ placeholders AS (
     EXTRACT(YEAR FROM slot) AS year,
     EXTRACT(MONTH FROM slot) AS month,
     EXTRACT(DAY FROM slot) AS day,
-    EXTRACT(HOUR FROM slot) AS hour, -- noqa: RF04
+    0 AS hour, -- noqa: RF04
     STRING(TIMESTAMP(slot, @timezone)) AS time -- noqa: RF04
   FROM weeklyslots
   UNION ALL
@@ -421,7 +421,7 @@ placeholders AS (
     EXTRACT(YEAR FROM slot) AS year,
     EXTRACT(MONTH FROM slot) AS month,
     EXTRACT(DAY FROM slot) AS day,
-    EXTRACT(HOUR FROM slot) AS hour, -- noqa: RF04
+    0 AS hour, -- noqa: RF04
     STRING(TIMESTAMP(slot, @timezone)) AS time -- noqa: RF04
   FROM monthlyslots
   UNION ALL
@@ -434,7 +434,7 @@ placeholders AS (
     EXTRACT(YEAR FROM slot) AS year,
     EXTRACT(MONTH FROM slot) AS month,
     EXTRACT(DAY FROM slot) AS day,
-    EXTRACT(HOUR FROM slot) AS hour, -- noqa: RF04
+    0 AS hour, -- noqa: RF04
     STRING(TIMESTAMP(slot, @timezone)) AS time -- noqa: RF04
   FROM quarterlyslots
   UNION ALL
@@ -447,7 +447,7 @@ placeholders AS (
     EXTRACT(YEAR FROM slot) AS year,
     EXTRACT(MONTH FROM slot) AS month,
     EXTRACT(DAY FROM slot) AS day,
-    EXTRACT(HOUR FROM slot) AS hour, -- noqa: RF04
+    0 AS hour, -- noqa: RF04
     STRING(TIMESTAMP(slot, @timezone)) AS time -- noqa: RF04
   FROM yearlyslots
 ),
