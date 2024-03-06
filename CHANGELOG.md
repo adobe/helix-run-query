@@ -1,3 +1,16 @@
+# [3.16.0](https://github.com/adobe/helix-run-query/compare/v3.15.0...v3.16.0) (2024-03-06)
+
+
+### Bug Fixes
+
+* add innote ([003353b](https://github.com/adobe/helix-run-query/commit/003353b54c86b1a95fd27c8bea0ba092597af81a))
+* correct schema ([181bbbe](https://github.com/adobe/helix-run-query/commit/181bbbee942ac0b12c48c92819bd8b9077f2ddc7))
+
+
+### Features
+
+* backend to add key to multiple domains in one call ([2defd84](https://github.com/adobe/helix-run-query/commit/2defd84f7a425eee4c960945c63d0a2535bfe43d))
+
 # [3.15.0](https://github.com/adobe/helix-run-query/compare/v3.14.2...v3.15.0) (2024-03-05)
 
 
