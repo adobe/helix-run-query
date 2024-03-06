@@ -228,7 +228,7 @@ GROUP BY
   source;
 
 CREATE OR REPLACE PROCEDURE
-  helix_rum.ROTATE_DOMAIN_KEYS( IN indomainkey STRING,
+  helix_reporting.ROTATE_DOMAIN_KEYS( IN indomainkey STRING,
     IN inurl STRING,
     IN intimezone STRING,
     IN ingraceperiod INT64,
