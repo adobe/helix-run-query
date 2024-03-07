@@ -238,8 +238,11 @@ CREATE OR REPLACE PROCEDURE
     IN innote STRING)
 BEGIN
 -- allow multiple domains to be passed in as comma-separated value
+-- remove any trailing comma before splitting into array
+-- because it would result in a global domain key
+-- remove any space chars
 DECLARE urls ARRAY<STRING>;
-SET urls =  SPLIT(inurl, ',');
+SET urls =  SPLIT(REGEXP_REPLACE(RTRIM(inurl, ','), ' ', ''), ',');
 
 UPDATE `helix-225321.helix_reporting.domain_keys`
 SET revoke_date = DATE_ADD(CURRENT_DATE(intimezone), INTERVAL ingraceperiod DAY)
