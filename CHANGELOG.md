@@ -1,3 +1,10 @@
+## [3.16.1](https://github.com/adobe/helix-run-query/compare/v3.16.0...v3.16.1) (2024-03-07)
+
+
+### Bug Fixes
+
+* prevent spaces or trailing comma in multi-domain key generation ([2ac041e](https://github.com/adobe/helix-run-query/commit/2ac041edebd5108a8b0ce73afc8b38ca6595e8b9))
+
 # [3.16.0](https://github.com/adobe/helix-run-query/compare/v3.15.0...v3.16.0) (2024-03-06)
 
 
