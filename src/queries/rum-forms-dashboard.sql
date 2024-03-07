@@ -61,6 +61,7 @@ submission_urls AS (
 SELECT
   v.ids,
   v.views,
+  s.actions AS submissions,
   v.actions,
   v.url,
   v.checkpoint,
