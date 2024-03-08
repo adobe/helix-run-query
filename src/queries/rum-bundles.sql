@@ -12,6 +12,7 @@ SELECT
   checkpoint,
   source,
   target,
+  weight,
   LCP,
   INP,
   CLS,
