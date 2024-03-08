@@ -1,3 +1,10 @@
+# [3.17.0](https://github.com/adobe/helix-run-query/compare/v3.16.1...v3.17.0) (2024-03-08)
+
+
+### Features
+
+* forms dashboard, initial commit without cwv ([52367ba](https://github.com/adobe/helix-run-query/commit/52367badddec3cd877f81516d7d1c75b224975dc))
+
 ## [3.16.1](https://github.com/adobe/helix-run-query/compare/v3.16.0...v3.16.1) (2024-03-07)
 
 
