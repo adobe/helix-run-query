@@ -1,3 +1,10 @@
+## [3.17.1](https://github.com/adobe/helix-run-query/compare/v3.17.0...v3.17.1) (2024-03-09)
+
+
+### Bug Fixes
+
+* cast cwv as int64 ([d2d57cb](https://github.com/adobe/helix-run-query/commit/d2d57cbda61aa8ee8d709a673c33cee04c166958))
+
 # [3.17.0](https://github.com/adobe/helix-run-query/compare/v3.16.1...v3.17.0) (2024-03-08)
 
 
