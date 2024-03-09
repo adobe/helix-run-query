@@ -111,9 +111,9 @@ current_rum_by_url_and_weight AS (
 current_rum_by_url AS (
   SELECT
     url,
-    SUM(avglcp * weight) / SUM(weight) AS avglcp,
-    SUM(avgfid * weight) / SUM(weight) AS avgfid,
-    SUM(avginp * weight) / SUM(weight) AS avginp,
+    CAST(SUM(avglcp * weight) / SUM(weight) AS INT64) AS avglcp,
+    CAST(SUM(avgfid * weight) / SUM(weight) AS INT64) AS avgfid,
+    CAST(SUM(avginp * weight) / SUM(weight) AS INT64) AS avginp,
     ROUND(SUM(avgcls * weight) / SUM(weight), 3) AS avgcls
   FROM current_rum_by_url_and_weight
   GROUP BY url
