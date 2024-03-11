@@ -7,9 +7,9 @@
 
 SELECT
   id,
+  url,
   STRING(MIN(time)) AS time, -- noqa: RF04
   CAST(ANY_VALUE(weight) AS INT64) AS weight,
-  ANY_VALUE(url) AS url,
   ARRAY_AGG(
     STRUCT(
       STRING(time) AS time, -- noqa: RF04
@@ -39,11 +39,11 @@ FROM
     @startdate,
     # startdate plus one day
     FORMAT_TIMESTAMP(
-      "%Y-%m-%d",
+      '%Y-%m-%d',
       TIMESTAMP_ADD(TIMESTAMP(@startdate), INTERVAL 1 DAY)
     ),
-    "UTC",
-    "all",
+    'UTC',
+    'all',
     @domainkey
   )
 GROUP BY
