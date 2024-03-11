@@ -9,10 +9,10 @@ SELECT
   id,
   STRING(MIN(time)) AS time, -- noqa: RF04
   CAST(ANY_VALUE(weight) AS INT64) AS weight,
+  ANY_VALUE(url) AS url,
   ARRAY_AGG(
     STRUCT(
       STRING(time) AS time, -- noqa: RF04
-      url,
       CASE
         WHEN LCP IS NOT NULL THEN 'cwv-lcp'
         WHEN INP IS NOT NULL THEN 'cwv-inp'
@@ -48,4 +48,5 @@ FROM
   )
 GROUP BY
   id,
+  url,
   TIMESTAMP_TRUNC(time, DAY)
