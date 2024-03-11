@@ -37,8 +37,14 @@ WITH alldata AS (
 ),
 
 all_checkpoints AS (
-  SELECT * FROM
-    helix_rum.CHECKPOINTS_V5(
+  SELECT
+    id,
+    checkpoint,
+    source,
+    target,
+    time
+  FROM
+    helix_rum.EVENTS_V5(
       @url, # domain or URL
       -1, # offset in days from today
       -1, # interval in days to consider
@@ -55,7 +61,6 @@ source_target_converted_checkpoints AS (
     all_checkpoints.id AS id,
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
-    ANY_VALUE(all_checkpoints.pageviews) AS pageviews,
     MIN(all_checkpoints.time) AS time
   FROM all_checkpoints
   WHERE
@@ -80,7 +85,6 @@ source_converted_checkpoints AS (
     all_checkpoints.id AS id,
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
-    ANY_VALUE(pageviews) AS pageviews,
     MIN(all_checkpoints.time) AS time
   FROM all_checkpoints
   WHERE
@@ -99,7 +103,6 @@ target_converted_checkpoints AS (
     all_checkpoints.id AS id,
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
-    ANY_VALUE(pageviews) AS pageviews,
     MIN(all_checkpoints.time) AS time
   FROM all_checkpoints
   WHERE
@@ -118,7 +121,6 @@ loose_converted_checkpoints AS (
     all_checkpoints.id AS id,
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
-    ANY_VALUE(pageviews) AS pageviews,
     MIN(all_checkpoints.time) AS time
   FROM all_checkpoints
   WHERE all_checkpoints.checkpoint = @conversioncheckpoint
@@ -157,17 +159,24 @@ attributable_sessions AS (
     all_attributable_checkpoints.attributable,
     all_attributable_checkpoints.time AS time_of_action,
     converted_checkpoints.time AS time_of_conversion,
+    TIMESTAMP_DIFF(
+      converted_checkpoints.time,
+      all_attributable_checkpoints.time,
+      SECOND
+    ) AS t_diff,
     IF(
       converted_checkpoints.id IS NULL,
       FALSE,
-      TIMESTAMP_DIFF(
+      converted_checkpoints.time >= all_attributable_checkpoints.time
+      AND TIMESTAMP_DIFF(
         converted_checkpoints.time,
         all_attributable_checkpoints.time,
         SECOND
       ) <= @within
     ) AS converted
   FROM all_attributable_checkpoints LEFT JOIN converted_checkpoints
-    ON all_attributable_checkpoints.id = converted_checkpoints.id
+    ON (all_attributable_checkpoints.id = converted_checkpoints.id
+    AND all_attributable_checkpoints.time <= converted_checkpoints.time)
 ),
 
 attribution AS (
