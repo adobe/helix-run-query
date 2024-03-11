@@ -13,6 +13,7 @@ SELECT
   source,
   target,
   weight,
+  user_agent,
   LCP,
   INP,
   CLS,
