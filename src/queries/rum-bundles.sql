@@ -10,6 +10,7 @@ SELECT
   url,
   STRING(MIN(time)) AS time, -- noqa: RF04
   CAST(ANY_VALUE(weight) AS INT64) AS weight,
+  ANY_VALUE(user_agent) AS user_agent,
   ARRAY_AGG(
     STRUCT(
       STRING(time) AS time, -- noqa: RF04
@@ -27,8 +28,7 @@ SELECT
         WHEN INP IS NOT NULL THEN INP
         WHEN CLS IS NOT NULL THEN CLS
         WHEN TTFB IS NOT NULL THEN TTFB
-      END AS value, -- noqa: RF04
-      user_agent
+      END AS value -- noqa: RF04
     )
   ) AS events
 FROM
