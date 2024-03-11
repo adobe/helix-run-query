@@ -21,9 +21,10 @@ WITH alldata AS (
     checkpoint,
     source,
     target,
-    lcp
+    lcp,
+    time
   FROM
-    `helix-225321.helix_rum.EVENTS_V3`(
+    helix_rum.EVENTS_V5(
       @url,
       -1,
       -1,
@@ -37,7 +38,7 @@ WITH alldata AS (
 
 all_checkpoints AS (
   SELECT * FROM
-    helix_rum.CHECKPOINTS_V3(
+    helix_rum.CHECKPOINTS_V5(
       @url, # domain or URL
       -1, # offset in days from today
       -1, # interval in days to consider
@@ -54,7 +55,8 @@ source_target_converted_checkpoints AS (
     all_checkpoints.id AS id,
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
-    ANY_VALUE(all_checkpoints.pageviews) AS pageviews
+    ANY_VALUE(all_checkpoints.pageviews) AS pageviews,
+    MIN(all_checkpoints.time) AS time
   FROM all_checkpoints
   WHERE
     all_checkpoints.checkpoint = @conversioncheckpoint
@@ -78,7 +80,8 @@ source_converted_checkpoints AS (
     all_checkpoints.id AS id,
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
-    ANY_VALUE(pageviews) AS pageviews
+    ANY_VALUE(pageviews) AS pageviews,
+    MIN(all_checkpoints.time) AS time
   FROM all_checkpoints
   WHERE
     all_checkpoints.checkpoint = @conversioncheckpoint
@@ -96,7 +99,8 @@ target_converted_checkpoints AS (
     all_checkpoints.id AS id,
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
-    ANY_VALUE(pageviews) AS pageviews
+    ANY_VALUE(pageviews) AS pageviews,
+    MIN(all_checkpoints.time) AS time
   FROM all_checkpoints
   WHERE
     all_checkpoints.checkpoint = @conversioncheckpoint
@@ -114,7 +118,8 @@ loose_converted_checkpoints AS (
     all_checkpoints.id AS id,
     ANY_VALUE(source) AS source,
     ANY_VALUE(target) AS target,
-    ANY_VALUE(pageviews) AS pageviews
+    ANY_VALUE(pageviews) AS pageviews,
+    MIN(all_checkpoints.time) AS time
   FROM all_checkpoints
   WHERE all_checkpoints.checkpoint = @conversioncheckpoint
   GROUP BY all_checkpoints.id
@@ -140,8 +145,8 @@ all_attributable_checkpoints AS (
     checkpoint,
     source,
     target,
-    IF(@attribute = "target", target, source) AS attributable
     time, -- noqa
+    IF(@attribute = "target", target, source) AS attributable
   FROM alldata
   WHERE checkpoint = @checkpoint
 ),
@@ -156,8 +161,8 @@ attributable_sessions AS (
       converted_checkpoints.id IS NULL,
       FALSE,
       TIMESTAMP_DIFF(
-        all_attributable_checkpoints.time,
         converted_checkpoints.time,
+        all_attributable_checkpoints.time,
         SECOND
       ) <= @within
     ) AS converted
@@ -170,8 +175,10 @@ attribution AS (
     attributable,
     COUNT(DISTINCT id) AS sessions,
     COUNTIF(converted) AS conversions,
-    SAFE_DIVIDE(COUNTIF(DISTINCT id), COUNT(DISTINCT id)) AS conversion_rate,
-    AVG(time_of_conversion - time_of_action) AS mean_time_to_conversion,
+    SAFE_DIVIDE(COUNTIF(converted), COUNT(DISTINCT id)) AS conversion_rate,
+    AVG(
+      TIMESTAMP_DIFF(time_of_conversion, time_of_action, MILLISECOND)
+    ) / 1000 AS mean_time_to_conversion,
     # row number for each attributable, so that we can paginate
     ROW_NUMBER() OVER (ORDER BY COUNTIF(converted) DESC) AS result_position
   FROM attributable_sessions
@@ -179,8 +186,8 @@ attribution AS (
 )
 
 # hlx:metadata
-SELECT COUNT(*) AS total_rows
-FROM attribution;
+# SELECT COUNT(*) AS total_rows
+# FROM attribution;
 
 
 SELECT
@@ -190,10 +197,11 @@ SELECT
   conversion_rate,
   mean_time_to_conversion
 FROM attribution
-ORDER BY conversions DESC
-WHERE -- noqa
-  result_position > CAST(@offset AS INT64) 
-  AND result_position <= CAST(@offset AS INT64) + CAST(@limit AS INT64);
+WHERE
+  result_position > CAST(@offset AS INT64)
+  AND result_position <= CAST(@offset AS INT64) + CAST(@limit AS INT64)
+  AND conversions > 0
+-- ORDER BY conversions DESC
 --- attributable: the source or target to attribute the conversion to
 --- sessions: the total number of sessions that had the action of interest
 --- conversions: the number of sessions that had the action of interest and converted
