@@ -1,3 +1,16 @@
+# [3.18.0](https://github.com/adobe/helix-run-query/compare/v3.17.1...v3.18.0) (2024-03-12)
+
+
+### Bug Fixes
+
+* do not extract hour from date ([63d89ea](https://github.com/adobe/helix-run-query/commit/63d89eab3976021bb91f36d0a624ab0656885fb1))
+* prevent divide by zero ([95133cf](https://github.com/adobe/helix-run-query/commit/95133cfdbb92e05716588760bc7253a50a4efcde))
+
+
+### Features
+
+* add hour granularity ([78bb87a](https://github.com/adobe/helix-run-query/commit/78bb87a33340490e0524adbe2ed535ec6e7e43d7))
+
 ## [3.17.1](https://github.com/adobe/helix-run-query/compare/v3.17.0...v3.17.1) (2024-03-09)
 
 
