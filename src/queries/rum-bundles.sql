@@ -38,10 +38,7 @@ FROM
     -1,
     @startdate,
     # startdate plus one day
-    FORMAT_TIMESTAMP(
-      '%Y-%m-%d',
-      TIMESTAMP_ADD(TIMESTAMP(@startdate), INTERVAL 1 DAY)
-    ),
+    @startdate,
     'UTC',
     'all',
     @domainkey
