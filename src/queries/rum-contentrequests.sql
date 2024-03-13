@@ -107,10 +107,11 @@ time_series AS (
     url,
     contenttype,
     weight,
-    day AS day,
-    EXTRACT(YEAR FROM trunc_date) AS year,
-    EXTRACT(MONTH FROM trunc_date) AS month,
-    SUM(contentrequests) AS contentrequests
+    day,
+    EXTRACT(YEAR FROM day) AS year,
+    EXTRACT(MONTH FROM day) AS month,
+    SUM(contentrequests) AS contentrequests,
+    SUM(allrequests) AS allrequests
   FROM all_data
   GROUP BY hostname, url, contenttype, weight, day
 )
