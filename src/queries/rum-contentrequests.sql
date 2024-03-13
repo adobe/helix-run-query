@@ -18,6 +18,7 @@ WITH all_raw_events AS (
     weight,
     url,
     hostname,
+    user_agent,
     time,
     TIMESTAMP_TRUNC(time, DAY, @timezone) AS day
   FROM helix_rum.EVENTS_V5(
@@ -53,7 +54,9 @@ pageviews AS (
     all_raw_events.hostname,
     all_raw_events.day,
     -- 1 PageView = 1 ContentRequest
-    all_raw_events.weight AS contentrequests
+    all_raw_events.weight AS contentrequests,
+    -- keep the number of all requests
+    all_raw_events.weight AS allrequests
   FROM group_all_events_daily
   LEFT JOIN all_raw_events
     ON
@@ -62,6 +65,8 @@ pageviews AS (
       AND group_all_events_daily.day = all_raw_events.day
   -- Content Request = any ID that does not have a checkpoint=404 gets counted as PageView
   WHERE '404' NOT IN UNNEST(group_all_events_daily.checkpoint)
+  -- bots are excluded from Content Requests
+  AND all_raw_events.user_agent != 'bot'
 ),
 
 -- filter billable API Calls
@@ -74,10 +79,14 @@ apicalls AS (
     hostname,
     day,
     -- 5 APICalls = 1 PageView = 1 ContentRequest
-    SUM(weight) * 0.2 AS contentrequests
+    SUM(weight) * 0.2 AS contentrequests,
+    -- keep the number of all requests
+    SUM(weight) AS allrequests
   FROM all_raw_events
   -- Content Request = any loadresource event that has a target that does not end in .json
   WHERE (checkpoint = 'loadresource' AND target NOT LIKE '%.json')
+  -- bots are excluded from Content Requests
+  AND user_agent != 'bot'
   GROUP BY id, url, hostname, weight, day
 ),
 
@@ -114,7 +123,8 @@ SELECT
   url,
   contenttype,
   weight,
-  contentrequests
+  contentrequests,
+  allrequests
 FROM time_series
 ORDER BY day DESC
 --- year: the year of the beginning of the reporting interval
@@ -125,3 +135,4 @@ ORDER BY day DESC
 --- contenttype: 'html' in case Content Request is counted as pageview, 'json' in case Content Request is of type json api call
 --- weight: the sampling weight
 --- contentrequests: the number of Content Requests in the reporting interval that match the criteria
+--- allrequests: the number of requests which resulted to the number of Content Requests
