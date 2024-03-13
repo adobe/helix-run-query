@@ -97,6 +97,7 @@
       "src/queries/rum-checkpoint-urls.sql",
       "src/queries/rum-checkpoints.sql",
       "src/queries/rum-content-requests.sql",
+      "src/queries/rum-contentrequests.sql",
       "src/queries/rum-dashboard.sql",
       "src/queries/rum-experiments.sql",
       "src/queries/rum-forms-dashboard.sql",
