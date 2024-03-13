@@ -1,3 +1,10 @@
+## [3.18.1](https://github.com/adobe/helix-run-query/compare/v3.18.0...v3.18.1) (2024-03-13)
+
+
+### Bug Fixes
+
+* exclude future events ([f3ddb78](https://github.com/adobe/helix-run-query/commit/f3ddb78dc5c0fe7c856d87356ef1e545784b8bee))
+
 # [3.18.0](https://github.com/adobe/helix-run-query/compare/v3.17.1...v3.18.0) (2024-03-12)
 
 
