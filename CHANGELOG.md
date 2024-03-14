@@ -1,3 +1,22 @@
+# [3.19.0](https://github.com/adobe/helix-run-query/compare/v3.18.1...v3.19.0) (2024-03-14)
+
+
+### Bug Fixes
+
+* **bundles:** add missing weight column ([49d05e8](https://github.com/adobe/helix-run-query/commit/49d05e829dcc2f973ce5d549735eb3b46d5bb512))
+* **bundles:** nicer iso timestamps ([2b454bc](https://github.com/adobe/helix-run-query/commit/2b454bc234513cc83c7bd2fdc5ac2060062f148d))
+* **bundles:** use only one day ([fd72ff1](https://github.com/adobe/helix-run-query/commit/fd72ff10c82ed47939a2964503c389edd9839816))
+* **bundles:** user agent stays constant ([d636eaa](https://github.com/adobe/helix-run-query/commit/d636eaa62d19b7c36841ca0d5cf53667c2501746))
+
+
+### Features
+
+* **bundles:** actually create a bundle per ID ([9f71873](https://github.com/adobe/helix-run-query/commit/9f71873a2b5aafa591d03f04f8f97ffd4e2710d1))
+* **bundles:** experimental raw data export for single day of data ([86b1a53](https://github.com/adobe/helix-run-query/commit/86b1a5337cd6e5c33834b95e4c33698401a3cb9a))
+* **bundles:** group by URL ([6f92169](https://github.com/adobe/helix-run-query/commit/6f9216925759cec2660fe29376aa4774d4a04f71))
+* **bundles:** group by URL ([9952367](https://github.com/adobe/helix-run-query/commit/99523678c3364f0c189aae42146c5c2345381bc5))
+* **bundles:** include user agent ([77103d8](https://github.com/adobe/helix-run-query/commit/77103d8f7b878e11297811e935a6888307340217))
+
 ## [3.18.1](https://github.com/adobe/helix-run-query/compare/v3.18.0...v3.18.1) (2024-03-13)
 
 
