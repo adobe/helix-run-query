@@ -8,12 +8,12 @@
 SELECT
   id,
   url,
-  FORMAT_TIMESTAMP('%Y-%m-%d', MIN(time)) AS time, -- noqa: RF04
+  FORMAT_TIMESTAMP('%Y-%m-%dT%X%Ez', MIN(time)) AS time, -- noqa: RF04
   CAST(ANY_VALUE(weight) AS INT64) AS weight,
   ANY_VALUE(user_agent) AS user_agent,
   ARRAY_AGG(
     STRUCT(
-      FORMAT_TIMESTAMP('%Y-%m-%d', time) AS time, -- noqa: RF04
+      FORMAT_TIMESTAMP('%Y-%m-%dT%X%Ez', time) AS time, -- noqa: RF04
       CASE
         WHEN LCP IS NOT NULL THEN 'cwv-lcp'
         WHEN INP IS NOT NULL THEN 'cwv-inp'
