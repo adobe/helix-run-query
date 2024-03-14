@@ -1,3 +1,10 @@
+## [3.19.1](https://github.com/adobe/helix-run-query/compare/v3.19.0...v3.19.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* **bundles:** full timestamps ([8486973](https://github.com/adobe/helix-run-query/commit/8486973060240ffd3085f2256e548736250cc5cc))
+
 # [3.19.0](https://github.com/adobe/helix-run-query/compare/v3.18.1...v3.19.0) (2024-03-14)
 
 
