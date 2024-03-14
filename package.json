@@ -93,6 +93,7 @@
       "src/queries/revoke-domainkey.sql",
       "src/queries/rotate-domainkeys.sql",
       "src/queries/rum-bounces.sql",
+      "src/queries/rum-bundles.sql",
       "src/queries/rum-checkpoint-cwv-correlation.sql",
       "src/queries/rum-checkpoint-urls.sql",
       "src/queries/rum-checkpoints.sql",
