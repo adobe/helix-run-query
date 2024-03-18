@@ -174,28 +174,52 @@ aggregate_default AS (
 -- reduce to 1 value per hostname, per date, per content type
 aggregate_reduce AS (
   SELECT
+    year,
+    month,
+    day,
     trunc_time,
     hostname,
     content_type,
     'all' AS url,
     AVG(weight) AS weight,
     SUM(content_requests) AS content_requests,
-    SUM(count_requests) AS count_requests,
-    year,
-    month,
-    day
+    SUM(count_requests) AS count_requests
   FROM aggregate_default
   GROUP BY year, month, day, trunc_time, hostname, content_type
   ORDER BY year DESC, month DESC, day DESC
 ),
 
 aggregate_result AS (
-  SELECT * FROM aggregate_reduce WHERE @aggregate = 'reduce'
+  SELECT
+    year,
+    month,
+    day,
+    trunc_time,
+    hostname,
+    url,
+    content_type,
+    weight,
+    content_requests,
+    count_requests
+  FROM aggregate_reduce
+  WHERE @aggregate = 'reduce'
   UNION ALL
-  SELECT * FROM aggregate_default WHERE @aggregate != 'reduce'
+  SELECT
+    year,
+    month,
+    day,
+    trunc_time,
+    hostname,
+    url,
+    content_type,
+    weight,
+    content_requests,
+    count_requests
+  FROM aggregate_default
+  WHERE @aggregate != 'reduce'
 )
 
-SELECT 
+SELECT
   year,
   month,
   day,
