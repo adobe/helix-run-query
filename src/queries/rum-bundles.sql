@@ -47,3 +47,5 @@ GROUP BY
   id,
   url,
   TIMESTAMP_TRUNC(time, DAY)
+ORDER BY
+  time DESC
