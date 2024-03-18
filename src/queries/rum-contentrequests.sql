@@ -7,6 +7,7 @@
 --- enddate: 2023-12-31
 --- url: -
 --- granularity: 1
+--- aggregate: - (default) or 'reduce'
 --- timezone: UTC
 --- domainkey: secret
 WITH all_raw_events AS (
@@ -20,7 +21,7 @@ WITH all_raw_events AS (
     hostname,
     user_agent,
     time,
-    TIMESTAMP_TRUNC(time, DAY, @timezone) AS day
+    TIMESTAMP_TRUNC(time, DAY, @timezone) AS trunc_time # events will be evaluated on day level
   FROM helix_rum.EVENTS_V5(
     @url, # url
     CAST(@offset AS INT64), # offset
@@ -33,36 +34,37 @@ WITH all_raw_events AS (
   )
 ),
 
+
 -- IDs can repeat, so we group by hostname and day
 group_all_events_daily AS (
   SELECT
     id,
     hostname,
-    day,
+    trunc_time,
     ARRAY_AGG(DISTINCT checkpoint IGNORE NULLS) AS checkpoint
   FROM all_raw_events
-  GROUP BY id, hostname, day
+  GROUP BY id, hostname, trunc_time
 ),
 
 -- filter billable PageViews
 pageviews AS (
   SELECT DISTINCT
     all_raw_events.id,
-    'html' AS contenttype,
+    'html' AS content_type,
     all_raw_events.weight,
     all_raw_events.url,
     all_raw_events.hostname,
-    all_raw_events.day,
+    all_raw_events.trunc_time,
     -- 1 PageView = 1 ContentRequest
-    all_raw_events.weight AS contentrequests,
+    all_raw_events.weight AS content_requests,
     -- keep the number of all requests
-    all_raw_events.weight AS allrequests
+    all_raw_events.weight AS count_requests
   FROM group_all_events_daily
   LEFT JOIN all_raw_events
     ON
       group_all_events_daily.id = all_raw_events.id
       AND group_all_events_daily.hostname = all_raw_events.hostname
-      AND group_all_events_daily.day = all_raw_events.day
+      AND group_all_events_daily.trunc_time = all_raw_events.trunc_time
   -- Content Request = any ID that does not have a checkpoint=404 gets counted as PageView
   WHERE '404' NOT IN UNNEST(group_all_events_daily.checkpoint)
   -- bots are excluded from Content Requests
@@ -73,67 +75,145 @@ pageviews AS (
 apicalls AS (
   SELECT
     id,
-    'json' AS contenttype,
+    'json' AS content_type,
     weight,
     url,
     hostname,
-    day,
+    trunc_time,
     -- 5 APICalls = 1 PageView = 1 ContentRequest
-    SUM(weight) * 0.2 AS contentrequests,
+    SUM(weight) * 0.2 AS content_requests,
     -- keep the number of all requests
-    SUM(weight) AS allrequests
+    SUM(weight) AS count_requests
   FROM all_raw_events
   -- Content Request = any loadresource event that has a target that does not end in .json
   WHERE (checkpoint = 'loadresource' AND target NOT LIKE '%.json')
   -- bots are excluded from Content Requests
   AND user_agent != 'bot'
-  GROUP BY id, url, hostname, weight, day
+  GROUP BY id, url, hostname, weight, trunc_time
 ),
 
 dailydata AS (
-  SELECT * FROM pageviews
+  SELECT
+    content_type,
+    weight,
+    url,
+    hostname,
+    trunc_time,
+    SUM(content_requests) AS content_requests,
+    SUM(count_requests) AS count_requests
+  FROM pageviews
+  GROUP BY content_type, weight, url, hostname, trunc_time
   UNION ALL
-  SELECT * FROM apicalls
+  SELECT
+    content_type,
+    weight,
+    url,
+    hostname,
+    trunc_time,
+    SUM(content_requests) AS content_requests,
+    SUM(count_requests) AS count_requests
+  FROM apicalls
+  GROUP BY content_type, weight, url, hostname, trunc_time
+),
+
+monthlydata AS (
+  SELECT
+    content_type,
+    weight,
+    url,
+    hostname,
+    TIMESTAMP_TRUNC(trunc_time, MONTH) AS trunc_time,
+    SUM(content_requests) AS content_requests,
+    SUM(count_requests) AS count_requests
+  FROM dailydata
+  GROUP BY
+    content_type, weight, url, hostname,
+    TIMESTAMP_TRUNC(trunc_time, MONTH)
+),
+
+yearlydata AS (
+  SELECT
+    content_type,
+    weight,
+    url,
+    hostname,
+    TIMESTAMP_TRUNC(trunc_time, YEAR) AS trunc_time,
+    SUM(content_requests) AS content_requests,
+    SUM(count_requests) AS count_requests
+  FROM dailydata
+  GROUP BY
+    content_type, weight, url, hostname,
+    TIMESTAMP_TRUNC(trunc_time, YEAR)
 ),
 
 all_data AS (
-  # Combine all the data, so that we have it according to desired granularity
-  SELECT * FROM dailydata
+  # Desired granularity
+  SELECT * FROM dailydata WHERE CAST(@granularity AS INT64) = 1
+  UNION ALL
+  SELECT * FROM monthlydata WHERE CAST(@granularity AS INT64) = 30
+  UNION ALL
+  SELECT * FROM yearlydata WHERE CAST(@granularity AS INT64) = 365
 ),
 
-time_series AS (
+aggregate_default AS (
   SELECT
+    trunc_time,
     hostname,
+    content_type,
     url,
-    contenttype,
     weight,
-    day,
-    EXTRACT(YEAR FROM day) AS year,
-    EXTRACT(MONTH FROM day) AS month,
-    SUM(contentrequests) AS contentrequests,
-    SUM(allrequests) AS allrequests
+    content_requests,
+    count_requests,
+    EXTRACT(YEAR FROM TIMESTAMP_TRUNC(trunc_time, YEAR)) AS year,
+    EXTRACT(MONTH FROM TIMESTAMP_TRUNC(trunc_time, MONTH)) AS month,
+    EXTRACT(DAY FROM TIMESTAMP_TRUNC(trunc_time, DAY)) AS day
   FROM all_data
-  GROUP BY hostname, url, contenttype, weight, day
+  ORDER BY year DESC, month DESC, day DESC
+),
+
+-- reduce to 1 value per hostname, per date, per content type
+aggregate_reduce AS (
+  SELECT
+    trunc_time,
+    hostname,
+    content_type,
+    'all' AS url,
+    AVG(weight) AS weight,
+    SUM(content_requests) AS content_requests,
+    SUM(count_requests) AS count_requests,
+    year,
+    month,
+    day
+  FROM aggregate_default
+  GROUP BY year, month, day, trunc_time, hostname, content_type
+  ORDER BY year DESC, month DESC, day DESC
+),
+
+aggregate_result AS (
+  SELECT * FROM aggregate_reduce WHERE @aggregate = 'reduce'
+  UNION ALL
+  SELECT * FROM aggregate_default WHERE @aggregate != 'reduce'
 )
 
-SELECT
+SELECT 
   year,
   month,
   day,
+  trunc_time,
   hostname,
   url,
-  contenttype,
+  content_type,
   weight,
-  contentrequests,
-  allrequests
-FROM time_series
-ORDER BY day DESC
---- year: the year of the beginning of the reporting interval
---- month: the month of the beginning of the reporting interval
---- day: the day of the beginning of the reporting interval
---- hostname: the domain itself
---- url: the URL of the request
---- contenttype: 'html' in case Content Request is counted as pageview, 'json' in case Content Request is of type json api call
---- weight: the sampling weight
---- contentrequests: the number of Content Requests in the reporting interval that match the criteria
---- allrequests: the number of requests which resulted to the number of Content Requests
+  content_requests,
+  count_requests
+FROM aggregate_result
+-- year: the year of the beginning of the reporting interval
+-- month: the month of the beginning of the reporting interval
+-- day: the day of the beginning of the reporting interval
+-- trunc_time: the timestamp of the beginning of the reporting interval
+-- hostname: the domain itself
+-- url: the URL of the request ('all' in 'reduce' result)
+-- content_type: 'html' in case Content Request is counted as PageView, 'json' in case Content Request is counted as APICall 
+-- weight: the sampling weight (average weight in 'reduce' result)
+-- content_requests: the number of Content Requests in the reporting interval that match the criteria
+-- count_requests: the number of requests which resulted to the number of Content Requests
