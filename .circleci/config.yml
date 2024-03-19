@@ -5,8 +5,8 @@ executors:
       - image: cimg/node:18.19
 
 orbs:
-  helix-post-deploy: adobe/helix-post-deploy@3.0.1
-  helix-gcloud-setup: adobe/helix-gcloud-setup@1.0.1
+  helix-post-deploy: adobe/helix-post-deploy@3.0.2
+  helix-gcloud-setup: adobe/helix-gcloud-setup@1.0.2
   codecov: codecov/codecov@4.0.1
 
 commands:
