@@ -1,3 +1,10 @@
+## [3.19.4](https://github.com/adobe/helix-run-query/compare/v3.19.3...v3.19.4) (2024-03-19)
+
+
+### Bug Fixes
+
+* **lambda:** reduce max size a bit ([f24448e](https://github.com/adobe/helix-run-query/commit/f24448e8f492056ec9eeab5457d3046c73d2add2))
+
 ## [3.19.3](https://github.com/adobe/helix-run-query/compare/v3.19.2...v3.19.3) (2024-03-19)
 
 
