@@ -1,3 +1,12 @@
+## [3.19.3](https://github.com/adobe/helix-run-query/compare/v3.19.2...v3.19.3) (2024-03-19)
+
+
+### Bug Fixes
+
+* **bundles:** sort bundles by date ([70ee26f](https://github.com/adobe/helix-run-query/commit/70ee26f5bd677e7c741f4c478efa9b1a1c0ba4af))
+* **deps:** update external fixes ([0d8d876](https://github.com/adobe/helix-run-query/commit/0d8d876f81c075b2eba58f11522168710cd838ee))
+* **sendquery:** bump response size limit to 6MB ([9265a4e](https://github.com/adobe/helix-run-query/commit/9265a4eb40e998354a7811fc209495b386f5f1a3))
+
 ## [3.19.2](https://github.com/adobe/helix-run-query/compare/v3.19.1...v3.19.2) (2024-03-19)
 
 
