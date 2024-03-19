@@ -79,7 +79,7 @@ export async function execute(email, key, project, query, _, params = {}) {
     return new Promise(async (resolve, reject) => {
       const results = [];
       let avgsize = 0;
-      const maxsize = 1024 * 1024 * 6 * 0.9;
+      const maxsize = 1024 * 1024 * 6 * 0.8;
       // eslint-disable-next-line no-param-reassign
       requestParams.limit = parseInt(requestParams.limit, 10);
       const headers = cleanHeaderParams(loadedQuery, headerParams, true);
