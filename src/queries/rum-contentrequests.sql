@@ -310,7 +310,6 @@ SELECT
   year,
   month,
   day,
-  trunc_time,
   hostname,
   url,
   weight,
@@ -319,12 +318,12 @@ SELECT
   json_requests,
   bot_requests,
   error404_requests,
-  content_requests
+  content_requests,
+  CAST(trunc_time AS STRING) AS trunc_time
 FROM aggregate_result
 -- year: the year of the beginning of the reporting interval
 -- month: the month of the beginning of the reporting interval
 -- day: the day of the beginning of the reporting interval
--- trunc_time: the timestamp of the beginning of the reporting interval
 -- hostname: the domain itself
 -- url: the URL of the request ('all' in 'reduce' result)
 -- weight: the sampling weight (average weight in 'reduce' result)
@@ -334,3 +333,4 @@ FROM aggregate_result
 -- bot_requests: the number of requests by bots
 -- error404_requests: the number of requests returning 404 error
 -- content_requests: the number of Content Requests in the reporting interval that match the criteria
+-- trunc_time: the timestamp of the beginning of the reporting interval
