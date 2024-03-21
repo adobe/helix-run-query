@@ -93,7 +93,7 @@ describe('Test Queries', () => {
     }
     assert.ok(json.results.data);
     assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
-    assert.equal(json.meta.data.length, 4);
+    assert.equal(json.meta.data.length, 5);
   }).timeout(100000);
 
   it('rum-dashboard (url auth)', async () => {
