@@ -61,7 +61,7 @@ WITH alldata AS (
 cursor_rows AS (
   SELECT MIN(rownum) AS rownum FROM alldata WHERE is_cursor
   UNION ALL
-  SELECT 0 AS rownum FROM alldata WHERE @after = '-'
+  SELECT 0 AS rownum FROM alldata WHERE @after = 'unset'
 ),
 
 cursor_rownum AS (
