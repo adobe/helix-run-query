@@ -1,3 +1,10 @@
+# [3.20.0](https://github.com/adobe/helix-run-query/compare/v3.19.4...v3.20.0) (2024-03-21)
+
+
+### Features
+
+* **bundles:** enable pagination ([8281efc](https://github.com/adobe/helix-run-query/commit/8281efc929b6057bb0c7c653aed3b441b0ca0ea0))
+
 ## [3.19.4](https://github.com/adobe/helix-run-query/compare/v3.19.3...v3.19.4) (2024-03-19)
 
 
