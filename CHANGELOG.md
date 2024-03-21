@@ -1,3 +1,10 @@
+## [3.20.1](https://github.com/adobe/helix-run-query/compare/v3.20.0...v3.20.1) (2024-03-21)
+
+
+### Bug Fixes
+
+* **bundles:** do not require cursor ([526bca7](https://github.com/adobe/helix-run-query/commit/526bca7b916f3261eb3db89f7382854cf59a6f8c))
+
 # [3.20.0](https://github.com/adobe/helix-run-query/compare/v3.19.4...v3.20.0) (2024-03-21)
 
 
