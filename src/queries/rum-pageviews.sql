@@ -295,16 +295,9 @@ hourlyslots AS (
 dailyslots AS (
   SELECT *
   FROM UNNEST(
-    GENERATE_DATE_ARRAY(
-      -- do not add timezone here because the placeholder 0s may shift a day too early
-      DATE(TIMESTAMP_TRUNC(@startdate, DAY)),
-      DATE(
-        TIMESTAMP_TRUNC(
-          TIMESTAMP_ADD(TIMESTAMP(@enddate, @timezone), INTERVAL 23 HOUR),
-          DAY,
-          @timezone
-        )
-      ),
+    GENERATE_TIMESTAMP_ARRAY(
+      TIMESTAMP(@startdate, @timezone),
+      TIMESTAMP_ADD(TIMESTAMP(@enddate, @timezone), INTERVAL 23 HOUR),
       INTERVAL 1 DAY
     )
   ) AS slot
@@ -399,12 +392,13 @@ placeholders AS (
     0 AS pageviews_forecast,
     0 AS url_forecast,
     1 AS granularity,
-    EXTRACT(YEAR FROM slot) AS year,
-    EXTRACT(MONTH FROM slot) AS month,
-    EXTRACT(DAY FROM slot) AS day,
-    0 AS hour, -- noqa: RF04
-    STRING(TIMESTAMP(slot, @timezone), @timezone) AS time -- noqa: RF04
+    EXTRACT(YEAR FROM slot AT TIME ZONE @timezone) AS year,
+    EXTRACT(MONTH FROM slot AT TIME ZONE @timezone) AS month,
+    EXTRACT(DAY FROM slot AT TIME ZONE @timezone) AS day,
+    EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
+    STRING(slot, @timezone) AS time -- noqa: RF04
   FROM dailyslots
+  WHERE EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) = 0
   UNION ALL
   SELECT
     0 AS url,
