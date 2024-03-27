@@ -298,7 +298,7 @@ dailyslots AS (
     GENERATE_TIMESTAMP_ARRAY(
       TIMESTAMP(@startdate, @timezone),
       TIMESTAMP_ADD(TIMESTAMP(@enddate, @timezone), INTERVAL 23 HOUR),
-      INTERVAL 1 DAY
+      INTERVAL 1 HOUR
     )
   ) AS slot
 ),
