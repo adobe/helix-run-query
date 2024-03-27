@@ -7,7 +7,6 @@
   --- acc_score: -1
   --- bp_score: -1
   --- seo_score: -1
-  --- pwa_score: -1
   --- perf_tti_score: -1
   --- perf_speed_idx: -1
   --- seo_crawl_score: -1
@@ -40,7 +39,6 @@ CALL
     @acc_score,
     @bp_score,
     @seo_score,
-    @pwa_score,
     @perf_tti_score,
     @perf_speed_idx,
     @seo_crawl_score,
