@@ -1,3 +1,11 @@
+## [3.20.3](https://github.com/adobe/helix-run-query/compare/v3.20.2...v3.20.3) (2024-03-27)
+
+
+### Bug Fixes
+
+* placeholder days after daylight savings ([f81b272](https://github.com/adobe/helix-run-query/commit/f81b272c663cc55612a8a9b498a61715bcb3fcd8))
+* remove additional hours from final date to prevent timezones east of UTC from returning 0 placeholder for the day after end date ([32e2a36](https://github.com/adobe/helix-run-query/commit/32e2a364a1c60c64cdbb5318bd5d5943de56904d))
+
 ## [3.20.2](https://github.com/adobe/helix-run-query/compare/v3.20.1...v3.20.2) (2024-03-27)
 
 
