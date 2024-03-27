@@ -30,7 +30,8 @@ IF EXISTS (
     key_bytes = SHA512(@domainkey)
     AND (
       revoke_date IS NULL
-      OR revoke_date > CURRENT_DATE(@timezone))
+      OR revoke_date > CURRENT_DATE(@timezone)
+    )
     AND (
       hostname_prefix = ""
       OR hostname_prefix = @url
@@ -56,7 +57,8 @@ IF EXISTS (
     @third_party_score,
     @device_type,
     @time,
-    @audit_ref);
+    @audit_ref
+  );
 END IF;
 SELECT
   "Lighthouse Data Successfully Uploaded" AS status,
@@ -72,4 +74,3 @@ WHERE
 GROUP BY
   status,
   url
-  
