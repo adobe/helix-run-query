@@ -1,3 +1,11 @@
+## [3.20.2](https://github.com/adobe/helix-run-query/compare/v3.20.1...v3.20.2) (2024-03-27)
+
+
+### Bug Fixes
+
+* change to favor timezone accuracy but omit placeholders for days after daylight savings change ([6a3799d](https://github.com/adobe/helix-run-query/commit/6a3799d7fda0cc7f6675ef293984fc7ca960a1f8))
+* daylight savings placeholder ([aa863a5](https://github.com/adobe/helix-run-query/commit/aa863a596ab61c761f0d8ee1a22f2707064e0019))
+
 ## [3.20.1](https://github.com/adobe/helix-run-query/compare/v3.20.0...v3.20.1) (2024-03-21)
 
 
