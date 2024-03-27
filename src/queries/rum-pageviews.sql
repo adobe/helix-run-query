@@ -398,6 +398,7 @@ placeholders AS (
     EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) AS hour, -- noqa: RF04
     STRING(slot, @timezone) AS time -- noqa: RF04
   FROM dailyslots
+  WHERE EXTRACT(HOUR FROM slot AT TIME ZONE @timezone) = 0
   UNION ALL
   SELECT
     0 AS url,
