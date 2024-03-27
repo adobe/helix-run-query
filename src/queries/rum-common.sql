@@ -303,6 +303,69 @@ AS (
   ) AS write
 )
 
+CREATE OR REPLACE PROCEDURE `helix-225321.helix_external_data.ADD_LHS_DATA`(
+  IN inurl STRING,
+  IN perf_score FLOAT64,
+  IN acc_score FLOAT64,
+  IN bp_score FLOAT64,
+  IN seo_score FLOAT64,
+  IN perf_tti_score FLOAT64,
+  IN perf_speed_idx FLOAT64,
+  IN seo_crawl_score FLOAT64,
+  IN seo_crawl_anchors_score FLOAT64,
+  IN net_servr_time FLOAT64,
+  IN net_nl FLOAT64,
+  IN net_mainthread_work_score FLOAT64,
+  IN net_total_blocking_score FLOAT64,
+  IN net_img_optimization_score FLOAT64,
+  IN third_party_score FLOAT64,
+  IN device_type STRING,
+  IN time STRING,
+  IN audit_ref STRING
+)
+BEGIN
+  INSERT INTO `helix-225321.helix_external_data.lhs_spacecat` ( 
+    url,
+    perf_score,
+    acc_score,
+    bp_score,
+    seo_score,
+    perf_tti_score,
+    perf_speed_idx,
+    seo_crawl_score,
+    seo_crawl_anchors_score,
+    net_servr_time,
+    net_nl,
+    net_mainthread_work_score,
+    net_total_blocking_score,
+    net_img_optimization_score,
+    third_party_score,
+    device_type,
+    time,
+    audit_ref 
+  )
+  VALUES (
+    inurl,
+    perf_score,
+    acc_score,
+    bp_score,
+    seo_score,
+    perf_tti_score,
+    perf_speed_idx,
+    seo_crawl_score,
+    seo_crawl_anchors_score,
+    net_servr_time,
+    net_nl,
+    net_mainthread_work_score,
+    net_total_blocking_score,
+    net_img_optimization_score,
+    third_party_score,
+    device_type,
+    time,
+    audit_ref
+  );
+END;
+
 
 # SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
 # ORDER BY time DESC
