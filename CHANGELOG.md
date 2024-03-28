@@ -1,3 +1,15 @@
+# [3.21.0](https://github.com/adobe/helix-run-query/compare/v3.20.3...v3.21.0) (2024-03-28)
+
+
+### Bug Fixes
+
+* top_source to return consistently correct value ([c79edec](https://github.com/adobe/helix-run-query/commit/c79edecd157b6967c5fdb4b5f7dd17ac4410692a))
+
+
+### Features
+
+* new 404 query grouped by url with source count ([4f7390e](https://github.com/adobe/helix-run-query/commit/4f7390e95f9cc72cf57e36ff083e8f58e2cb7351))
+
 ## [3.20.3](https://github.com/adobe/helix-run-query/compare/v3.20.2...v3.20.3) (2024-03-27)
 
 
