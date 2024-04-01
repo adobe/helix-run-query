@@ -303,6 +303,31 @@ AS (
   ) AS write
 )
 
+--- description: Calculate Margin of Error for Binomial Distribution
+--- weight: 100
+--- successes: 270
+--- zscore: 1.96
+CREATE OR REPLACE FUNCTION helix_rum.CALC_BINOMIAL_DISTRIBUTION_MARGIN_OF_ERROR_TEMP(weight NUMERIC, successes NUMERIC, zscore NUMERIC) 
+  RETURNS NUMERIC
+  AS (
+    --- Formula for Binomial Distribution: σ= √(npq)
+    --- Binomial distribution represents the probability for 'x' successes of an experiment in 'n' trials, 
+    --- given a success probability 'p' and a non-success probability 'q'
+
+    --- Margin of Error
+    --- Formula: Z-score * Standard Deviation
+    --- The z-score for the confidence level: With a 95 percent confidence interval, you have a 5 percent chance of being wrong.
+    --- Standard Deviation: Measure of the amount of variation of a random variable expected about its mean
+    CAST(COALESCE(zscore, 
+      CASE
+        --- no sampling, no margin of error
+        WHEN weight = 1 THEN 0
+        --- 95% confidence level - industry standard
+        ELSE 1.96
+      END
+    ) * (weight * SQRT(successes)) AS NUMERIC)
+  );
+
 
 # SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
 # ORDER BY time DESC
