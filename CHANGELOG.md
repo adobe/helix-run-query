@@ -1,3 +1,108 @@
+## [3.21.1](https://github.com/adobe/helix-run-query/compare/v3.21.0...v3.21.1) (2024-03-30)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([b461c4d](https://github.com/adobe/helix-run-query/commit/b461c4da35113f35310e1c73be841cf93a1ca8d3))
+
+# [3.21.0](https://github.com/adobe/helix-run-query/compare/v3.20.3...v3.21.0) (2024-03-28)
+
+
+### Bug Fixes
+
+* top_source to return consistently correct value ([c79edec](https://github.com/adobe/helix-run-query/commit/c79edecd157b6967c5fdb4b5f7dd17ac4410692a))
+
+
+### Features
+
+* new 404 query grouped by url with source count ([4f7390e](https://github.com/adobe/helix-run-query/commit/4f7390e95f9cc72cf57e36ff083e8f58e2cb7351))
+
+## [3.20.3](https://github.com/adobe/helix-run-query/compare/v3.20.2...v3.20.3) (2024-03-27)
+
+
+### Bug Fixes
+
+* placeholder days after daylight savings ([f81b272](https://github.com/adobe/helix-run-query/commit/f81b272c663cc55612a8a9b498a61715bcb3fcd8))
+* remove additional hours from final date to prevent timezones east of UTC from returning 0 placeholder for the day after end date ([32e2a36](https://github.com/adobe/helix-run-query/commit/32e2a364a1c60c64cdbb5318bd5d5943de56904d))
+
+## [3.20.2](https://github.com/adobe/helix-run-query/compare/v3.20.1...v3.20.2) (2024-03-27)
+
+
+### Bug Fixes
+
+* change to favor timezone accuracy but omit placeholders for days after daylight savings change ([6a3799d](https://github.com/adobe/helix-run-query/commit/6a3799d7fda0cc7f6675ef293984fc7ca960a1f8))
+* daylight savings placeholder ([aa863a5](https://github.com/adobe/helix-run-query/commit/aa863a596ab61c761f0d8ee1a22f2707064e0019))
+
+## [3.20.1](https://github.com/adobe/helix-run-query/compare/v3.20.0...v3.20.1) (2024-03-21)
+
+
+### Bug Fixes
+
+* **bundles:** do not require cursor ([526bca7](https://github.com/adobe/helix-run-query/commit/526bca7b916f3261eb3db89f7382854cf59a6f8c))
+
+# [3.20.0](https://github.com/adobe/helix-run-query/compare/v3.19.4...v3.20.0) (2024-03-21)
+
+
+### Features
+
+* **bundles:** enable pagination ([8281efc](https://github.com/adobe/helix-run-query/commit/8281efc929b6057bb0c7c653aed3b441b0ca0ea0))
+
+## [3.19.4](https://github.com/adobe/helix-run-query/compare/v3.19.3...v3.19.4) (2024-03-19)
+
+
+### Bug Fixes
+
+* **lambda:** reduce max size a bit ([f24448e](https://github.com/adobe/helix-run-query/commit/f24448e8f492056ec9eeab5457d3046c73d2add2))
+
+## [3.19.3](https://github.com/adobe/helix-run-query/compare/v3.19.2...v3.19.3) (2024-03-19)
+
+
+### Bug Fixes
+
+* **bundles:** sort bundles by date ([70ee26f](https://github.com/adobe/helix-run-query/commit/70ee26f5bd677e7c741f4c478efa9b1a1c0ba4af))
+* **deps:** update external fixes ([0d8d876](https://github.com/adobe/helix-run-query/commit/0d8d876f81c075b2eba58f11522168710cd838ee))
+* **sendquery:** bump response size limit to 6MB ([9265a4e](https://github.com/adobe/helix-run-query/commit/9265a4eb40e998354a7811fc209495b386f5f1a3))
+
+## [3.19.2](https://github.com/adobe/helix-run-query/compare/v3.19.1...v3.19.2) (2024-03-19)
+
+
+### Bug Fixes
+
+* **deps:** update dependency googleapis to v134 ([#1081](https://github.com/adobe/helix-run-query/issues/1081)) ([5bdd400](https://github.com/adobe/helix-run-query/commit/5bdd400b52640f65314e4b6c8de353db325d5dcf))
+
+## [3.19.1](https://github.com/adobe/helix-run-query/compare/v3.19.0...v3.19.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* **bundles:** full timestamps ([8486973](https://github.com/adobe/helix-run-query/commit/8486973060240ffd3085f2256e548736250cc5cc))
+
+# [3.19.0](https://github.com/adobe/helix-run-query/compare/v3.18.1...v3.19.0) (2024-03-14)
+
+
+### Bug Fixes
+
+* **bundles:** add missing weight column ([49d05e8](https://github.com/adobe/helix-run-query/commit/49d05e829dcc2f973ce5d549735eb3b46d5bb512))
+* **bundles:** nicer iso timestamps ([2b454bc](https://github.com/adobe/helix-run-query/commit/2b454bc234513cc83c7bd2fdc5ac2060062f148d))
+* **bundles:** use only one day ([fd72ff1](https://github.com/adobe/helix-run-query/commit/fd72ff10c82ed47939a2964503c389edd9839816))
+* **bundles:** user agent stays constant ([d636eaa](https://github.com/adobe/helix-run-query/commit/d636eaa62d19b7c36841ca0d5cf53667c2501746))
+
+
+### Features
+
+* **bundles:** actually create a bundle per ID ([9f71873](https://github.com/adobe/helix-run-query/commit/9f71873a2b5aafa591d03f04f8f97ffd4e2710d1))
+* **bundles:** experimental raw data export for single day of data ([86b1a53](https://github.com/adobe/helix-run-query/commit/86b1a5337cd6e5c33834b95e4c33698401a3cb9a))
+* **bundles:** group by URL ([6f92169](https://github.com/adobe/helix-run-query/commit/6f9216925759cec2660fe29376aa4774d4a04f71))
+* **bundles:** group by URL ([9952367](https://github.com/adobe/helix-run-query/commit/99523678c3364f0c189aae42146c5c2345381bc5))
+* **bundles:** include user agent ([77103d8](https://github.com/adobe/helix-run-query/commit/77103d8f7b878e11297811e935a6888307340217))
+
+## [3.18.1](https://github.com/adobe/helix-run-query/compare/v3.18.0...v3.18.1) (2024-03-13)
+
+
+### Bug Fixes
+
+* exclude future events ([f3ddb78](https://github.com/adobe/helix-run-query/commit/f3ddb78dc5c0fe7c856d87356ef1e545784b8bee))
+
 # [3.18.0](https://github.com/adobe/helix-run-query/compare/v3.17.1...v3.18.0) (2024-03-12)
 
 

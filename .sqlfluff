@@ -16,3 +16,6 @@ ignore_comment_lines = true
 
 [sqlfluff:rules:references.keywords]
 ignore_words = source,target,date
+
+[sqlfluff:rules:capitalisation.identifiers]
+ignore_words = FID,INP,LCP,CLS,TTFB
