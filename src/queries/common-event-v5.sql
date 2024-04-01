@@ -59,11 +59,16 @@ FUNCTION `helix-225321.helix_rum.EVENTS_V5`( -- noqa: PRS
       key_bytes = SHA512(domainkey)
       AND (revoke_date IS NULL
         OR revoke_date > CURRENT_DATE(timezone))
-      AND (hostname_prefix = ""
+      AND (
+        hostname_prefix = ""
         OR filterurl LIKE CONCAT("%.", hostname_prefix)
         OR filterurl LIKE CONCAT("%.", hostname_prefix, "/%")
         OR filterurl LIKE CONCAT(hostname_prefix)
-        OR filterurl LIKE CONCAT(hostname_prefix, "/%")))
+        OR filterurl LIKE CONCAT(hostname_prefix, "/%")
+        -- handle comma-separated list of urls, remove spaces and trailing comma
+        OR hostname_prefix IN (SELECT * FROM UNNEST(SPLIT(REGEXP_REPLACE(RTRIM(filterurl, ','), ' ', ''), ',')))
+      )
+    )
     SELECT
       hostname,
       host,
@@ -89,14 +94,22 @@ FUNCTION `helix-225321.helix_rum.EVENTS_V5`( -- noqa: PRS
       OR rumdata.url LIKE CONCAT("https://", validkeys.hostname_prefix, "/%")
       OR validkeys.hostname_prefix = "" )
   WHERE
-    helix_rum.MATCH_URLS_V5(url, filterurl)
-    AND
-  IF
-    (filterurl = '-', TRUE, (hostname = SPLIT(filterurl, '/')[
-      OFFSET
-        (0)])
-      OR (filterurl LIKE 'localhost:%'
-        AND hostname = 'localhost'))
+    (
+      (
+        helix_rum.MATCH_URLS_V5(url, filterurl)
+        AND
+        IF(
+          filterurl = '-', TRUE,
+          (hostname = SPLIT(filterurl, '/')[OFFSET(0)])
+          OR (
+            filterurl LIKE 'localhost:%'
+            AND hostname = 'localhost'
+          )
+        )
+      )
+      -- handle comma-separated list of urls, remove spaces and trailing comma
+      OR hostname IN (SELECT * FROM UNNEST(SPLIT(REGEXP_REPLACE(RTRIM(filterurl, ','), ' ', ''), ',')))
+    )
     AND
   IF
     (days_offset >= 0, DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, helix_rum.CLEAN_TIMEZONE(timezone)), INTERVAL days_offset DAY), TIMESTAMP_ADD(TIMESTAMP(day_max, helix_rum.CLEAN_TIMEZONE(timezone)), INTERVAL 1 DAY)) > time
