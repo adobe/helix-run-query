@@ -66,7 +66,7 @@ FUNCTION `helix-225321.helix_rum.EVENTS_V5`( -- noqa: PRS
         OR filterurl LIKE CONCAT(hostname_prefix)
         OR filterurl LIKE CONCAT(hostname_prefix, "/%")
         -- handle comma-separated list of urls, remove spaces and trailing comma
-        OR hostname_prefix IN (SELECT * FROM UNNEST(SPLIT(REGEXP_REPLACE(RTRIM(filterurl, ','), ' ', ''), ',')))
+        OR hostname_prefix IN (SELECT * FROM helix_rum.URLS_FROM_LIST(filterurl))
       )
     )
     SELECT
@@ -108,7 +108,7 @@ FUNCTION `helix-225321.helix_rum.EVENTS_V5`( -- noqa: PRS
         )
       )
       -- handle comma-separated list of urls, remove spaces and trailing comma
-      OR hostname IN (SELECT * FROM UNNEST(SPLIT(REGEXP_REPLACE(RTRIM(filterurl, ','), ' ', ''), ',')))
+      OR hostname IN (SELECT * FROM helix_rum.URLS_FROM_LIST(filterurl))
     )
     AND
   IF
