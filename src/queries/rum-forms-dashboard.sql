@@ -39,7 +39,7 @@ view_urls AS (
   FROM current_checkpoints
   WHERE
     checkpoint = 'viewblock'
-    AND source = '.form'
+    AND (source = '.form' OR source = '.marketo')
   GROUP BY url, checkpoint, source
 ),
 
@@ -54,7 +54,7 @@ submission_urls AS (
   FROM current_checkpoints
   WHERE
     checkpoint = 'formsubmit'
-    AND (source LIKE '%.form%' OR source LIKE '%mktoForm%')
+    AND (source LIKE '%.form%' OR source LIKE '%mktoForm%' OR source LIKE '%.marketo%')
   GROUP BY url, checkpoint, source
 ),
 
