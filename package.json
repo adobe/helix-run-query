@@ -63,7 +63,7 @@
     "c8": "9.1.0",
     "chai": "5.1.0",
     "chai-http": "4.4.0",
-    "eslint": "8.57.0",
+    "eslint": "9.0.0",
     "esmock": "2.6.4",
     "husky": "9.0.11",
     "jsdoc-to-markdown": "8.0.1",
