@@ -6,7 +6,7 @@
 --- startdate: 2023-01-01
 --- enddate: 2023-12-31
 --- url: -
---- granularity: 1
+--- granularity: 30
 --- timezone: UTC
 --- after: -
 --- limit: 1000
@@ -46,7 +46,12 @@ group_all_events_daily AS (
     weight AS html_requests,
     # a JSON request
     COALESCE(
-      COUNTIF(checkpoint = 'loadresource' AND target NOT LIKE '%.json'), 0
+      COUNTIF(
+        checkpoint = 'loadresource'
+        AND target NOT LIKE '%.json'
+        AND source NOT LIKE '%/libs/granite/csrf/token.json'
+      ),
+      0
     )
     * weight AS json_requests,
     # request by bot
@@ -137,8 +142,8 @@ dailydata AS (
 monthlydata AS (
   SELECT
     hostname,
-    TIMESTAMP_TRUNC(trunc_time, MONTH) AS trunc_time,
     weight,
+    TIMESTAMP_TRUNC(trunc_time, MONTH) AS trunc_time,
     SUM(content_requests) AS content_requests,
     SUM(pageviews) AS pageviews,
     SUM(apicalls) AS apicalls,
@@ -156,8 +161,8 @@ monthlydata AS (
 yearlydata AS (
   SELECT
     hostname,
-    TIMESTAMP_TRUNC(trunc_time, YEAR) AS trunc_time,
     weight,
+    TIMESTAMP_TRUNC(trunc_time, YEAR) AS trunc_time,
     SUM(content_requests) AS content_requests,
     SUM(pageviews) AS pageviews,
     SUM(apicalls) AS apicalls,
@@ -175,35 +180,12 @@ yearlydata AS (
 alldata_granularity AS (
   --- Desired granularity
   SELECT
-    CONCAT(
-      hostname,
-      '-',
-      CAST(weight AS STRING),
-      '-',
-      CAST(UNIX_MICROS(trunc_time) AS STRING)
-    ) AS row_id,
-    *
-  FROM dailydata WHERE CAST(@granularity AS INT64) = 1
-  UNION ALL
-  SELECT
-    CONCAT(
-      hostname,
-      '-',
-      CAST(weight AS STRING),
-      '-',
-      CAST(UNIX_MICROS(trunc_time) AS STRING)
-    ) AS row_id,
+    CONCAT(hostname, '-', CAST(UNIX_MICROS(trunc_time) AS STRING)) AS row_id,
     *
   FROM monthlydata WHERE CAST(@granularity AS INT64) = 30
   UNION ALL
   SELECT
-    CONCAT(
-      hostname,
-      '-',
-      CAST(weight AS STRING),
-      '-',
-      CAST(UNIX_MICROS(trunc_time) AS STRING)
-    ) AS row_id,
+    CONCAT(hostname, '-', CAST(UNIX_MICROS(trunc_time) AS STRING)) AS row_id,
     *
   FROM yearlydata WHERE CAST(@granularity AS INT64) = 365
 ),
@@ -213,13 +195,12 @@ alldata AS (
     row_id,
     trunc_time,
     hostname,
-    weight,
     EXTRACT(YEAR FROM TIMESTAMP_TRUNC(trunc_time, YEAR)) AS year,
     EXTRACT(MONTH FROM TIMESTAMP_TRUNC(trunc_time, MONTH)) AS month,
     EXTRACT(DAY FROM TIMESTAMP_TRUNC(trunc_time, DAY)) AS day,
+    SUM(content_requests) AS content_requests,
     SUM(pageviews) AS pageviews,
     SUM(apicalls) AS apicalls,
-    SUM(content_requests) AS content_requests,
     SUM(html_requests) AS html_requests,
     SUM(json_requests) AS json_requests,
     SUM(error404_requests) AS error404_requests,
@@ -227,32 +208,32 @@ alldata AS (
     SUM(bot_json_requests) AS bot_json_requests,
     CASE
       # no sampling, confidence level = 100%
-      WHEN weight = 1 THEN 100
+      WHEN MAX(weight) = 1 THEN 100
       # otherwise 95% confidence level, industry standard
       ELSE 95
     END AS confidence_level,
     # get margin of error for sampling
     helix_rum.CALC_BINOMIAL_DISTRIBUTION_MARGIN_OF_ERROR_TEMP(
       # sampling rate
-      weight,
+      MAX(weight),
       # successes 
-      (SUM(content_requests) * (1 / weight)),
+      (SUM(content_requests) * (1 / MAX(weight))),
       # z-score
       CAST(CASE
         # no sampling, confidence level = 100%
-        WHEN weight = 1 THEN 0
+        WHEN MAX(weight) = 1 THEN 0
         # otherwise 95% confidence level, industry standard
         ELSE 1.96
       END AS NUMERIC)
     ) AS margin_of_error,
     # row number
     ROW_NUMBER()
-      OVER (ORDER BY hostname ASC, trunc_time ASC, weight ASC)
+      OVER (ORDER BY hostname ASC, trunc_time ASC)
       AS rownum,
     row_id = CAST(@after AS STRING) AS is_cursor
   FROM alldata_granularity
-  GROUP BY row_id, year, month, day, trunc_time, hostname, weight
-  ORDER BY hostname ASC, trunc_time ASC, weight ASC
+  GROUP BY row_id, year, month, day, trunc_time, hostname
+  ORDER BY hostname ASC, trunc_time ASC
 ),
 
 cursor_rows AS (
@@ -272,45 +253,36 @@ SELECT
   day,
   hostname, -- noqa: RF04
   content_requests,
+  pageviews,
+  apicalls,
   # Lower Bound
   # Formula: Content Requests - Margin of Error
   # Make sure lower bound cannot be < 1
-  weight,
+  html_requests,
   # Upper Bound
   # Formula: Content Requests + Margin of Error
-  confidence_level,
-  margin_of_error,
-  pageviews,
-  apicalls,
-  html_requests,
   json_requests,
   error404_requests,
   bot_html_requests,
   bot_json_requests,
   rownum,
+  FORMAT_TIMESTAMP('%Y-%m-%dT%X%Ez', trunc_time) AS time, -- noqa: RF04
   CAST(GREATEST((content_requests - margin_of_error), 1) AS INT64)
     AS content_requests_marginal_err_excl,
   CAST((content_requests + margin_of_error) AS INT64)
-    AS content_requests_marginal_err_incl,
-  FORMAT_TIMESTAMP('%Y-%m-%dT%X%Ez', trunc_time) AS time -- noqa: RF04
+    AS content_requests_marginal_err_incl
 FROM alldata
 WHERE
   (rownum > (SELECT rownum FROM cursor_rownum))
-  AND (rownum <= ((SELECT rownum FROM cursor_rownum) + 1000)) -- @limit))
+  AND (rownum <= ((SELECT rownum FROM cursor_rownum) + @limit))
 ORDER BY
   rownum ASC
 -- id: the cursor id
 -- year: the year of the beginning of the reporting interval
 -- month: the month of the beginning of the reporting interval
 -- day: the day of the beginning of the reporting interval
--- time: the timestamp of the beginning of the reporting interval
 -- hostname: the domain itself
 -- content_requests: the number of Content Requests in the reporting interval that match the criteria
--- content_requests_marginal_err_excl: the lower bound of Content Requests respecting the sampling error
--- content_requests_marginal_err_incl: the upper bound of Content Requests respecting the sampling error
--- weight: the sampling weight
--- confidence_level: the level of confidence for the Content Requests calculation
--- margin_of_error: the margin of error  for the Content Requests calculation
 -- pageviews: the number of PageViews
 -- apicalls: the number of APICalls
 -- html_requests: the total number of HTML Requests
@@ -318,4 +290,7 @@ ORDER BY
 -- error404_requests: the total number of requests returning 404 error
 -- bot_html_requests: the total number of HTML requests by bots
 -- bot_json_requests: the total number of JSON requests by bots
+-- time: the timestamp of the beginning of the reporting interval
+-- content_requests_marginal_err_excl: the lower bound of Content Requests respecting the sampling error
+-- content_requests_marginal_err_incl: the upper bound of Content Requests respecting the sampling error
 -- rownum: the number of the row
