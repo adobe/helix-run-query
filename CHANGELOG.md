@@ -1,3 +1,10 @@
+# [3.22.0](https://github.com/adobe/helix-run-query/compare/v3.21.1...v3.22.0) (2024-04-09)
+
+
+### Features
+
+* allow comma-separated list of domains as input param ([ddcd0a2](https://github.com/adobe/helix-run-query/commit/ddcd0a21285ff2290b6b09a13db7c0887815aa37))
+
 ## [3.21.1](https://github.com/adobe/helix-run-query/compare/v3.21.0...v3.21.1) (2024-03-30)
 
 
