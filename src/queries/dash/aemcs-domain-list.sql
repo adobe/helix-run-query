@@ -29,6 +29,7 @@ WITH hosts AS (
     )
   WHERE
     host LIKE '%adobeaemcloud.net'
+    AND hostname NOT LIKE '%adobeaemcloud.com'
     AND host != hostname
   GROUP BY hostname, host
 ),
