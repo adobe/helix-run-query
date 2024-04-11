@@ -1,3 +1,10 @@
+## [3.22.2](https://github.com/adobe/helix-run-query/compare/v3.22.1...v3.22.2) (2024-04-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal-logger to v3.0.14 ([#1100](https://github.com/adobe/helix-run-query/issues/1100)) ([45e7e01](https://github.com/adobe/helix-run-query/commit/45e7e015aba298cebdec6293783721ee32cecf76))
+
 ## [3.22.1](https://github.com/adobe/helix-run-query/compare/v3.22.0...v3.22.1) (2024-04-11)
 
 
