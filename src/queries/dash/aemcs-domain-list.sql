@@ -46,7 +46,7 @@ SELECT
   h.hostname,
   h.program_id,
   h.environment_id,
-  h.first_rum
+  STRING(h.first_rum) AS first_rum
 FROM hosts AS h
 INNER JOIN env_events AS e ON h.environment_id = e.environment_id
 ORDER BY CAST(h.program_id AS INT64), e.env_count DESC, h.hostname_count DESC
