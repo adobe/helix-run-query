@@ -181,25 +181,26 @@ alldata AS (
     row_id,
     trunc_time,
     hostname,
-    content_requests,
-    content_requests_margin_of_error,
-    pageviews,
-    apicalls,
-    html_requests,
-    # Lower Bound: Content Requests - Margin of Error
-    # Make sure lower bound cannot be < 1
-    json_requests,
-    # Upper Bound: Content Requests + Margin of Error
-    error404_requests,
+    CAST(content_requests AS INT64) AS content_requests,
+    CAST(content_requests_margin_of_error AS INT64)
+      AS content_requests_margin_of_error,
+    CAST(pageviews AS INT64) AS pageviews,
+    CAST(apicalls AS INT64) AS apicalls,
+    CAST(html_requests AS INT64) AS html_requests,
+    CAST(json_requests AS INT64) AS json_requests,
+    CAST(error404_requests AS INT64) AS error404_requests,
     EXTRACT(YEAR FROM TIMESTAMP_TRUNC(trunc_time, YEAR)) AS year,
     EXTRACT(MONTH FROM TIMESTAMP_TRUNC(trunc_time, MONTH)) AS month,
     EXTRACT(DAY FROM TIMESTAMP_TRUNC(trunc_time, DAY)) AS day,
+    # Lower Bound: Content Requests - Margin of Error
+    # Make sure lower bound cannot be < 1
     CAST(
       GREATEST(
         (content_requests - content_requests_margin_of_error), 1
       ) AS INT64
     )
       AS content_requests_marginal_err_excl,
+    # Upper Bound: Content Requests + Margin of Error
     CAST((content_requests + content_requests_margin_of_error) AS INT64)
       AS content_requests_marginal_err_incl,
     # row number
