@@ -163,7 +163,7 @@ describe('Test ContentRequests', () => {
       assert.fail(`${results} is not valid JSON`);
     }
     assert.ok(json.results.data);
-    assert.ok(json.results.data.length === 1, 'expecting 2 entries, 1 for each host for year 2024');
+    assert.ok(json.results.data.length === 2, 'expecting 2 entries, 1 for each host for year 2024');
     const expected = [
       {
         id: 'blog.adobe.com-1704067200000000',
