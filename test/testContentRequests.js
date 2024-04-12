@@ -163,7 +163,7 @@ describe('Test ContentRequests', () => {
       assert.fail(`${results} is not valid JSON`);
     }
     assert.ok(json.results.data);
-    assert.ok(json.results.data.length === 1, 'expecting 1 entries, 1 for year 2024');
+    assert.ok(json.results.data.length === 1, 'expecting 2 entries, 1 for each host for year 2024');
     const expected = [
       {
         id: 'blog.adobe.com-1704067200000000',
@@ -214,8 +214,8 @@ describe('Test ContentRequests', () => {
       + '&startdate=2024-03-30'
       + '&enddate=2024-04-01'
       + '&timezone=UTC'
-      + 'limit=1'
-      + 'after=dxc.com-1709251200000000'
+      + '&limit=1'
+      + '&after=dxc.com-1709251200000000'
       + `&domainkey=${process.env.UNIVERSAL_TOKEN}`, {}), {
       env: {
         GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
