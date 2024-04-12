@@ -49,7 +49,6 @@ group_all_events_daily AS (
       COUNTIF(
         checkpoint = 'loadresource'
         AND target NOT LIKE '%.json'
-        AND source NOT LIKE '%/libs/granite/csrf/token.json'
       ),
       0
     )
@@ -63,7 +62,7 @@ group_all_events_daily AS (
 ),
 
 -- filter requests
-dailydata_prepare AS (
+dailydata AS (
   SELECT
     hostname,
     trunc_time,
@@ -99,50 +98,14 @@ dailydata_prepare AS (
     CASE
       WHEN is_bot_request THEN SUM(html_requests)
       ELSE 0
-    END AS error404_requests,
-    -- Bot requests
-    CASE
-      WHEN is_bot_request THEN SUM(html_requests)
-      ELSE 0
-    END AS bot_html_requests,
-    CASE
-      WHEN is_bot_request THEN SUM(json_requests)
-      ELSE 0
-    END AS bot_json_requests
+    END AS error404_requests
   FROM group_all_events_daily
   GROUP BY hostname, trunc_time, weight, is_bot_request, is_404_request
-),
-
-dailydata AS (
-  SELECT
-    hostname,
-    trunc_time,
-    weight,
-    # 1 PageView = 1 ContentRequest
-    # 5 APICalls = 1 PageView = 1 ContentRequest
-    # Exclude Bots and 404
-    SUM(content_requests) AS content_requests,
-    -- PageViews
-    SUM(pageviews) AS pageviews,
-    -- APICalls
-    SUM(apicalls) AS apicalls,
-    -- HTML requests: Total HTML requests
-    SUM(html_requests) AS html_requests,
-    -- JSON requests: Total JSON requests
-    SUM(json_requests) AS json_requests,
-    -- 404 requests
-    SUM(error404_requests) AS error404_requests,
-    -- Bot requests
-    SUM(bot_html_requests) AS bot_html_requests,
-    SUM(bot_json_requests) AS bot_json_requests
-  FROM dailydata_prepare
-  GROUP BY hostname, trunc_time, weight
 ),
 
 monthlydata AS (
   SELECT
     hostname,
-    weight,
     TIMESTAMP_TRUNC(trunc_time, MONTH) AS trunc_time,
     SUM(content_requests) AS content_requests,
     SUM(pageviews) AS pageviews,
@@ -150,18 +113,29 @@ monthlydata AS (
     SUM(html_requests) AS html_requests,
     SUM(json_requests) AS json_requests,
     SUM(error404_requests) AS error404_requests,
-    SUM(bot_html_requests) AS bot_html_requests,
-    SUM(bot_json_requests) AS bot_json_requests
+    # content requests is sampled data
+    # margin of error for content requests
+    helix_rum.CALC_BINOMIAL_DISTRIBUTION_MARGIN_OF_ERROR_TEMP(
+      # sampling rate
+      MAX(weight),
+      # successes 
+      (SUM(content_requests) * (1 / MAX(weight))),
+      # z-score
+      CAST(CASE
+        # no sampling, confidence level = 100%
+        WHEN MAX(weight) = 1 THEN 0
+        # otherwise 95% confidence level, industry standard
+        ELSE 1.96
+      END AS NUMERIC)
+    ) AS content_requests_margin_of_error
   FROM dailydata
   GROUP BY
-    hostname, weight,
-    TIMESTAMP_TRUNC(trunc_time, MONTH)
+    hostname, TIMESTAMP_TRUNC(trunc_time, MONTH)
 ),
 
 yearlydata AS (
   SELECT
     hostname,
-    weight,
     TIMESTAMP_TRUNC(trunc_time, YEAR) AS trunc_time,
     SUM(content_requests) AS content_requests,
     SUM(pageviews) AS pageviews,
@@ -169,12 +143,24 @@ yearlydata AS (
     SUM(html_requests) AS html_requests,
     SUM(json_requests) AS json_requests,
     SUM(error404_requests) AS error404_requests,
-    SUM(bot_html_requests) AS bot_html_requests,
-    SUM(bot_json_requests) AS bot_json_requests
+    # content requests is sampled data
+    # margin of error for content requests
+    helix_rum.CALC_BINOMIAL_DISTRIBUTION_MARGIN_OF_ERROR_TEMP(
+      # sampling rate
+      MAX(weight),
+      # successes 
+      (SUM(content_requests) * (1 / MAX(weight))),
+      # z-score
+      CAST(CASE
+        # no sampling, confidence level = 100%
+        WHEN MAX(weight) = 1 THEN 0
+        # otherwise 95% confidence level, industry standard
+        ELSE 1.96
+      END AS NUMERIC)
+    ) AS content_requests_margin_of_error
   FROM dailydata
   GROUP BY
-    hostname, weight,
-    TIMESTAMP_TRUNC(trunc_time, YEAR)
+    hostname, TIMESTAMP_TRUNC(trunc_time, YEAR)
 ),
 
 alldata_granularity AS (
@@ -195,44 +181,33 @@ alldata AS (
     row_id,
     trunc_time,
     hostname,
+    content_requests,
+    content_requests_margin_of_error,
+    pageviews,
+    apicalls,
+    html_requests,
+    # Lower Bound: Content Requests - Margin of Error
+    # Make sure lower bound cannot be < 1
+    json_requests,
+    # Upper Bound: Content Requests + Margin of Error
+    error404_requests,
     EXTRACT(YEAR FROM TIMESTAMP_TRUNC(trunc_time, YEAR)) AS year,
     EXTRACT(MONTH FROM TIMESTAMP_TRUNC(trunc_time, MONTH)) AS month,
     EXTRACT(DAY FROM TIMESTAMP_TRUNC(trunc_time, DAY)) AS day,
-    SUM(content_requests) AS content_requests,
-    SUM(pageviews) AS pageviews,
-    SUM(apicalls) AS apicalls,
-    SUM(html_requests) AS html_requests,
-    SUM(json_requests) AS json_requests,
-    SUM(error404_requests) AS error404_requests,
-    SUM(bot_html_requests) AS bot_html_requests,
-    SUM(bot_json_requests) AS bot_json_requests,
-    CASE
-      # no sampling, confidence level = 100%
-      WHEN MAX(weight) = 1 THEN 100
-      # otherwise 95% confidence level, industry standard
-      ELSE 95
-    END AS confidence_level,
-    # get margin of error for sampling
-    helix_rum.CALC_BINOMIAL_DISTRIBUTION_MARGIN_OF_ERROR_TEMP(
-      # sampling rate
-      MAX(weight),
-      # successes 
-      (SUM(content_requests) * (1 / MAX(weight))),
-      # z-score
-      CAST(CASE
-        # no sampling, confidence level = 100%
-        WHEN MAX(weight) = 1 THEN 0
-        # otherwise 95% confidence level, industry standard
-        ELSE 1.96
-      END AS NUMERIC)
-    ) AS margin_of_error,
+    CAST(
+      GREATEST(
+        (content_requests - content_requests_margin_of_error), 1
+      ) AS INT64
+    )
+      AS content_requests_marginal_err_excl,
+    CAST((content_requests + content_requests_margin_of_error) AS INT64)
+      AS content_requests_marginal_err_incl,
     # row number
     ROW_NUMBER()
       OVER (ORDER BY hostname ASC, trunc_time ASC)
       AS rownum,
     row_id = CAST(@after AS STRING) AS is_cursor
   FROM alldata_granularity
-  GROUP BY row_id, year, month, day, trunc_time, hostname
   ORDER BY hostname ASC, trunc_time ASC
 ),
 
@@ -253,28 +228,19 @@ SELECT
   day,
   hostname, -- noqa: RF04
   content_requests,
+  content_requests_marginal_err_excl,
+  content_requests_marginal_err_incl,
   pageviews,
   apicalls,
-  # Lower Bound
-  # Formula: Content Requests - Margin of Error
-  # Make sure lower bound cannot be < 1
   html_requests,
-  # Upper Bound
-  # Formula: Content Requests + Margin of Error
   json_requests,
   error404_requests,
-  bot_html_requests,
-  bot_json_requests,
   rownum,
-  FORMAT_TIMESTAMP('%Y-%m-%dT%X%Ez', trunc_time) AS time, -- noqa: RF04
-  CAST(GREATEST((content_requests - margin_of_error), 1) AS INT64)
-    AS content_requests_marginal_err_excl,
-  CAST((content_requests + margin_of_error) AS INT64)
-    AS content_requests_marginal_err_incl
+  FORMAT_TIMESTAMP('%Y-%m-%dT%X%Ez', trunc_time) AS time -- noqa: RF04
 FROM alldata
 WHERE
   (rownum > (SELECT rownum FROM cursor_rownum))
-  AND (rownum <= ((SELECT rownum FROM cursor_rownum) + @limit))
+  AND (rownum <= ((SELECT rownum FROM cursor_rownum) + 1000))
 ORDER BY
   rownum ASC
 -- id: the cursor id
@@ -288,9 +254,7 @@ ORDER BY
 -- html_requests: the total number of HTML Requests
 -- json_requests: the total number of JSON Requests
 -- error404_requests: the total number of requests returning 404 error
--- bot_html_requests: the total number of HTML requests by bots
--- bot_json_requests: the total number of JSON requests by bots
+-- rownum: the number of the row
 -- time: the timestamp of the beginning of the reporting interval
 -- content_requests_marginal_err_excl: the lower bound of Content Requests respecting the sampling error
 -- content_requests_marginal_err_incl: the upper bound of Content Requests respecting the sampling error
--- rownum: the number of the row
