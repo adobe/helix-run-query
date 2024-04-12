@@ -240,7 +240,7 @@ SELECT
 FROM alldata
 WHERE
   (rownum > (SELECT rownum FROM cursor_rownum))
-  AND (rownum <= ((SELECT rownum FROM cursor_rownum) + 1000))
+  AND (rownum <= ((SELECT rownum FROM cursor_rownum) + @limit))
 ORDER BY
   rownum ASC
 -- id: the cursor id
