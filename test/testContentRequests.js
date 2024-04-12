@@ -196,7 +196,7 @@ describe('Test ContentRequests', () => {
         html_requests: 48300,
         json_requests: 7200,
         error404_requests: 5800,
-        rownum: 1,
+        rownum: 2,
         time: '2024-01-01T00:00:00+00:00',
       },
     ];
