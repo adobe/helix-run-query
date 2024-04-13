@@ -1,3 +1,31 @@
+## [3.22.3](https://github.com/adobe/helix-run-query/compare/v3.22.2...v3.22.3) (2024-04-12)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([571bb7e](https://github.com/adobe/helix-run-query/commit/571bb7e7ab974d94d0ed1ba084d6aad6374598fa))
+
+## [3.22.2](https://github.com/adobe/helix-run-query/compare/v3.22.1...v3.22.2) (2024-04-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal-logger to v3.0.14 ([#1100](https://github.com/adobe/helix-run-query/issues/1100)) ([45e7e01](https://github.com/adobe/helix-run-query/commit/45e7e015aba298cebdec6293783721ee32cecf76))
+
+## [3.22.1](https://github.com/adobe/helix-run-query/compare/v3.22.0...v3.22.1) (2024-04-11)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([#1099](https://github.com/adobe/helix-run-query/issues/1099)) ([bd10391](https://github.com/adobe/helix-run-query/commit/bd10391995a21f88afd9b35a1b26e7ca209cd07c))
+
+# [3.22.0](https://github.com/adobe/helix-run-query/compare/v3.21.1...v3.22.0) (2024-04-09)
+
+
+### Features
+
+* allow comma-separated list of domains as input param ([ddcd0a2](https://github.com/adobe/helix-run-query/commit/ddcd0a21285ff2290b6b09a13db7c0887815aa37))
+
 ## [3.21.1](https://github.com/adobe/helix-run-query/compare/v3.21.0...v3.21.1) (2024-03-30)
 
 
