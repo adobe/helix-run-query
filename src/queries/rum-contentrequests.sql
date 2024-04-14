@@ -240,6 +240,43 @@ SELECT
 FROM alldata
 ORDER BY rownum ASC;
 
+# hlx:metadata
+WITH metadata AS (
+  WITH prepare_meta_results AS (
+    SELECT
+      COUNT(*) AS total_rows,
+      CEIL(COUNT(*) / @limit) AS total_pages
+    FROM alldata_rum_contentrequests_results
+  ),
+
+  prepare_meta_cursor AS (
+    SELECT
+      rownum,
+      (rownum + @limit) AS next_rownum
+    FROM alldata_rum_contentrequests_results
+    WHERE is_cursor IS true
+  )
+
+  SELECT
+    (SELECT total_rows FROM prepare_meta_results) AS total_rows,
+    (SELECT total_pages FROM prepare_meta_results) AS total_pages,
+    (SELECT CEIL(rownum / @limit) FROM prepare_meta_cursor) AS page,
+    (SELECT id FROM alldata_rum_contentrequests_results WHERE rownum = (
+      SELECT next_rownum FROM prepare_meta_cursor
+    )) AS next_cursor_id
+)
+
+SELECT
+  next_cursor_id,
+  CAST(total_rows AS INT64) AS total_rows,
+  CAST(total_pages AS INT64) AS total_pages,
+  CAST(page AS INT64) AS page
+FROM metadata;
+-- next_cursor_id: the next cursor id
+-- total_rows: the total number of rows
+-- total_pages: the total number of pages
+-- page: the current page
+
 # filter results according pagination information
 WITH pagination AS (
   SELECT rownum
@@ -285,40 +322,3 @@ ORDER BY rownum ASC;
 -- error404_requests: the total number of requests returning 404 error
 -- rownum: the number of the row
 -- time: the timestamp of the beginning of the reporting interval
-
-# hlx:metadata
-WITH metadata AS (
-  WITH prepare_meta_results AS (
-    SELECT
-      COUNT(*) AS total_rows,
-      CEIL(COUNT(*) / @limit) AS total_pages
-    FROM alldata_rum_contentrequests_results
-  ),
-
-  prepare_meta_cursor AS (
-    SELECT
-      rownum,
-      (rownum + @limit) AS next_rownum
-    FROM alldata_rum_contentrequests_results
-    WHERE is_cursor IS true
-  )
-
-  SELECT
-    (SELECT total_rows FROM prepare_meta_results) AS total_rows,
-    (SELECT total_pages FROM prepare_meta_results) AS total_pages,
-    (SELECT CEIL(rownum / @limit) FROM prepare_meta_cursor) AS page,
-    (SELECT id FROM alldata_rum_contentrequests_results WHERE rownum = (
-      SELECT next_rownum FROM prepare_meta_cursor
-    )) AS next_cursor_id
-)
-
-SELECT
-  next_cursor_id,
-  CAST(total_rows AS INT64) AS total_rows,
-  CAST(total_pages AS INT64) AS total_pages,
-  CAST(page AS INT64) AS page
-FROM metadata;
--- next_cursor_id: the next cursor id
--- total_rows: the total number of rows
--- total_pages: the total number of pages
--- page: the current page
