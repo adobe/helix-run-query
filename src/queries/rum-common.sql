@@ -369,7 +369,6 @@ END;
 CREATE OR REPLACE TABLE FUNCTION helix_rum.URLS_FROM_LIST(inurls STRING) AS (
   SELECT * FROM UNNEST(SPLIT(REGEXP_REPLACE(RTRIM(inurls, ','), ' ', ''), ',')) AS url
 );
-
 --- description: Calculate Margin of Error for Binomial Distribution
 --- weight: 100
 --- successes: 270

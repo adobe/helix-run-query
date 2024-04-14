@@ -44,9 +44,7 @@ describe('Test ContentRequests', () => {
       assert.fail(`${results} is not valid JSON`);
     }
     assert.ok(json.results.data);
-    /*
-    assert.ok(json.results.data.length === 2,
-      'expecting 2 entries, 1 for march 2024, 1 for april 2024');
+    assert.ok(json.results.data.length === 2, 'expecting 2 entries, 1 for march 2024, 1 for april 2024');
     const expected = [
       {
         id: 'dxc.com-1709251200000000',
@@ -55,7 +53,6 @@ describe('Test ContentRequests', () => {
         day: 1,
         hostname: 'dxc.com',
         content_requests: 25160,
-        content_requests_margin_of_error: 3109,
         content_requests_marginal_err_excl: 22051,
         content_requests_marginal_err_incl: 28269,
         pageviews: 24400,
@@ -73,7 +70,6 @@ describe('Test ContentRequests', () => {
         day: 1,
         hostname: 'dxc.com',
         content_requests: 18620,
-        content_requests_margin_of_error: 2675,
         content_requests_marginal_err_excl: 15945,
         content_requests_marginal_err_incl: 21295,
         pageviews: 18100,
@@ -87,7 +83,6 @@ describe('Test ContentRequests', () => {
     ];
     const actual = json.results.data;
     assert.deepEqual(actual, expected);
-    */
     assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 
@@ -117,9 +112,7 @@ describe('Test ContentRequests', () => {
       assert.fail(`${results} is not valid JSON`);
     }
     assert.ok(json.results.data);
-    /*
-    assert.ok(json.results.data.length === 1,
-      'expecting 1 entries, 1 for year 2024');
+    assert.ok(json.results.data.length === 1, 'expecting 1 entries, 1 for year 2024');
     const expected = [
       {
         id: 'dxc.com-1704067200000000',
@@ -128,7 +121,6 @@ describe('Test ContentRequests', () => {
         day: 1,
         hostname: 'dxc.com',
         content_requests: 43780,
-        content_requests_margin_of_error: 4101,
         content_requests_marginal_err_excl: 39679,
         content_requests_marginal_err_incl: 47881,
         pageviews: 42500,
@@ -142,7 +134,6 @@ describe('Test ContentRequests', () => {
     ];
     const actual = json.results.data;
     assert.deepEqual(actual, expected);
-    */
     assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 
@@ -172,9 +163,7 @@ describe('Test ContentRequests', () => {
       assert.fail(`${results} is not valid JSON`);
     }
     assert.ok(json.results.data);
-    /*
-    assert.ok(json.results.data.length === 2,
-      'expecting 2 entries, 1 for each host for year 2024');
+    assert.ok(json.results.data.length === 2, 'expecting 2 entries, 1 for each host for year 2024');
     const expected = [
       {
         id: 'blog.adobe.com-1704067200000000',
@@ -183,7 +172,6 @@ describe('Test ContentRequests', () => {
         day: 1,
         hostname: 'blog.adobe.com',
         content_requests: 188140,
-        content_requests_margin_of_error: 8502,
         content_requests_marginal_err_excl: 179638,
         content_requests_marginal_err_incl: 196642,
         pageviews: 90580,
@@ -201,7 +189,6 @@ describe('Test ContentRequests', () => {
         day: 1,
         hostname: 'dxc.com',
         content_requests: 43780,
-        content_requests_margin_of_error: 4101,
         content_requests_marginal_err_excl: 39679,
         content_requests_marginal_err_incl: 47881,
         pageviews: 42500,
@@ -215,7 +202,6 @@ describe('Test ContentRequests', () => {
     ];
     const actual = json.results.data;
     assert.deepEqual(actual, expected);
-    */
     assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 
@@ -247,9 +233,7 @@ describe('Test ContentRequests', () => {
       assert.fail(`${results} is not valid JSON`);
     }
     assert.ok(json.results.data);
-    /*
-    assert.ok(json.results.data.length === 1,
-      'expecting 1 entry for april 2024');
+    assert.ok(json.results.data.length === 1, 'expecting 1 entry for april 2024');
     const expected = [
       {
         id: 'dxc.com-1711929600000000',
@@ -258,7 +242,6 @@ describe('Test ContentRequests', () => {
         day: 1,
         hostname: 'dxc.com',
         content_requests: 18620,
-        content_requests_margin_of_error: 2675,
         content_requests_marginal_err_excl: 15945,
         content_requests_marginal_err_incl: 21295,
         pageviews: 18100,
@@ -272,7 +255,6 @@ describe('Test ContentRequests', () => {
     ];
     const actual = json.results.data;
     assert.deepEqual(actual, expected);
-    */
     assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 });
