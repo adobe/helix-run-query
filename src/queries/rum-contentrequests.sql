@@ -3,14 +3,16 @@
 --- Access-Control-Allow-Origin: *
 --- interval: 30
 --- offset: 0
---- startdate: 2023-01-01
---- enddate: 2023-12-31
+--- startdate: 2024-03-01
+--- enddate: 2024-03-31
 --- url: -
 --- granularity: 30
 --- timezone: UTC
 --- after: -
 --- limit: 1000
 --- domainkey: secret
+CREATE OR REPLACE TEMP TABLE alldata_rum_contentrequests_results
+AS
 WITH all_raw_events AS (
   SELECT
     id,
@@ -206,20 +208,15 @@ alldata AS (
     # row number
     ROW_NUMBER()
       OVER (ORDER BY hostname ASC, trunc_time ASC)
-      AS rownum,
-    row_id = CAST(@after AS STRING) AS is_cursor
+      AS rownum
   FROM alldata_granularity
   ORDER BY hostname ASC, trunc_time ASC
 ),
 
-cursor_rows AS (
-  SELECT MIN(rownum) AS rownum FROM alldata WHERE is_cursor
-  UNION ALL
-  SELECT 0 AS rownum FROM alldata WHERE @after = '-'
-),
-
 cursor_rownum AS (
-  SELECT MIN(rownum) AS rownum FROM cursor_rows
+  SELECT COALESCE(MIN(rownum), 1) AS rownum
+  FROM alldata
+  WHERE CAST(row_id AS STRING) = CAST(@after AS STRING)
 )
 
 SELECT
@@ -227,8 +224,37 @@ SELECT
   year,
   month,
   day,
-  hostname, -- noqa: RF04
+  hostname,
   content_requests,
+  content_requests_margin_of_error,
+  content_requests_marginal_err_excl,
+  content_requests_marginal_err_incl,
+  pageviews,
+  apicalls,
+  html_requests,
+  json_requests,
+  error404_requests,
+  rownum,
+  (rownum = (SELECT rownum FROM cursor_rownum)) AS is_cursor,
+  trunc_time
+FROM alldata
+ORDER BY rownum ASC;
+
+# filter results according pagination information
+WITH pagination AS (
+  SELECT rownum
+  FROM alldata_rum_contentrequests_results
+  WHERE is_cursor IS true
+)
+
+SELECT
+  id,
+  year,
+  month,
+  day,
+  hostname,
+  content_requests,
+  content_requests_margin_of_error,
   content_requests_marginal_err_excl,
   content_requests_marginal_err_incl,
   pageviews,
@@ -238,18 +264,20 @@ SELECT
   error404_requests,
   rownum,
   FORMAT_TIMESTAMP('%Y-%m-%dT%X%Ez', trunc_time) AS time -- noqa: RF04
-FROM alldata
+FROM alldata_rum_contentrequests_results
 WHERE
-  (rownum > (SELECT rownum FROM cursor_rownum))
-  AND (rownum <= ((SELECT rownum FROM cursor_rownum) + @limit))
-ORDER BY
-  rownum ASC
+  (rownum >= (SELECT rownum FROM pagination))
+  AND (rownum < ((SELECT rownum FROM pagination) + @limit))
+ORDER BY rownum ASC;
 -- id: the cursor id
 -- year: the year of the beginning of the reporting interval
 -- month: the month of the beginning of the reporting interval
 -- day: the day of the beginning of the reporting interval
 -- hostname: the domain itself
 -- content_requests: the number of Content Requests in the reporting interval that match the criteria
+-- content_requests_margin_of_error: the margin of error for the sampled data
+-- content_requests_marginal_err_excl: the lower bound of Content Requests respecting the sampling error
+-- content_requests_marginal_err_incl: the upper bound of Content Requests respecting the sampling error
 -- pageviews: the number of PageViews
 -- apicalls: the number of APICalls
 -- html_requests: the total number of HTML Requests
@@ -257,5 +285,40 @@ ORDER BY
 -- error404_requests: the total number of requests returning 404 error
 -- rownum: the number of the row
 -- time: the timestamp of the beginning of the reporting interval
--- content_requests_marginal_err_excl: the lower bound of Content Requests respecting the sampling error
--- content_requests_marginal_err_incl: the upper bound of Content Requests respecting the sampling error
+
+# hlx:metadata
+WITH metadata AS (
+  WITH prepare_meta_results AS (
+    SELECT
+      COUNT(*) AS total_rows,
+      CEIL(COUNT(*) / @limit) AS total_pages
+    FROM alldata_rum_contentrequests_results
+  ),
+
+  prepare_meta_cursor AS (
+    SELECT
+      rownum,
+      (rownum + @limit) AS next_rownum
+    FROM alldata_rum_contentrequests_results
+    WHERE is_cursor IS true
+  )
+
+  SELECT
+    (SELECT total_rows FROM prepare_meta_results) AS total_rows,
+    (SELECT total_pages FROM prepare_meta_results) AS total_pages,
+    (SELECT CEIL(rownum / @limit) FROM prepare_meta_cursor) AS page,
+    (SELECT id FROM alldata_rum_contentrequests_results WHERE rownum = (
+      SELECT next_rownum FROM prepare_meta_cursor
+    )) AS next_cursor_id
+)
+
+SELECT
+  next_cursor_id,
+  CAST(total_rows AS INT64) AS total_rows,
+  CAST(total_pages AS INT64) AS total_pages,
+  CAST(page AS INT64) AS page
+FROM metadata;
+-- next_cursor_id: the next cursor id
+-- total_rows: the total number of rows
+-- total_pages: the total number of pages
+-- page: the current page
