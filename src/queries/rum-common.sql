@@ -2,29 +2,10 @@ CREATE OR REPLACE FUNCTION helix_rum.CLUSTER_FILTERCLASS(user_agent STRING, devi
   RETURNS BOOLEAN
   AS (
     device = "all" OR 
-    (device = "desktop" AND user_agent NOT LIKE "%Mobile%" AND user_agent LIKE "Mozilla%" ) OR 
-    (device = "nobot" AND (
-      user_agent NOT LIKE "%Amazon CloudFront%" OR
-      user_agent NOT LIKE "%Apache Http Client%" OR
-      user_agent NOT LIKE "%Asynchronous Http Client%" OR 
-      user_agent NOT LIKE "%Axios"  OR 
-      user_agent NOT LIKE "%Azureus%" OR 
-      user_agent NOT LIKE "%Curl%" OR 
-      user_agent NOT LIKE "%Guzzle%" OR 
-      user_agent NOT LIKE "%Go-http-client%" OR 
-      user_agent NOT LIKE "%Headless Chrome%" OR 
-      user_agent NOT LIKE "%Java Client%" OR 
-      user_agent NOT LIKE "%Jersey%" OR 
-      user_agent NOT LIKE "%Node Oembed%" OR 
-      user_agent NOT LIKE "%okhttp%" OR 
-      user_agent NOT LIKE "%Python Requests%" OR 
-      user_agent NOT LIKE "%Wget%" OR 
-      user_agent NOT LIKE "%WinHTTP%" OR 
-      user_agent NOT LIKE "%Fast HTTP%" OR 
-      user_agent NOT LIKE "%GitHub Node Fetch"
-    )) OR
-    (device = "mobile" AND user_agent LIKE "%Mobile%") OR
-    (device = "bot" AND user_agent NOT LIKE "Mozilla%"));
+    (device = "desktop" AND user_agent LIKE "desktop%") OR 
+    (device = "nobot" AND user_agent != "bot") OR
+    (device = "mobile" AND user_agent LIKE "mobile%") OR
+    (device = "bot" AND user_agent = "bot"));
 
 CREATE OR REPLACE FUNCTION helix_rum.CLEAN_TIMEZONE(intimezone STRING)
   RETURNS STRING
