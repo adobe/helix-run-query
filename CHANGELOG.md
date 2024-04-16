@@ -1,3 +1,10 @@
+## [3.22.4](https://github.com/adobe/helix-run-query/compare/v3.22.3...v3.22.4) (2024-04-16)
+
+
+### Bug Fixes
+
+* adjust CLUSTER_FILTERCLASS to be compatible with newly defined user agent types ([18edba9](https://github.com/adobe/helix-run-query/commit/18edba986ac27710bd2edb4cbef824abd8cc2f09))
+
 ## [3.22.3](https://github.com/adobe/helix-run-query/compare/v3.22.2...v3.22.3) (2024-04-12)
 
 
