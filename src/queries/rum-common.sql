@@ -5,7 +5,7 @@ CREATE OR REPLACE FUNCTION helix_rum.CLUSTER_FILTERCLASS(user_agent STRING, devi
     (device = "desktop" AND user_agent LIKE "desktop%") OR 
     (device = "nobot" AND user_agent NOT LIKE "bot%") OR
     (device = "mobile" AND user_agent LIKE "mobile%") OR
-    (device = "bot" AND user_agent = "bot"));
+    (device = "bot" AND user_agent LIKE "bot%"));
 
 CREATE OR REPLACE FUNCTION helix_rum.CLEAN_TIMEZONE(intimezone STRING)
   RETURNS STRING
