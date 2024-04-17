@@ -10,10 +10,10 @@
 --- url: -
 --- checkpoint: -
 --- source: -
+--- aggregate: true
 --- domainkey: secret
 
-WITH
-current_data AS (
+WITH current_data AS (
   SELECT *
   FROM
     helix_rum.CHECKPOINTS_V5(
@@ -44,18 +44,79 @@ sources AS (
       ) = '-' OR CAST(@checkpoint AS STRING) = checkpoint
     ) AND (source = @source OR @source = '-')
   GROUP BY source, id, checkpoint
+),
+
+aggregate_true AS (
+  SELECT
+    checkpoint,
+    source,
+    'true' AS aggregate,
+    '' AS url,
+    APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
+    COUNT(id) AS ids,
+    COUNT(DISTINCT url) AS pages,
+    SUM(views) AS views,
+    SUM(actions) AS actions,
+    SUM(actions) / SUM(views) AS actions_per_view
+  FROM sources
+  GROUP BY source, checkpoint
+),
+
+aggregate_false AS (
+  SELECT
+    checkpoint,
+    source,
+    'false' AS aggregate,
+    url,
+    '' AS topurl,
+    COUNT(id) AS ids,
+    COUNT(DISTINCT url) AS pages,
+    SUM(views) AS views,
+    SUM(actions) AS actions,
+    SUM(actions) / SUM(views) AS actions_per_view
+  FROM sources
+  GROUP BY source, checkpoint, url
+),
+
+aggregate_all AS (
+  SELECT
+    checkpoint,
+    source,
+    ids,
+    pages,
+    url,
+    topurl,
+    views,
+    actions,
+    actions_per_view,
+    aggregate
+  FROM aggregate_true
+  UNION ALL
+  SELECT
+    checkpoint,
+    source,
+    ids,
+    pages,
+    url,
+    topurl,
+    views,
+    actions,
+    actions_per_view,
+    aggregate
+  FROM aggregate_false
 )
 
 SELECT
   checkpoint,
   source,
-  COUNT(id) AS ids,
-  COUNT(DISTINCT url) AS pages,
-  APPROX_TOP_COUNT(url, 1)[OFFSET(0)].value AS topurl,
-  SUM(views) AS views,
-  SUM(actions) AS actions,
-  SUM(actions) / SUM(views) AS actions_per_view
-FROM sources
-GROUP BY source, checkpoint
+  ids,
+  pages,
+  url,
+  topurl,
+  views,
+  actions,
+  actions_per_view
+FROM aggregate_all
+WHERE aggregate = CAST(@aggregate AS STRING)
 ORDER BY views DESC
 LIMIT @limit
