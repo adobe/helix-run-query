@@ -125,7 +125,7 @@ monthlydata AS (
     SUM(error404_requests) AS error404_requests,
     # content requests is sampled data
     # margin of error for content requests
-    helix_rum.CALC_BINOMIAL_DISTRIBUTION_MARGIN_OF_ERROR_TEMP(
+    helix_rum.MARGIN_OF_ERROR(
       # sampling rate
       MAX(weight),
       # successes 
@@ -155,7 +155,7 @@ yearlydata AS (
     SUM(error404_requests) AS error404_requests,
     # content requests is sampled data
     # margin of error for content requests
-    helix_rum.CALC_BINOMIAL_DISTRIBUTION_MARGIN_OF_ERROR_TEMP(
+    helix_rum.MARGIN_OF_ERROR(
       # sampling rate
       MAX(weight),
       # successes 

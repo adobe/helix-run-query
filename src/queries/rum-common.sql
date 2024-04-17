@@ -370,10 +370,10 @@ CREATE OR REPLACE TABLE FUNCTION helix_rum.URLS_FROM_LIST(inurls STRING) AS (
   SELECT * FROM UNNEST(SPLIT(REGEXP_REPLACE(RTRIM(inurls, ','), ' ', ''), ',')) AS url
 );
 --- description: Calculate Margin of Error for Binomial Distribution
---- weight: 100
---- successes: 270
+--- weight: the sampling weight
+--- successes: the number of successful tries
 --- zscore: 1.96
-CREATE OR REPLACE FUNCTION helix_rum.CALC_BINOMIAL_DISTRIBUTION_MARGIN_OF_ERROR_TEMP(weight NUMERIC, successes NUMERIC, zscore NUMERIC) 
+CREATE OR REPLACE FUNCTION helix_rum.MARGIN_OF_ERROR(weight NUMERIC, successes NUMERIC, zscore NUMERIC) 
   RETURNS NUMERIC
   AS (
     --- Formula for Binomial Distribution: σ= √(npq)
