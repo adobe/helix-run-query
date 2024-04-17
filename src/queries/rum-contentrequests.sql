@@ -23,16 +23,26 @@ WITH all_raw_events AS (
     user_agent,
     time,
     TIMESTAMP_TRUNC(time, DAY, @timezone) AS trunc_time # events will be evaluated on day level
-  FROM helix_rum.EVENTS_V5(
-    @url, # url
-    CAST(@offset AS INT64), # offset
-    CAST(@interval AS INT64), # days to fetch
-    @startdate, # start date
-    @enddate, # end date
-    @timezone, # timezone
-    'all', # deviceclass
-    @domainkey # domain key to prevent data sharing
-  )
+  FROM
+    helix_rum.EVENTS_V5(
+      @url, # url
+      CAST(@offset AS INT64), # offset
+      CAST(@interval AS INT64), # days to fetch
+      @startdate, # start date
+      @enddate, # end date
+      @timezone, # timezone
+      'all', # deviceclass
+      @domainkey # domain key to prevent data sharing
+    )
+  WHERE
+    hostname != ''
+    AND NOT REGEXP_CONTAINS(hostname, r'^\d+\.\d+\.\d+\.\d+$') -- IP addresses
+    AND hostname NOT LIKE 'localhost%'
+    AND hostname NOT LIKE '%.hlx.page'
+    AND hostname NOT LIKE '%.hlx3.page'
+    AND hostname NOT LIKE '%.hlx.live'
+    AND hostname NOT LIKE '%.helix3.dev'
+    AND hostname NOT LIKE '%.sharepoint.com'
 ),
 
 -- IDs can repeat, so we group by hostname and day
@@ -166,12 +176,12 @@ yearlydata AS (
 alldata_granularity AS (
   --- Desired granularity
   SELECT
-    CONCAT(hostname, '-', CAST(UNIX_MICROS(trunc_time) AS STRING)) AS row_id,
+    CONCAT(hostname, '-m-', CAST(UNIX_MICROS(trunc_time) AS STRING)) AS row_id,
     *
   FROM monthlydata WHERE CAST(@granularity AS INT64) = 30
   UNION ALL
   SELECT
-    CONCAT(hostname, '-', CAST(UNIX_MICROS(trunc_time) AS STRING)) AS row_id,
+    CONCAT(hostname, '-y-', CAST(UNIX_MICROS(trunc_time) AS STRING)) AS row_id,
     *
   FROM yearlydata WHERE CAST(@granularity AS INT64) = 365
 ),
@@ -192,17 +202,6 @@ alldata AS (
     EXTRACT(YEAR FROM TIMESTAMP_TRUNC(trunc_time, YEAR)) AS year,
     EXTRACT(MONTH FROM TIMESTAMP_TRUNC(trunc_time, MONTH)) AS month,
     EXTRACT(DAY FROM TIMESTAMP_TRUNC(trunc_time, DAY)) AS day,
-    # Lower Bound: Content Requests - Margin of Error
-    # Make sure lower bound cannot be < 1
-    CAST(
-      GREATEST(
-        (content_requests - content_requests_margin_of_error), 1
-      ) AS INT64
-    )
-      AS content_requests_marginal_err_excl,
-    # Upper Bound: Content Requests + Margin of Error
-    CAST((content_requests + content_requests_margin_of_error) AS INT64)
-      AS content_requests_marginal_err_incl,
     # row number
     ROW_NUMBER()
       OVER (ORDER BY hostname ASC, trunc_time ASC)
@@ -229,8 +228,7 @@ SELECT
   day,
   hostname, -- noqa: RF04
   content_requests,
-  content_requests_marginal_err_excl,
-  content_requests_marginal_err_incl,
+  content_requests_margin_of_error,
   pageviews,
   apicalls,
   html_requests,
@@ -250,6 +248,7 @@ ORDER BY
 -- day: the day of the beginning of the reporting interval
 -- hostname: the domain itself
 -- content_requests: the number of Content Requests in the reporting interval that match the criteria
+-- content_requests_margin_of_error: the margin of error for Content Request
 -- pageviews: the number of PageViews
 -- apicalls: the number of APICalls
 -- html_requests: the total number of HTML Requests
@@ -257,5 +256,3 @@ ORDER BY
 -- error404_requests: the total number of requests returning 404 error
 -- rownum: the number of the row
 -- time: the timestamp of the beginning of the reporting interval
--- content_requests_marginal_err_excl: the lower bound of Content Requests respecting the sampling error
--- content_requests_marginal_err_incl: the upper bound of Content Requests respecting the sampling error

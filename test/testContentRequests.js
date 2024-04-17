@@ -47,14 +47,13 @@ describe('Test ContentRequests', () => {
     assert.ok(json.results.data.length === 2, 'expecting 2 entries, 1 for march 2024, 1 for april 2024');
     const expected = [
       {
-        id: 'dxc.com-1709251200000000',
+        id: 'dxc.com-m-1709251200000000',
         year: 2024,
         month: 3,
         day: 1,
         hostname: 'dxc.com',
         content_requests: 25160,
-        content_requests_marginal_err_excl: 22051,
-        content_requests_marginal_err_incl: 28269,
+        content_requests_margin_of_error: 3109,
         pageviews: 24400,
         apicalls: 3800,
         html_requests: 28400,
@@ -64,14 +63,13 @@ describe('Test ContentRequests', () => {
         time: '2024-03-01T00:00:00+00:00',
       },
       {
-        id: 'dxc.com-1711929600000000',
+        id: 'dxc.com-m-1711929600000000',
         year: 2024,
         month: 4,
         day: 1,
         hostname: 'dxc.com',
         content_requests: 18620,
-        content_requests_marginal_err_excl: 15945,
-        content_requests_marginal_err_incl: 21295,
+        content_requests_margin_of_error: 2675,
         pageviews: 18100,
         apicalls: 2600,
         html_requests: 19900,
@@ -115,14 +113,13 @@ describe('Test ContentRequests', () => {
     assert.ok(json.results.data.length === 1, 'expecting 1 entries, 1 for year 2024');
     const expected = [
       {
-        id: 'dxc.com-1704067200000000',
+        id: 'dxc.com-y-1704067200000000',
         year: 2024,
         month: 1,
         day: 1,
         hostname: 'dxc.com',
         content_requests: 43780,
-        content_requests_marginal_err_excl: 39679,
-        content_requests_marginal_err_incl: 47881,
+        content_requests_margin_of_error: 4101,
         pageviews: 42500,
         apicalls: 6400,
         html_requests: 48300,
@@ -166,14 +163,13 @@ describe('Test ContentRequests', () => {
     assert.ok(json.results.data.length === 2, 'expecting 2 entries, 1 for each host for year 2024');
     const expected = [
       {
-        id: 'blog.adobe.com-1704067200000000',
+        id: 'blog.adobe.com-y-1704067200000000',
         year: 2024,
         month: 1,
         day: 1,
         hostname: 'blog.adobe.com',
         content_requests: 188140,
-        content_requests_marginal_err_excl: 179638,
-        content_requests_marginal_err_incl: 196642,
+        content_requests_margin_of_error: 8502,
         pageviews: 90580,
         apicalls: 487800,
         html_requests: 94880,
@@ -183,14 +179,13 @@ describe('Test ContentRequests', () => {
         time: '2024-01-01T00:00:00+00:00',
       },
       {
-        id: 'dxc.com-1704067200000000',
+        id: 'dxc.com-y-1704067200000000',
         year: 2024,
         month: 1,
         day: 1,
         hostname: 'dxc.com',
         content_requests: 43780,
-        content_requests_marginal_err_excl: 39679,
-        content_requests_marginal_err_incl: 47881,
+        content_requests_margin_of_error: 4101,
         pageviews: 42500,
         apicalls: 6400,
         html_requests: 48300,
@@ -215,7 +210,7 @@ describe('Test ContentRequests', () => {
       + '&enddate=2024-04-01'
       + '&timezone=UTC'
       + '&limit=1'
-      + '&after=dxc.com-1709251200000000'
+      + '&after=dxc.com-m-1709251200000000'
       + `&domainkey=${process.env.UNIVERSAL_TOKEN}`, {}), {
       env: {
         GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
@@ -236,14 +231,13 @@ describe('Test ContentRequests', () => {
     assert.ok(json.results.data.length === 1, 'expecting 1 entry for april 2024');
     const expected = [
       {
-        id: 'dxc.com-1711929600000000',
+        id: 'dxc.com-m-1711929600000000',
         year: 2024,
         month: 4,
         day: 1,
         hostname: 'dxc.com',
         content_requests: 18620,
-        content_requests_marginal_err_excl: 15945,
-        content_requests_marginal_err_incl: 21295,
+        content_requests_margin_of_error: 2675,
         pageviews: 18100,
         apicalls: 2600,
         html_requests: 19900,
