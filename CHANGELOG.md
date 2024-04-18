@@ -1,3 +1,10 @@
+# [3.25.0](https://github.com/adobe/helix-run-query/compare/v3.24.0...v3.25.0) (2024-04-18)
+
+
+### Features
+
+* add AEM CS mapping information to domain list [#1111](https://github.com/adobe/helix-run-query/issues/1111) ([#1112](https://github.com/adobe/helix-run-query/issues/1112)) ([bc2be3e](https://github.com/adobe/helix-run-query/commit/bc2be3e9f605cde6b424f591eaa491868fbb51b0))
+
 # [3.24.0](https://github.com/adobe/helix-run-query/compare/v3.23.0...v3.24.0) (2024-04-18)
 
 
