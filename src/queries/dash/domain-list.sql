@@ -1,4 +1,4 @@
---- description: List of domains along with some summary data.
+--- description: List of domains along with cs and some summary data.
 --- Access-Control-Allow-Origin: *
 --- Cache-Control: max-age=3600
 --- timezone: UTC
