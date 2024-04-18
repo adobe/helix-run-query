@@ -41,6 +41,7 @@ checkpoint_urls AS (
 SELECT
   url,
   APPROX_TOP_SUM(source, views, 1)[OFFSET(0)].value AS top_source,
+  ARRAY_AGG(source) AS all_sources,
   COUNT(source) AS source_count,
   SUM(views) AS views
 FROM checkpoint_urls
