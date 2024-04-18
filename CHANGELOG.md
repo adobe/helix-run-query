@@ -1,3 +1,10 @@
+# [3.23.0](https://github.com/adobe/helix-run-query/compare/v3.22.4...v3.23.0) (2024-04-18)
+
+
+### Features
+
+* add option to not aggregate rum-sources ([d9e9d22](https://github.com/adobe/helix-run-query/commit/d9e9d22247ca685e953b8a93a7e20a3a610ba537))
+
 ## [3.22.4](https://github.com/adobe/helix-run-query/compare/v3.22.3...v3.22.4) (2024-04-16)
 
 
