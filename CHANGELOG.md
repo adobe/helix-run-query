@@ -1,3 +1,10 @@
+# [3.24.0](https://github.com/adobe/helix-run-query/compare/v3.23.0...v3.24.0) (2024-04-18)
+
+
+### Features
+
+* include field for all sources in 404 query ([616a738](https://github.com/adobe/helix-run-query/commit/616a7387b70eab61fe2cb1d5eb79ad676771b468))
+
 # [3.23.0](https://github.com/adobe/helix-run-query/compare/v3.22.4...v3.23.0) (2024-04-18)
 
 
