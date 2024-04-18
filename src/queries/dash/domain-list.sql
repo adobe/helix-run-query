@@ -1,4 +1,4 @@
---- description: List of domains along with some summary data.
+--- description: List of domains along with cs and some summary data.
 --- Access-Control-Allow-Origin: *
 --- Cache-Control: max-age=3600
 --- timezone: UTC
@@ -12,6 +12,7 @@
 
 WITH pvs AS (
   SELECT
+    host,
     SUM(pageviews) AS pageviews,
     REGEXP_REPLACE(hostname, r'^www.', '') AS hostname,
     FORMAT_DATE('%Y-%b', time) AS month,
@@ -41,7 +42,16 @@ WITH pvs AS (
     AND hostname NOT LIKE '%.edison.pfizer' -- not live
     AND hostname NOT LIKE '%.web.pfizer'
     OR hostname = 'www.hlx.live'
-  GROUP BY month, hostname
+  GROUP BY month, host, hostname
+),
+
+cs AS (
+  SELECT
+    hostname,
+    REGEXP_EXTRACT(host, r'^publish-p([0-9]+)') AS program_id,
+    REGEXP_EXTRACT(host, r'^publish-p[0-9]+-e([0-9]+)') AS environment_id
+  FROM pvs
+  WHERE REGEXP_CONTAINS(host, r'^publish-p[0-9]+-e[0-9]+')
 ),
 
 total_pvs AS (
@@ -59,15 +69,15 @@ domains AS (
     a.hostname,
     a.first_visit,
     a.last_visit,
-    b.pageviews AS current_month_visits,
-    a.estimated_pvs AS total_visits
+    SUM(b.pageviews) AS current_month_visits,
+    SUM(a.estimated_pvs) AS total_visits
   FROM total_pvs AS a
   LEFT JOIN
     pvs AS b
     ON
       a.hostname = b.hostname AND b.month = FORMAT_DATE('%Y-%b', CURRENT_DATE())
   GROUP BY
-    a.hostname, a.first_visit, a.last_visit, a.estimated_pvs, b.pageviews
+    a.hostname, a.first_visit, a.last_visit
 )
 
 SELECT
@@ -76,12 +86,15 @@ SELECT
   a.first_visit,
   a.last_visit,
   a.current_month_visits,
-  a.total_visits
+  a.total_visits,
+  CAST(cs.program_id AS INT64) AS program_id,
+  CAST(cs.environment_id AS INT64) AS environment_id
 FROM domains AS a
 LEFT JOIN
   helix_reporting.domain_info AS b
   ON
     a.hostname = b.domain
+LEFT JOIN cs ON a.hostname = cs.hostname
 WHERE
   a.total_visits >= 1000
   AND DATE(a.last_visit) > (CURRENT_DATE() - 60)
