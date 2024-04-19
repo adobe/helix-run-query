@@ -148,6 +148,7 @@ enter_events AS (
   FROM events
   WHERE
     checkpoint = 'enter'
+    AND target = 'visible'
 ),
 
 utm_source_events AS (
@@ -198,22 +199,6 @@ utm_campaign_events AS (
     AND source = 'utm_campaign'
 ),
 
-utm_term_events AS (
-  SELECT
-    id,
-    date,
-    dategroup,
-    hostname,
-    checkpoint,
-    source,
-    target,
-    weight
-  FROM events
-  WHERE
-    checkpoint = 'utm'
-    AND source = 'utm_term'
-),
-
 utm_content_events AS (
   SELECT
     id,
@@ -259,14 +244,12 @@ enter_events_with_utm AS (
     ANY_VALUE(us.target) AS utm_source,
     ANY_VALUE(um.target) AS utm_medium,
     ANY_VALUE(uc.target) AS utm_campaign,
-    ANY_VALUE(ut.target) AS utm_term,
     ANY_VALUE(uc2.target) AS utm_content,
     IF(COUNT(up.source) = 0, 'organic', 'paid') AS acquisition_type
   FROM enter_events AS e
   LEFT JOIN utm_source_events AS us ON e.id = us.id AND e.date = us.date
   LEFT JOIN utm_medium_events AS um ON e.id = um.id AND e.date = um.date
   LEFT JOIN utm_campaign_events AS uc ON e.id = uc.id AND e.date = uc.date
-  LEFT JOIN utm_term_events AS ut ON e.id = ut.id AND e.date = ut.date
   LEFT JOIN utm_content_events AS uc2 ON e.id = uc2.id AND e.date = uc2.date
   LEFT JOIN utm_paid_events AS up ON e.id = up.id AND e.date = up.date
   GROUP BY e.id, e.dategroup, e.hostname, e.checkpoint, e.source, e.weight
@@ -282,7 +265,6 @@ enter_events_grouped AS (
     utm_source,
     utm_medium,
     utm_campaign,
-    utm_term,
     utm_content,
     acquisition_type,
     COUNT(source) AS count
@@ -296,7 +278,6 @@ enter_events_grouped AS (
     utm_source,
     utm_medium,
     utm_campaign,
-    utm_term,
     utm_content,
     acquisition_type
 ),
@@ -337,7 +318,6 @@ events_channels AS (
       -- affiliate
       IF(utm_medium = 'affiliate', 'affiliate', null),
       IF(utm_campaign = 'affiliate', 'affiliate', null),
-      IF(utm_term = 'affiliate', 'affiliate', null),
       -- direct
       IF(source = '', 'direct', null),
       -- everything else
@@ -351,7 +331,6 @@ events_channels AS (
     utm_source,
     utm_medium,
     utm_campaign,
-    utm_term,
     acquisition_type
 )
 
