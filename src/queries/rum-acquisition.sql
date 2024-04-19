@@ -42,7 +42,7 @@ WITH daily_events AS (
       @domainkey # domain key to prevent data sharing
     )
   WHERE
-    checkpoint IN ('enter', 'utm')
+    checkpoint IN ('enter', 'top', 'utm')
     AND user_agent NOT IN ('bot', 'undefined')
 ),
 
@@ -68,7 +68,7 @@ weekly_events AS (
       @domainkey # domain key to prevent data sharing
     )
   WHERE
-    checkpoint IN ('enter', 'utm')
+    checkpoint IN ('enter', 'top', 'utm')
     AND user_agent NOT IN ('bot', 'undefined')
 ),
 
@@ -94,7 +94,7 @@ monthly_events AS (
       @domainkey # domain key to prevent data sharing
     )
   WHERE
-    checkpoint IN ('enter', 'utm')
+    checkpoint IN ('enter', 'top', 'utm')
     AND user_agent NOT IN ('bot', 'undefined')
 ),
 
@@ -149,6 +149,34 @@ enter_events AS (
   WHERE
     checkpoint = 'enter'
     AND target = 'visible'
+),
+
+top_events AS (
+  SELECT
+    id,
+    date,
+    dategroup,
+    hostname,
+    checkpoint,
+    source,
+    weight
+  FROM events
+  WHERE
+    checkpoint = 'top'
+),
+
+top_events_without_enter AS (
+  SELECT
+    t.id,
+    t.date,
+    t.dategroup,
+    t.hostname,
+    t.checkpoint,
+    t.source,
+    t.weight
+  FROM top_events AS t
+  LEFT JOIN enter_events AS e ON t.id = e.id AND t.date = e.date
+  WHERE e.id IS NULL
 ),
 
 utm_source_events AS (
@@ -233,7 +261,7 @@ utm_paid_events AS (
   )
 ),
 
-enter_events_with_utm AS (
+events_with_utm AS (
   SELECT
     e.id,
     e.dategroup,
@@ -253,9 +281,23 @@ enter_events_with_utm AS (
   LEFT JOIN utm_content_events AS uc2 ON e.id = uc2.id AND e.date = uc2.date
   LEFT JOIN utm_paid_events AS up ON e.id = up.id AND e.date = up.date
   GROUP BY e.id, e.dategroup, e.hostname, e.checkpoint, e.source, e.weight
+  UNION ALL
+  SELECT
+    id,
+    dategroup,
+    hostname,
+    checkpoint,
+    '' AS source,
+    weight,
+    null AS utm_source,
+    null AS utm_medium,
+    null AS utm_campaign,
+    null AS utm_content,
+    'organic' AS acquisition_type
+  FROM top_events_without_enter
 ),
 
-enter_events_grouped AS (
+events_grouped AS (
   SELECT
     dategroup AS date,
     hostname,
@@ -268,7 +310,7 @@ enter_events_grouped AS (
     utm_content,
     acquisition_type,
     COUNT(source) AS count
-  FROM enter_events_with_utm
+  FROM events_with_utm
   GROUP BY
     dategroup,
     hostname,
@@ -288,6 +330,7 @@ events_channels AS (
     STRING(date, @timezone) AS date,
     COALESCE(
       -- segmentation is based on first match so the sequence of matching logic is important
+      IF(checkpoint = 'top', 'internal', null),
       -- display
       IF(utm_medium = 'display', 'display', null),
       IF(utm_source = 'dbm', 'display', null),
@@ -313,6 +356,7 @@ events_channels AS (
       IF(source LIKE '%buzzfeed%', 'social', null),
       IF(source LIKE '%youtube%', 'social', null),
       -- email
+      IF(utm_medium = 'email', 'email', null),
       IF(source LIKE '%mail%', 'email', null),
       -- referral
       -- affiliate
@@ -324,9 +368,10 @@ events_channels AS (
       'unassigned'
     ) AS traffic_source,
     SUM(weight * count) AS pageviews
-  FROM enter_events_grouped
+  FROM events_grouped
   GROUP BY
     date,
+    checkpoint,
     source,
     utm_source,
     utm_medium,
