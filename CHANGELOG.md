@@ -1,3 +1,10 @@
+# [3.26.0](https://github.com/adobe/helix-run-query/compare/v3.25.0...v3.26.0) (2024-04-23)
+
+
+### Features
+
+* new query to serve go-live hints for spacecat ([e9f2794](https://github.com/adobe/helix-run-query/commit/e9f2794567b17eb88a93d8e454357276bc4f94a4))
+
 # [3.25.0](https://github.com/adobe/helix-run-query/compare/v3.24.0...v3.25.0) (2024-04-18)
 
 
