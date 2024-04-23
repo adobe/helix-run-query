@@ -29,9 +29,14 @@ WITH hosts AS (
     checkpoint = 'top'
     AND NOT (
       host LIKE '%adobeaemcloud.net'
-      AND hostname NOT LIKE '%adobeaemcloud.com'
       AND host != hostname
     )
+    AND hostname NOT LIKE '%.hlx.live'
+    AND hostname NOT LIKE '%.hlx.page'
+    AND hostname NOT LIKE '%.aem.live'
+    AND hostname NOT LIKE '%.aem.page'
+    AND hostname NOT LIKE '%.pfizer'
+    AND hostname NOT LIKE '%.adobeaemcloud.com'
   GROUP BY hostname
 )
 
