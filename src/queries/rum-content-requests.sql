@@ -73,7 +73,7 @@ group_all_events_daily AS (
     )
     * e.weight AS json_requests,
     # request by bot
-    COALESCE(COUNTIF(e.user_agent LIKE 'bot%') > 1, false) AS is_bot_request,
+    COALESCE(COUNTIF(e.user_agent LIKE 'bot%') > 0, false) AS is_bot_request,
     # request with 404 error
     COALESCE((COUNTIF(e.checkpoint = '404') > 0), false) AS is_404_request,
     # request to excluded url (html requests)
