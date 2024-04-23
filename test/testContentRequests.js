@@ -17,16 +17,13 @@ import { Request } from '@adobe/fetch';
 
 import { main } from '../src/index.js';
 
-describe('Test ContentRequests', () => {
-  it('rum-contentrequests should provide monthly data', async () => {
-    const res = await main(new Request('https://helix-run-query.com/rum-contentrequests'
+describe('Test Content Requests', () => {
+  it('rum-content-requests should provide monthly data', async () => {
+    const res = await main(new Request('https://helix-run-query.com/rum-content-requests'
       + '?url=dxc.com'
       + '&granularity=30'
-      + '&offset=-1'
-      + '&interval=-1'
       + '&startdate=2024-03-30'
       + '&enddate=2024-04-01'
-      + '&timezone=UTC'
       + `&domainkey=${process.env.UNIVERSAL_TOKEN}`, {}), {
       env: {
         GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
@@ -47,36 +44,34 @@ describe('Test ContentRequests', () => {
     assert.ok(json.results.data.length === 2, 'expecting 2 entries, 1 for march 2024, 1 for april 2024');
     const expected = [
       {
-        id: 'dxc.com-m-1709251200000000',
-        year: 2024,
-        month: 3,
-        day: 1,
-        hostname: 'dxc.com',
         content_requests: 25160,
-        content_requests_margin_of_error: 3109,
-        pageviews: 24400,
-        apicalls: 3800,
+        cr_apicalls: 760,
+        cr_margin_of_error: 3303,
+        cr_pageviews: 24400,
+        error404_requests: 0,
+        hostname: 'dxc.com',
         html_requests: 28400,
+        id: '0ac8dd00086a26594ab800acc5f79c21450ee147',
         json_requests: 4300,
-        error404_requests: 4000,
-        rownum: 1,
+        month: 3,
         time: '2024-03-01T00:00:00+00:00',
+        top_host: 'rum.hlx.page',
+        year: 2024,
       },
       {
-        id: 'dxc.com-m-1711929600000000',
-        year: 2024,
-        month: 4,
-        day: 1,
-        hostname: 'dxc.com',
         content_requests: 18620,
-        content_requests_margin_of_error: 2675,
-        pageviews: 18100,
-        apicalls: 2600,
+        cr_apicalls: 520,
+        cr_margin_of_error: 2765,
+        cr_pageviews: 18100,
+        error404_requests: 0,
+        hostname: 'dxc.com',
         html_requests: 19900,
+        id: 'c6dfddbcc0addf585931499895b1f0729d50f390',
         json_requests: 2900,
-        error404_requests: 1800,
-        rownum: 2,
+        month: 4,
         time: '2024-04-01T00:00:00+00:00',
+        top_host: 'rum.hlx.page',
+        year: 2024,
       },
     ];
     const actual = json.results.data;
@@ -84,15 +79,12 @@ describe('Test ContentRequests', () => {
     assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 
-  it('rum-contentrequests should provide yearly data', async () => {
-    const res = await main(new Request('https://helix-run-query.com/rum-contentrequests'
+  it('rum-content-requests should provide yearly data', async () => {
+    const res = await main(new Request('https://helix-run-query.com/rum-content-requests'
       + '?url=dxc.com'
       + '&granularity=365'
-      + '&offset=-1'
-      + '&interval=-1'
       + '&startdate=2024-03-30'
       + '&enddate=2024-04-01'
-      + '&timezone=UTC'
       + `&domainkey=${process.env.UNIVERSAL_TOKEN}`, {}), {
       env: {
         GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
@@ -113,20 +105,19 @@ describe('Test ContentRequests', () => {
     assert.ok(json.results.data.length === 1, 'expecting 1 entries, 1 for year 2024');
     const expected = [
       {
-        id: 'dxc.com-y-1704067200000000',
-        year: 2024,
-        month: 1,
-        day: 1,
-        hostname: 'dxc.com',
         content_requests: 43780,
-        content_requests_margin_of_error: 4101,
-        pageviews: 42500,
-        apicalls: 6400,
+        cr_apicalls: 1280,
+        cr_margin_of_error: 6068,
+        cr_pageviews: 42500,
+        error404_requests: 0,
+        hostname: 'dxc.com',
         html_requests: 48300,
+        id: '3789fdb2d363d27da6a6dcffbe6d4b3d65aeaae5',
         json_requests: 7200,
-        error404_requests: 5800,
-        rownum: 1,
+        month: null,
         time: '2024-01-01T00:00:00+00:00',
+        top_host: 'rum.hlx.page',
+        year: 2024,
       },
     ];
     const actual = json.results.data;
@@ -134,15 +125,12 @@ describe('Test ContentRequests', () => {
     assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 
-  it('rum-contentrequests should provide data for multiple hosts', async () => {
-    const res = await main(new Request('https://helix-run-query.com/rum-contentrequests'
+  it('rum-content-requests should provide data for multiple hosts', async () => {
+    const res = await main(new Request('https://helix-run-query.com/rum-content-requests'
       + '?url=dxc.com,blog.adobe.com'
       + '&granularity=365'
-      + '&offset=-1'
-      + '&interval=-1'
       + '&startdate=2024-03-30'
       + '&enddate=2024-04-01'
-      + '&timezone=UTC'
       + `&domainkey=${process.env.UNIVERSAL_TOKEN}`, {}), {
       env: {
         GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
@@ -163,36 +151,34 @@ describe('Test ContentRequests', () => {
     assert.ok(json.results.data.length === 2, 'expecting 2 entries, 1 for each host for year 2024');
     const expected = [
       {
-        id: 'blog.adobe.com-y-1704067200000000',
-        year: 2024,
-        month: 1,
-        day: 1,
+        content_requests: 190000,
+        cr_apicalls: 99420,
+        cr_margin_of_error: 8556,
+        cr_pageviews: 90580,
+        error404_requests: 1700,
         hostname: 'blog.adobe.com',
-        content_requests: 188140,
-        content_requests_margin_of_error: 8502,
-        pageviews: 90580,
-        apicalls: 487800,
         html_requests: 94880,
+        id: '3d8835af40a49938c772d724480e09a35aa9b881',
         json_requests: 508200,
-        error404_requests: 2600,
-        rownum: 1,
+        month: null,
         time: '2024-01-01T00:00:00+00:00',
+        top_host: 'rum.hlx.page',
+        year: 2024,
       },
       {
-        id: 'dxc.com-y-1704067200000000',
-        year: 2024,
-        month: 1,
-        day: 1,
-        hostname: 'dxc.com',
         content_requests: 43780,
-        content_requests_margin_of_error: 4101,
-        pageviews: 42500,
-        apicalls: 6400,
+        cr_apicalls: 1280,
+        cr_margin_of_error: 6068,
+        cr_pageviews: 42500,
+        error404_requests: 0,
+        hostname: 'dxc.com',
         html_requests: 48300,
+        id: '3789fdb2d363d27da6a6dcffbe6d4b3d65aeaae5',
         json_requests: 7200,
-        error404_requests: 5800,
-        rownum: 2,
+        month: null,
         time: '2024-01-01T00:00:00+00:00',
+        top_host: 'rum.hlx.page',
+        year: 2024,
       },
     ];
     const actual = json.results.data;
@@ -200,17 +186,14 @@ describe('Test ContentRequests', () => {
     assert.ok(json.meta.data.filter((e) => e.name === 'domainkey').length === 0, 'domainkey should not be in requestParams');
   }).timeout(100000);
 
-  it('rum-contentrequests should provide the second page of the monthly data', async () => {
-    const res = await main(new Request('https://helix-run-query.com/rum-contentrequests'
+  it('rum-content-requests should provide the second page of the monthly data', async () => {
+    const res = await main(new Request('https://helix-run-query.com/rum-content-requests'
       + '?url=dxc.com'
       + '&granularity=30'
-      + '&offset=-1'
-      + '&interval=-1'
       + '&startdate=2024-03-30'
       + '&enddate=2024-04-01'
-      + '&timezone=UTC'
       + '&limit=1'
-      + '&after=dxc.com-m-1709251200000000'
+      + '&after=0ac8dd00086a26594ab800acc5f79c21450ee147'
       + `&domainkey=${process.env.UNIVERSAL_TOKEN}`, {}), {
       env: {
         GOOGLE_CLIENT_EMAIL: process.env.GOOGLE_CLIENT_EMAIL,
@@ -231,20 +214,19 @@ describe('Test ContentRequests', () => {
     assert.ok(json.results.data.length === 1, 'expecting 1 entry for april 2024');
     const expected = [
       {
-        id: 'dxc.com-m-1711929600000000',
-        year: 2024,
-        month: 4,
-        day: 1,
-        hostname: 'dxc.com',
         content_requests: 18620,
-        content_requests_margin_of_error: 2675,
-        pageviews: 18100,
-        apicalls: 2600,
+        cr_apicalls: 520,
+        cr_margin_of_error: 2765,
+        cr_pageviews: 18100,
+        error404_requests: 0,
+        hostname: 'dxc.com',
         html_requests: 19900,
+        id: 'c6dfddbcc0addf585931499895b1f0729d50f390',
         json_requests: 2900,
-        error404_requests: 1800,
-        rownum: 2,
+        month: 4,
         time: '2024-04-01T00:00:00+00:00',
+        top_host: 'rum.hlx.page',
+        year: 2024,
       },
     ];
     const actual = json.results.data;

@@ -369,30 +369,41 @@ END;
 CREATE OR REPLACE TABLE FUNCTION helix_rum.URLS_FROM_LIST(inurls STRING) AS (
   SELECT * FROM UNNEST(SPLIT(REGEXP_REPLACE(RTRIM(inurls, ','), ' ', ''), ',')) AS url
 );
+
 --- description: Calculate Margin of Error for Binomial Distribution
---- weight: the sampling weight
+--- sampling_rate: the sampling rate
 --- successes: the number of successful tries
 --- zscore: 1.96
-CREATE OR REPLACE FUNCTION helix_rum.MARGIN_OF_ERROR(weight NUMERIC, successes NUMERIC, zscore NUMERIC) 
-  RETURNS NUMERIC
-  AS (
-    --- Formula for Binomial Distribution: σ= √(npq)
-    --- Binomial distribution represents the probability for 'x' successes of an experiment in 'n' trials, 
-    --- given a success probability 'p' and a non-success probability 'q'
+CREATE OR REPLACE FUNCTION helix_rum.MARGIN_OF_ERROR(
+  sampling_rate NUMERIC, successes NUMERIC, zscore NUMERIC
+)
+RETURNS NUMERIC
+AS (
+  --- Formula for Binomial Distribution: σ= √(npq)
+  --- Binomial distribution represents the probability for 'x' successes of an experiment in 'n' trials, 
+  --- given a success probability 'p' and a non-success probability 'q'
 
-    --- Margin of Error
-    --- Formula: Z-score * Standard Deviation
-    --- The z-score for the confidence level: With a 95 percent confidence interval, you have a 5 percent chance of being wrong.
-    --- Standard Deviation: Measure of the amount of variation of a random variable expected about its mean
-    CAST(COALESCE(zscore, 
+  --- Margin of Error
+  --- Formula: Z-score * Standard Deviation
+  --- The z-score for the confidence level: 
+  --- With a 95 percent confidence interval, you have a 5 percent chance of being wrong.
+  --- Standard Deviation: Measure of the amount of variation of a random variable expected about its mean
+  CAST(
+    COALESCE(
+      zscore,
       CASE
         --- no sampling, no margin of error
-        WHEN weight = 1 THEN 0
+        WHEN sampling_rate = 1 THEN 0
         --- 95% confidence level - industry standard
         ELSE 1.96
       END
-    ) * (weight * SQRT(successes)) AS NUMERIC)
-  );
+    )
+    *
+    (
+      sampling_rate * SQRT(successes)
+    ) AS NUMERIC
+  )
+);
 
 # SELECT * FROM helix_rum.CLUSTER_PAGEVIEWS('blog.adobe.com', 1, 7, '', '', 'GMT', 'desktop', '-')
 # ORDER BY time DESC
