@@ -390,3 +390,7 @@ WHERE
   AND (@acquisition_type = '-' OR @acquisition_type = acquisition_type)
 GROUP BY date, traffic_source, acquisition_type
 ORDER BY acquisition_type, traffic_source, date
+--- date: date (or start date for date periods) of the reported metric
+--- traffic_source: categorization of where users are coming from
+--- acquisition_type: organic or paid
+--- pageviews: estimated page views for the given traffic source / acquisition type combination
