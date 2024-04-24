@@ -24,8 +24,8 @@ WITH all_raw_events AS (
   FROM
     helix_rum.EVENTS_V5(
       @url, # list of urls
-      CAST(-1 AS INT64), # offset
-      CAST(-1 AS INT64), # days to fetch
+      -1, # offset
+      -1, # days to fetch
       @startdate, # start date
       @enddate, # end date
       'UTC', # timezone
