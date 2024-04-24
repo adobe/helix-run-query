@@ -1,4 +1,4 @@
---- description: Get ContentRequests.
+--- description: Get ContentRequests, see documentation in https://experienceleague.adobe.com/en/docs/experience-manager-cloud-service/content/implementing/using-cloud-manager/content-requests#cliendside-collection.
 --- Authorization: none
 --- Access-Control-Allow-Origin: *
 --- startdate: 2024-01-01
@@ -45,7 +45,7 @@ WITH all_raw_events AS (
     AND hostname NOT LIKE '%.aem.live'
 ),
 
-get_top_host AS (
+top_hosts AS (
   SELECT
     hostname,
     APPROX_TOP_COUNT(host, 1)[OFFSET(0)].value AS top_host
@@ -56,32 +56,33 @@ get_top_host AS (
 # IDs can repeat, so we group by hostname and day
 group_all_events_daily AS (
   SELECT
-    e.id,
+    events.id,
     th.top_host,
-    e.hostname,
-    e.trunc_time,
-    e.weight,
+    events.hostname,
+    events.trunc_time,
+    events.weight,
     # an ID marks a single HTML request
-    e.weight AS html_requests,
+    events.weight AS html_requests,
     # a JSON request
     COALESCE(
       COUNTIF(
-        e.checkpoint = 'loadresource'
-        AND e.target NOT LIKE '%.html'
+        events.checkpoint = 'loadresource'
+        AND events.target NOT LIKE '%.html'
       ),
       0
     )
-    * e.weight AS json_requests,
+    * events.weight AS json_requests,
     # request by bot
-    COALESCE(COUNTIF(e.user_agent LIKE 'bot%') > 0, false) AS is_bot_request,
+    COALESCE(COUNTIF(events.user_agent LIKE 'bot%') > 0, false)
+      AS is_bot_request,
     # request with 404 error
-    COALESCE((COUNTIF(e.checkpoint = '404') > 0), false) AS is_404_request,
+    COALESCE((COUNTIF(events.checkpoint = '404') > 0), false) AS is_404_request,
     # request to excluded url (html requests)
     COALESCE(
       (
         COUNTIF(
-          e.url LIKE '%/manifest.json'
-          OR e.url LIKE '%/libs/%'
+          events.url LIKE '%/manifest.json'
+          OR events.url LIKE '%/libs/%'
         )
         > 0
       ),
@@ -91,14 +92,15 @@ group_all_events_daily AS (
     COALESCE(
       (
         COUNTIF(
-          e.source LIKE '%/api/qraphql/%'
+          events.source LIKE '%/api/qraphql/%'
         )
         > 0
       ), false
     ) AS is_excluded_source_request
-  FROM all_raw_events AS e
-  LEFT JOIN get_top_host AS th ON e.hostname = th.hostname
-  GROUP BY e.id, e.hostname, th.top_host, e.trunc_time, e.weight
+  FROM all_raw_events AS events
+  LEFT JOIN top_hosts AS th ON events.hostname = th.hostname
+  GROUP BY
+    events.id, events.hostname, th.top_host, events.trunc_time, events.weight
 ),
 
 # filter requests
