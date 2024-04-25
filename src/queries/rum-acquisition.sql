@@ -15,7 +15,6 @@
 -- Lars wrote: We have two distinct categories:
 -- Organic vs. Paid: this is based on the utm-campagin checkpoint
 -- Search vs. Social vs. Direct vs. Email vs. Display: this is based on the enter checkpoint
--- And then we can build a breakdown based on the combination.
 -- I think traffic_source = search | social | display | email | direct and acquisition_type = paid | organic should be separate fields in the result
 
 WITH daily_events AS (
