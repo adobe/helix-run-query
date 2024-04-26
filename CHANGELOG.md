@@ -1,3 +1,10 @@
+# [3.27.0](https://github.com/adobe/helix-run-query/compare/v3.26.0...v3.27.0) (2024-04-26)
+
+
+### Features
+
+* [ContentRequests] Create new query for billable traffic [#1083](https://github.com/adobe/helix-run-query/issues/1083) ([#1103](https://github.com/adobe/helix-run-query/issues/1103)) ([f172c91](https://github.com/adobe/helix-run-query/commit/f172c91bff80a55dbd79bb9dadae960f209f3e2c))
+
 # [3.26.0](https://github.com/adobe/helix-run-query/compare/v3.25.0...v3.26.0) (2024-04-23)
 
 
