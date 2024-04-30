@@ -43,7 +43,7 @@ describe('testing util functions', () => {
 
   it('loadQuery works with trailing parameters', async () => {
     const result = await loadQuery('rum-dashboard');
-    assert.equal(Object.keys(getTrailingParams(result)).length, 31);
+    assert.equal(Object.keys(getTrailingParams(result)).length, 37);
   });
 
   it('loadQuery throws with bad query file', async () => {
