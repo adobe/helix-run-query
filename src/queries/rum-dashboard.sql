@@ -65,10 +65,12 @@ current_rum_by_id AS (
     IF(MAX(fid) IS NULL, NULL, IF(MAX(fid) <= 100, TRUE, FALSE)) AS fidgood,
     IF(MAX(inp) IS NULL, NULL, IF(MAX(inp) <= 200, TRUE, FALSE)) AS inpgood,
     IF(MAX(cls) IS NULL, NULL, IF(MAX(cls) <= 0.1, TRUE, FALSE)) AS clsgood,
+    IF(MAX(ttfb) IS NULL, NULL, IF(MAX(ttfb) <= 800, TRUE, FALSE)) AS ttfbgood,
     IF(MAX(lcp) IS NULL, NULL, IF(MAX(lcp) >= 4000, TRUE, FALSE)) AS lcpbad,
     IF(MAX(fid) IS NULL, NULL, IF(MAX(fid) >= 300, TRUE, FALSE)) AS fidbad,
     IF(MAX(inp) IS NULL, NULL, IF(MAX(fid) >= 500, TRUE, FALSE)) AS inpbad,
     IF(MAX(cls) IS NULL, NULL, IF(MAX(cls) >= 0.25, TRUE, FALSE)) AS clsbad,
+    IF(MAX(ttfb) IS NULL, NULL, IF(MAX(ttfb) >= 1800, TRUE, FALSE)) AS ttfbbad,
     MAX(host) AS host,
     MAX(user_agent) AS user_agent,
     IF(
@@ -80,6 +82,7 @@ current_rum_by_id AS (
     MAX(fid) AS fid,
     MAX(inp) AS inp,
     MAX(cls) AS cls,
+    MAX(ttfb) AS ttfb,
     MAX(referer) AS referer,
     MAX(weight) AS weight
   FROM current_data
@@ -99,10 +102,12 @@ previous_rum_by_id AS (
     IF(MAX(fid) IS NULL, NULL, IF(MAX(fid) <= 100, TRUE, FALSE)) AS fidgood,
     IF(MAX(inp) IS NULL, NULL, IF(MAX(inp) <= 200, TRUE, FALSE)) AS inpgood,
     IF(MAX(cls) IS NULL, NULL, IF(MAX(cls) <= 0.1, TRUE, FALSE)) AS clsgood,
+    IF(MAX(ttfb) IS NULL, NULL, IF(MAX(ttfb) <= 800, TRUE, FALSE)) AS ttfbgood,
     IF(MAX(lcp) IS NULL, NULL, IF(MAX(lcp) >= 4000, TRUE, FALSE)) AS lcpbad,
     IF(MAX(fid) IS NULL, NULL, IF(MAX(fid) >= 300, TRUE, FALSE)) AS fidbad,
     IF(MAX(inp) IS NULL, NULL, IF(MAX(inp) >= 500, TRUE, FALSE)) AS inpbad,
     IF(MAX(cls) IS NULL, NULL, IF(MAX(cls) >= 0.25, TRUE, FALSE)) AS clsbad,
+    IF(MAX(ttfb) IS NULL, NULL, IF(MAX(ttfb) >= 1800, TRUE, FALSE)) AS ttfbbad,
     MAX(host) AS host,
     MAX(user_agent) AS user_agent,
     IF(
@@ -114,6 +119,7 @@ previous_rum_by_id AS (
     MAX(fid) AS fid,
     MAX(inp) AS inp,
     MAX(cls) AS cls,
+    MAX(ttfb) AS ttfb,
     MAX(referer) AS referer,
     MAX(weight) AS weight
   FROM previous_data
@@ -160,6 +166,13 @@ current_rum_by_url_and_weight AS (
     ) AS clsgood,
     CAST(
       100 * IF(
+        COUNTIF(ttfbgood IS NOT NULL) != 0,
+        COUNTIF(ttfbgood = TRUE) / COUNTIF(ttfbgood IS NOT NULL),
+        NULL
+      ) AS INT64
+    ) AS ttfbgood,
+    CAST(
+      100 * IF(
         COUNTIF(lcpbad IS NOT NULL) != 0,
         COUNTIF(lcpbad = TRUE) / COUNTIF(lcpbad IS NOT NULL),
         NULL
@@ -186,10 +199,18 @@ current_rum_by_url_and_weight AS (
         NULL
       ) AS INT64
     ) AS clsbad,
+    CAST(
+      100 * IF(
+        COUNTIF(ttfbbad IS NOT NULL) != 0,
+        COUNTIF(ttfbbad = TRUE) / COUNTIF(ttfbbad IS NOT NULL),
+        NULL
+      ) AS INT64
+    ) AS ttfbbad,
     CAST(APPROX_QUANTILES(lcp, 100)[OFFSET(75)] AS INT64) AS avglcp,
     CAST(APPROX_QUANTILES(fid, 100)[OFFSET(75)] AS INT64) AS avgfid,
     CAST(APPROX_QUANTILES(inp, 100)[OFFSET(75)] AS INT64) AS avginp,
     ROUND(APPROX_QUANTILES(cls, 100)[OFFSET(75)], 3) AS avgcls,
+    CAST(APPROX_QUANTILES(ttfb, 100)[OFFSET(75)] AS INT64) AS avgttfb,
     COUNT(id) AS events
   FROM current_rum_by_id
   GROUP BY url, weight
@@ -230,6 +251,13 @@ previous_rum_by_url_and_weight AS (
     ) AS clsgood,
     CAST(
       100 * IF(
+        COUNTIF(ttfbgood IS NOT NULL) != 0,
+        COUNTIF(ttfbgood = TRUE) / COUNTIF(ttfbgood IS NOT NULL),
+        NULL
+      ) AS INT64
+    ) AS ttfbgood,
+    CAST(
+      100 * IF(
         COUNTIF(lcpbad IS NOT NULL) != 0,
         COUNTIF(lcpbad = TRUE) / COUNTIF(lcpbad IS NOT NULL),
         NULL
@@ -256,10 +284,18 @@ previous_rum_by_url_and_weight AS (
         NULL
       ) AS INT64
     ) AS clsbad,
+    CAST(
+      100 * IF(
+        COUNTIF(ttfbbad IS NOT NULL) != 0,
+        COUNTIF(ttfbbad = TRUE) / COUNTIF(ttfbbad IS NOT NULL),
+        NULL
+      ) AS INT64
+    ) AS ttfbbad,
     CAST(APPROX_QUANTILES(lcp, 100)[OFFSET(75)] AS INT64) AS avglcp,
     CAST(APPROX_QUANTILES(fid, 100)[OFFSET(75)] AS INT64) AS avgfid,
     CAST(APPROX_QUANTILES(inp, 100)[OFFSET(75)] AS INT64) AS avginp,
     ROUND(APPROX_QUANTILES(cls, 100)[OFFSET(75)], 3) AS avgcls,
+    CAST(APPROX_QUANTILES(ttfb, 100)[OFFSET(75)] AS INT64) AS avgttfb,
     COUNT(id) AS events
   FROM previous_rum_by_id
   GROUP BY url, weight
@@ -273,14 +309,17 @@ current_rum_by_url AS (
     SUM(fidgood * weight) / SUM(weight) AS fidgood,
     SUM(inpgood * weight) / SUM(weight) AS inpgood,
     SUM(clsgood * weight) / SUM(weight) AS clsgood,
+    SUM(ttfbgood * weight) / SUM(weight) AS ttfbgood,
     SUM(lcpbad * weight) / SUM(weight) AS lcpbad,
     SUM(fidbad * weight) / SUM(weight) AS fidbad,
     SUM(inpbad * weight) / SUM(weight) AS inpbad,
     SUM(clsbad * weight) / SUM(weight) AS clsbad,
+    SUM(ttfbbad * weight) / SUM(weight) AS ttfbbad,
     SUM(avglcp * weight) / SUM(weight) AS avglcp,
     SUM(avgfid * weight) / SUM(weight) AS avgfid,
     SUM(avginp * weight) / SUM(weight) AS avginp,
     ROUND(SUM(avgcls * weight) / SUM(weight), 3) AS avgcls,
+    SUM(avgttfb * weight) / SUM(weight) AS avgttfb,
     SUM(events * weight) AS pageviews
 
   FROM current_rum_by_url_and_weight
@@ -295,14 +334,17 @@ previous_rum_by_url AS (
     SUM(fidgood * weight) / SUM(weight) AS fidgood,
     SUM(inpgood * weight) / SUM(weight) AS inpgood,
     SUM(clsgood * weight) / SUM(weight) AS clsgood,
+    SUM(ttfbgood * weight) / SUM(weight) AS ttfbgood,
     SUM(lcpbad * weight) / SUM(weight) AS lcpbad,
     SUM(fidbad * weight) / SUM(weight) AS fidbad,
     SUM(inpbad * weight) / SUM(weight) AS inpbad,
     SUM(clsbad * weight) / SUM(weight) AS clsbad,
+    SUM(ttfbbad * weight) / SUM(weight) AS ttfbbad,
     SUM(avglcp * weight) / SUM(weight) AS avglcp,
     SUM(avgfid * weight) / SUM(weight) AS avgfid,
     SUM(avginp * weight) / SUM(weight) AS avginp,
     ROUND(SUM(avgcls * weight) / SUM(weight), 3) AS avgcls,
+    SUM(avgttfb * weight) / SUM(weight) AS avgttfb,
     SUM(events * weight) AS pageviews
 
   FROM previous_rum_by_url_and_weight
@@ -336,14 +378,17 @@ current_truncated_rum_by_url AS (
     CAST(SUM(ranked.fidgood * pageviews) / SUM(pageviews) AS INT64) AS fidgood,
     CAST(SUM(ranked.inpgood * pageviews) / SUM(pageviews) AS INT64) AS inpgood,
     CAST(SUM(ranked.clsgood * pageviews) / SUM(pageviews) AS INT64) AS clsgood,
+    CAST(SUM(ranked.ttfbgood * pageviews) / SUM(pageviews) AS INT64) AS ttfbgood,
     CAST(SUM(ranked.lcpbad * pageviews) / SUM(pageviews) AS INT64) AS lcpbad,
     CAST(SUM(ranked.fidbad * pageviews) / SUM(pageviews) AS INT64) AS fidbad,
     CAST(SUM(ranked.inpbad * pageviews) / SUM(pageviews) AS INT64) AS inpbad,
     CAST(SUM(ranked.clsbad * pageviews) / SUM(pageviews) AS INT64) AS clsbad,
+    CAST(SUM(ranked.ttfbbad * pageviews) / SUM(pageviews) AS INT64) AS ttfbbad,
     CAST(SUM(ranked.avglcp * pageviews) / SUM(pageviews) AS INT64) AS avglcp,
     CAST(SUM(ranked.avgfid * pageviews) / SUM(pageviews) AS INT64) AS avgfid,
     CAST(SUM(ranked.avginp * pageviews) / SUM(pageviews) AS INT64) AS avginp,
     ROUND(SUM(ranked.avgcls * pageviews) / SUM(pageviews), 3) AS avgcls,
+    CAST(SUM(ranked.avgttfb * pageviews) / SUM(pageviews) AS INT64) AS avgttfb,
     SUM(ranked.pageviews) AS pageviews,
     100 * SUM(pageviews) / MAX(current_event_count.allevents) AS rumshare,
     IF(ranked.rank > @limit AND NOT @rising, "Other", ranked.url) AS url
@@ -354,14 +399,17 @@ current_truncated_rum_by_url AS (
       fidgood,
       inpgood,
       clsgood,
+      ttfbgood,
       lcpbad,
       fidbad,
       inpbad,
       clsbad,
+      ttfbbad,
       avglcp,
       avgfid,
       avginp,
       avgcls,
+      avgttfb,
       url,
       ROW_NUMBER() OVER (ORDER BY pageviews DESC) AS rank
     FROM current_rum_by_url) AS ranked,
@@ -375,14 +423,17 @@ previous_truncated_rum_by_url AS (
     CAST(SUM(ranked.fidgood * pageviews) / SUM(pageviews) AS INT64) AS fidgood,
     CAST(SUM(ranked.inpgood * pageviews) / SUM(pageviews) AS INT64) AS inpgood,
     CAST(SUM(ranked.clsgood * pageviews) / SUM(pageviews) AS INT64) AS clsgood,
+    CAST(SUM(ranked.ttfbgood * pageviews) / SUM(pageviews) AS INT64) AS ttfbgood,
     CAST(SUM(ranked.lcpbad * pageviews) / SUM(pageviews) AS INT64) AS lcpbad,
     CAST(SUM(ranked.fidbad * pageviews) / SUM(pageviews) AS INT64) AS fidbad,
     CAST(SUM(ranked.inpbad * pageviews) / SUM(pageviews) AS INT64) AS inpbad,
     CAST(SUM(ranked.clsbad * pageviews) / SUM(pageviews) AS INT64) AS clsbad,
+    CAST(SUM(ranked.ttfbbad * pageviews) / SUM(pageviews) AS INT64) AS ttfbbad,
     CAST(SUM(ranked.avglcp * pageviews) / SUM(pageviews) AS INT64) AS avglcp,
     CAST(SUM(ranked.avgfid * pageviews) / SUM(pageviews) AS INT64) AS avgfid,
     CAST(SUM(ranked.avginp * pageviews) / SUM(pageviews) AS INT64) AS avginp,
     ROUND(SUM(ranked.avgcls * pageviews) / SUM(pageviews), 3) AS avgcls,
+    CAST(SUM(ranked.avgttfb * pageviews) / SUM(pageviews) AS INT64) AS avgttfb,
     SUM(ranked.pageviews) AS pageviews,
     100 * SUM(pageviews) / MAX(previous_event_count.allevents) AS rumshare,
     IF(ranked.rank > @limit AND NOT @rising, "Other", ranked.url) AS url
@@ -404,27 +455,33 @@ SELECT
   fidgood,
   inpgood,
   clsgood,
+  ttfbgood,
   lcpbad,
   fidbad,
   inpbad,
   clsbad,
+  ttfbbad,
   avglcp,
   avgfid,
   avginp,
   avgcls,
+  avgttfb,
   rumshare,
   lcpgood_1,
   fidgood_1,
   inpgood_1,
   clsgood_1,
+  ttfbgood_1,
   lcpbad_1,
   fidbad_1,
   inpbad_1,
   clsbad_1,
+  ttfbbad_1,
   avglcp_1,
   avgfid_1,
   avginp_1,
   avgcls_1,
+  avgttfb_1,
   rumshare_1,
   url_1
 FROM (
@@ -435,27 +492,33 @@ FROM (
     current_truncated_rum_by_url.fidgood AS fidgood,
     current_truncated_rum_by_url.inpgood AS inpgood,
     current_truncated_rum_by_url.clsgood AS clsgood,
+    current_truncated_rum_by_url.ttfbgood AS ttfbgood,
     current_truncated_rum_by_url.lcpbad AS lcpbad,
     current_truncated_rum_by_url.fidbad AS fidbad,
     current_truncated_rum_by_url.inpbad AS inpbad,
     current_truncated_rum_by_url.clsbad AS clsbad,
+    current_truncated_rum_by_url.ttfbbad AS ttfbbad,
     current_truncated_rum_by_url.avglcp AS avglcp,
     current_truncated_rum_by_url.avgfid AS avgfid,
     current_truncated_rum_by_url.avginp AS avginp,
     current_truncated_rum_by_url.avgcls AS avgcls,
+    current_truncated_rum_by_url.avgttfb AS avgttfb,
     current_truncated_rum_by_url.rumshare AS rumshare,
     previous_truncated_rum_by_url.lcpgood AS lcpgood_1,
     previous_truncated_rum_by_url.fidgood AS fidgood_1,
     previous_truncated_rum_by_url.inpgood AS inpgood_1,
     previous_truncated_rum_by_url.clsgood AS clsgood_1,
+    previous_truncated_rum_by_url.ttfbgood AS ttfbgood_1,
     previous_truncated_rum_by_url.lcpbad AS lcpbad_1,
     previous_truncated_rum_by_url.fidbad AS fidbad_1,
     previous_truncated_rum_by_url.inpbad AS inpbad_1,
     previous_truncated_rum_by_url.clsbad AS clsbad_1,
+    previous_truncated_rum_by_url.ttfbbad AS ttfbbad_1,
     previous_truncated_rum_by_url.avglcp AS avglcp_1,
     previous_truncated_rum_by_url.avgfid AS avgfid_1,
     previous_truncated_rum_by_url.avginp AS avginp_1,
     previous_truncated_rum_by_url.avgcls AS avgcls_1,
+    previous_truncated_rum_by_url.avgttfb AS avgttfb_1,
     previous_truncated_rum_by_url.rumshare AS rumshare_1,
     previous_truncated_rum_by_url.url AS url_1,
     ROW_NUMBER() OVER (
@@ -499,6 +562,8 @@ FROM (
 --- avginp_1: 75th percentile of INP in the previous period
 --- avglcp: 75th percentile of the Largest Contentful Paint metric in milliseconds in the current period
 --- avglcp_1: 75th percentile of LCP in the previous period
+--- avgttfb: 75th percentile of the Time to First Byte metric in milliseconds in the current period
+--- avgttfb_1: 75th percentile of TTFB in the previous period
 --- clsbad: percentage of all page views where Cumulative Layout Shift is in the “needs improvement” range in the current period
 --- clsbad_1: percentage of of all page views with bad CLS in the previous period
 --- clsgood: percentage of all page views where the CLS metric is in the “good” range in the current period
@@ -515,6 +580,10 @@ FROM (
 --- lcpbad_1: percentage of pageviews with bad LCP in the previous period
 --- lcpgood: percentage of pageviews with good LCP in the current period
 --- lcpgood_1: percentage of pageviews with good LCP in the current period
+--- ttfbbad: percentage of pageviews with bad TTFB in the current period
+--- ttfbbad_1: percentage of pageviews with bad TTFB in the previous period
+--- ttfbgood: percentage of pageviews with good TTFB in the current period
+--- ttfbgood_1: percentage of pageviews with good TTFB in the current period
 --- pageviews: estimated number of pageviews in the current period
 --- pageviews_1: estimated number of pageviews in the previous period
 --- pageviews_diff: difference in pageviews between the current and previous period. If the parameter rising is true, then pages will be ranked according to this value
