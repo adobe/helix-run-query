@@ -1,3 +1,15 @@
+# [3.28.0](https://github.com/adobe/helix-run-query/compare/v3.27.0...v3.28.0) (2024-05-02)
+
+
+### Bug Fixes
+
+* unit tests ([5708fd1](https://github.com/adobe/helix-run-query/commit/5708fd1e5cb351c668b9c271a7a2f56066c93ef8))
+
+
+### Features
+
+* add ttfb metric to rum-dashboard ([4bee7d8](https://github.com/adobe/helix-run-query/commit/4bee7d8f1df902a714dc569874307ae2dd711848))
+
 # [3.27.0](https://github.com/adobe/helix-run-query/compare/v3.26.0...v3.27.0) (2024-04-26)
 
 
