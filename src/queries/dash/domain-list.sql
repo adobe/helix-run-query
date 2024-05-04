@@ -46,7 +46,7 @@ WITH pvs AS (
 ),
 
 cs AS (
-  SELECT
+  SELECT DISTINCT
     hostname,
     REGEXP_EXTRACT(host, r'^publish-p([0-9]+)') AS program_id,
     REGEXP_EXTRACT(host, r'^publish-p[0-9]+-e([0-9]+)') AS environment_id
