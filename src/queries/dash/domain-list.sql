@@ -46,7 +46,7 @@ WITH pvs AS (
 ),
 
 cs AS (
-  SELECT
+  SELECT DISTINCT
     hostname,
     REGEXP_EXTRACT(host, r'^publish-p([0-9]+)') AS program_id,
     REGEXP_EXTRACT(host, r'^publish-p[0-9]+-e([0-9]+)') AS environment_id
@@ -80,7 +80,7 @@ domains AS (
     a.hostname, a.first_visit, a.last_visit
 )
 
-SELECT DISTINCT
+SELECT
   a.hostname,
   b.ims_org_id,
   a.first_visit,
