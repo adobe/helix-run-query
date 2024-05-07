@@ -80,7 +80,7 @@ domains AS (
     a.hostname, a.first_visit, a.last_visit
 )
 
-SELECT
+SELECT DISTINCT
   a.hostname,
   b.ims_org_id,
   a.first_visit,
