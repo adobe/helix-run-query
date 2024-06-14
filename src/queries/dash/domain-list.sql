@@ -38,9 +38,6 @@ WITH pvs AS (
     AND hostname NOT LIKE '%.hlx.live'
     AND hostname NOT LIKE '%.helix3.dev'
     AND hostname NOT LIKE '%.sharepoint.com'
-    AND hostname NOT LIKE '%.google.com'
-    AND hostname NOT LIKE '%.edison.pfizer' -- not live
-    AND hostname NOT LIKE '%.web.pfizer'
     OR hostname = 'www.hlx.live'
   GROUP BY month, host, hostname
 ),
@@ -82,7 +79,7 @@ domains AS (
 
 SELECT
   a.hostname,
-  b.ims_org_id,
+  '' AS ims_org_id,
   a.first_visit,
   a.last_visit,
   a.current_month_visits,
@@ -90,12 +87,7 @@ SELECT
   CAST(cs.program_id AS INT64) AS program_id,
   CAST(cs.environment_id AS INT64) AS environment_id
 FROM domains AS a
-LEFT JOIN
-  helix_reporting.domain_info AS b
-  ON
-    a.hostname = b.domain
 LEFT JOIN cs ON a.hostname = cs.hostname
 WHERE
-  a.total_visits >= 1000
-  AND DATE(a.last_visit) > (CURRENT_DATE() - 60)
+  DATE(a.last_visit) > (CURRENT_DATE() - 60)
 ORDER BY a.total_visits DESC, a.current_month_visits DESC
