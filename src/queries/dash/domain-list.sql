@@ -38,6 +38,7 @@ WITH pvs AS (
     AND hostname NOT LIKE '%.hlx.live'
     AND hostname NOT LIKE '%.helix3.dev'
     AND hostname NOT LIKE '%.sharepoint.com'
+    AND hostname NOT LIKE '%.google.com'
     OR hostname = 'www.hlx.live'
   GROUP BY month, host, hostname
 ),
