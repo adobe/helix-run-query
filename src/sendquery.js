@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { BigQuery, BigQueryTimestamp } from '@google-cloud/bigquery';
+import { BigQuery } from '@google-cloud/bigquery';
 import size from 'json-size';
 import { Response } from '@adobe/fetch';
 import * as crypto from 'crypto';
@@ -181,7 +181,7 @@ export async function execute(email, key, project, query, _, params = {}, logger
               const [metadataResults] = await metadata.getQueryResults();
               responseMetadata.totalRows = metadataResults[0]?.total_rows;
             }
-            await logQueryStats(childJobs[1], BigQueryTimestamp, domainKeyHash, logger.info);
+            await logQueryStats(childJobs[1], query, domainKeyHash, logger.info);
           }
           resolve({
             headers,
