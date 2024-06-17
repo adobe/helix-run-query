@@ -15,7 +15,6 @@ import { cleanupHeaderValue } from '@adobe/helix-shared-utils';
 import { logger } from '@adobe/helix-universal-logger';
 import { Response } from '@adobe/fetch';
 import bodyData from '@adobe/helix-shared-body-data';
-import * as crypto from 'crypto';
 import { execute, queryInfo } from './sendquery.js';
 import {
   cleanRequestParams, csvify, sshonify, extractQueryPath, chartify,
@@ -34,6 +33,7 @@ async function runExec(params, pathname, log) {
       requestParams,
       responseDetails,
       responseMetadata,
+      domainKeyHash,
     } = await execute(
       params.GOOGLE_CLIENT_EMAIL,
       params.GOOGLE_PRIVATE_KEY,
@@ -43,8 +43,6 @@ async function runExec(params, pathname, log) {
       cleanRequestParams(params),
       log,
     );
-
-    const domainKeyHash = crypto.createHash('md5').update(requestParams.domainkey).digest('hex');
 
     if (pathname && pathname.endsWith('.csv')) {
       return new Response(csvify(results), {

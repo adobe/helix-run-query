@@ -9,9 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { BigQuery } from '@google-cloud/bigquery';
+import { BigQuery, BigQueryTimestamp } from '@google-cloud/bigquery';
 import size from 'json-size';
 import { Response } from '@adobe/fetch';
+import * as crypto from 'crypto';
 import { auth } from './auth.js';
 
 import {
@@ -38,6 +39,7 @@ async function processParams(query, params) {
     cleanHeaderParams(loadedQuery, headerParams),
   );
   const responseDetails = getTrailingParams(loadedQuery);
+  const domainKeyHash = requestParams.domainkey ? crypto.createHash('md5').update(requestParams.domainkey).digest('hex') : null;
 
   return {
     headerParams,
@@ -45,7 +47,38 @@ async function processParams(query, params) {
     loadedQuery,
     requestParams,
     responseDetails,
+    domainKeyHash,
   };
+}
+
+async function logQueryStats(job, query, domainKeyHash, fn) {
+  const [metadata] = await job.getMetadata();
+  if (!metadata.statistics.query.totalBytesBilled) {
+    // nothing to do
+    return;
+  }
+  const centsperterra = 5;
+  const minbytes = 1024 * 1024;
+  const billed = parseInt(metadata.statistics.query.totalBytesBilled, 10);
+  const billedbytes = Math.max(billed, billed && minbytes);
+  const billedterrabytes = billedbytes / 1024 / 1024 / 1024 / 1024;
+
+  const billedcents = billedterrabytes * centsperterra;
+  const cf = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    minimumSignificantDigits: 2,
+    maximumSignificantDigits: 2,
+  });
+  const nf = new Intl.NumberFormat('en-US', {
+    style: 'unit',
+    unit: 'gigabyte',
+    maximumSignificantDigits: 3,
+  });
+  const msg = `BigQuery job ${job.id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ${cf.format(billedcents)}, domainkey: ${domainKeyHash}`;
+  console.log('Logger Message', msg);
+  fn(msg);
 }
 
 /**
@@ -58,13 +91,14 @@ async function processParams(query, params) {
  * @param {string} service the serviceid of the published site
  * @param {object} params parameters for substitution into query
  */
-export async function execute(email, key, project, query, _, params = {}) {
+export async function execute(email, key, project, query, _, params = {}, logger = console) {
   const {
     headerParams,
     description,
     loadedQuery,
     requestParams,
     responseDetails,
+    domainKeyHash,
   } = await processParams(query, params);
   try {
     const credentials = await auth(email, key.replace(/\\n/g, '\n'));
@@ -125,6 +159,7 @@ export async function execute(email, key, project, query, _, params = {}) {
           requestParams,
           responseDetails,
           responseMetadata,
+          domainKeyHash,
         })))
         .on(
           'error',
@@ -146,6 +181,7 @@ export async function execute(email, key, project, query, _, params = {}) {
               const [metadataResults] = await metadata.getQueryResults();
               responseMetadata.totalRows = metadataResults[0]?.total_rows;
             }
+            await logQueryStats(childJobs[1], BigQueryTimestamp, domainKeyHash, logger.info);
           }
           resolve({
             headers,
@@ -155,6 +191,7 @@ export async function execute(email, key, project, query, _, params = {}) {
             requestParams,
             responseDetails,
             responseMetadata,
+            domainKeyHash,
           });
         });
     });
