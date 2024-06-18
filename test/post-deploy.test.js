@@ -10,11 +10,9 @@
  * governing permissions and limitations under the License.
  */
 /* eslint-env mocha */
-import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import assert from 'assert';
+import { fetch } from '@adobe/fetch';
 import { createTargets } from './post-deploy-utils.js';
-
-const { expect, request } = chai.use(chaiHttp);
 
 createTargets().forEach((target) => {
   describe(`Post-Deploy Tests (${target.title()}) ${target.host()}${target.urlPath()}`, () => {
@@ -28,51 +26,41 @@ createTargets().forEach((target) => {
       const path = `${target.urlPath()}/rum-dashboard`;
       // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
-      await request(target.host())
-        .get(path)
-        // set Authorization header to the universal token
-        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
-        .then((response) => {
-          expect(response).to.have.status(200);
-          expect(response).to.have.header('Content-Type', /^application\/json/);
-          // validate the response body
-          expect(response.body.meta.data).to.have.lengthOf(49);
-        })
-        .catch((e) => {
-          throw e;
-        });
+      const response = await fetch(`${target.host()}${path}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
+        },
+      });
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get('Content-Type'), 'application/json');
+      const body = await response.json();
+      assert.equal(body.meta.data.length, 49);
     }).timeout(60000);
 
     it('Daily Pageviews', async () => {
       const path = `${target.urlPath()}/rum-pageviews?url=www.theplayers.com&offset=1`;
       // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
-      await request(target.host())
-        .get(path)
-        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
-        .then((response) => {
-          expect(response).to.have.status(200);
-          expect(response).to.have.header('Content-Type', /^application\/json/);
-        })
-        .catch((e) => {
-          throw e;
-        });
+      const response = await fetch(`${target.host()}${path}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
+        },
+      });
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get('Content-Type'), 'application/json');
     }).timeout(60000);
 
     it('Service reports status', async () => {
       const path = `${target.urlPath()}/_status_check/healthcheck.json`;
       // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
-      await request(target.host())
-        .get(path)
-        .set('Authorization', `Bearer ${process.env.UNIVERSAL_TOKEN}`)
-        .then((response) => {
-          expect(response).to.have.status(200);
-          expect(response).to.have.header('Content-Type', /^application\/json/);
-        })
-        .catch((e) => {
-          throw e;
-        });
+      const response = await fetch(`${target.host()}${path}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
+        },
+      });
+      assert.equal(response.status, 200);
+      assert.equal(response.headers.get('Content-Type'), 'application/json');
     }).timeout(10000);
-  }).timeout(10000);
+  });
 });
