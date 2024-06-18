@@ -33,7 +33,7 @@ async function runExec(params, pathname, log) {
       requestParams,
       responseDetails,
       responseMetadata,
-      domainKeyHash,
+      domainKey,
     } = await execute(
       params.GOOGLE_CLIENT_EMAIL,
       params.GOOGLE_PRIVATE_KEY,
@@ -81,7 +81,7 @@ async function runExec(params, pathname, log) {
       responseDetails,
       responseMetadata,
       truncated,
-      domainKeyHash,
+      domainKey,
     ), {
       status: 200,
       headers: {

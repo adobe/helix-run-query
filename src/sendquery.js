@@ -12,7 +12,6 @@
 import { BigQuery } from '@google-cloud/bigquery';
 import size from 'json-size';
 import { Response } from '@adobe/fetch';
-import * as crypto from 'crypto';
 import { auth } from './auth.js';
 
 import {
@@ -39,7 +38,7 @@ async function processParams(query, params) {
     cleanHeaderParams(loadedQuery, headerParams),
   );
   const responseDetails = getTrailingParams(loadedQuery);
-  const domainKeyHash = requestParams.domainkey ? crypto.createHash('md5').update(requestParams.domainkey).digest('hex') : null;
+  const domainKey = requestParams.domainkey;
 
   return {
     headerParams,
@@ -47,16 +46,13 @@ async function processParams(query, params) {
     loadedQuery,
     requestParams,
     responseDetails,
-    domainKeyHash,
+    domainKey,
   };
 }
 
-async function logQueryStats(job, query, domainKeyHash, fn) {
+async function logQueryStats(job, query, domainKey, fn) {
   const [metadata] = await job.getMetadata();
-  if (!metadata.statistics.query.totalBytesBilled) {
-    // nothing to do
-    return;
-  }
+
   const centsperterra = 5;
   const minbytes = 1024 * 1024;
   const billed = parseInt(metadata.statistics.query.totalBytesBilled, 10);
@@ -64,19 +60,12 @@ async function logQueryStats(job, query, domainKeyHash, fn) {
   const billedterrabytes = billedbytes / 1024 / 1024 / 1024 / 1024;
 
   const billedcents = billedterrabytes * centsperterra;
-  const cf = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    minimumSignificantDigits: 2,
-    maximumSignificantDigits: 2,
-  });
   const nf = new Intl.NumberFormat('en-US', {
     style: 'unit',
     unit: 'gigabyte',
     maximumSignificantDigits: 3,
   });
-  const msg = `BigQuery job ${job.id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ${cf.format(billedcents)}, domainkey: ${domainKeyHash}`;
+  const msg = `BigQuery job ${job.id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ¢${billedcents}, domainkey: ${domainKey}`;
   console.log('Logger Message', msg);
   fn(msg);
 }
@@ -98,7 +87,7 @@ export async function execute(email, key, project, query, _, params = {}, logger
     loadedQuery,
     requestParams,
     responseDetails,
-    domainKeyHash,
+    domainKey,
   } = await processParams(query, params);
   try {
     const credentials = await auth(email, key.replace(/\\n/g, '\n'));
@@ -159,7 +148,7 @@ export async function execute(email, key, project, query, _, params = {}, logger
           requestParams,
           responseDetails,
           responseMetadata,
-          domainKeyHash,
+          domainKey,
         })))
         .on(
           'error',
@@ -181,7 +170,7 @@ export async function execute(email, key, project, query, _, params = {}, logger
               const [metadataResults] = await metadata.getQueryResults();
               responseMetadata.totalRows = metadataResults[0]?.total_rows;
             }
-            await logQueryStats(childJobs[1], query, domainKeyHash, logger.info);
+            await logQueryStats(childJobs[1], query, domainKey, logger.info);
           }
           resolve({
             headers,
@@ -191,7 +180,7 @@ export async function execute(email, key, project, query, _, params = {}, logger
             requestParams,
             responseDetails,
             responseMetadata,
-            domainKeyHash,
+            domainKey,
           });
         });
     });
