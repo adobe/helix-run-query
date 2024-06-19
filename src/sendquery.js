@@ -38,6 +38,7 @@ async function processParams(query, params) {
     cleanHeaderParams(loadedQuery, headerParams),
   );
   const responseDetails = getTrailingParams(loadedQuery);
+  const domainKey = requestParams.domainkey;
 
   return {
     headerParams,
@@ -45,7 +46,27 @@ async function processParams(query, params) {
     loadedQuery,
     requestParams,
     responseDetails,
+    domainKey,
   };
+}
+
+async function logQueryStats(job, query, domainKey, fn) {
+  const [metadata] = await job.getMetadata();
+
+  const centsperterra = 5;
+  const minbytes = 1024 * 1024;
+  const billed = parseInt(metadata.statistics.query.totalBytesBilled, 10);
+  const billedbytes = Math.max(billed, billed && minbytes);
+  const billedterrabytes = billedbytes / 1024 / 1024 / 1024 / 1024;
+
+  const billedcents = billedterrabytes * centsperterra;
+  const nf = new Intl.NumberFormat('en-US', {
+    style: 'unit',
+    unit: 'gigabyte',
+    maximumSignificantDigits: 3,
+  });
+  const msg = `BigQuery job ${job.id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ¢${billedcents}, domainkey: ${domainKey}`;
+  fn(msg);
 }
 
 /**
@@ -58,13 +79,14 @@ async function processParams(query, params) {
  * @param {string} service the serviceid of the published site
  * @param {object} params parameters for substitution into query
  */
-export async function execute(email, key, project, query, _, params = {}) {
+export async function execute(email, key, project, query, _, params = {}, logger = console) {
   const {
     headerParams,
     description,
     loadedQuery,
     requestParams,
     responseDetails,
+    domainKey,
   } = await processParams(query, params);
   try {
     const credentials = await auth(email, key.replace(/\\n/g, '\n'));
@@ -125,6 +147,7 @@ export async function execute(email, key, project, query, _, params = {}) {
           requestParams,
           responseDetails,
           responseMetadata,
+          domainKey,
         })))
         .on(
           'error',
@@ -146,6 +169,7 @@ export async function execute(email, key, project, query, _, params = {}) {
               const [metadataResults] = await metadata.getQueryResults();
               responseMetadata.totalRows = metadataResults[0]?.total_rows;
             }
+            await logQueryStats(childJobs[1], query, domainKey, logger.info);
           }
           resolve({
             headers,
@@ -155,6 +179,7 @@ export async function execute(email, key, project, query, _, params = {}) {
             requestParams,
             responseDetails,
             responseMetadata,
+            domainKey,
           });
         });
     });
