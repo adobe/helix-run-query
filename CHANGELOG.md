@@ -1,3 +1,10 @@
+# [3.30.0](https://github.com/adobe/helix-run-query/compare/v3.29.0...v3.30.0) (2024-06-19)
+
+
+### Features
+
+* **domain-list.sql:** Remove pv threshold, cleanup hostname and ims org id ([ddc1a09](https://github.com/adobe/helix-run-query/commit/ddc1a0981dea7e7b452e271a59121549f644a87e)), closes [#1140](https://github.com/adobe/helix-run-query/issues/1140)
+
 # [3.29.0](https://github.com/adobe/helix-run-query/compare/v3.28.5...v3.29.0) (2024-06-19)
 
 
