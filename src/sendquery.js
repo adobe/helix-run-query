@@ -66,7 +66,6 @@ async function logQueryStats(job, query, domainKey, fn) {
     maximumSignificantDigits: 3,
   });
   const msg = `BigQuery job ${job.id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ¢${billedcents}, domainkey: ${domainKey}`;
-  console.log('Logger Message', msg);
   fn(msg);
 }
 
