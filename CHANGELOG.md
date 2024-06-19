@@ -1,3 +1,10 @@
+# [3.29.0](https://github.com/adobe/helix-run-query/compare/v3.28.5...v3.29.0) (2024-06-19)
+
+
+### Features
+
+* **sendquery:** add function logQueryStats, log plain domain key ([c54f54b](https://github.com/adobe/helix-run-query/commit/c54f54bdad961c079150b49d524d46fcbe5483e8))
+
 ## [3.28.5](https://github.com/adobe/helix-run-query/compare/v3.28.4...v3.28.5) (2024-06-07)
 
 
