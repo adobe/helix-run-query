@@ -1,3 +1,10 @@
+## [3.30.2](https://github.com/adobe/helix-run-query/compare/v3.30.1...v3.30.2) (2024-06-20)
+
+
+### Bug Fixes
+
+* short-circuit rum-dashboard query if invalid domain key ([ecfab6b](https://github.com/adobe/helix-run-query/commit/ecfab6bddccf4cfeddbe55eb1072ae06220d7db7))
+
 ## [3.30.1](https://github.com/adobe/helix-run-query/compare/v3.30.0...v3.30.1) (2024-06-20)
 
 
