@@ -40,7 +40,6 @@
     "@adobe/helix-shared-utils": "3.0.2",
     "@adobe/helix-shared-wrap": "2.0.2",
     "@adobe/helix-status": "10.1.2",
-    "@adobe/helix-universal-logger": "3.0.18",
     "@google-cloud/bigquery": "7.5.2",
     "dotenv": "16.4.5",
     "fs-extra": "11.2.0",
