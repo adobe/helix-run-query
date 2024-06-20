@@ -1,3 +1,10 @@
+## [3.30.1](https://github.com/adobe/helix-run-query/compare/v3.30.0...v3.30.1) (2024-06-20)
+
+
+### Bug Fixes
+
+* **logging:** remove old log adapter ([13d32ef](https://github.com/adobe/helix-run-query/commit/13d32ef93ac78f007ad30a83f14c22a199323ef1))
+
 # [3.30.0](https://github.com/adobe/helix-run-query/compare/v3.29.0...v3.30.0) (2024-06-19)
 
 
