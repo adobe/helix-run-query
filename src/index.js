@@ -12,7 +12,6 @@
 import { helixStatus } from '@adobe/helix-status';
 import wrap from '@adobe/helix-shared-wrap';
 import { cleanupHeaderValue } from '@adobe/helix-shared-utils';
-import { logger } from '@adobe/helix-universal-logger';
 import { Response } from '@adobe/fetch';
 import bodyData from '@adobe/helix-shared-body-data';
 import { execute, queryInfo } from './sendquery.js';
@@ -121,8 +120,6 @@ export const main = wrap(run)
     googleiam: 'https://iam.googleapis.com/$discovery/rest?version=v1',
     googlebigquery: 'https://www.googleapis.com/discovery/v1/apis/bigquery/v2/rest',
   })
-  .with(logger.trace)
-  .with(logger)
   .with(bodyData, {
     coerceInt: true,
     coerceBoolean: true,
