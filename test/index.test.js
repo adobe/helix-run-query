@@ -70,6 +70,17 @@ describe('Index Tests', async () => {
       ],
     ).passthrough();
 
+    // Ensure that the Authorization header is always redacted in the recordings.
+    server.any().on('beforePersist', (req, recording) => {
+      // eslint-disable-next-line no-param-reassign
+      recording.request.headers = recording.request.headers.map((header) => {
+        if (header.name === 'authorization') {
+          return { name: header.name, value: '<redacted>' };
+        }
+        return header;
+      });
+    });
+
     server.any('https://bigquery.googleapis.com/bigquery/v2/projects/helix-225321/queries/*')
       .on('beforePersist', (req, recording) => {
         // eslint-disable-next-line no-param-reassign
