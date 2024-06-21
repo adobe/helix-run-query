@@ -50,6 +50,9 @@ async function processParams(query, params) {
   };
 }
 
+/**
+ * Log query stats to console.
+ */
 async function logQueryStats(job, query, domainKey, fn) {
   const [metadata] = await job.getMetadata();
 
@@ -149,12 +152,12 @@ export async function execute(email, key, project, query, _, params = {}, logger
       parentJobId: job.metadata.jobReference.jobId,
     });
     // jobs are ordered in descending order by execution time
-    const metadata = childJobs && childJobs.length >= 2 ? childJobs[1] : job;
-    if (metadata) {
-      const [metadataResults] = await metadata.getQueryResults();
+    const statsJob = childJobs && childJobs.length >= 2 ? childJobs[1] : job;
+    if (statsJob) {
+      const [metadataResults] = await statsJob.getQueryResults();
       responseMetadata.totalRows = metadataResults[0]?.total_rows;
     }
-    await logQueryStats(metadata, query, domainKey, logger.info);
+    await logQueryStats(statsJob, query, domainKey, logger.info);
 
     return {
       headers,
