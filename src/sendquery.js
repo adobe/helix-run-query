@@ -66,9 +66,16 @@ async function logQueryStats(job, query, domainKey, fn) {
   const nf = new Intl.NumberFormat('en-US', {
     style: 'unit',
     unit: 'gigabyte',
-    maximumSignificantDigits: 3,
+    maximumSignificantDigits: 9,
   });
-  const msg = `BigQuery job ${job.id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ¢${totalBilledCents}, domainkey: ${domainKey}`;
+  const totalBytesProcessed = parseInt(metadata.statistics.query.totalBytesProcessed, 10);
+  const msg = `BigQuery job ${job.id} for `
+    + `${metadata.statistics.query.cacheHit ? '(cached)' : ''} `
+    + `${metadata.statistics.query.statementType} ${query} `
+    + `finished with status ${metadata.status.state}, `
+    + `total processed: ${nf.format(totalBytesProcessed / 1024 / 1024 / 1024)}, `
+    + `total billed: ${nf.format(maximumBilledBytes / 1024 / 1024 / 1024)}, `
+    + `estimated cost: ¢${totalBilledCents}, domainkey: ${domainKey}`;
   fn(msg);
 }
 
