@@ -50,23 +50,66 @@ async function processParams(query, params) {
   };
 }
 
+/**
+ * Log query stats to console.
+ */
 async function logQueryStats(job, query, domainKey, fn) {
   const [metadata] = await job.getMetadata();
 
-  const centsperterra = 5;
-  const minbytes = 1024 * 1024;
+  const centsPerTerabyte = 5;
+  const minimumBytes = 1024 * 1024;
   const billed = parseInt(metadata.statistics.query.totalBytesBilled, 10);
-  const billedbytes = Math.max(billed, billed && minbytes);
-  const billedterrabytes = billedbytes / 1024 / 1024 / 1024 / 1024;
+  const maximumBilledBytes = Math.max(billed, billed && minimumBytes);
+  const billedBytesInTerabytes = maximumBilledBytes / 1024 / 1024 / 1024 / 1024;
 
-  const billedcents = billedterrabytes * centsperterra;
+  const totalBilledCents = billedBytesInTerabytes * centsPerTerabyte;
   const nf = new Intl.NumberFormat('en-US', {
     style: 'unit',
     unit: 'gigabyte',
-    maximumSignificantDigits: 3,
+    maximumSignificantDigits: 9,
   });
-  const msg = `BigQuery job ${job.id} for ${metadata.statistics.query.cacheHit ? '(cached)' : ''} ${metadata.statistics.query.statementType} ${query} finished with status ${metadata.status.state}, total processed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, total billed: ${nf.format(parseInt(metadata.statistics.query.totalBytesProcessed, 10) / 1024 / 1024 / 1024)}, estimated cost: ¢${billedcents}, domainkey: ${domainKey}`;
+  const totalBytesProcessed = parseInt(metadata.statistics.query.totalBytesProcessed, 10);
+  const msg = `BigQuery job ${job.id} for `
+    + `${metadata.statistics.query.cacheHit ? '(cached)' : ''} `
+    + `${metadata.statistics.query.statementType} ${query} `
+    + `finished with status ${metadata.status.state}, `
+    + `total processed: ${nf.format(totalBytesProcessed / 1024 / 1024 / 1024)}, `
+    + `total billed: ${nf.format(maximumBilledBytes / 1024 / 1024 / 1024)}, `
+    + `estimated cost: ¢${totalBilledCents}, domainkey: ${domainKey}`;
   fn(msg);
+}
+
+async function loadResultsFromStream(stream) {
+  return new Promise((resolve, reject) => {
+    const results = [];
+    let avgsize = 0;
+    const maxsize = 1024 * 1024 * 6 * 0.8;
+
+    const spaceleft = () => {
+      if (results.length === 10) {
+        avgsize = size(results) / results.length;
+      }
+      if (avgsize * results.length > maxsize) {
+        return false;
+      }
+      return true;
+    };
+
+    let truncated = false;
+
+    stream
+      .on('data', (row) => {
+        if (spaceleft()) {
+          results.push(row);
+        } else {
+          truncated = true;
+        }
+      })
+      .on('error', reject)
+      .on('end', () => {
+        resolve({ results, truncated });
+      });
+  });
 }
 
 /**
@@ -97,92 +140,42 @@ export async function execute(email, key, project, query, _, params = {}, logger
 
     // check if dataset exists in that location
 
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise(async (resolve, reject) => {
-      const results = [];
-      let avgsize = 0;
-      const maxsize = 1024 * 1024 * 6 * 0.8;
-      // eslint-disable-next-line no-param-reassign
-      requestParams.limit = parseInt(requestParams.limit, 10);
-      const headers = cleanHeaderParams(loadedQuery, headerParams, true);
+    // eslint-disable-next-line no-param-reassign
+    requestParams.limit = parseInt(requestParams.limit, 10);
+    const headers = cleanHeaderParams(loadedQuery, headerParams, true);
+    const q = loadedQuery;
 
-      const spaceleft = () => {
-        if (results.length === 10) {
-          avgsize = size(results) / results.length;
-        }
-        if (avgsize * results.length > maxsize) {
-          return false;
-        }
-        return true;
-      };
+    const responseMetadata = {};
 
-      let stream;
-      let rootJob;
-      const q = loadedQuery;
-
-      const responseMetadata = {};
-      if (loadedQuery.indexOf('# hlx:metadata') > -1) {
-        const jobs = await bq.createQueryJob({
-          query: q,
-          params: requestParams,
-        });
-        stream = await jobs[0].getQueryResultsStream();
-
-        // we have multiple jobs, so we need to inspect the first job
-        // to get the list of all jobs.
-        [rootJob] = jobs;
-      } else {
-        stream = await bq.createQueryStream({
-          query: q,
-          maxResults: params.limit,
-          params: requestParams,
-        });
-      }
-      stream
-        .on('data', (row) => (spaceleft() ? results.push(row) : resolve({
-          headers,
-          truncated: true,
-          results,
-          description,
-          requestParams,
-          responseDetails,
-          responseMetadata,
-          domainKey,
-        })))
-        .on(
-          'error',
-          /* c8 ignore next 3 */
-          async (e) => {
-            reject(e);
-          },
-        )
-        .on('end', async () => {
-          if (rootJob) {
-            // try to get the list of child jobs. We need to wait until the
-            // root job has finished, otherwise the list of child jobs is not
-            // complete.
-            const [childJobs] = await bq.getJobs({
-              parentJobId: rootJob.metadata.jobReference.jobId,
-            });
-            const metadata = childJobs[1]; // jobs are ordered in descending order by execution time
-            if (metadata) {
-              const [metadataResults] = await metadata.getQueryResults();
-              responseMetadata.totalRows = metadataResults[0]?.total_rows;
-            }
-            await logQueryStats(childJobs[1], query, domainKey, logger.info);
-          }
-          resolve({
-            headers,
-            truncated: false,
-            results,
-            description,
-            requestParams,
-            responseDetails,
-            responseMetadata,
-            domainKey,
-          });
-        });
+    const [job] = await bq.createQueryJob({
+      query: q,
+      params: requestParams,
     });
+    const stream = job.getQueryResultsStream();
+
+    const { results, truncated } = await loadResultsFromStream(stream);
+
+    const [childJobs] = await bq.getJobs({
+      parentJobId: job.metadata.jobReference.jobId,
+    });
+    // jobs are ordered in descending order by execution time
+    const statsJob = childJobs && childJobs.length >= 2 ? childJobs[1] : job;
+    if (statsJob) {
+      const [metadataResults] = await statsJob.getQueryResults();
+      responseMetadata.totalRows = metadataResults[0]?.total_rows;
+    }
+    await logQueryStats(statsJob, query, domainKey, logger.info);
+
+    return {
+      headers,
+      truncated,
+      results,
+      description,
+      requestParams,
+      responseDetails,
+      responseMetadata,
+      domainKey,
+    };
   } catch (e) {
     throw new Error(`Unable to execute Google Query ${query}: ${e.message}`);
   }
