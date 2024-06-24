@@ -1,3 +1,10 @@
+# [3.31.0](https://github.com/adobe/helix-run-query/compare/v3.30.2...v3.31.0) (2024-06-24)
+
+
+### Features
+
+* **sendquery:** Enable cost logging for all jobs ([662c0a0](https://github.com/adobe/helix-run-query/commit/662c0a08494d98ace9eabcac7a8f1606c07b41a9)), closes [#1150](https://github.com/adobe/helix-run-query/issues/1150)
+
 ## [3.30.2](https://github.com/adobe/helix-run-query/compare/v3.30.1...v3.30.2) (2024-06-20)
 
 
