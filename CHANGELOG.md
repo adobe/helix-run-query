@@ -1,3 +1,11 @@
+# [3.32.0](https://github.com/adobe/helix-run-query/compare/v3.31.1...v3.32.0) (2024-07-05)
+
+
+### Features
+
+* **events_v5:** ignore invalid weights in EVENTS_V5 ([0897469](https://github.com/adobe/helix-run-query/commit/08974695606aede4255205222780e195dc89f81a)), closes [#1157](https://github.com/adobe/helix-run-query/issues/1157)
+* **events_v5:** ignore invalid weights in EVENTS_V5 ([ee5bb40](https://github.com/adobe/helix-run-query/commit/ee5bb40ea96acf3e7bfde0c509049264b1989c46))
+
 ## [3.31.1](https://github.com/adobe/helix-run-query/compare/v3.31.0...v3.31.1) (2024-06-24)
 
 
