@@ -94,6 +94,9 @@ FUNCTION `helix-225321.helix_rum.EVENTS_V5`( -- noqa: PRS
       OR rumdata.url LIKE CONCAT("https://", validkeys.hostname_prefix, "/%")
       OR validkeys.hostname_prefix = "" )
   WHERE
+     -- ignore invalid weights
+    weight IN (1,10,20,100,1000)
+    AND
     (
       (
         helix_rum.MATCH_URLS_V5(url, filterurl)
