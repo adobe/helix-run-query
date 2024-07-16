@@ -143,7 +143,7 @@ export async function execute(email, key, project, query, _, params = {}, logger
     // eslint-disable-next-line no-param-reassign
     requestParams.limit = parseInt(requestParams.limit, 10);
     const headers = cleanHeaderParams(loadedQuery, headerParams, true);
-    var q = `
+    let q = `
       IF EXISTS(
         SELECT
           *
