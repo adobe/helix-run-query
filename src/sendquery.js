@@ -172,8 +172,9 @@ export async function execute(email, key, project, query, _, params = {}, logger
     `;
 
     // multi-results is a special test query which does not need a domain key check
-    // rorate-domainkeys is a sepcial query which already has a domain key check
-    if (query === '/multi-results' || query === '/rotate-domainkeys') {
+    // rorate-domainkeys is a special query which already has a domain key check
+    // rum-dashboard already has a domain key check
+    if (query === '/multi-results' || query === '/rotate-domainkeys' || query === '/rum-dashboard') {
       q = loadedQuery;
     }
 

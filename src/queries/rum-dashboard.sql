@@ -576,7 +576,7 @@ FROM (
 ) WHERE
   rank <= @limit OR url = "Other" OR @rising;
 
-END IF
+END IF;
 --- avgcls: 75th percentile value of the Cumulative Layout Shift metric in the current period
 --- avgcls_1: 75th percentile value of the CLS metric in the previous period
 --- avgfid: 75th percentile value of the First Input Delay metric in milliseconds in the current period
