@@ -26,4 +26,4 @@ SELECT
   events,
   metadata,
   meta_array
-FROM all_results LIMIT 1;
+FROM all_results LIMIT 1
