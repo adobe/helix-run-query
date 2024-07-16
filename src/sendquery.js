@@ -143,7 +143,7 @@ export async function execute(email, key, project, query, _, params = {}, logger
     // eslint-disable-next-line no-param-reassign
     requestParams.limit = parseInt(requestParams.limit, 10);
     const headers = cleanHeaderParams(loadedQuery, headerParams, true);
-    const q = `
+    var q = `
       IF EXISTS(
         SELECT
           *
@@ -170,6 +170,11 @@ export async function execute(email, key, project, query, _, params = {}, logger
         ;
       END IF;
     `;
+
+    // multi-results is a special test query which does not need a domain key check
+    if (query === '/multi-results') {
+      q = loadedQuery;
+    }
 
     const responseMetadata = {};
 
