@@ -152,7 +152,7 @@ export async function execute(email, key, project, query, _, params = {}, logger
         WHERE
           key_bytes = SHA512(@domainkey)
           AND (revoke_date IS NULL
-            OR revoke_date > CURRENT_DATE(@timezone))
+            OR revoke_date > CURRENT_DATE())
           AND (
             hostname_prefix = ""
             OR @url LIKE CONCAT("%.", hostname_prefix)
