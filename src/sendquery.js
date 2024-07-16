@@ -167,7 +167,7 @@ export async function execute(email, key, project, query, _, params = {}, logger
       THEN
 
         ${loadedQuery}
-
+        ;
       END IF;
     `;
 
