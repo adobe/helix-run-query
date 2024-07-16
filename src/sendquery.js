@@ -143,7 +143,33 @@ export async function execute(email, key, project, query, _, params = {}, logger
     // eslint-disable-next-line no-param-reassign
     requestParams.limit = parseInt(requestParams.limit, 10);
     const headers = cleanHeaderParams(loadedQuery, headerParams, true);
-    const q = loadedQuery;
+    const q = `
+      IF EXISTS(
+        SELECT
+          *
+        FROM
+          helix-225321.helix_reporting.domain_keys
+        WHERE
+          key_bytes = SHA512(@domainkey)
+          AND (revoke_date IS NULL
+            OR revoke_date > CURRENT_DATE(@timezone))
+          AND (
+            hostname_prefix = ""
+            OR @url LIKE CONCAT("%.", hostname_prefix)
+            OR @url LIKE CONCAT("%.", hostname_prefix, "/%")
+            OR @url LIKE CONCAT(hostname_prefix)
+            OR @url LIKE CONCAT(hostname_prefix, "/%")
+            -- handle comma-separated list of urls, remove spaces and trailing comma
+            OR hostname_prefix IN (SELECT * FROM helix_rum.URLS_FROM_LIST(@url))
+          )
+        )
+
+      THEN
+
+        ${loadedQuery}
+
+      END IF;
+    `;
 
     const responseMetadata = {};
 
