@@ -27,28 +27,6 @@ AS (
   OR (device = "bot" AND user_agent NOT LIKE "Mozilla%")
 );
 
-IF EXISTS(
-    SELECT
-      *
-    FROM
-      `helix-225321.helix_reporting.domain_keys`
-    WHERE
-      key_bytes = SHA512(@domainkey)
-      AND (revoke_date IS NULL
-        OR revoke_date > CURRENT_DATE(@timezone))
-      AND (
-        hostname_prefix = ""
-        OR @url LIKE CONCAT("%.", hostname_prefix)
-        OR @url LIKE CONCAT("%.", hostname_prefix, "/%")
-        OR @url LIKE CONCAT(hostname_prefix)
-        OR @url LIKE CONCAT(hostname_prefix, "/%")
-        -- handle comma-separated list of urls, remove spaces and trailing comma
-        OR hostname_prefix IN (SELECT * FROM helix_rum.URLS_FROM_LIST(@url))
-      )
-    )
-
-THEN
-
 WITH
 current_data AS (
   SELECT * FROM
@@ -574,9 +552,8 @@ FROM (
     current_truncated_rum_by_url.pageviews DESC,
     previous_truncated_rum_by_url.pageviews DESC
 ) WHERE
-  rank <= @limit OR url = "Other" OR @rising;
+  rank <= @limit OR url = "Other" OR @rising
 
-END IF;
 --- avgcls: 75th percentile value of the Cumulative Layout Shift metric in the current period
 --- avgcls_1: 75th percentile value of the CLS metric in the previous period
 --- avgfid: 75th percentile value of the First Input Delay metric in milliseconds in the current period
