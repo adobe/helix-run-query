@@ -1,3 +1,10 @@
+# [3.33.0](https://github.com/adobe/helix-run-query/compare/v3.32.1...v3.33.0) (2024-07-17)
+
+
+### Features
+
+* add domainkey validation to all queries ([dd5b6a2](https://github.com/adobe/helix-run-query/commit/dd5b6a23d27ac019a3f5594100047172d6d83f31))
+
 ## [3.32.1](https://github.com/adobe/helix-run-query/compare/v3.32.0...v3.32.1) (2024-07-05)
 
 
