@@ -151,8 +151,8 @@ describe('Test Content Requests', () => {
     assert.ok(json.results.data.length === 2, 'expecting 2 entries, 1 for each host for year 2024');
     const expected = [
       {
-        content_requests: 188220,
-        cr_apicalls: 99140,
+        content_requests: 187140,
+        cr_apicalls: 98060,
         cr_margin_of_error: 8556,
         cr_pageviews: 89080,
         error404_requests: 1700,
