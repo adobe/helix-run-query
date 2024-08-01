@@ -93,6 +93,8 @@ group_all_events_daily AS (
       (
         COUNTIF(
           events.source LIKE '%/api/qraphql/%'
+          OR events.source LIKE '%/libs/%'
+          OR events.source LIKE '%/manifest.json%'
         )
         > 0
       ), false
