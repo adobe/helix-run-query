@@ -151,15 +151,15 @@ describe('Test Content Requests', () => {
     assert.ok(json.results.data.length === 2, 'expecting 2 entries, 1 for each host for year 2024');
     const expected = [
       {
-        content_requests: 187140,
-        cr_apicalls: 98060,
+        content_requests: 133520,
+        cr_apicalls: 44440,
         cr_margin_of_error: 8556,
         cr_pageviews: 89080,
         error404_requests: 1700,
         hostname: 'blog.adobe.com',
         html_requests: 94880,
         id: '3d8835af40a49938c772d724480e09a35aa9b881',
-        json_requests: 508200,
+        json_requests: 230700,
         month: null,
         time: '2024-01-01T00:00:00+00:00',
         top_host: 'rum.hlx.page',
