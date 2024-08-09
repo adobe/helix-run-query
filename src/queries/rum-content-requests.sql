@@ -67,7 +67,7 @@ group_all_events_daily AS (
     COALESCE(
       COUNTIF(
         events.checkpoint = 'loadresource'
-        AND events.target NOT LIKE '%.html'
+        AND events.source NOT LIKE '%.html'
       ),
       0
     )
