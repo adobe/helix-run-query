@@ -67,7 +67,7 @@ group_all_events_daily AS (
     COALESCE(
       COUNTIF(
         events.checkpoint = 'loadresource'
-        AND events.target NOT LIKE '%.html'
+        AND events.source NOT LIKE '%.html'
       ),
       0
     )
@@ -93,6 +93,8 @@ group_all_events_daily AS (
       (
         COUNTIF(
           events.source LIKE '%/api/qraphql/%'
+          OR events.source LIKE '%/libs/%'
+          OR events.source LIKE '%/manifest.json%'
         )
         > 0
       ), false
