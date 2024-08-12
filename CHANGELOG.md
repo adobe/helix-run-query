@@ -1,3 +1,10 @@
+## [3.33.2](https://github.com/adobe/helix-run-query/compare/v3.33.1...v3.33.2) (2024-08-12)
+
+
+### Bug Fixes
+
+* more closely align with CDN content request API call definition ([df0e970](https://github.com/adobe/helix-run-query/commit/df0e9705a3c8ce9377031a43e8e47a4aa6b6f362))
+
 ## [3.33.1](https://github.com/adobe/helix-run-query/compare/v3.33.0...v3.33.1) (2024-08-10)
 
 
