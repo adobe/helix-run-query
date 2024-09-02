@@ -43,7 +43,7 @@
     "@google-cloud/bigquery": "7.9.0",
     "dotenv": "16.4.5",
     "fs-extra": "11.2.0",
-    "googleapis": "142.0.0",
+    "googleapis": "143.0.0",
     "json-size": "1.0.0"
   },
   "devDependencies": {
@@ -64,7 +64,7 @@
     "eslint": "8.57.0",
     "esmock": "2.6.7",
     "husky": "9.1.5",
-    "jsdoc-to-markdown": "8.0.3",
+    "jsdoc-to-markdown": "9.0.0",
     "junit-report-builder": "5.0.0",
     "lint-staged": "15.2.9",
     "lodash": "4.17.21",
