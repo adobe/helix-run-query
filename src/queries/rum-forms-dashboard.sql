@@ -26,6 +26,8 @@ current_checkpoints AS (
       'all',
       @domainkey
     )
+  WHERE
+    weight != 1
 ),
 
 view_urls AS (
