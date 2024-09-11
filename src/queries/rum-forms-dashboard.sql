@@ -105,6 +105,7 @@ current_rum_by_url_and_weight AS (
     CAST(APPROX_QUANTILES(inp, 100)[OFFSET(75)] AS INT64) AS avginp,
     ROUND(APPROX_QUANTILES(cls, 100)[OFFSET(75)], 3) AS avgcls
   FROM current_rum_by_id
+  where weight != 1
   GROUP BY url, weight
 ),
 
