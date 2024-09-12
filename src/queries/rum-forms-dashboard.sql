@@ -26,8 +26,6 @@ current_checkpoints AS (
       'all',
       @domainkey
     )
-  WHERE
-    weight != 1
 ),
 
 view_urls AS (
@@ -72,6 +70,8 @@ current_data AS (
       'all',
       @domainkey
     )
+  WHERE
+    weight != 1
 ),
 
 current_rum_by_id AS (
