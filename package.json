@@ -63,16 +63,16 @@
     "c8": "10.1.2",
     "eslint": "8.57.0",
     "esmock": "2.6.7",
-    "husky": "9.1.5",
-    "jsdoc-to-markdown": "9.0.0",
+    "husky": "9.1.6",
+    "jsdoc-to-markdown": "9.0.1",
     "junit-report-builder": "5.0.0",
     "lint-staged": "15.2.10",
     "lodash": "4.17.21",
     "mocha": "10.7.3",
     "mocha-multi-reporters": "1.5.1",
     "nodemon": "3.1.4",
-    "semantic-release": "24.1.0",
-    "sinon": "18.0.0"
+    "semantic-release": "24.1.1",
+    "sinon": "18.0.1"
   },
   "lint-staged": {
     "*.js": "eslint",
