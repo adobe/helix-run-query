@@ -155,7 +155,7 @@ LEFT JOIN current_rum_by_url AS c
     v.url = c.url
     AND v.source IS NOT NULL
 ORDER BY v.views DESC -- noqa: PRS
-LIMIT CAST(@limit AS INT64)
+LIMIT CAST(@limit AS INT64) 
 --- url: the URL of the page that is getting traffic
 --- views: the number of form views
 --- avglcp: 75th percentile of the Largest Contentful Paint metric in milliseconds in the current period
