@@ -39,7 +39,7 @@ view_urls AS (
   FROM current_checkpoints
   WHERE
     checkpoint = 'viewblock'
-    AND (source = '.form' OR source = '.marketo')
+    AND (source = '.form' OR source = '.marketo' OR source IS NULL)
   GROUP BY url, checkpoint, source
 ),
 
@@ -70,6 +70,8 @@ current_data AS (
       'all',
       @domainkey
     )
+  WHERE
+    weight != 1
 ),
 
 current_rum_by_id AS (
@@ -105,6 +107,7 @@ current_rum_by_url_and_weight AS (
     CAST(APPROX_QUANTILES(inp, 100)[OFFSET(75)] AS INT64) AS avginp,
     ROUND(APPROX_QUANTILES(cls, 100)[OFFSET(75)], 3) AS avgcls
   FROM current_rum_by_id
+  where weight != 1
   GROUP BY url, weight
 ),
 
@@ -129,7 +132,9 @@ SELECT
   COALESCE(s.actions, 0) AS submissions
 FROM view_urls AS v
 LEFT JOIN submission_urls AS s ON v.url = s.url
+    AND ((v.source IS NULL AND (s.checkpoint = 'formsubmit' AND (s.source LIKE '%.form%' OR s.source LIKE '%mktoForm%' OR s.source LIKE '%.marketo%'))) OR (v.source IS NOT NULL))
 LEFT JOIN current_rum_by_url AS c ON v.url = c.url
+    AND v.source IS NOT NULL
 ORDER BY v.views DESC -- noqa: PRS
 LIMIT CAST(@limit AS INT64)
 --- url: the URL of the page that is getting traffic
