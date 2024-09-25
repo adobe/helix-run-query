@@ -77,7 +77,15 @@ current_rum_by_id AS (
   FROM current_data
   GROUP BY id
 ),
-
+current_event_count AS (
+  SELECT SUM(events) AS allevents FROM (
+    SELECT
+      id,
+      MAX(weight) AS events
+    FROM current_data
+    GROUP BY id
+  )
+),
 current_rum_by_url_and_weight AS (
   SELECT
     weight,
