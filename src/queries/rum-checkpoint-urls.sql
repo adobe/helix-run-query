@@ -11,7 +11,6 @@
 --- checkpoint: -
 --- source: -
 --- domainkey: secret
-
 WITH
 current_data AS (
   SELECT
