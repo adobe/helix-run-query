@@ -258,7 +258,7 @@ submission_urls AS (
 )
 
 SELECT
-  v.url,
+  s.url,
   v.pageviews,
   COALESCE(s.actions, 0) AS submissions
 FROM submission_urls AS s
