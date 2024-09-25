@@ -244,7 +244,7 @@ submission_urls AS (
   WHERE
     checkpoint = 'formsubmit'
   GROUP BY url, checkpoint, source
-),
+)
 
 SELECT
   v.url,
