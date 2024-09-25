@@ -10,6 +10,7 @@
 --- url: -
 --- owner: -
 --- repo: -
+--- rising: false
 --- domainkey: secret
 
 WITH
