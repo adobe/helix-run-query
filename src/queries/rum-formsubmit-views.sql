@@ -8,6 +8,8 @@
 --- enddate: 2022-01-31
 --- timezone: UTC
 --- url: -
+--- owner: -
+--- repo: -
 --- domainkey: secret
 
 WITH
