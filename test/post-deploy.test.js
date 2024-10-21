@@ -11,14 +11,19 @@
  */
 /* eslint-env mocha */
 import assert from 'assert';
+import { setTimeout } from 'node:timers/promises';
 import { fetch } from '@adobe/fetch';
 import { createTargets } from './post-deploy-utils.js';
 
 createTargets().forEach((target) => {
   describe(`Post-Deploy Tests (${target.title()}) ${target.host()}${target.urlPath()}`, () => {
-    before(function beforeAll() {
+    before(async function beforeAll() {
       if (!target.enabled()) {
         this.skip();
+      } else {
+        console.log('wait for 2 seconds for function become ready.... (really?)');
+        this.timeout(3000);
+        await setTimeout(2000);
       }
     });
 
@@ -62,5 +67,5 @@ createTargets().forEach((target) => {
       assert.equal(response.status, 200, await response.text());
       assert.equal(response.headers.get('Content-Type'), 'application/json');
     }).timeout(10000);
-  });
+  }).timeout(60000);
 });
