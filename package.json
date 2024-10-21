@@ -44,7 +44,7 @@
     "@google-cloud/bigquery": "7.9.1",
     "dotenv": "16.4.5",
     "fs-extra": "11.2.0",
-    "googleapis": "143.0.0",
+    "googleapis": "144.0.0",
     "json-size": "1.0.0"
   },
   "devDependencies": {
@@ -73,7 +73,7 @@
     "mocha-multi-reporters": "1.5.1",
     "nodemon": "3.1.7",
     "semantic-release": "24.1.2",
-    "sinon": "18.0.1"
+    "sinon": "19.0.2"
   },
   "lint-staged": {
     "*.js": "eslint",
