@@ -62,12 +62,8 @@ jobs:
             ,/helix/github-action-secrets
       - name: Branch Deployment
         run: npm run deploy-ci
-        env:
-          HLX_TEST_HEADERS: ${{ secrets.HLX_TEST_HEADERS }}
       - name: Post-Deployment Integration Test
         run: npm run test-postdeploy
-        env:
-          HLX_TEST_HEADERS: ${{ secrets.HLX_TEST_HEADERS }}
 
   release:
     name: Release
@@ -98,5 +94,4 @@ jobs:
       - name: Semantic Release
         run: npm run semantic-release
         env:
-          HLX_TEST_HEADERS: ${{ secrets.HLX_TEST_HEADERS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
