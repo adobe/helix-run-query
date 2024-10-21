@@ -31,7 +31,7 @@ createTargets().forEach((target) => {
           Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
         },
       });
-      assert.equal(response.status, 200);
+      assert.equal(response.status, 200, await response.text());
       assert.equal(response.headers.get('Content-Type'), 'application/json');
       const body = await response.json();
       assert.equal(body.meta.data.length, 49);
@@ -46,7 +46,7 @@ createTargets().forEach((target) => {
           Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
         },
       });
-      assert.equal(response.status, 200);
+      assert.equal(response.status, 200, await response.text());
       assert.equal(response.headers.get('Content-Type'), 'application/json');
     }).timeout(60000);
 
@@ -59,7 +59,7 @@ createTargets().forEach((target) => {
           Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
         },
       });
-      assert.equal(response.status, 200);
+      assert.equal(response.status, 200, await response.text());
       assert.equal(response.headers.get('Content-Type'), 'application/json');
     }).timeout(10000);
   });
