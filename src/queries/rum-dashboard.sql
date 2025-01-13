@@ -205,11 +205,12 @@ current_rum_by_url_and_weight AS (
         NULL
       ) AS INT64
     ) AS ttfbbad,
-    CAST(APPROX_QUANTILES(lcp, 100)[OFFSET(75)] AS INT64) AS avglcp,
-    CAST(APPROX_QUANTILES(fid, 100)[OFFSET(75)] AS INT64) AS avgfid,
-    CAST(APPROX_QUANTILES(inp, 100)[OFFSET(75)] AS INT64) AS avginp,
-    ROUND(APPROX_QUANTILES(cls, 100)[OFFSET(75)], 3) AS avgcls,
-    CAST(APPROX_QUANTILES(ttfb, 100)[OFFSET(75)] AS INT64) AS avgttfb,
+    # 15th 20-quantile is equivalent to 75th 100-quantile, but cheaper to compute
+    CAST(APPROX_QUANTILES(lcp, 20)[OFFSET(15)] AS INT64) AS avglcp,
+    CAST(APPROX_QUANTILES(fid, 20)[OFFSET(15)] AS INT64) AS avgfid,
+    CAST(APPROX_QUANTILES(inp, 20)[OFFSET(15)] AS INT64) AS avginp,
+    ROUND(APPROX_QUANTILES(cls, 20)[OFFSET(15)], 3) AS avgcls,
+    CAST(APPROX_QUANTILES(ttfb, 20)[OFFSET(15)] AS INT64) AS avgttfb,
     COUNT(id) AS events
   FROM current_rum_by_id
   GROUP BY url, weight
@@ -290,11 +291,11 @@ previous_rum_by_url_and_weight AS (
         NULL
       ) AS INT64
     ) AS ttfbbad,
-    CAST(APPROX_QUANTILES(lcp, 100)[OFFSET(75)] AS INT64) AS avglcp,
-    CAST(APPROX_QUANTILES(fid, 100)[OFFSET(75)] AS INT64) AS avgfid,
-    CAST(APPROX_QUANTILES(inp, 100)[OFFSET(75)] AS INT64) AS avginp,
-    ROUND(APPROX_QUANTILES(cls, 100)[OFFSET(75)], 3) AS avgcls,
-    CAST(APPROX_QUANTILES(ttfb, 100)[OFFSET(75)] AS INT64) AS avgttfb,
+    CAST(APPROX_QUANTILES(lcp, 20)[OFFSET(15)] AS INT64) AS avglcp,
+    CAST(APPROX_QUANTILES(fid, 20)[OFFSET(15)] AS INT64) AS avgfid,
+    CAST(APPROX_QUANTILES(inp, 20)[OFFSET(15)] AS INT64) AS avginp,
+    ROUND(APPROX_QUANTILES(cls, 20)[OFFSET(15)], 3) AS avgcls,
+    CAST(APPROX_QUANTILES(ttfb, 20)[OFFSET(15)] AS INT64) AS avgttfb,
     COUNT(id) AS events
   FROM previous_rum_by_id
   GROUP BY url, weight
