@@ -1,3 +1,10 @@
+# [3.34.0](https://github.com/adobe/helix-run-query/compare/v3.33.7...v3.34.0) (2025-01-13)
+
+
+### Features
+
+* **sendquery:** enhance query job configuration with timeout and caching ([b0ee4ed](https://github.com/adobe/helix-run-query/commit/b0ee4ed096623f5a4e583e5a60964505704f4393))
+
 ## [3.33.7](https://github.com/adobe/helix-run-query/compare/v3.33.6...v3.33.7) (2024-10-21)
 
 
