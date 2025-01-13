@@ -182,6 +182,13 @@ export async function execute(email, key, project, query, _, params = {}, logger
     const [job] = await bq.createQueryJob({
       query: q,
       params: requestParams,
+      jobTimeoutMs: 29000,
+      configuration: {
+        query: {
+          useQueryCache: true,
+          priority: 'INTERACTIVE',
+        },
+      },
     });
     const stream = job.getQueryResultsStream();
 
