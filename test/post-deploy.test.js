@@ -66,7 +66,7 @@ createTargets().forEach((target) => {
     }).timeout(30000);
 
     it('RUM Dashboard', async () => {
-      const path = `${target.urlPath()}/rum-dashboard?url=www.theplayers.com`;
+      const path = `${target.urlPath()}/rum-dashboard?url=www.adobe.com`;
       console.log(`testing ${target.host()}${path}`);
       const response = await retryFetch(`${target.host()}${path}`, {
         headers: {
