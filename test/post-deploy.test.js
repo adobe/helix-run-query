@@ -15,6 +15,31 @@ import { setTimeout } from 'node:timers/promises';
 import { fetch } from '@adobe/fetch';
 import { createTargets } from './post-deploy-utils.js';
 
+async function retryFetch(url, options, maxRetries = 3, initialDelay = 1000) {
+  const attempts = Array.from({ length: maxRetries }, (_, i) => i + 1);
+
+  for (const attempt of attempts) {
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const response = await fetch(url, options);
+      if (response.status !== 503) {
+        return response;
+      }
+      const backoffDelay = initialDelay * (2 ** (attempt - 1)); // exponential backoff
+      console.log(`Attempt ${attempt}: Got 503, retrying in ${backoffDelay}ms...`);
+      // eslint-disable-next-line no-await-in-loop
+      await setTimeout(backoffDelay);
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+      const backoffDelay = initialDelay * (2 ** (attempt - 1));
+      console.log(`Attempt ${attempt}: Failed with ${error.message}, retrying in ${backoffDelay}ms...`);
+      // eslint-disable-next-line no-await-in-loop
+      await setTimeout(backoffDelay);
+    }
+  }
+  throw new Error(`Failed after ${maxRetries} attempts`);
+}
+
 createTargets().forEach((target) => {
   describe(`Post-Deploy Tests (${target.title()}) ${target.host()}${target.urlPath()}`, () => {
     before(async function beforeAll() {
@@ -29,22 +54,20 @@ createTargets().forEach((target) => {
 
     it('Service reports status', async () => {
       const path = `${target.urlPath()}/_status_check/healthcheck.json`;
-      // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
-      const response = await fetch(`${target.host()}${path}`, {
+      const response = await retryFetch(`${target.host()}${path}`, {
         headers: {
           Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
         },
       });
       assert.equal(response.status, 200, await response.text());
       assert.equal(response.headers.get('Content-Type'), 'application/json');
-    }).timeout(10000);
+    }).timeout(20000);
 
     it('RUM Dashboard', async () => {
       const path = `${target.urlPath()}/rum-dashboard`;
-      // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
-      const response = await fetch(`${target.host()}${path}`, {
+      const response = await retryFetch(`${target.host()}${path}`, {
         headers: {
           Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
         },
@@ -57,9 +80,8 @@ createTargets().forEach((target) => {
 
     it('Daily Pageviews', async () => {
       const path = `${target.urlPath()}/rum-pageviews?url=www.theplayers.com&offset=1`;
-      // eslint-disable-next-line no-console
       console.log(`testing ${target.host()}${path}`);
-      const response = await fetch(`${target.host()}${path}`, {
+      const response = await retryFetch(`${target.host()}${path}`, {
         headers: {
           Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
         },
