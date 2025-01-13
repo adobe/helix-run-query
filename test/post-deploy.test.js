@@ -27,6 +27,19 @@ createTargets().forEach((target) => {
       }
     });
 
+    it('Service reports status', async () => {
+      const path = `${target.urlPath()}/_status_check/healthcheck.json`;
+      // eslint-disable-next-line no-console
+      console.log(`testing ${target.host()}${path}`);
+      const response = await fetch(`${target.host()}${path}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
+        },
+      });
+      assert.equal(response.status, 200, await response.text());
+      assert.equal(response.headers.get('Content-Type'), 'application/json');
+    }).timeout(10000);
+
     it('RUM Dashboard', async () => {
       const path = `${target.urlPath()}/rum-dashboard`;
       // eslint-disable-next-line no-console
@@ -54,18 +67,5 @@ createTargets().forEach((target) => {
       assert.equal(response.status, 200, await response.text());
       assert.equal(response.headers.get('Content-Type'), 'application/json');
     }).timeout(60000);
-
-    it('Service reports status', async () => {
-      const path = `${target.urlPath()}/_status_check/healthcheck.json`;
-      // eslint-disable-next-line no-console
-      console.log(`testing ${target.host()}${path}`);
-      const response = await fetch(`${target.host()}${path}`, {
-        headers: {
-          Authorization: `Bearer ${process.env.UNIVERSAL_TOKEN}`,
-        },
-      });
-      assert.equal(response.status, 200, await response.text());
-      assert.equal(response.headers.get('Content-Type'), 'application/json');
-    }).timeout(10000);
   }).timeout(60000);
 });
