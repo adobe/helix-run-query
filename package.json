@@ -43,7 +43,7 @@
     "@adobe/helix-status": "10.1.5",
     "@google-cloud/bigquery": "7.9.1",
     "dotenv": "16.4.7",
-    "fs-extra": "11.2.0",
+    "fs-extra": "11.3.0",
     "googleapis": "144.0.0",
     "json-size": "1.0.0"
   },
@@ -67,7 +67,7 @@
     "husky": "9.1.7",
     "jsdoc-to-markdown": "9.1.1",
     "junit-report-builder": "5.1.1",
-    "lint-staged": "15.3.0",
+    "lint-staged": "15.4.1",
     "lodash": "4.17.21",
     "mocha": "11.0.1",
     "mocha-multi-reporters": "1.5.1",
