@@ -48,7 +48,7 @@
     "json-size": "1.0.0"
   },
   "devDependencies": {
-    "@adobe/eslint-config-helix": "2.0.8",
+    "@adobe/eslint-config-helix": "2.0.9",
     "@adobe/helix-deploy": "12.4.14",
     "@adobe/helix-universal": "5.0.8",
     "@adobe/helix-universal-devserver": "1.1.84",
