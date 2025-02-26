@@ -1,3 +1,10 @@
+## [3.34.5](https://github.com/adobe/helix-run-query/compare/v3.34.4...v3.34.5) (2025-02-26)
+
+
+### Bug Fixes
+
+* use node 22 on AWS Lambda ([#1241](https://github.com/adobe/helix-run-query/issues/1241)) ([625591f](https://github.com/adobe/helix-run-query/commit/625591f21851818f667614ff94711b3308726b49))
+
 ## [3.34.4](https://github.com/adobe/helix-run-query/compare/v3.34.3...v3.34.4) (2025-02-17)
 
 
