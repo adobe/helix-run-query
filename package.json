@@ -82,7 +82,7 @@
   "wsk": {
     "namespace": "helix",
     "memory": 512,
-    "nodeVersion": 18,
+    "nodeVersion": 22,
     "target": "aws",
     "name": "helix-services/run-query@${version}",
     "static": [
