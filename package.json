@@ -44,7 +44,7 @@
     "@google-cloud/bigquery": "7.9.2",
     "dotenv": "16.4.7",
     "fs-extra": "11.3.0",
-    "googleapis": "144.0.0",
+    "googleapis": "146.0.0",
     "json-size": "1.0.0"
   },
   "devDependencies": {
@@ -58,7 +58,7 @@
     "@pollyjs/persister-fs": "6.0.6",
     "@pollyjs/persister-rest": "6.0.6",
     "@semantic-release/changelog": "6.0.3",
-    "@semantic-release/exec": "6.0.3",
+    "@semantic-release/exec": "7.0.3",
     "@semantic-release/git": "10.0.1",
     "ajv": "8.17.1",
     "c8": "10.1.3",
