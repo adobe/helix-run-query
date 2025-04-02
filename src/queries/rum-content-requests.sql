@@ -34,6 +34,7 @@ WITH all_raw_events AS (
     )
   WHERE
     hostname != ''
+    AND REGEXP_CONTAINS(hostname, r'^[a-zA-Z0-9_\-./]*$') -- valid hostnames
     AND NOT REGEXP_CONTAINS(hostname, r'^\d+\.\d+\.\d+\.\d+$') -- IP addresses
     AND hostname NOT LIKE 'localhost%'
     AND hostname NOT LIKE '%.hlx.page'
