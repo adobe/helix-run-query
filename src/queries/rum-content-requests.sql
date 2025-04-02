@@ -10,17 +10,17 @@
 --- domainkey: secret
 WITH all_raw_events AS (
   SELECT
-    id,
-    checkpoint,
-    source,
-    target,
-    weight,
-    url,
-    host,
-    hostname,
-    user_agent,
-    time,
-    TIMESTAMP_TRUNC(time, DAY, 'UTC') AS trunc_time # events will be evaluated on day level
+    id, -- noqa: RF01
+    checkpoint, -- noqa: RF01
+    source, -- noqa: RF01
+    target, -- noqa: RF01
+    weight, -- noqa: RF01
+    url, -- noqa: RF01
+    host, -- noqa: RF01
+    hostname, -- noqa: RF01
+    user_agent, -- noqa: RF01
+    time, -- noqa: RF01
+    TIMESTAMP_TRUNC(time, DAY, 'UTC') AS trunc_time # events will be evaluated on day level  -- noqa: RF01
   FROM
     helix_rum.EVENTS_V5(
       @url, # list of urls
@@ -33,17 +33,16 @@ WITH all_raw_events AS (
       @domainkey # domain key to prevent data sharing
     )
   WHERE
-    hostname != ''
-    AND REGEXP_CONTAINS(hostname, r'^[a-zA-Z0-9_\-./]*$') -- valid hostnames
-    AND NOT REGEXP_CONTAINS(hostname, r'^\d+\.\d+\.\d+\.\d+$') -- IP addresses
-    AND hostname NOT LIKE 'localhost%'
-    AND hostname NOT LIKE '%.hlx.page'
-    AND hostname NOT LIKE '%.hlx3.page'
-    AND hostname NOT LIKE '%.hlx.live'
-    AND hostname NOT LIKE '%.helix3.dev'
-    AND hostname NOT LIKE '%.sharepoint.com'
-    AND hostname NOT LIKE '%.aem.page'
-    AND hostname NOT LIKE '%.aem.live'
+    hostname != '' -- noqa: RF01
+    AND NOT REGEXP_CONTAINS(hostname, r'^\d+\.\d+\.\d+\.\d+$') -- IP addresses -- noqa: RF01
+    AND hostname NOT LIKE 'localhost%' -- noqa: RF01
+    AND hostname NOT LIKE '%.hlx.page' -- noqa: RF01
+    AND hostname NOT LIKE '%.hlx3.page' -- noqa: RF01
+    AND hostname NOT LIKE '%.hlx.live' -- noqa: RF01
+    AND hostname NOT LIKE '%.helix3.dev' -- noqa: RF01
+    AND hostname NOT LIKE '%.sharepoint.com' -- noqa: RF01
+    AND hostname NOT LIKE '%.aem.page' -- noqa: RF01
+    AND hostname NOT LIKE '%.aem.live' -- noqa: RF01
 ),
 
 top_hosts AS (
@@ -229,7 +228,8 @@ alldata_granularity AS (
     EXTRACT(YEAR FROM TIMESTAMP_TRUNC(trunc_time, YEAR)) AS year,
     EXTRACT(MONTH FROM TIMESTAMP_TRUNC(trunc_time, MONTH)) AS month,
     *
-  FROM monthlydata WHERE CAST(@granularity AS INT64) = 30
+  FROM monthlydata
+  WHERE CAST(@granularity AS INT64) = 30
   UNION ALL
   SELECT
     TO_HEX(
@@ -239,7 +239,8 @@ alldata_granularity AS (
     EXTRACT(YEAR FROM TIMESTAMP_TRUNC(trunc_time, YEAR)) AS year,
     null AS month,
     *
-  FROM yearlydata WHERE CAST(@granularity AS INT64) = 365
+  FROM yearlydata
+  WHERE CAST(@granularity AS INT64) = 365
 ),
 
 alldata AS (
@@ -259,7 +260,9 @@ alldata AS (
     CAST(error404_requests AS INT64) AS error404_requests,
     # row number
     ROW_NUMBER()
-      OVER (ORDER BY hostname ASC, trunc_time ASC)
+      OVER (
+        ORDER BY hostname ASC, trunc_time ASC
+      )
       AS rownum,
     row_id = CAST(@after AS STRING) AS is_cursor
   FROM alldata_granularity
@@ -267,9 +270,11 @@ alldata AS (
 ),
 
 cursor_rows AS (
-  SELECT MIN(rownum) AS rownum FROM alldata WHERE is_cursor IS true
+  SELECT MIN(rownum) AS rownum FROM alldata
+  WHERE is_cursor IS true
   UNION ALL
-  SELECT 0 AS rownum FROM alldata WHERE @after = '-'
+  SELECT 0 AS rownum FROM alldata
+  WHERE @after = '-'
 ),
 
 cursor_rownum AS (
@@ -292,8 +297,8 @@ SELECT
   FORMAT_TIMESTAMP('%Y-%m-%dT%X%Ez', trunc_time) AS time -- noqa: RF04
 FROM alldata
 WHERE
-  (rownum > (SELECT rownum FROM cursor_rownum))
-  AND (rownum <= ((SELECT rownum FROM cursor_rownum) + @limit))
+  (rownum > (SELECT rownum FROM cursor_rownum)) -- noqa: RF02
+  AND (rownum <= ((SELECT rownum FROM cursor_rownum) + @limit)) -- noqa: RF02
 ORDER BY
   rownum ASC
 -- id: the cursor id
