@@ -121,5 +121,7 @@ FUNCTION `helix-225321.helix_rum.EVENTS_V5`( -- noqa: PRS
     (days_count >= 0, DATETIME_SUB(TIMESTAMP_TRUNC(CURRENT_TIMESTAMP(), DAY, helix_rum.CLEAN_TIMEZONE(timezone)), INTERVAL (days_offset + days_count) DAY), TIMESTAMP(day_min, helix_rum.CLEAN_TIMEZONE(timezone))) <= time
     AND helix_rum.CLUSTER_FILTERCLASS(user_agent,
       deviceclass)
+    -- ignore invalid hostnames
+    AND REGEXP_CONTAINS(hostname, r'^[a-zA-Z0-9_\-./]*$') IS TRUE
     AND time < CURRENT_TIMESTAMP()
 );
