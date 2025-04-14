@@ -101,6 +101,7 @@
       "src/queries/rum-dashboard.sql",
       "src/queries/rum-experiments.sql",
       "src/queries/rum-forms-dashboard.sql",
+      "src/queries/rum-formsubmit-views.sql",
       "src/queries/rum-intervals.sql",
       "src/queries/rum-pageviews.sql",
       "src/queries/rum-pageviews-pivot.sql",
