@@ -9,8 +9,6 @@
 --- timezone: UTC
 --- experiment: -
 --- conversioncheckpoint: click
---- sources: -
---- targets: -
 --- threshold: 500
 --- domainkey: secret
 
@@ -73,70 +71,7 @@ experiment_checkpoints AS (
     id
 ),
 
-source_target_converted_checkpoints AS (
-  SELECT
-    all_checkpoints.id AS id,
-    ANY_VALUE(experiment_checkpoints.source) AS source,
-    ANY_VALUE(experiment_checkpoints.target) AS target,
-    ANY_VALUE(all_checkpoints.pageviews) AS pageviews
-  FROM experiment_checkpoints INNER JOIN all_checkpoints
-    ON experiment_checkpoints.id = all_checkpoints.id
-  WHERE
-    all_checkpoints.checkpoint = @conversioncheckpoint
-    AND EXISTS (
-      SELECT 1
-      FROM
-        UNNEST(SPLIT(@sources, ',')) AS prefix
-      WHERE all_checkpoints.source LIKE CONCAT(TRIM(prefix), '%')
-    )
-    AND EXISTS (
-      SELECT 1
-      FROM
-        UNNEST(SPLIT(@targets, ',')) AS prefix
-      WHERE all_checkpoints.target LIKE CONCAT(TRIM(prefix), '%')
-    )
-  GROUP BY all_checkpoints.id
-),
-
-source_converted_checkpoints AS (
-  SELECT
-    all_checkpoints.id AS id,
-    ANY_VALUE(experiment_checkpoints.source) AS source,
-    ANY_VALUE(experiment_checkpoints.target) AS target,
-    ANY_VALUE(all_checkpoints.pageviews) AS pageviews
-  FROM experiment_checkpoints INNER JOIN all_checkpoints
-    ON experiment_checkpoints.id = all_checkpoints.id
-  WHERE
-    all_checkpoints.checkpoint = @conversioncheckpoint
-    AND EXISTS (
-      SELECT 1
-      FROM
-        UNNEST(SPLIT(@sources, ',')) AS prefix
-      WHERE all_checkpoints.source LIKE CONCAT(TRIM(prefix), '%')
-    )
-  GROUP BY all_checkpoints.id
-),
-
-target_converted_checkpoints AS (
-  SELECT
-    all_checkpoints.id AS id,
-    ANY_VALUE(experiment_checkpoints.source) AS source,
-    ANY_VALUE(experiment_checkpoints.target) AS target,
-    ANY_VALUE(all_checkpoints.pageviews) AS pageviews
-  FROM experiment_checkpoints INNER JOIN all_checkpoints
-    ON experiment_checkpoints.id = all_checkpoints.id
-  WHERE
-    all_checkpoints.checkpoint = @conversioncheckpoint
-    AND EXISTS (
-      SELECT 1
-      FROM
-        UNNEST(SPLIT(@targets, ',')) AS prefix
-      WHERE all_checkpoints.target LIKE CONCAT(TRIM(prefix), '%')
-    )
-  GROUP BY all_checkpoints.id
-),
-
-loose_converted_checkpoints AS (
+converted_checkpoints AS (
   SELECT
     all_checkpoints.id AS id,
     ANY_VALUE(experiment_checkpoints.source) AS source,
@@ -146,20 +81,6 @@ loose_converted_checkpoints AS (
     ON experiment_checkpoints.id = all_checkpoints.id
   WHERE all_checkpoints.checkpoint = @conversioncheckpoint
   GROUP BY all_checkpoints.id
-),
-
-converted_checkpoints AS (
-  SELECT * FROM loose_converted_checkpoints
-  WHERE @sources = '-' AND @targets = '-'
-  UNION ALL
-  SELECT * FROM source_target_converted_checkpoints
-  WHERE @sources != '-' AND @targets != '-'
-  UNION ALL
-  SELECT * FROM source_converted_checkpoints
-  WHERE @sources != '-' AND @targets = '-'
-  UNION ALL
-  SELECT * FROM target_converted_checkpoints
-  WHERE @sources = '-' AND @targets != '-'
 ),
 
 conversions_summary AS (
